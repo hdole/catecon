@@ -3,9 +3,10 @@
   "basename": "Actions",
   "name": "hdole/Actions",
   "prototype": "Diagram",
+  "properName": "hdole/Actions",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/Actions_Index",
+  "domain": "Actions_Index",
   "codomain": "em/Cat",
   "references": [],
   "domainInfo": {
@@ -493,6 +494,5 @@
     "x": -96,
     "y": 682,
     "scale": 1.490215090126815
-  },
-  "properName": "hdole/Actions"
+  }
 }

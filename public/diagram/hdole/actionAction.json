@@ -6,7 +6,7 @@
   "properName": "hdole/actionAction",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/actionAction_Index",
+  "domain": "actionAction_Index",
   "codomain": "zf/Set",
   "references": [],
   "domainInfo": {

@@ -6,7 +6,7 @@
   "properName": "hdole/Catecon",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/Catecon_Index",
+  "domain": "Catecon_Index",
   "codomain": "em/Cat",
   "references": [],
   "domainInfo": {

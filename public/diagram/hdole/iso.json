@@ -3,9 +3,10 @@
   "basename": "iso",
   "name": "hdole/iso",
   "prototype": "Diagram",
+  "properName": "hdole/iso",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/iso_Index",
+  "domain": "iso_Index",
   "codomain": "em/Cat",
   "references": [],
   "domainInfo": {
@@ -31,7 +32,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/iso/A",
+        "to": "A",
         "xy": {
           "x": 720,
           "y": 780
@@ -40,7 +41,7 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/iso/B",
+        "to": "B",
         "xy": {
           "x": 870,
           "y": 780
@@ -49,7 +50,7 @@
       {
         "basename": "o_7",
         "prototype": "IndexObject",
-        "to": "hdole/iso/A",
+        "to": "A",
         "xy": {
           "x": 870,
           "y": 930
@@ -58,7 +59,7 @@
       {
         "basename": "o_8",
         "prototype": "IndexObject",
-        "to": "hdole/iso/B",
+        "to": "B",
         "xy": {
           "x": 1030,
           "y": 930
@@ -87,50 +88,50 @@
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/iso/o_4",
-        "codomain": "hdole/iso/o_5",
-        "to": "hdole/iso/f"
+        "domain": "o_4",
+        "codomain": "o_5",
+        "to": "f"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/iso/o_5",
-        "codomain": "hdole/iso/o_7",
-        "to": "hdole/iso/finv"
+        "domain": "o_5",
+        "codomain": "o_7",
+        "to": "finv"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/iso/o_4",
-        "codomain": "hdole/iso/o_7",
+        "domain": "o_4",
+        "codomain": "o_7",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/iso/Id{A}dI"
+        "to": "Id{A}dI"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/iso/o_7",
-        "codomain": "hdole/iso/o_8",
-        "to": "hdole/iso/f"
+        "domain": "o_7",
+        "codomain": "o_8",
+        "to": "f"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
-        "domain": "hdole/iso/o_5",
-        "codomain": "hdole/iso/o_7",
-        "to": "hdole/iso/finv"
+        "domain": "o_5",
+        "codomain": "o_7",
+        "to": "finv"
       },
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
-        "domain": "hdole/iso/o_5",
-        "codomain": "hdole/iso/o_8",
-        "to": "hdole/iso/Id{B}dI"
+        "domain": "o_5",
+        "codomain": "o_8",
+        "to": "Id{B}dI"
       }
     ],
     "cells": [
@@ -172,24 +173,24 @@
     {
       "basename": "f",
       "prototype": "Morphism",
-      "domain": "hdole/iso/A",
-      "codomain": "hdole/iso/B"
+      "domain": "A",
+      "codomain": "B"
     },
     {
       "description": "Inverse of f",
       "basename": "finv",
       "prototype": "Morphism",
       "properName": "f⁻¹",
-      "domain": "hdole/iso/B",
-      "codomain": "hdole/iso/A"
+      "domain": "B",
+      "codomain": "A"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/iso/A"
+      "domain": "A"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/iso/B"
+      "domain": "B"
     }
   ],
   "user": "hdole",
@@ -199,6 +200,5 @@
     "x": -1512,
     "y": -1780,
     "scale": 3.0678070039586123
-  },
-  "properName": "hdole/iso"
+  }
 }

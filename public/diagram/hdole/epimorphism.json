@@ -3,9 +3,10 @@
   "basename": "epimorphism",
   "name": "hdole/epimorphism",
   "prototype": "Diagram",
+  "properName": "hdole/epimorphism",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/epimorphism_Index",
+  "domain": "epimorphism_Index",
   "codomain": "em/Cat",
   "references": [],
   "domainInfo": {
@@ -30,7 +31,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/epimorphism/A",
+        "to": "A",
         "xy": {
           "x": 550,
           "y": 550
@@ -39,7 +40,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/epimorphism/B",
+        "to": "B",
         "xy": {
           "x": 750,
           "y": 550
@@ -48,7 +49,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/epimorphism/C",
+        "to": "C",
         "xy": {
           "x": 1000,
           "y": 550
@@ -97,15 +98,15 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/epimorphism/o_0",
-        "codomain": "hdole/epimorphism/o_1",
-        "to": "hdole/epimorphism/f"
+        "domain": "o_0",
+        "codomain": "o_1",
+        "to": "f"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/epimorphism/o_1",
-        "codomain": "hdole/epimorphism/o_2",
+        "domain": "o_1",
+        "codomain": "o_2",
         "attributes": [
           [
             "quantifier",
@@ -114,16 +115,19 @@
           [
             "level",
             1
+          ],
+          [
+            "bezier",
+            -1
           ]
         ],
-        "homsetIndex": -1,
-        "to": "hdole/epimorphism/g"
+        "to": "g"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/epimorphism/o_1",
-        "codomain": "hdole/epimorphism/o_2",
+        "domain": "o_1",
+        "codomain": "o_2",
         "attributes": [
           [
             "flipName",
@@ -136,10 +140,13 @@
           [
             "level",
             1
+          ],
+          [
+            "bezier",
+            1
           ]
         ],
-        "homsetIndex": 1,
-        "to": "hdole/epimorphism/h"
+        "to": "h"
       }
     ],
     "cells": [
@@ -191,20 +198,20 @@
     {
       "basename": "f",
       "prototype": "Morphism",
-      "domain": "hdole/epimorphism/A",
-      "codomain": "hdole/epimorphism/B"
+      "domain": "A",
+      "codomain": "B"
     },
     {
       "basename": "g",
       "prototype": "Morphism",
-      "domain": "hdole/epimorphism/B",
-      "codomain": "hdole/epimorphism/C"
+      "domain": "B",
+      "codomain": "C"
     },
     {
       "basename": "h",
       "prototype": "Morphism",
-      "domain": "hdole/epimorphism/B",
-      "codomain": "hdole/epimorphism/C"
+      "domain": "B",
+      "codomain": "C"
     }
   ],
   "user": "hdole",
@@ -214,6 +221,5 @@
     "x": -1797,
     "y": -880,
     "scale": 3.8134550121281725
-  },
-  "properName": "hdole/epimorphism"
+  }
 }

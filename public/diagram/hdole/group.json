@@ -4,552 +4,561 @@
   "name": "hdole/group",
   "prototype": "Diagram",
   "properName": "hdole/group",
-  "category": "sys/CAT",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/group_Index",
+  "domain": "group_Index",
   "codomain": "zf/Set",
   "references": [],
-  "domainElements": [
-    {
-      "description": "Group",
-      "basename": "t_0",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -160,
-        "y": 40
+  "domainInfo": {
+    "description": "index category for diagram hdole/group",
+    "basename": "group_Index",
+    "name": "hdole/group_Index",
+    "prototype": "IndexCategory",
+    "category": "em/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "Group",
+        "basename": "t_0",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -160,
+          "y": 40
+        },
+        "height": "200",
+        "weight": "bold"
       },
-      "height": "200",
-      "weight": "bold"
-    },
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 0,
-        "y": 400
-      }
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 200,
-        "y": 400
-      }
-    },
-    {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/group/#1",
-      "xy": {
-        "x": 0,
-        "y": 500
-      }
-    },
-    {
-      "basename": "o_4",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 200,
-        "y": 500
-      }
-    },
-    {
-      "basename": "o_5",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 200,
-        "y": 600
-      }
-    },
-    {
-      "basename": "o_6",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 0,
-        "y": 600
-      }
-    },
-    {
-      "basename": "o_7",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 0,
-        "y": 1600
-      }
-    },
-    {
-      "basename": "o_8",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 200,
-        "y": 1600
-      }
-    },
-    {
-      "basename": "o_12",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 400,
-        "y": 1600
-      }
-    },
-    {
-      "basename": "o_13",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 400,
-        "y": 1800
-      }
-    },
-    {
-      "basename": "o_11",
-      "prototype": "IndexObject",
-      "to": "hdole/group/#1",
-      "xy": {
-        "x": 0,
-        "y": 1800
-      }
-    },
-    {
-      "description": "g * g⁻¹ = 1",
-      "basename": "t_1",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -260,
-        "y": 1600
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "Po{G,G}oP",
+        "xy": {
+          "x": 0,
+          "y": 400
+        }
       },
-      "height": "24"
-    },
-    {
-      "basename": "o_10",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 0,
-        "y": 1900
-      }
-    },
-    {
-      "basename": "o_14",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 200,
-        "y": 1900
-      }
-    },
-    {
-      "basename": "o_15",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 400,
-        "y": 1900
-      }
-    },
-    {
-      "basename": "o_16",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 400,
-        "y": 2100
-      }
-    },
-    {
-      "basename": "o_18",
-      "prototype": "IndexObject",
-      "to": "hdole/group/#1",
-      "xy": {
-        "x": 0,
-        "y": 2100
-      }
-    },
-    {
-      "description": "g⁻¹ * g = 1",
-      "basename": "t_2",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -260,
-        "y": 1890
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 200,
+          "y": 400
+        }
       },
-      "height": "24"
-    },
-    {
-      "description": "G is a group object when supplied with a multiplier,\na unit in the group, and an inverse for the group\nand the following cells must commute.",
-      "basename": "t_6",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -140,
-        "y": 180
+      {
+        "basename": "o_3",
+        "prototype": "IndexObject",
+        "to": "#1",
+        "xy": {
+          "x": 0,
+          "y": 500
+        }
       },
-      "height": "24"
-    },
-    {
-      "basename": "o_19",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G,G}oP",
-      "xy": {
-        "x": 0,
-        "y": 1300
-      }
-    },
-    {
-      "basename": "o_21",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,Po{G,G}oP}oP",
-      "xy": {
-        "x": 300,
-        "y": 1300
-      }
-    },
-    {
-      "basename": "o_22",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{Po{G,G}oP,G}oP",
-      "xy": {
-        "x": 0,
-        "y": 1500
-      }
-    },
-    {
-      "basename": "o_28",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 300,
-        "y": 1500
-      }
-    },
-    {
-      "basename": "o_30",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 600,
-        "y": 1300
-      }
-    },
-    {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 600,
-        "y": 1500
-      }
-    },
-    {
-      "description": "g*(h*i) = (g*h)*i",
-      "basename": "t_3",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -300,
-        "y": 1300
+      {
+        "basename": "o_4",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 200,
+          "y": 500
+        }
       },
-      "height": "24"
-    },
-    {
-      "basename": "o_9",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 200,
-        "y": 900
-      }
-    },
-    {
-      "basename": "o_17",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 200,
-        "y": 700
-      }
-    },
-    {
-      "basename": "o_20",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 0,
-        "y": 700
-      }
-    },
-    {
-      "basename": "o_23",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,#1}oP",
-      "xy": {
-        "x": 0,
-        "y": 900
-      }
-    },
-    {
-      "basename": "o_24",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 0,
-        "y": 1000
-      }
-    },
-    {
-      "basename": "o_25",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{#1,G}oP",
-      "xy": {
-        "x": 0,
-        "y": 1200
-      }
-    },
-    {
-      "basename": "o_27",
-      "prototype": "IndexObject",
-      "to": "hdole/group/Po{G,G}oP",
-      "xy": {
-        "x": 200,
-        "y": 1200
-      }
-    },
-    {
-      "basename": "o_26",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 200,
-        "y": 1000
-      }
-    },
-    {
-      "description": "g = g*1",
-      "basename": "t_4",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -150,
-        "y": 700
+      {
+        "basename": "o_5",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 200,
+          "y": 600
+        }
       },
-      "height": "24"
-    },
-    {
-      "description": "g = 1*g",
-      "basename": "t_5",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -200,
-        "y": 1000
+      {
+        "basename": "o_6",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 0,
+          "y": 600
+        }
       },
-      "height": "24"
-    },
-    {
-      "basename": "o_32",
-      "prototype": "IndexObject",
-      "to": "hdole/group/G",
-      "xy": {
-        "x": 0,
-        "y": 300
+      {
+        "basename": "o_7",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 0,
+          "y": 1600
+        }
+      },
+      {
+        "basename": "o_8",
+        "prototype": "IndexObject",
+        "to": "Po{G,G}oP",
+        "xy": {
+          "x": 200,
+          "y": 1600
+        }
+      },
+      {
+        "basename": "o_12",
+        "prototype": "IndexObject",
+        "to": "Po{G,G}oP",
+        "xy": {
+          "x": 400,
+          "y": 1600
+        }
+      },
+      {
+        "basename": "o_13",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 400,
+          "y": 1800
+        }
+      },
+      {
+        "basename": "o_11",
+        "prototype": "IndexObject",
+        "to": "#1",
+        "xy": {
+          "x": 0,
+          "y": 1800
+        }
+      },
+      {
+        "description": "g * g⁻¹ = 1",
+        "basename": "t_1",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -260,
+          "y": 1600
+        },
+        "height": "24"
+      },
+      {
+        "basename": "o_10",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 0,
+          "y": 1900
+        }
+      },
+      {
+        "basename": "o_14",
+        "prototype": "IndexObject",
+        "to": "Po{G,G}oP",
+        "xy": {
+          "x": 200,
+          "y": 1900
+        }
+      },
+      {
+        "basename": "o_15",
+        "prototype": "IndexObject",
+        "to": "Po{G,G}oP",
+        "xy": {
+          "x": 400,
+          "y": 1900
+        }
+      },
+      {
+        "basename": "o_16",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 400,
+          "y": 2100
+        }
+      },
+      {
+        "basename": "o_18",
+        "prototype": "IndexObject",
+        "to": "#1",
+        "xy": {
+          "x": 0,
+          "y": 2100
+        }
+      },
+      {
+        "description": "g⁻¹ * g = 1",
+        "basename": "t_2",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -260,
+          "y": 1890
+        },
+        "height": "24"
+      },
+      {
+        "description": "G is a group object when supplied with a multiplier,\na unit in the group, and an inverse for the group\nand the following cells must commute.",
+        "basename": "t_6",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -140,
+          "y": 180
+        },
+        "height": "24"
+      },
+      {
+        "basename": "o_19",
+        "prototype": "IndexObject",
+        "to": "Po{G,G,G}oP",
+        "xy": {
+          "x": 0,
+          "y": 1300
+        }
+      },
+      {
+        "basename": "o_21",
+        "prototype": "IndexObject",
+        "to": "Po{G,Po{G,G}oP}oP",
+        "xy": {
+          "x": 300,
+          "y": 1300
+        }
+      },
+      {
+        "basename": "o_22",
+        "prototype": "IndexObject",
+        "to": "Po{Po{G,G}oP,G}oP",
+        "xy": {
+          "x": 0,
+          "y": 1500
+        }
+      },
+      {
+        "basename": "o_28",
+        "prototype": "IndexObject",
+        "to": "Po{G,G}oP",
+        "xy": {
+          "x": 300,
+          "y": 1500
+        }
+      },
+      {
+        "basename": "o_30",
+        "prototype": "IndexObject",
+        "to": "Po{G,G}oP",
+        "xy": {
+          "x": 600,
+          "y": 1300
+        }
+      },
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 600,
+          "y": 1500
+        }
+      },
+      {
+        "description": "g*(h*i) = (g*h)*i",
+        "basename": "t_3",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -300,
+          "y": 1300
+        },
+        "height": "24"
+      },
+      {
+        "basename": "o_9",
+        "prototype": "IndexObject",
+        "to": "Po{G,G}oP",
+        "xy": {
+          "x": 200,
+          "y": 900
+        }
+      },
+      {
+        "basename": "o_17",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 200,
+          "y": 700
+        }
+      },
+      {
+        "basename": "o_20",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 0,
+          "y": 700
+        }
+      },
+      {
+        "basename": "o_23",
+        "prototype": "IndexObject",
+        "to": "Po{G,#1}oP",
+        "xy": {
+          "x": 0,
+          "y": 900
+        }
+      },
+      {
+        "basename": "o_24",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 0,
+          "y": 1000
+        }
+      },
+      {
+        "basename": "o_25",
+        "prototype": "IndexObject",
+        "to": "Po{#1,G}oP",
+        "xy": {
+          "x": 0,
+          "y": 1200
+        }
+      },
+      {
+        "basename": "o_27",
+        "prototype": "IndexObject",
+        "to": "Po{G,G}oP",
+        "xy": {
+          "x": 200,
+          "y": 1200
+        }
+      },
+      {
+        "basename": "o_26",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 200,
+          "y": 1000
+        }
+      },
+      {
+        "description": "g = g*1",
+        "basename": "t_4",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 700
+        },
+        "height": "24"
+      },
+      {
+        "description": "g = 1*g",
+        "basename": "t_5",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -200,
+          "y": 1000
+        },
+        "height": "24"
+      },
+      {
+        "basename": "o_32",
+        "prototype": "IndexObject",
+        "to": "G",
+        "xy": {
+          "x": 0,
+          "y": 300
+        }
+      },
+      {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "o_2",
+        "codomain": "o_1",
+        "to": "mult"
+      },
+      {
+        "basename": "m_1",
+        "prototype": "IndexMorphism",
+        "domain": "o_3",
+        "codomain": "o_4",
+        "to": "unit"
+      },
+      {
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "o_6",
+        "codomain": "o_5",
+        "to": "inv"
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "o_7",
+        "codomain": "o_8",
+        "to": "Fa{G,G_,G_}aF"
+      },
+      {
+        "basename": "m_6",
+        "prototype": "IndexMorphism",
+        "domain": "o_12",
+        "codomain": "o_13",
+        "to": "mult"
+      },
+      {
+        "basename": "m_7",
+        "prototype": "IndexMorphism",
+        "domain": "o_7",
+        "codomain": "o_11",
+        "to": "Fa{G,G_-1}aF"
+      },
+      {
+        "basename": "m_4",
+        "prototype": "IndexMorphism",
+        "domain": "o_11",
+        "codomain": "o_13",
+        "to": "unit"
+      },
+      {
+        "basename": "m_8",
+        "prototype": "IndexMorphism",
+        "domain": "o_8",
+        "codomain": "o_12",
+        "to": "Pm{Id{G}dI,inv}mP"
+      },
+      {
+        "basename": "m_9",
+        "prototype": "IndexMorphism",
+        "domain": "o_10",
+        "codomain": "o_14",
+        "to": "Fa{G,G_,G_}aF"
+      },
+      {
+        "basename": "m_10",
+        "prototype": "IndexMorphism",
+        "domain": "o_15",
+        "codomain": "o_16",
+        "to": "mult"
+      },
+      {
+        "basename": "m_11",
+        "prototype": "IndexMorphism",
+        "domain": "o_10",
+        "codomain": "o_18",
+        "to": "Fa{G,G_-1}aF"
+      },
+      {
+        "basename": "m_12",
+        "prototype": "IndexMorphism",
+        "domain": "o_18",
+        "codomain": "o_16",
+        "to": "unit"
+      },
+      {
+        "basename": "m_13",
+        "prototype": "IndexMorphism",
+        "domain": "o_14",
+        "codomain": "o_15",
+        "to": "Pm{inv,Id{G}dI}mP"
+      },
+      {
+        "basename": "m_17",
+        "prototype": "IndexMorphism",
+        "domain": "o_19",
+        "codomain": "o_21",
+        "to": "Pa{Fa{Po{G,G,G}oP,G_0}aF,Fa{Po{G,G,G}oP,G_1,G_2}aF}aP"
+      },
+      {
+        "basename": "m_18",
+        "prototype": "IndexMorphism",
+        "domain": "o_19",
+        "codomain": "o_22",
+        "to": "Pa{Fa{Po{G,G,G}oP,G_0,G_1}aF,Fa{Po{G,G,G}oP,G_2}aF}aP"
+      },
+      {
+        "basename": "m_19",
+        "prototype": "IndexMorphism",
+        "domain": "o_22",
+        "codomain": "o_28",
+        "to": "Pm{mult,Id{G}dI}mP"
+      },
+      {
+        "basename": "m_5",
+        "prototype": "IndexMorphism",
+        "domain": "o_21",
+        "codomain": "o_30",
+        "to": "Pm{Id{G}dI,mult}mP"
+      },
+      {
+        "basename": "m_14",
+        "prototype": "IndexMorphism",
+        "domain": "o_28",
+        "codomain": "o_0",
+        "to": "mult"
+      },
+      {
+        "basename": "m_15",
+        "prototype": "IndexMorphism",
+        "domain": "o_30",
+        "codomain": "o_0",
+        "to": "mult"
+      },
+      {
+        "basename": "m_16",
+        "prototype": "IndexMorphism",
+        "domain": "o_9",
+        "codomain": "o_17",
+        "to": "mult"
+      },
+      {
+        "basename": "m_20",
+        "prototype": "IndexMorphism",
+        "domain": "o_20",
+        "codomain": "o_23",
+        "to": "Fa{G,G_,G_-1}aF"
+      },
+      {
+        "basename": "m_21",
+        "prototype": "IndexMorphism",
+        "domain": "o_20",
+        "codomain": "o_17",
+        "to": "Id{G}dI"
+      },
+      {
+        "basename": "m_22",
+        "prototype": "IndexMorphism",
+        "domain": "o_23",
+        "codomain": "o_9",
+        "to": "Pm{Id{G}dI,unit}mP"
+      },
+      {
+        "basename": "m_23",
+        "prototype": "IndexMorphism",
+        "domain": "o_24",
+        "codomain": "o_25",
+        "to": "Fa{G,G_-1,G_}aF"
+      },
+      {
+        "basename": "m_24",
+        "prototype": "IndexMorphism",
+        "domain": "o_25",
+        "codomain": "o_27",
+        "to": "Pm{unit,Id{G}dI}mP"
+      },
+      {
+        "basename": "m_25",
+        "prototype": "IndexMorphism",
+        "domain": "o_27",
+        "codomain": "o_26",
+        "to": "mult"
+      },
+      {
+        "basename": "m_26",
+        "prototype": "IndexMorphism",
+        "domain": "o_24",
+        "codomain": "o_26",
+        "to": "Id{G}dI"
       }
-    },
-    {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_2",
-      "codomain": "hdole/group/o_1",
-      "to": "hdole/group/mult"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_3",
-      "codomain": "hdole/group/o_4",
-      "to": "hdole/group/unit"
-    },
-    {
-      "basename": "m_2",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_6",
-      "codomain": "hdole/group/o_5",
-      "to": "hdole/group/inv"
-    },
-    {
-      "basename": "m_3",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_7",
-      "codomain": "hdole/group/o_8",
-      "to": "hdole/group/Fa{G,G_,G_}aF"
-    },
-    {
-      "basename": "m_6",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_12",
-      "codomain": "hdole/group/o_13",
-      "to": "hdole/group/mult"
-    },
-    {
-      "basename": "m_7",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_7",
-      "codomain": "hdole/group/o_11",
-      "to": "hdole/group/Fa{G,G_-1}aF"
-    },
-    {
-      "basename": "m_4",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_11",
-      "codomain": "hdole/group/o_13",
-      "to": "hdole/group/unit"
-    },
-    {
-      "basename": "m_8",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_8",
-      "codomain": "hdole/group/o_12",
-      "to": "hdole/group/Pm{Id{G}dI,inv}mP"
-    },
-    {
-      "basename": "m_9",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_10",
-      "codomain": "hdole/group/o_14",
-      "to": "hdole/group/Fa{G,G_,G_}aF"
-    },
-    {
-      "basename": "m_10",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_15",
-      "codomain": "hdole/group/o_16",
-      "to": "hdole/group/mult"
-    },
-    {
-      "basename": "m_11",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_10",
-      "codomain": "hdole/group/o_18",
-      "to": "hdole/group/Fa{G,G_-1}aF"
-    },
-    {
-      "basename": "m_12",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_18",
-      "codomain": "hdole/group/o_16",
-      "to": "hdole/group/unit"
-    },
-    {
-      "basename": "m_13",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_14",
-      "codomain": "hdole/group/o_15",
-      "to": "hdole/group/Pm{inv,Id{G}dI}mP"
-    },
-    {
-      "basename": "m_17",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_19",
-      "codomain": "hdole/group/o_21",
-      "to": "hdole/group/Pa{Fa{Po{G,G,G}oP,G_0}aF,Fa{Po{G,G,G}oP,G_1,G_2}aF}aP"
-    },
-    {
-      "basename": "m_18",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_19",
-      "codomain": "hdole/group/o_22",
-      "to": "hdole/group/Pa{Fa{Po{G,G,G}oP,G_0,G_1}aF,Fa{Po{G,G,G}oP,G_2}aF}aP"
-    },
-    {
-      "basename": "m_19",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_22",
-      "codomain": "hdole/group/o_28",
-      "to": "hdole/group/Pm{mult,Id{G}dI}mP"
-    },
-    {
-      "basename": "m_5",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_21",
-      "codomain": "hdole/group/o_30",
-      "to": "hdole/group/Pm{Id{G}dI,mult}mP"
-    },
-    {
-      "basename": "m_14",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_28",
-      "codomain": "hdole/group/o_0",
-      "to": "hdole/group/mult"
-    },
-    {
-      "basename": "m_15",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_30",
-      "codomain": "hdole/group/o_0",
-      "to": "hdole/group/mult"
-    },
-    {
-      "basename": "m_16",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_9",
-      "codomain": "hdole/group/o_17",
-      "to": "hdole/group/mult"
-    },
-    {
-      "basename": "m_20",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_20",
-      "codomain": "hdole/group/o_23",
-      "to": "hdole/group/Fa{G,G_,G_-1}aF"
-    },
-    {
-      "basename": "m_21",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_20",
-      "codomain": "hdole/group/o_17",
-      "to": "hdole/group/Id{G}dI"
-    },
-    {
-      "basename": "m_22",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_23",
-      "codomain": "hdole/group/o_9",
-      "to": "hdole/group/Pm{Id{G}dI,unit}mP"
-    },
-    {
-      "basename": "m_23",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_24",
-      "codomain": "hdole/group/o_25",
-      "to": "hdole/group/Fa{G,G_-1,G_}aF"
-    },
-    {
-      "basename": "m_24",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_25",
-      "codomain": "hdole/group/o_27",
-      "to": "hdole/group/Pm{unit,Id{G}dI}mP"
-    },
-    {
-      "basename": "m_25",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_27",
-      "codomain": "hdole/group/o_26",
-      "to": "hdole/group/mult"
-    },
-    {
-      "basename": "m_26",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/group/o_24",
-      "codomain": "hdole/group/o_26",
-      "to": "hdole/group/Id{G}dI"
-    }
-  ],
+    ],
+    "cells": []
+  },
   "elements": [
     {
       "basename": "G",
@@ -609,49 +618,46 @@
     {
       "basename": "mult",
       "prototype": "Morphism",
-      "domain": "hdole/group/Po{G,G}oP",
-      "codomain": "hdole/group/G"
+      "domain": "Po{G,G}oP",
+      "codomain": "G"
     },
     {
       "basename": "unit",
       "prototype": "Morphism",
-      "domain": "hdole/group/#1",
-      "codomain": "hdole/group/G"
+      "domain": "#1",
+      "codomain": "G"
     },
     {
       "basename": "inv",
       "prototype": "Morphism",
-      "domain": "hdole/group/G",
-      "codomain": "hdole/group/G"
+      "domain": "G",
+      "codomain": "G"
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/group/G",
-      "codomain": "hdole/group/Po{G,G}oP",
+      "domain": "G",
+      "codomain": "Po{G,G}oP",
       "factors": [
         [],
         []
       ]
     },
     {
-      "basename": "Id{G}dI",
       "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/group/G",
-      "codomain": "hdole/group/G"
+      "domain": "G"
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/group/G",
-      "codomain": "hdole/group/#1",
+      "domain": "G",
+      "codomain": "#1",
       "factors": [
         -1
       ]
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/group/Po{G,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
+      "domain": "Po{G,G}oP",
+      "codomain": "Po{G,G}oP",
       "morphisms": [
         "Id{G}dI",
         "inv"
@@ -659,8 +665,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/group/Po{G,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
+      "domain": "Po{G,G}oP",
+      "codomain": "Po{G,G}oP",
       "morphisms": [
         "inv",
         "Id{G}dI"
@@ -668,8 +674,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "Po{G,G}oP",
       "factors": [
         [
           0
@@ -681,8 +687,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/G",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "G",
       "factors": [
         [
           0
@@ -691,8 +697,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "Po{G,G}oP",
       "factors": [
         [
           1
@@ -704,8 +710,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/G",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "G",
       "factors": [
         [
           2
@@ -714,8 +720,8 @@
     },
     {
       "prototype": "ProductAssembly",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/Po{G,Po{G,G}oP}oP",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "Po{G,Po{G,G}oP}oP",
       "morphisms": [
         "Fa{Po{G,G,G}oP,G_0}aF",
         "Fa{Po{G,G,G}oP,G_1,G_2}aF"
@@ -723,8 +729,8 @@
     },
     {
       "prototype": "ProductAssembly",
-      "domain": "hdole/group/Po{G,G,G}oP",
-      "codomain": "hdole/group/Po{Po{G,G}oP,G}oP",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "Po{Po{G,G}oP,G}oP",
       "morphisms": [
         "Fa{Po{G,G,G}oP,G_0,G_1}aF",
         "Fa{Po{G,G,G}oP,G_2}aF"
@@ -732,8 +738,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/group/Po{Po{G,G}oP,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
+      "domain": "Po{Po{G,G}oP,G}oP",
+      "codomain": "Po{G,G}oP",
       "morphisms": [
         "mult",
         "Id{G}dI"
@@ -741,8 +747,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/group/Po{G,Po{G,G}oP}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
+      "domain": "Po{G,Po{G,G}oP}oP",
+      "codomain": "Po{G,G}oP",
       "morphisms": [
         "Id{G}dI",
         "mult"
@@ -750,8 +756,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/group/G",
-      "codomain": "hdole/group/Po{G,#1}oP",
+      "domain": "G",
+      "codomain": "Po{G,#1}oP",
       "factors": [
         [],
         -1
@@ -759,8 +765,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/group/Po{G,#1}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
+      "domain": "Po{G,#1}oP",
+      "codomain": "Po{G,G}oP",
       "morphisms": [
         "Id{G}dI",
         "unit"
@@ -768,8 +774,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/group/G",
-      "codomain": "hdole/group/Po{#1,G}oP",
+      "domain": "G",
+      "codomain": "Po{#1,G}oP",
       "factors": [
         -1,
         []
@@ -777,8 +783,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/group/Po{#1,G}oP",
-      "codomain": "hdole/group/Po{G,G}oP",
+      "domain": "Po{#1,G}oP",
+      "codomain": "Po{G,G}oP",
       "morphisms": [
         "unit",
         "Id{G}dI"

@@ -4,8 +4,9 @@
   "name": "hdole/hotkeys",
   "prototype": "Diagram",
   "properName": "hdole/hotkeys",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/hotkeys_Index",
+  "domain": "hotkeys_Index",
   "codomain": "em/Cat",
   "references": [],
   "domainInfo": {
@@ -1416,6 +1417,5 @@
     "x": -973,
     "y": -202,
     "scale": 1.301176877358732
-  },
-  "category": "CAT"
+  }
 }

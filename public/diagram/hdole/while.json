@@ -6,7 +6,7 @@
   "properName": "hdole/while",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/while_Index",
+  "domain": "while_Index",
   "codomain": "zf/Set",
   "references": [],
   "domainInfo": {
@@ -20,7 +20,7 @@
       {
         "basename": "o_8",
         "prototype": "IndexObject",
-        "to": "hdole/while/S",
+        "to": "S",
         "xy": {
           "x": 650,
           "y": 650
@@ -29,7 +29,7 @@
       {
         "basename": "o_10",
         "prototype": "IndexObject",
-        "to": "hdole/while/#1",
+        "to": "#1",
         "xy": {
           "x": 450,
           "y": 850
@@ -38,7 +38,7 @@
       {
         "basename": "o_11",
         "prototype": "IndexObject",
-        "to": "hdole/while/#1",
+        "to": "#1",
         "xy": {
           "x": 850,
           "y": 850
@@ -47,7 +47,7 @@
       {
         "basename": "o_13",
         "prototype": "IndexObject",
-        "to": "hdole/while/S",
+        "to": "S",
         "xy": {
           "x": 450,
           "y": 650
@@ -56,7 +56,7 @@
       {
         "basename": "o_12",
         "prototype": "IndexObject",
-        "to": "hdole/while/S",
+        "to": "S",
         "xy": {
           "x": 850,
           "y": 650
@@ -65,7 +65,7 @@
       {
         "basename": "o_14",
         "prototype": "IndexObject",
-        "to": "hdole/while/S",
+        "to": "S",
         "xy": {
           "x": 1050,
           "y": 650
@@ -74,7 +74,7 @@
       {
         "basename": "o_15",
         "prototype": "IndexObject",
-        "to": "hdole/while/S",
+        "to": "S",
         "xy": {
           "x": 1250,
           "y": 650
@@ -94,7 +94,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/while/S",
+        "to": "S",
         "xy": {
           "x": 450,
           "y": 200
@@ -103,7 +103,7 @@
       {
         "basename": "o_7",
         "prototype": "IndexObject",
-        "to": "hdole/while/S",
+        "to": "S",
         "xy": {
           "x": 650,
           "y": 200
@@ -152,7 +152,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/while/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 450,
           "y": 400
@@ -161,7 +161,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/while/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 650,
           "y": 850
@@ -170,8 +170,8 @@
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_13",
-        "codomain": "hdole/while/o_10",
+        "domain": "o_13",
+        "codomain": "o_10",
         "attributes": [
           [
             "flipName",
@@ -186,13 +186,13 @@
             true
           ]
         ],
-        "to": "hdole/while/Fa{S,S_-1}aF"
+        "to": "Fa{S,S_-1}aF"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_13",
-        "codomain": "hdole/while/o_8",
+        "domain": "o_13",
+        "codomain": "o_8",
         "attributes": [
           [
             "assyMorphism",
@@ -203,13 +203,13 @@
             true
           ]
         ],
-        "to": "hdole/while/Id{S}dI"
+        "to": "Id{S}dI"
       },
       {
         "basename": "m_9",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_12",
-        "codomain": "hdole/while/o_11",
+        "domain": "o_12",
+        "codomain": "o_11",
         "attributes": [
           [
             "assyMorphism",
@@ -220,27 +220,27 @@
             true
           ]
         ],
-        "to": "hdole/while/Fa{S,S_-1}aF"
+        "to": "Fa{S,S_-1}aF"
       },
       {
         "basename": "m_10",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_12",
-        "codomain": "hdole/while/o_14",
-        "to": "hdole/while/update"
+        "domain": "o_12",
+        "codomain": "o_14",
+        "to": "update"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_14",
-        "codomain": "hdole/while/o_15",
-        "to": "hdole/while/while"
+        "domain": "o_14",
+        "codomain": "o_15",
+        "to": "while"
       },
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_12",
-        "codomain": "hdole/while/o_8",
+        "domain": "o_12",
+        "codomain": "o_8",
         "attributes": [
           [
             "flipName",
@@ -255,34 +255,34 @@
             true
           ]
         ],
-        "to": "hdole/while/Id{S}dI"
+        "to": "Id{S}dI"
       },
       {
         "basename": "m_14",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_4",
-        "codomain": "hdole/while/o_7",
-        "to": "hdole/while/update"
+        "domain": "o_4",
+        "codomain": "o_7",
+        "to": "update"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_4",
-        "codomain": "hdole/while/o_1",
-        "to": "hdole/while/test"
+        "domain": "o_4",
+        "codomain": "o_1",
+        "to": "test"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_8",
-        "codomain": "hdole/while/o_3",
-        "to": "hdole/while/test"
+        "domain": "o_8",
+        "codomain": "o_3",
+        "to": "test"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_10",
-        "codomain": "hdole/while/o_3",
+        "domain": "o_10",
+        "codomain": "o_3",
         "attributes": [
           [
             "assyMorphism",
@@ -293,13 +293,13 @@
             true
           ]
         ],
-        "to": "hdole/while/CFa{CPo{#1,#1}oPC,#1_0}aFC"
+        "to": "CFa{CPo{#1,#1}oPC,#1_0}aFC"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/while/o_11",
-        "codomain": "hdole/while/o_3",
+        "domain": "o_11",
+        "codomain": "o_3",
         "attributes": [
           [
             "flipName",
@@ -314,7 +314,7 @@
             true
           ]
         ],
-        "to": "hdole/while/CFa{CPo{#1,#1}oPC,#1_1}aFC"
+        "to": "CFa{CPo{#1,#1}oPC,#1_1}aFC"
       }
     ],
     "cells": []
@@ -325,18 +325,6 @@
       "prototype": "CatObject"
     },
     {
-      "basename": "S",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
-    },
-    {
       "basename": "#1",
       "prototype": "FiniteObject",
       "properName": "1",
@@ -353,78 +341,40 @@
       ]
     },
     {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "#1",
-        "#1"
-      ]
-    },
-    {
       "basename": "while",
       "prototype": "Morphism",
-      "domain": "hdole/while/S",
-      "codomain": "hdole/while/S"
-    },
-    {
-      "basename": "while",
-      "prototype": "Morphism",
-      "domain": "hdole/while/S",
-      "codomain": "hdole/while/S"
+      "domain": "S",
+      "codomain": "S"
     },
     {
       "basename": "update",
       "prototype": "Morphism",
-      "domain": "hdole/while/S",
-      "codomain": "hdole/while/S"
-    },
-    {
-      "basename": "update",
-      "prototype": "Morphism",
-      "domain": "hdole/while/S",
-      "codomain": "hdole/while/S"
+      "domain": "S",
+      "codomain": "S"
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/while/S",
-      "codomain": "hdole/while/#1",
-      "factors": [
-        -1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "hdole/while/S",
-      "codomain": "hdole/while/#1",
+      "domain": "S",
+      "codomain": "#1",
       "factors": [
         -1
       ]
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/while/S"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/while/S"
+      "domain": "S"
     },
     {
       "basename": "test",
       "prototype": "Morphism",
-      "domain": "hdole/while/S",
-      "codomain": "hdole/while/CPo{#1,#1}oPC"
-    },
-    {
-      "basename": "test",
-      "prototype": "Morphism",
-      "domain": "hdole/while/S",
-      "codomain": "hdole/while/CPo{#1,#1}oPC"
+      "domain": "S",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "prototype": "FactorMorphism",
       "dual": true,
-      "domain": "hdole/while/#1",
-      "codomain": "hdole/while/CPo{#1,#1}oPC",
+      "domain": "#1",
+      "codomain": "CPo{#1,#1}oPC",
       "factors": [
         0
       ]
@@ -432,26 +382,8 @@
     {
       "prototype": "FactorMorphism",
       "dual": true,
-      "domain": "hdole/while/#1",
-      "codomain": "hdole/while/CPo{#1,#1}oPC",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/while/#1",
-      "codomain": "hdole/while/CPo{#1,#1}oPC",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "dual": true,
-      "domain": "hdole/while/#1",
-      "codomain": "hdole/while/CPo{#1,#1}oPC",
+      "domain": "#1",
+      "codomain": "CPo{#1,#1}oPC",
       "factors": [
         1
       ]

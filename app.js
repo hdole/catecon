@@ -882,7 +882,7 @@ async function serve()
 			{
 				try
 				{
-					diagrams = [...Cat.R.catalog.values()].filter(info => info.user !== 'sys' && Cat.R.canLoad(info.name) && !Cat.R.$CAT.elements.has(info.name));
+					diagrams = [...Cat.R.catalog.values()].filter(info => info.user !== 'sys' && Cat.R.canLoad(info.name) && !Cat.R.$CAT.elements.has(info.name) && info.isLocal);
 					const loaded = new Set();
 					const loadit = info =>
 					{
@@ -891,15 +891,22 @@ async function serve()
 						[...refs].reverse().map(ref => !loaded.has(info.name) && loadit(Cat.R.catalog.get(ref)));
 						if (!loaded.has(info.name))
 						{
-							const diagram = Cat.R.loadDiagram(info.name);
-							if (diagram)
+							loaded.add(info.name);
+							const diagram = Cat.R.$CAT.getElement(info.name);
+							if (!diagram)
 							{
-								console.log('read diagram', diagram.name);
-								loaded.add(info.name);
-								Cat.R.saveLocal(diagram);
+								Cat.R.loadDiagram(info.name, diagram =>
+								{
+									if (diagram)
+									{
+										console.log('read diagram', diagram.name);
+										loaded.add(info.name);
+										Cat.R.saveDiagram(diagram);
+									}
+									else
+										console.log('error: cannot read diagram', info.name);
+								});
 							}
-							else
-								console.log('error: cannot read diagram', info.name);
 						}
 					};
 					diagrams.map(info => loadit(info));

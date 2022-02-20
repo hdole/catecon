@@ -1563,6 +1563,16 @@
             0
           ]
         ]
+      },
+      {
+        "description": "BUG: line spacing too close",
+        "basename": "t_13",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -200,
+          "y": -40
+        },
+        "height": 24
       }
     ],
     "cells": [
@@ -2122,11 +2132,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1645177118031,
+  "timestamp": 1645336957782,
   "version": 0,
   "viewport": {
     "x": 527,
-    "y": 813,
+    "y": 337,
     "scale": 1.172496558151784
   }
 }

@@ -4,8 +4,9 @@
   "name": "hdole/diagram",
   "prototype": "Diagram",
   "properName": "hdole/diagram",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/diagram_Index",
+  "domain": "diagram_Index",
   "codomain": "em/Cat",
   "references": [
     "hdole/HTML"
@@ -42,7 +43,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/diagram/index",
+        "to": "index",
         "xy": {
           "x": 400,
           "y": 400
@@ -51,7 +52,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/diagram/C",
+        "to": "C",
         "xy": {
           "x": 600,
           "y": 400
@@ -70,7 +71,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/diagram/k",
+        "to": "k",
         "xy": {
           "x": 400,
           "y": 600
@@ -79,7 +80,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/diagram/diagram",
+        "to": "diagram",
         "xy": {
           "x": 640,
           "y": 600
@@ -98,7 +99,7 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/diagram/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 800
@@ -117,7 +118,7 @@
       {
         "basename": "o_6",
         "prototype": "IndexObject",
-        "to": "hdole/diagram/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 1000
@@ -154,7 +155,7 @@
       {
         "basename": "o_11",
         "prototype": "IndexObject",
-        "to": "hdole/diagram/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
+        "to": "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
         "xy": {
           "x": 700,
           "y": 1200
@@ -163,7 +164,7 @@
       {
         "basename": "o_8",
         "prototype": "IndexObject",
-        "to": "hdole/diagram/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 1200
@@ -172,37 +173,37 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/diagram/o_0",
-        "codomain": "hdole/diagram/o_1",
-        "to": "hdole/diagram/d"
+        "domain": "o_0",
+        "codomain": "o_1",
+        "to": "d"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/diagram/o_2",
-        "codomain": "hdole/diagram/o_3",
-        "to": "hdole/diagram/references"
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "references"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/diagram/o_5",
-        "codomain": "hdole/diagram/o_4",
-        "to": "hdole/diagram/user"
+        "domain": "o_5",
+        "codomain": "o_4",
+        "to": "user"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/diagram/o_6",
-        "codomain": "hdole/diagram/o_7",
-        "to": "hdole/diagram/time"
+        "domain": "o_6",
+        "codomain": "o_7",
+        "to": "time"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/diagram/o_8",
-        "codomain": "hdole/diagram/o_11",
-        "to": "hdole/diagram/viewport"
+        "domain": "o_8",
+        "codomain": "o_11",
+        "to": "viewport"
       }
     ],
     "cells": []
@@ -246,33 +247,33 @@
       "basename": "d",
       "prototype": "Morphism",
       "properName": "D",
-      "domain": "hdole/diagram/index",
-      "codomain": "hdole/diagram/C"
+      "domain": "index",
+      "codomain": "C"
     },
     {
       "basename": "references",
       "prototype": "Morphism",
-      "domain": "hdole/diagram/k",
-      "codomain": "hdole/diagram/diagram"
+      "domain": "k",
+      "codomain": "diagram"
     },
     {
       "basename": "user",
       "prototype": "Morphism",
-      "domain": "hdole/diagram/#1",
+      "domain": "#1",
       "codomain": "hdole/str/str"
     },
     {
       "description": "A number giving the milliseconds elapsed since the beginning of the epoch.",
       "basename": "time",
       "prototype": "Morphism",
-      "domain": "hdole/diagram/#1",
+      "domain": "#1",
       "codomain": "hdole/floats/F64"
     },
     {
       "basename": "viewport",
       "prototype": "Morphism",
-      "domain": "hdole/diagram/#1",
-      "codomain": "hdole/diagram/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
+      "domain": "#1",
+      "codomain": "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
     }
   ],
   "user": "hdole",
@@ -282,6 +283,5 @@
     "x": 669,
     "y": -30,
     "scale": 2.0356019245259898
-  },
-  "category": "CAT"
+  }
 }

@@ -4,133 +4,142 @@
   "name": "hdole/select",
   "prototype": "Diagram",
   "properName": "hdole/select",
-  "category": "sys/CAT",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/select_Index",
+  "domain": "select_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/str"
   ],
-  "domainElements": [
-    {
-      "description": "Select",
-      "basename": "t_0",
-      "prototype": "IndexText",
-      "xy": {
-        "x": -90,
-        "y": 160
+  "domainInfo": {
+    "description": "index category for diagram hdole/select",
+    "basename": "select_Index",
+    "name": "hdole/select_Index",
+    "prototype": "IndexCategory",
+    "category": "em/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "Select",
+        "basename": "t_0",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -90,
+          "y": 160
+        },
+        "height": "200",
+        "weight": "bold"
       },
-      "height": "200",
-      "weight": "bold"
-    },
-    {
-      "basename": "o_0",
-      "prototype": "IndexObject",
-      "to": "hdole/str/str",
-      "xy": {
-        "x": 200,
-        "y": 300
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "hdole/str/str",
+        "xy": {
+          "x": 200,
+          "y": 300
+        }
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "#1",
+        "xy": {
+          "x": 400,
+          "y": 300
+        }
+      },
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "#1",
+        "xy": {
+          "x": 0,
+          "y": 300
+        }
+      },
+      {
+        "basename": "o_3",
+        "prototype": "IndexObject",
+        "to": "#1",
+        "xy": {
+          "x": 0,
+          "y": 500
+        }
+      },
+      {
+        "basename": "o_4",
+        "prototype": "IndexObject",
+        "to": "#1",
+        "xy": {
+          "x": 400,
+          "y": 500
+        }
+      },
+      {
+        "basename": "o_5",
+        "prototype": "IndexObject",
+        "to": "hdole/str/str",
+        "xy": {
+          "x": 200,
+          "y": 500
+        }
+      },
+      {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "o_1",
+        "codomain": "o_0",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/str/empty"
+      },
+      {
+        "basename": "m_1",
+        "prototype": "IndexMorphism",
+        "domain": "o_2",
+        "codomain": "o_0",
+        "to": "a"
+      },
+      {
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "o_3",
+        "codomain": "o_0",
+        "to": "b"
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "o_4",
+        "codomain": "o_0",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "c"
+      },
+      {
+        "basename": "m_4",
+        "prototype": "IndexMorphism",
+        "domain": "o_5",
+        "codomain": "o_0",
+        "attributes": [
+          [
+            "assyMorphism",
+            true
+          ]
+        ],
+        "to": "Id{hdole/str/str}dI"
       }
-    },
-    {
-      "basename": "o_1",
-      "prototype": "IndexObject",
-      "to": "hdole/str/#1",
-      "xy": {
-        "x": 400,
-        "y": 300
-      }
-    },
-    {
-      "basename": "o_2",
-      "prototype": "IndexObject",
-      "to": "hdole/select/#1",
-      "xy": {
-        "x": 0,
-        "y": 300
-      }
-    },
-    {
-      "basename": "o_3",
-      "prototype": "IndexObject",
-      "to": "hdole/select/#1",
-      "xy": {
-        "x": 0,
-        "y": 500
-      }
-    },
-    {
-      "basename": "o_4",
-      "prototype": "IndexObject",
-      "to": "hdole/select/#1",
-      "xy": {
-        "x": 400,
-        "y": 500
-      }
-    },
-    {
-      "basename": "o_5",
-      "prototype": "IndexObject",
-      "to": "hdole/str/str",
-      "xy": {
-        "x": 200,
-        "y": 500
-      }
-    },
-    {
-      "basename": "m_0",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/select/o_1",
-      "codomain": "hdole/select/o_0",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/str/empty"
-    },
-    {
-      "basename": "m_1",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/select/o_2",
-      "codomain": "hdole/select/o_0",
-      "to": "hdole/select/a"
-    },
-    {
-      "basename": "m_2",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/select/o_3",
-      "codomain": "hdole/select/o_0",
-      "to": "hdole/select/b"
-    },
-    {
-      "basename": "m_3",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/select/o_4",
-      "codomain": "hdole/select/o_0",
-      "attributes": [
-        [
-          "flipName",
-          true
-        ]
-      ],
-      "to": "hdole/select/c"
-    },
-    {
-      "basename": "m_4",
-      "prototype": "IndexMorphism",
-      "domain": "hdole/select/o_5",
-      "codomain": "hdole/select/o_0",
-      "attributes": [
-        [
-          "assyMorphism",
-          true
-        ]
-      ],
-      "to": "hdole/select/Id{hdole/str/str}dI"
-    }
-  ],
+    ],
+    "cells": []
+  },
   "elements": [
     {
       "basename": "#1",
@@ -144,7 +153,7 @@
       "basename": "a",
       "prototype": "Morphism",
       "properName": "&#39;a&#39;",
-      "domain": "hdole/select/#1",
+      "domain": "#1",
       "codomain": "hdole/str/str",
       "data": [
         [
@@ -157,7 +166,7 @@
       "basename": "b",
       "prototype": "Morphism",
       "properName": "&#39;b&#39;",
-      "domain": "hdole/select/#1",
+      "domain": "#1",
       "codomain": "hdole/str/str",
       "data": [
         [
@@ -170,7 +179,7 @@
       "basename": "c",
       "prototype": "Morphism",
       "properName": "&#39;c&#39;",
-      "domain": "hdole/select/#1",
+      "domain": "#1",
       "codomain": "hdole/str/str",
       "data": [
         [
@@ -180,11 +189,8 @@
       ]
     },
     {
-      "basename": "Id{hdole/str/str}dI",
       "prototype": "Identity",
-      "properName": "id",
-      "domain": "hdole/str/str",
-      "codomain": "hdole/str/str"
+      "domain": "hdole/str/str"
     }
   ],
   "user": "hdole",

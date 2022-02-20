@@ -6,7 +6,7 @@
   "properName": "&Copf; Arithmetic",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/complex_Index",
+  "domain": "complex_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/floats"
@@ -22,7 +22,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 200,
           "y": 200
@@ -41,7 +41,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/complex/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 400
@@ -50,7 +50,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 400,
           "y": 400
@@ -69,7 +69,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/complex/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 600
@@ -78,7 +78,7 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 400,
           "y": 600
@@ -97,7 +97,7 @@
       {
         "basename": "o_6",
         "prototype": "IndexObject",
-        "to": "hdole/complex/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 800
@@ -106,7 +106,7 @@
       {
         "basename": "o_7",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 400,
           "y": 800
@@ -125,7 +125,7 @@
       {
         "basename": "o_8",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 200,
           "y": 1000
@@ -144,7 +144,7 @@
       {
         "basename": "o_10",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 200,
           "y": 1200
@@ -163,7 +163,7 @@
       {
         "basename": "o_13",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 400,
           "y": 1400
@@ -182,7 +182,7 @@
       {
         "basename": "o_14",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 200,
           "y": 1600
@@ -191,7 +191,7 @@
       {
         "basename": "o_15",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 400,
           "y": 1600
@@ -210,7 +210,7 @@
       {
         "basename": "o_16",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 200,
           "y": 1800
@@ -239,7 +239,7 @@
       {
         "basename": "o_20",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 400,
           "y": 2200
@@ -258,7 +258,7 @@
       {
         "basename": "o_22",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 400,
           "y": 2400
@@ -277,7 +277,7 @@
       {
         "basename": "o_24",
         "prototype": "IndexObject",
-        "to": "hdole/complex/C",
+        "to": "C",
         "xy": {
           "x": 400,
           "y": 2600
@@ -347,30 +347,30 @@
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/complex/o_2",
-        "codomain": "hdole/complex/o_3",
-        "to": "hdole/complex/zero"
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "zero"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/complex/o_4",
-        "codomain": "hdole/complex/o_5",
-        "to": "hdole/complex/i"
+        "domain": "o_4",
+        "codomain": "o_5",
+        "to": "i"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/complex/o_6",
-        "codomain": "hdole/complex/o_7",
-        "to": "hdole/complex/e"
+        "domain": "o_6",
+        "codomain": "o_7",
+        "to": "e"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
-        "domain": "hdole/complex/o_14",
-        "codomain": "hdole/complex/o_15",
-        "to": "hdole/complex/conjugate"
+        "domain": "o_14",
+        "codomain": "o_15",
+        "to": "conjugate"
       }
     ],
     "cells": []
@@ -385,18 +385,6 @@
       "max": 1
     },
     {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "&#10034;",
-      "size": 1,
-      "min": 0,
-      "max": 1
-    },
-    {
-      "basename": "C",
-      "prototype": "CatObject"
-    },
-    {
       "basename": "C",
       "prototype": "CatObject"
     },
@@ -409,20 +397,8 @@
         "js": "function %Type(args)\n{\n\treturn 0.0;\n}\n",
         "cpp": "%0 = std::complex(0.0);\n"
       },
-      "domain": "hdole/complex/#1",
-      "codomain": "hdole/complex/C"
-    },
-    {
-      "description": "The complex number zero",
-      "basename": "zero",
-      "prototype": "Morphism",
-      "properName": "0",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn 0.0;\n}\n",
-        "cpp": "%0 = std::complex(0.0);\n"
-      },
-      "domain": "hdole/complex/#1",
-      "codomain": "hdole/complex/C"
+      "domain": "#1",
+      "codomain": "C"
     },
     {
       "description": "The first interesting complex number",
@@ -432,19 +408,8 @@
         "js": "function %Type(args)\n{\n\treturn [0, 1];\n}\n",
         "cpp": "%0 = std::complex<double>(0, 1);"
       },
-      "domain": "hdole/complex/#1",
-      "codomain": "hdole/complex/C"
-    },
-    {
-      "description": "The first interesting complex number",
-      "basename": "i",
-      "prototype": "Morphism",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn [0, 1];\n}\n",
-        "cpp": "%0 = std::complex<double>(0, 1);"
-      },
-      "domain": "hdole/complex/#1",
-      "codomain": "hdole/complex/C"
+      "domain": "#1",
+      "codomain": "C"
     },
     {
       "description": "Euler&#39;s constant",
@@ -454,19 +419,8 @@
         "js": "function %Type(args)\n{\n\treturn [Math.E, 0];\n}\n",
         "cpp": "%0 = std::complex(std::numbers::e_v);"
       },
-      "domain": "hdole/complex/#1",
-      "codomain": "hdole/complex/C"
-    },
-    {
-      "description": "Euler&#39;s constant",
-      "basename": "e",
-      "prototype": "Morphism",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn [Math.E, 0];\n}\n",
-        "cpp": "%0 = std::complex(std::numbers::e_v);"
-      },
-      "domain": "hdole/complex/#1",
-      "codomain": "hdole/complex/C"
+      "domain": "#1",
+      "codomain": "C"
     },
     {
       "description": "conjugate of a complex number",
@@ -477,20 +431,8 @@
         "js": "function %Type(args)\n{\n\treturn [args[0], -args[1]];\n}\n",
         "cpp": "%1 = %0.conj();"
       },
-      "domain": "hdole/complex/C",
-      "codomain": "hdole/complex/C"
-    },
-    {
-      "description": "conjugate of a complex number",
-      "basename": "conjugate",
-      "prototype": "Morphism",
-      "properName": "&dagger;",
-      "code": {
-        "js": "function %Type(args)\n{\n\treturn [args[0], -args[1]];\n}\n",
-        "cpp": "%1 = %0.conj();"
-      },
-      "domain": "hdole/complex/C",
-      "codomain": "hdole/complex/C"
+      "domain": "C",
+      "codomain": "C"
     }
   ],
   "user": "hdole",

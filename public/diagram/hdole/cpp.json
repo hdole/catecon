@@ -9,7 +9,7 @@
   "code": {
     "cpp": "#include <sys/types.h>\n#include <time.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n#include <unistd.h>\n#include <math.h>\n#include <stdint.h>\n#include <errno.h>\n#include <stdio.h>\n#include <byteswap.h>"
   },
-  "domain": "hdole/cpp_Index",
+  "domain": "cpp_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/str"
@@ -25,7 +25,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/Errno",
+        "to": "Errno",
         "xy": {
           "x": 200,
           "y": 500
@@ -53,7 +53,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/Errno",
+        "to": "Errno",
         "xy": {
           "x": 200,
           "y": 700
@@ -71,7 +71,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 200,
           "y": 900
@@ -100,7 +100,7 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 1400,
           "y": 1100
@@ -128,7 +128,7 @@
       {
         "basename": "o_7",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 1000,
           "y": 1300
@@ -156,7 +156,7 @@
       {
         "basename": "o_9",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 1400,
           "y": 1500
@@ -184,7 +184,7 @@
       {
         "basename": "o_11",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 200,
           "y": 1700
@@ -202,7 +202,7 @@
       {
         "basename": "o_13",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 200,
           "y": 1900
@@ -240,7 +240,7 @@
       {
         "basename": "o_15",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 1600,
           "y": 2100
@@ -268,7 +268,7 @@
       {
         "basename": "o_17",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 1600,
           "y": 2300
@@ -296,7 +296,7 @@
       {
         "basename": "o_19",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 1600,
           "y": 2500
@@ -324,7 +324,7 @@
       {
         "basename": "o_21",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 400,
           "y": 2700
@@ -333,7 +333,7 @@
       {
         "basename": "o_22",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 200,
           "y": 2900
@@ -371,7 +371,7 @@
       {
         "basename": "o_24",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 1600,
           "y": 3100
@@ -399,7 +399,7 @@
       {
         "basename": "o_26",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 1600,
           "y": 3300
@@ -427,7 +427,7 @@
       {
         "basename": "o_28",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 1600,
           "y": 3500
@@ -455,7 +455,7 @@
       {
         "basename": "o_30",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 400,
           "y": 3700
@@ -464,7 +464,7 @@
       {
         "basename": "o_31",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/file",
+        "to": "file",
         "xy": {
           "x": 200,
           "y": 3900
@@ -492,7 +492,7 @@
       {
         "basename": "o_34",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/off_t",
+        "to": "off_t",
         "xy": {
           "x": 200,
           "y": 4300
@@ -510,7 +510,7 @@
       {
         "basename": "o_36",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 200,
           "y": 4500
@@ -538,7 +538,7 @@
       {
         "basename": "o_43",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 4900
@@ -566,7 +566,7 @@
       {
         "basename": "o_45",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 5100
@@ -594,7 +594,7 @@
       {
         "basename": "o_47",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 5300
@@ -622,7 +622,7 @@
       {
         "basename": "o_49",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 5500
@@ -650,7 +650,7 @@
       {
         "basename": "o_51",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 5700
@@ -678,7 +678,7 @@
       {
         "basename": "o_53",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 5900
@@ -706,7 +706,7 @@
       {
         "basename": "o_55",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP",
+        "to": "Po{hdole/str/str,hdole/int/Z32}oP",
         "xy": {
           "x": 200,
           "y": 6100
@@ -715,7 +715,7 @@
       {
         "basename": "o_56",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/CPo{file,Errno}oPC",
+        "to": "CPo{file,Errno}oPC",
         "xy": {
           "x": 400,
           "y": 6100
@@ -734,7 +734,7 @@
       {
         "basename": "o_57",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/file",
+        "to": "file",
         "xy": {
           "x": 200,
           "y": 6300
@@ -743,7 +743,7 @@
       {
         "basename": "o_58",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/CPo{#1,Errno}oPC",
+        "to": "CPo{#1,Errno}oPC",
         "xy": {
           "x": 400,
           "y": 6300
@@ -752,7 +752,7 @@
       {
         "basename": "o_59",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stat",
+        "to": "stat",
         "xy": {
           "x": 200,
           "y": 7300
@@ -781,7 +781,7 @@
       {
         "basename": "o_60",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/file",
+        "to": "file",
         "xy": {
           "x": 200,
           "y": 7500
@@ -790,7 +790,7 @@
       {
         "basename": "o_61",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/CPo{stat,Errno}oPC",
+        "to": "CPo{stat,Errno}oPC",
         "xy": {
           "x": 400,
           "y": 7500
@@ -809,7 +809,7 @@
       {
         "basename": "o_62",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stat",
+        "to": "stat",
         "xy": {
           "x": 200,
           "y": 7700
@@ -828,7 +828,7 @@
       {
         "basename": "o_64",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 8100
@@ -856,7 +856,7 @@
       {
         "basename": "o_66",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 8300
@@ -884,7 +884,7 @@
       {
         "basename": "o_68",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 8500
@@ -912,7 +912,7 @@
       {
         "basename": "o_70",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 8700
@@ -940,7 +940,7 @@
       {
         "basename": "o_72",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 8900
@@ -968,7 +968,7 @@
       {
         "basename": "o_74",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
+        "to": "Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
         "xy": {
           "x": 200,
           "y": 9100
@@ -977,7 +977,7 @@
       {
         "basename": "o_75",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/CPo{voidPtr,Errno}oPC",
+        "to": "CPo{voidPtr,Errno}oPC",
         "xy": {
           "x": 700,
           "y": 9100
@@ -996,7 +996,7 @@
       {
         "basename": "o_76",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/Po{voidPtr,size_t}oP",
+        "to": "Po{voidPtr,size_t}oP",
         "xy": {
           "x": 200,
           "y": 9300
@@ -1005,7 +1005,7 @@
       {
         "basename": "o_77",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/CPo{#1,Errno}oPC",
+        "to": "CPo{#1,Errno}oPC",
         "xy": {
           "x": 500,
           "y": 9300
@@ -1024,7 +1024,7 @@
       {
         "basename": "o_78",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 200,
           "y": 9500
@@ -1052,7 +1052,7 @@
       {
         "basename": "o_80",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 200,
           "y": 9700
@@ -1080,7 +1080,7 @@
       {
         "basename": "o_82",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 200,
           "y": 9900
@@ -1108,7 +1108,7 @@
       {
         "basename": "o_84",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 200,
           "y": 10100
@@ -1136,7 +1136,7 @@
       {
         "basename": "o_86",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 200,
           "y": 10300
@@ -1164,7 +1164,7 @@
       {
         "basename": "o_88",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 200,
           "y": 10500
@@ -1192,7 +1192,7 @@
       {
         "basename": "o_90",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/Po{voidPtr,hdole/nat/N64}oP",
+        "to": "Po{voidPtr,hdole/nat/N64}oP",
         "xy": {
           "x": 200,
           "y": 10700
@@ -1220,7 +1220,7 @@
       {
         "basename": "o_92",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 200,
           "y": 10900
@@ -1229,7 +1229,7 @@
       {
         "basename": "o_93",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 400,
           "y": 10900
@@ -1238,7 +1238,7 @@
       {
         "basename": "o_94",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 600,
           "y": 10900
@@ -1247,7 +1247,7 @@
       {
         "basename": "o_95",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 800,
           "y": 10900
@@ -1256,7 +1256,7 @@
       {
         "basename": "o_96",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 1000,
           "y": 10900
@@ -1265,7 +1265,7 @@
       {
         "basename": "o_97",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 1200,
           "y": 10900
@@ -1284,7 +1284,7 @@
       {
         "basename": "o_98",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/Po{voidPtr,hdole/nat/N16}oP",
+        "to": "Po{voidPtr,hdole/nat/N16}oP",
         "xy": {
           "x": 200,
           "y": 11100
@@ -1293,7 +1293,7 @@
       {
         "basename": "o_99",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 400,
           "y": 11100
@@ -1313,7 +1313,7 @@
       {
         "basename": "o_100",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 200,
           "y": 1100
@@ -1340,7 +1340,7 @@
       {
         "basename": "o_103",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 600,
           "y": 1100
@@ -1349,7 +1349,7 @@
       {
         "basename": "o_104",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 1000,
           "y": 1100
@@ -1376,7 +1376,7 @@
       {
         "basename": "o_107",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 1800,
           "y": 1100
@@ -1421,7 +1421,7 @@
       {
         "basename": "o_112",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 400,
           "y": 2100
@@ -1430,7 +1430,7 @@
       {
         "basename": "o_113",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 800,
           "y": 2100
@@ -1439,7 +1439,7 @@
       {
         "basename": "o_114",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 1200,
           "y": 2100
@@ -1448,7 +1448,7 @@
       {
         "basename": "o_115",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 2000,
           "y": 2100
@@ -1457,7 +1457,7 @@
       {
         "basename": "o_116",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 2000,
           "y": 2300
@@ -1466,7 +1466,7 @@
       {
         "basename": "o_117",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 2000,
           "y": 2500
@@ -1475,7 +1475,7 @@
       {
         "basename": "o_118",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 1200,
           "y": 2300
@@ -1484,7 +1484,7 @@
       {
         "basename": "o_119",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 1200,
           "y": 2500
@@ -1493,7 +1493,7 @@
       {
         "basename": "o_120",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 800,
           "y": 2300
@@ -1502,7 +1502,7 @@
       {
         "basename": "o_122",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
+        "to": "stdout",
         "xy": {
           "x": 400,
           "y": 2300
@@ -1547,7 +1547,7 @@
       {
         "basename": "o_128",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 200,
           "y": 1300
@@ -1556,7 +1556,7 @@
       {
         "basename": "o_129",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 600,
           "y": 1300
@@ -1565,7 +1565,7 @@
       {
         "basename": "o_130",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 1400,
           "y": 1300
@@ -1574,7 +1574,7 @@
       {
         "basename": "o_131",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 1800,
           "y": 1300
@@ -1583,7 +1583,7 @@
       {
         "basename": "o_134",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 1800,
           "y": 1500
@@ -1592,7 +1592,7 @@
       {
         "basename": "o_135",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
+        "to": "stdin",
         "xy": {
           "x": 1000,
           "y": 1500
@@ -1763,7 +1763,7 @@
       {
         "basename": "o_150",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 400,
           "y": 3100
@@ -1772,7 +1772,7 @@
       {
         "basename": "o_151",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 400,
           "y": 3300
@@ -1781,7 +1781,7 @@
       {
         "basename": "o_152",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 800,
           "y": 3300
@@ -1790,7 +1790,7 @@
       {
         "basename": "o_153",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 800,
           "y": 3100
@@ -1799,7 +1799,7 @@
       {
         "basename": "o_154",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 1200,
           "y": 3300
@@ -1808,7 +1808,7 @@
       {
         "basename": "o_155",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 1200,
           "y": 3100
@@ -1817,7 +1817,7 @@
       {
         "basename": "o_156",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 2000,
           "y": 3300
@@ -1826,7 +1826,7 @@
       {
         "basename": "o_157",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 2000,
           "y": 3100
@@ -1835,7 +1835,7 @@
       {
         "basename": "o_158",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 1200,
           "y": 3500
@@ -1844,7 +1844,7 @@
       {
         "basename": "o_159",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stderr",
+        "to": "stderr",
         "xy": {
           "x": 2000,
           "y": 3500
@@ -1853,7 +1853,7 @@
       {
         "basename": "o_32",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/size_t",
+        "to": "size_t",
         "xy": {
           "x": 200,
           "y": 4100
@@ -1862,7 +1862,7 @@
       {
         "basename": "o_38",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/off_t",
+        "to": "off_t",
         "xy": {
           "x": 600,
           "y": 4300
@@ -1871,7 +1871,7 @@
       {
         "basename": "o_39",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 600,
           "y": 4500
@@ -1880,7 +1880,7 @@
       {
         "basename": "o_40",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/voidPtr",
+        "to": "voidPtr",
         "xy": {
           "x": 400,
           "y": 4700
@@ -1889,7 +1889,7 @@
       {
         "basename": "o_41",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 4700
@@ -1908,7 +1908,7 @@
       {
         "basename": "o_42",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/off_t",
+        "to": "off_t",
         "xy": {
           "x": 400,
           "y": 7700
@@ -1917,7 +1917,7 @@
       {
         "basename": "o_63",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/size_t",
+        "to": "size_t",
         "xy": {
           "x": 600,
           "y": 4100
@@ -1926,7 +1926,7 @@
       {
         "basename": "o_160",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/off_t",
+        "to": "off_t",
         "xy": {
           "x": 800,
           "y": 4300
@@ -1953,7 +1953,7 @@
       {
         "basename": "o_163",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/size_t",
+        "to": "size_t",
         "xy": {
           "x": 1200,
           "y": 4500
@@ -1972,7 +1972,7 @@
       {
         "basename": "o_164",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/time_t",
+        "to": "time_t",
         "xy": {
           "x": 200,
           "y": 6500
@@ -1981,7 +1981,7 @@
       {
         "basename": "o_165",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/stat",
+        "to": "stat",
         "xy": {
           "x": 200,
           "y": 7900
@@ -1990,7 +1990,7 @@
       {
         "basename": "o_166",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/time_t",
+        "to": "time_t",
         "xy": {
           "x": 500,
           "y": 7900
@@ -2009,7 +2009,7 @@
       {
         "basename": "o_167",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/timespec",
+        "to": "timespec",
         "xy": {
           "x": 200,
           "y": 6700
@@ -2018,7 +2018,7 @@
       {
         "basename": "o_168",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/timespec",
+        "to": "timespec",
         "xy": {
           "x": 200,
           "y": 6900
@@ -2027,7 +2027,7 @@
       {
         "basename": "o_169",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/time_t",
+        "to": "time_t",
         "xy": {
           "x": 500,
           "y": 6900
@@ -2045,7 +2045,7 @@
       {
         "basename": "o_171",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/timespec",
+        "to": "timespec",
         "xy": {
           "x": 200,
           "y": 7100
@@ -2054,7 +2054,7 @@
       {
         "basename": "o_174",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 200,
           "y": 300
@@ -2073,7 +2073,7 @@
       {
         "basename": "o_172",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/off_t",
+        "to": "off_t",
         "xy": {
           "x": 1700,
           "y": 4400
@@ -2082,7 +2082,7 @@
       {
         "basename": "o_173",
         "prototype": "IndexObject",
-        "to": "hdole/cpp/size_t",
+        "to": "size_t",
         "xy": {
           "x": 1900,
           "y": 4400
@@ -2091,595 +2091,595 @@
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_2",
-        "codomain": "hdole/cpp/o_3",
-        "to": "hdole/cpp/strerror"
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "strerror"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_5",
-        "codomain": "hdole/cpp/o_6",
-        "to": "hdole/cpp/stdinToN64"
+        "domain": "o_5",
+        "codomain": "o_6",
+        "to": "stdinToN64"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_7",
-        "codomain": "hdole/cpp/o_8",
-        "to": "hdole/cpp/stdinToZ32"
+        "domain": "o_7",
+        "codomain": "o_8",
+        "to": "stdinToZ32"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_9",
-        "codomain": "hdole/cpp/o_10",
-        "to": "hdole/cpp/stdinToF64"
+        "domain": "o_9",
+        "codomain": "o_10",
+        "to": "stdinToF64"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_11",
-        "codomain": "hdole/cpp/o_12",
-        "to": "hdole/cpp/stdinToStr"
+        "domain": "o_11",
+        "codomain": "o_12",
+        "to": "stdinToStr"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_14",
-        "codomain": "hdole/cpp/o_15",
-        "to": "hdole/cpp/N64ToStdout"
+        "domain": "o_14",
+        "codomain": "o_15",
+        "to": "N64ToStdout"
       },
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_16",
-        "codomain": "hdole/cpp/o_17",
-        "to": "hdole/cpp/Z64ToStdout"
+        "domain": "o_16",
+        "codomain": "o_17",
+        "to": "Z64ToStdout"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_18",
-        "codomain": "hdole/cpp/o_19",
-        "to": "hdole/cpp/F64ToStdout"
+        "domain": "o_18",
+        "codomain": "o_19",
+        "to": "F64ToStdout"
       },
       {
         "basename": "m_9",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_20",
-        "codomain": "hdole/cpp/o_21",
-        "to": "hdole/cpp/StrToStdout"
+        "domain": "o_20",
+        "codomain": "o_21",
+        "to": "StrToStdout"
       },
       {
         "basename": "m_10",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_23",
-        "codomain": "hdole/cpp/o_24",
-        "to": "hdole/cpp/N64ToStderr"
+        "domain": "o_23",
+        "codomain": "o_24",
+        "to": "N64ToStderr"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_25",
-        "codomain": "hdole/cpp/o_26",
-        "to": "hdole/cpp/Z64ToStderr"
+        "domain": "o_25",
+        "codomain": "o_26",
+        "to": "Z64ToStderr"
       },
       {
         "basename": "m_12",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_27",
-        "codomain": "hdole/cpp/o_28",
-        "to": "hdole/cpp/F64ToStderr"
+        "domain": "o_27",
+        "codomain": "o_28",
+        "to": "F64ToStderr"
       },
       {
         "basename": "m_13",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_29",
-        "codomain": "hdole/cpp/o_30",
-        "to": "hdole/cpp/StrToStderr"
+        "domain": "o_29",
+        "codomain": "o_30",
+        "to": "StrToStderr"
       },
       {
         "basename": "m_22",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_43",
-        "codomain": "hdole/cpp/o_44",
-        "to": "hdole/cpp/O_RDONLY"
+        "domain": "o_43",
+        "codomain": "o_44",
+        "to": "O_RDONLY"
       },
       {
         "basename": "m_23",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_45",
-        "codomain": "hdole/cpp/o_46",
-        "to": "hdole/cpp/O_WRONLY"
+        "domain": "o_45",
+        "codomain": "o_46",
+        "to": "O_WRONLY"
       },
       {
         "basename": "m_24",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_47",
-        "codomain": "hdole/cpp/o_48",
-        "to": "hdole/cpp/O_RDWR"
+        "domain": "o_47",
+        "codomain": "o_48",
+        "to": "O_RDWR"
       },
       {
         "basename": "m_25",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_49",
-        "codomain": "hdole/cpp/o_50",
-        "to": "hdole/cpp/O_APPEND"
+        "domain": "o_49",
+        "codomain": "o_50",
+        "to": "O_APPEND"
       },
       {
         "basename": "m_26",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_51",
-        "codomain": "hdole/cpp/o_52",
-        "to": "hdole/cpp/O_ASYNC"
+        "domain": "o_51",
+        "codomain": "o_52",
+        "to": "O_ASYNC"
       },
       {
         "basename": "m_27",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_53",
-        "codomain": "hdole/cpp/o_54",
-        "to": "hdole/cpp/O_CREAT"
+        "domain": "o_53",
+        "codomain": "o_54",
+        "to": "O_CREAT"
       },
       {
         "basename": "m_28",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_55",
-        "codomain": "hdole/cpp/o_56",
-        "to": "hdole/cpp/open"
+        "domain": "o_55",
+        "codomain": "o_56",
+        "to": "open"
       },
       {
         "basename": "m_29",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_57",
-        "codomain": "hdole/cpp/o_58",
-        "to": "hdole/cpp/close"
+        "domain": "o_57",
+        "codomain": "o_58",
+        "to": "close"
       },
       {
         "basename": "m_30",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_60",
-        "codomain": "hdole/cpp/o_61",
-        "to": "hdole/cpp/fstat"
+        "domain": "o_60",
+        "codomain": "o_61",
+        "to": "fstat"
       },
       {
         "basename": "m_32",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_64",
-        "codomain": "hdole/cpp/o_65",
-        "to": "hdole/cpp/PROT_READ"
+        "domain": "o_64",
+        "codomain": "o_65",
+        "to": "PROT_READ"
       },
       {
         "basename": "m_33",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_66",
-        "codomain": "hdole/cpp/o_67",
-        "to": "hdole/cpp/PROT_WRITE"
+        "domain": "o_66",
+        "codomain": "o_67",
+        "to": "PROT_WRITE"
       },
       {
         "basename": "m_34",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_68",
-        "codomain": "hdole/cpp/o_69",
-        "to": "hdole/cpp/MAP_SHARED"
+        "domain": "o_68",
+        "codomain": "o_69",
+        "to": "MAP_SHARED"
       },
       {
         "basename": "m_35",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_70",
-        "codomain": "hdole/cpp/o_71",
-        "to": "hdole/cpp/MAP_PRIVATE"
+        "domain": "o_70",
+        "codomain": "o_71",
+        "to": "MAP_PRIVATE"
       },
       {
         "basename": "m_36",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_72",
-        "codomain": "hdole/cpp/o_73",
-        "to": "hdole/cpp/MAP_ANONYMOUS"
+        "domain": "o_72",
+        "codomain": "o_73",
+        "to": "MAP_ANONYMOUS"
       },
       {
         "basename": "m_37",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_74",
-        "codomain": "hdole/cpp/o_75",
-        "to": "hdole/cpp/mmap"
+        "domain": "o_74",
+        "codomain": "o_75",
+        "to": "mmap"
       },
       {
         "basename": "m_38",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_76",
-        "codomain": "hdole/cpp/o_77",
-        "to": "hdole/cpp/munmap"
+        "domain": "o_76",
+        "codomain": "o_77",
+        "to": "munmap"
       },
       {
         "basename": "m_39",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_78",
-        "codomain": "hdole/cpp/o_79",
-        "to": "hdole/cpp/memToN8"
+        "domain": "o_78",
+        "codomain": "o_79",
+        "to": "memToN8"
       },
       {
         "basename": "m_40",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_80",
-        "codomain": "hdole/cpp/o_81",
-        "to": "hdole/cpp/memToN16"
+        "domain": "o_80",
+        "codomain": "o_81",
+        "to": "memToN16"
       },
       {
         "basename": "m_41",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_82",
-        "codomain": "hdole/cpp/o_83",
-        "to": "hdole/cpp/memToZ32"
+        "domain": "o_82",
+        "codomain": "o_83",
+        "to": "memToZ32"
       },
       {
         "basename": "m_42",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_84",
-        "codomain": "hdole/cpp/o_85",
-        "to": "hdole/cpp/memToF64"
+        "domain": "o_84",
+        "codomain": "o_85",
+        "to": "memToF64"
       },
       {
         "basename": "m_43",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_86",
-        "codomain": "hdole/cpp/o_87",
-        "to": "hdole/cpp/IBM360Float"
+        "domain": "o_86",
+        "codomain": "o_87",
+        "to": "IBM360Float"
       },
       {
         "basename": "m_44",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_88",
-        "codomain": "hdole/cpp/o_89",
-        "to": "hdole/cpp/mem2str"
+        "domain": "o_88",
+        "codomain": "o_89",
+        "to": "mem2str"
       },
       {
         "basename": "m_45",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_90",
-        "codomain": "hdole/cpp/o_91",
-        "to": "hdole/cpp/memRec2str"
+        "domain": "o_90",
+        "codomain": "o_91",
+        "to": "memRec2str"
       },
       {
         "basename": "m_46",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_92",
-        "codomain": "hdole/cpp/o_93",
-        "to": "hdole/cpp/voidPtrPlus2"
+        "domain": "o_92",
+        "codomain": "o_93",
+        "to": "voidPtrPlus2"
       },
       {
         "basename": "m_47",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_94",
-        "codomain": "hdole/cpp/o_95",
-        "to": "hdole/cpp/voidPtrPlus4"
+        "domain": "o_94",
+        "codomain": "o_95",
+        "to": "voidPtrPlus4"
       },
       {
         "basename": "m_48",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_96",
-        "codomain": "hdole/cpp/o_97",
-        "to": "hdole/cpp/voidPtrPlus8"
+        "domain": "o_96",
+        "codomain": "o_97",
+        "to": "voidPtrPlus8"
       },
       {
         "basename": "m_49",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_98",
-        "codomain": "hdole/cpp/o_99",
-        "to": "hdole/cpp/voidPtrPlusN"
+        "domain": "o_98",
+        "codomain": "o_99",
+        "to": "voidPtrPlusN"
       },
       {
         "basename": "m_50",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_100",
-        "codomain": "hdole/cpp/o_101",
-        "to": "hdole/cpp/stdinToN8"
+        "domain": "o_100",
+        "codomain": "o_101",
+        "to": "stdinToN8"
       },
       {
         "basename": "m_51",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_103",
-        "codomain": "hdole/cpp/o_102",
-        "to": "hdole/cpp/stdinToN16"
+        "domain": "o_103",
+        "codomain": "o_102",
+        "to": "stdinToN16"
       },
       {
         "basename": "m_52",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_104",
-        "codomain": "hdole/cpp/o_105",
-        "to": "hdole/cpp/stdinToN32"
+        "domain": "o_104",
+        "codomain": "o_105",
+        "to": "stdinToN32"
       },
       {
         "basename": "m_53",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_107",
-        "codomain": "hdole/cpp/o_106",
-        "to": "hdole/cpp/stdinToN128"
+        "domain": "o_107",
+        "codomain": "o_106",
+        "to": "stdinToN128"
       },
       {
         "basename": "m_54",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_108",
-        "codomain": "hdole/cpp/o_112",
-        "to": "hdole/cpp/N8ToStdout"
+        "domain": "o_108",
+        "codomain": "o_112",
+        "to": "N8ToStdout"
       },
       {
         "basename": "m_55",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_109",
-        "codomain": "hdole/cpp/o_113",
-        "to": "hdole/cpp/N16ToStdout"
+        "domain": "o_109",
+        "codomain": "o_113",
+        "to": "N16ToStdout"
       },
       {
         "basename": "m_56",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_110",
-        "codomain": "hdole/cpp/o_114",
-        "to": "hdole/cpp/N32ToStdout"
+        "domain": "o_110",
+        "codomain": "o_114",
+        "to": "N32ToStdout"
       },
       {
         "basename": "m_57",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_111",
-        "codomain": "hdole/cpp/o_115",
-        "to": "hdole/cpp/N128ToStdout"
+        "domain": "o_111",
+        "codomain": "o_115",
+        "to": "N128ToStdout"
       },
       {
         "basename": "m_58",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_128",
-        "codomain": "hdole/cpp/o_125",
-        "to": "hdole/cpp/stdinToZ8"
+        "domain": "o_128",
+        "codomain": "o_125",
+        "to": "stdinToZ8"
       },
       {
         "basename": "m_59",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_129",
-        "codomain": "hdole/cpp/o_124",
-        "to": "hdole/cpp/stdinToZ16"
+        "domain": "o_129",
+        "codomain": "o_124",
+        "to": "stdinToZ16"
       },
       {
         "basename": "m_60",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_130",
-        "codomain": "hdole/cpp/o_126",
-        "to": "hdole/cpp/stdinToZ64"
+        "domain": "o_130",
+        "codomain": "o_126",
+        "to": "stdinToZ64"
       },
       {
         "basename": "m_61",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_131",
-        "codomain": "hdole/cpp/o_127",
-        "to": "hdole/cpp/stdinToZ128"
+        "domain": "o_131",
+        "codomain": "o_127",
+        "to": "stdinToZ128"
       },
       {
         "basename": "m_62",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_135",
-        "codomain": "hdole/cpp/o_132",
-        "to": "hdole/cpp/stdinToF32"
+        "domain": "o_135",
+        "codomain": "o_132",
+        "to": "stdinToF32"
       },
       {
         "basename": "m_63",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_134",
-        "codomain": "hdole/cpp/o_133",
-        "to": "hdole/cpp/stdinToF128"
+        "domain": "o_134",
+        "codomain": "o_133",
+        "to": "stdinToF128"
       },
       {
         "basename": "m_64",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_136",
-        "codomain": "hdole/cpp/o_122",
-        "to": "hdole/cpp/Z8ToStdout"
+        "domain": "o_136",
+        "codomain": "o_122",
+        "to": "Z8ToStdout"
       },
       {
         "basename": "m_65",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_137",
-        "codomain": "hdole/cpp/o_120",
-        "to": "hdole/cpp/Z16ToStdout"
+        "domain": "o_137",
+        "codomain": "o_120",
+        "to": "Z16ToStdout"
       },
       {
         "basename": "m_66",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_138",
-        "codomain": "hdole/cpp/o_118",
-        "to": "hdole/cpp/Z32ToStdout"
+        "domain": "o_138",
+        "codomain": "o_118",
+        "to": "Z32ToStdout"
       },
       {
         "basename": "m_67",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_140",
-        "codomain": "hdole/cpp/o_116",
-        "to": "hdole/cpp/Z128ToStdout"
+        "domain": "o_140",
+        "codomain": "o_116",
+        "to": "Z128ToStdout"
       },
       {
         "basename": "m_68",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_139",
-        "codomain": "hdole/cpp/o_119",
-        "to": "hdole/cpp/F32ToStdout"
+        "domain": "o_139",
+        "codomain": "o_119",
+        "to": "F32ToStdout"
       },
       {
         "basename": "m_69",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_141",
-        "codomain": "hdole/cpp/o_117",
-        "to": "hdole/cpp/F128ToStdout"
+        "domain": "o_141",
+        "codomain": "o_117",
+        "to": "F128ToStdout"
       },
       {
         "basename": "m_70",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_142",
-        "codomain": "hdole/cpp/o_150",
-        "to": "hdole/cpp/N8ToStderr"
+        "domain": "o_142",
+        "codomain": "o_150",
+        "to": "N8ToStderr"
       },
       {
         "basename": "m_71",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_143",
-        "codomain": "hdole/cpp/o_151",
-        "to": "hdole/cpp/Z8ToStderr"
+        "domain": "o_143",
+        "codomain": "o_151",
+        "to": "Z8ToStderr"
       },
       {
         "basename": "m_72",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_121",
-        "codomain": "hdole/cpp/o_153",
-        "to": "hdole/cpp/N16ToStderr"
+        "domain": "o_121",
+        "codomain": "o_153",
+        "to": "N16ToStderr"
       },
       {
         "basename": "m_73",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_123",
-        "codomain": "hdole/cpp/o_152",
-        "to": "hdole/cpp/Z16ToStderr"
+        "domain": "o_123",
+        "codomain": "o_152",
+        "to": "Z16ToStderr"
       },
       {
         "basename": "m_74",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_144",
-        "codomain": "hdole/cpp/o_155",
-        "to": "hdole/cpp/N32ToStderr"
+        "domain": "o_144",
+        "codomain": "o_155",
+        "to": "N32ToStderr"
       },
       {
         "basename": "m_75",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_145",
-        "codomain": "hdole/cpp/o_154",
-        "to": "hdole/cpp/Z32ToStderr"
+        "domain": "o_145",
+        "codomain": "o_154",
+        "to": "Z32ToStderr"
       },
       {
         "basename": "m_76",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_146",
-        "codomain": "hdole/cpp/o_158",
-        "to": "hdole/cpp/F32ToStderr"
+        "domain": "o_146",
+        "codomain": "o_158",
+        "to": "F32ToStderr"
       },
       {
         "basename": "m_77",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_147",
-        "codomain": "hdole/cpp/o_157",
-        "to": "hdole/cpp/N128ToStderr"
+        "domain": "o_147",
+        "codomain": "o_157",
+        "to": "N128ToStderr"
       },
       {
         "basename": "m_78",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_148",
-        "codomain": "hdole/cpp/o_156",
-        "to": "hdole/cpp/Z128ToStderr"
+        "domain": "o_148",
+        "codomain": "o_156",
+        "to": "Z128ToStderr"
       },
       {
         "basename": "m_79",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_149",
-        "codomain": "hdole/cpp/o_159",
-        "to": "hdole/cpp/F128ToStderr"
+        "domain": "o_149",
+        "codomain": "o_159",
+        "to": "F128ToStderr"
       },
       {
         "basename": "m_14",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_32",
-        "codomain": "hdole/cpp/o_33",
-        "to": "hdole/cpp/size_tToN64"
+        "domain": "o_32",
+        "codomain": "o_33",
+        "to": "size_tToN64"
       },
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_34",
-        "codomain": "hdole/cpp/o_35",
-        "to": "hdole/cpp/off_tToZ64"
+        "domain": "o_34",
+        "codomain": "o_35",
+        "to": "off_tToZ64"
       },
       {
         "basename": "m_15",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_36",
-        "codomain": "hdole/cpp/o_37",
-        "to": "hdole/cpp/voidPtrToN64"
+        "domain": "o_36",
+        "codomain": "o_37",
+        "to": "voidPtrToN64"
       },
       {
         "basename": "m_16",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_0",
-        "codomain": "hdole/cpp/o_1",
-        "to": "hdole/cpp/ErrnoToZ32"
+        "domain": "o_0",
+        "codomain": "o_1",
+        "to": "ErrnoToZ32"
       },
       {
         "basename": "m_17",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_35",
-        "codomain": "hdole/cpp/o_38",
-        "to": "hdole/cpp/Z64toOff_t"
+        "domain": "o_35",
+        "codomain": "o_38",
+        "to": "Z64toOff_t"
       },
       {
         "basename": "m_18",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_37",
-        "codomain": "hdole/cpp/o_39",
-        "to": "hdole/cpp/N64toVoidPtr"
+        "domain": "o_37",
+        "codomain": "o_39",
+        "to": "N64toVoidPtr"
       },
       {
         "basename": "m_19",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_41",
-        "codomain": "hdole/cpp/o_40",
-        "to": "hdole/cpp/NULL"
+        "domain": "o_41",
+        "codomain": "o_40",
+        "to": "NULL"
       },
       {
         "basename": "m_20",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_62",
-        "codomain": "hdole/cpp/o_42",
-        "to": "hdole/cpp/filesize"
+        "domain": "o_62",
+        "codomain": "o_42",
+        "to": "filesize"
       },
       {
         "basename": "m_21",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_33",
-        "codomain": "hdole/cpp/o_63",
-        "to": "hdole/cpp/N64toSize_t"
+        "domain": "o_33",
+        "codomain": "o_63",
+        "to": "N64toSize_t"
       },
       {
         "basename": "m_31",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_160",
-        "codomain": "hdole/cpp/o_161",
-        "to": "hdole/cpp/off_tToZ64"
+        "domain": "o_160",
+        "codomain": "o_161",
+        "to": "off_tToZ64"
       },
       {
         "basename": "m_80",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_161",
-        "codomain": "hdole/cpp/o_162",
+        "domain": "o_161",
+        "codomain": "o_162",
         "to": "hdole/int/abs64"
       },
       {
         "basename": "m_81",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_162",
-        "codomain": "hdole/cpp/o_163",
-        "to": "hdole/cpp/N64toSize_t"
+        "domain": "o_162",
+        "codomain": "o_163",
+        "to": "N64toSize_t"
       },
       {
         "basename": "m_82",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_160",
-        "codomain": "hdole/cpp/o_163",
+        "domain": "o_160",
+        "codomain": "o_163",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/cpp/Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
+        "to": "Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
       },
       {
         "basename": "m_83",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_160",
-        "codomain": "hdole/cpp/o_163",
+        "domain": "o_160",
+        "codomain": "o_163",
         "attributes": [
           [
             "flipName",
@@ -2690,35 +2690,35 @@
             5
           ]
         ],
-        "to": "hdole/cpp/off_tToSize_t"
+        "to": "off_tToSize_t"
       },
       {
         "basename": "m_84",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_165",
-        "codomain": "hdole/cpp/o_166",
-        "to": "hdole/cpp/modtime"
+        "domain": "o_165",
+        "codomain": "o_166",
+        "to": "modtime"
       },
       {
         "basename": "m_85",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_168",
-        "codomain": "hdole/cpp/o_169",
-        "to": "hdole/cpp/seconds"
+        "domain": "o_168",
+        "codomain": "o_169",
+        "to": "seconds"
       },
       {
         "basename": "m_86",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_171",
-        "codomain": "hdole/cpp/o_170",
-        "to": "hdole/cpp/nanoseconds"
+        "domain": "o_171",
+        "codomain": "o_170",
+        "to": "nanoseconds"
       },
       {
         "basename": "m_87",
         "prototype": "IndexMorphism",
-        "domain": "hdole/cpp/o_172",
-        "codomain": "hdole/cpp/o_173",
-        "to": "hdole/cpp/Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
+        "domain": "o_172",
+        "codomain": "o_173",
+        "to": "Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
       }
     ],
     "cells": []
@@ -2901,7 +2901,7 @@
       "code": {
         "cpp": "%1 = std::string(::strerror(::errno));"
       },
-      "domain": "hdole/cpp/Errno",
+      "domain": "Errno",
       "codomain": "hdole/str/str"
     },
     {
@@ -2912,7 +2912,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/nat/N64"
     },
     {
@@ -2923,7 +2923,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -2934,7 +2934,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/floats/F64"
     },
     {
@@ -2945,7 +2945,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/str/str"
     },
     {
@@ -2957,7 +2957,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/nat/N64",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "description": "Write an integer to standard out.",
@@ -2968,7 +2968,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/int/Z64",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "description": "Write a floating point number to standard out.",
@@ -2979,7 +2979,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/floats/F64",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "description": "Write a string to standard out.",
@@ -2990,7 +2990,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/str/str",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "description": "Write a natural number to standard error.",
@@ -3001,7 +3001,7 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/nat/N64",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "description": "Write an integer to standard error.",
@@ -3012,7 +3012,7 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/int/Z64",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "description": "Write a floating point number to standard error.",
@@ -3023,7 +3023,7 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/floats/F64",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "description": "Write a string to standard error.",
@@ -3034,7 +3034,7 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/str/str",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "description": "The file is opened in read only mode",
@@ -3043,7 +3043,7 @@
       "code": {
         "cpp": "%0 = ::O_RDONLY;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3053,7 +3053,7 @@
       "code": {
         "cpp": "%0 = ::O_WRONLY;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3063,7 +3063,7 @@
       "code": {
         "cpp": "%0 = ::O_RDWR;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3073,7 +3073,7 @@
       "code": {
         "cpp": "%0 = ::O_APPEND;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3083,7 +3083,7 @@
       "code": {
         "cpp": "%0 = ::O_ASYNC;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3093,7 +3093,7 @@
       "code": {
         "cpp": "%0 = ::O_CREAT;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3103,8 +3103,8 @@
       "code": {
         "cpp": "{\n\tconst int fd = ::open(%0.c_str(), %1);\n\tif (fd >= 0)\n\t{\n\t\t%2.c = 0;\n\t\t%2.m_0 = fd;\n\t}\n\telse\n\t{\n\t\t%2.c = 1;\n\t\t%2.m_1 = ::errno;\n\t}\n}"
       },
-      "domain": "hdole/cpp/Po{hdole/str/str,hdole/int/Z32}oP",
-      "codomain": "hdole/cpp/CPo{file,Errno}oPC"
+      "domain": "Po{hdole/str/str,hdole/int/Z32}oP",
+      "codomain": "CPo{file,Errno}oPC"
     },
     {
       "description": "Close a file.",
@@ -3113,8 +3113,8 @@
       "code": {
         "cpp": "if (::close(args) == 0)\n{\n\t%1.c = 0;\n}\nelse\n{\n\t%1.c = 1;\n\t%1.m_0 = ::errno;\n}"
       },
-      "domain": "hdole/cpp/file",
-      "codomain": "hdole/cpp/CPo{#1,Errno}oPC"
+      "domain": "file",
+      "codomain": "CPo{#1,Errno}oPC"
     },
     {
       "description": "Get file status",
@@ -3123,8 +3123,8 @@
       "code": {
         "cpp": "\nif (::fstat(%0, & %1.m0))\n\t%1.c = 0;\nelse\n{\n\t%1.c = 1;\n\t%1.m_1 = ::errno;\n}"
       },
-      "domain": "hdole/cpp/file",
-      "codomain": "hdole/cpp/CPo{stat,Errno}oPC"
+      "domain": "file",
+      "codomain": "CPo{stat,Errno}oPC"
     },
     {
       "description": "Pages may be read",
@@ -3133,7 +3133,7 @@
       "code": {
         "cpp": "%0 = ::PROT_READ;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3143,7 +3143,7 @@
       "code": {
         "cpp": "%0 = ::PROT_WRITE;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3153,7 +3153,7 @@
       "code": {
         "cpp": "%0 = ::MAP_SHARED;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3163,7 +3163,7 @@
       "code": {
         "cpp": "%0 = ::MAP_PRIVATE;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3173,7 +3173,7 @@
       "code": {
         "cpp": "%0 = ::MAP_ANONYMOUS;"
       },
-      "domain": "hdole/cpp/#1",
+      "domain": "#1",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3183,8 +3183,8 @@
       "code": {
         "cpp": "{\n\tvoid * ptr = ::mmap(%0, %1, %2, %3, %4, %5);\n\tif (ptr != MAP_FAILED)\n\t{\n\t\t%6.c = 0;\n\t\t%6.m_0 = ptr;\n\t}\n\telse\n\t{\n\t\t%6.c = 1;\n\t\t%6.m_1 = errno;\n\t}\n}"
       },
-      "domain": "hdole/cpp/Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
-      "codomain": "hdole/cpp/CPo{voidPtr,Errno}oPC"
+      "domain": "Po{voidPtr,size_t,hdole/int/Z32,hdole/int/Z32,file,off_t}oP",
+      "codomain": "CPo{voidPtr,Errno}oPC"
     },
     {
       "description": "Unmap a memory mapped file",
@@ -3193,8 +3193,8 @@
       "code": {
         "cpp": "if (::munmap(%0, %1) == 0)\n\t%1.c = 0;\nelse\n{\n\t%1.c = 1;\n\t%1.m_1 = ::errno;\n}"
       },
-      "domain": "hdole/cpp/Po{voidPtr,size_t}oP",
-      "codomain": "hdole/cpp/CPo{#1,Errno}oPC"
+      "domain": "Po{voidPtr,size_t}oP",
+      "codomain": "CPo{#1,Errno}oPC"
     },
     {
       "description": "Get an unsigned byte from memory",
@@ -3204,7 +3204,7 @@
       "code": {
         "cpp": "%1 = *(unsigned char*)%0;"
       },
-      "domain": "hdole/cpp/voidPtr",
+      "domain": "voidPtr",
       "codomain": "hdole/nat/N8"
     },
     {
@@ -3215,7 +3215,7 @@
       "code": {
         "cpp": "%1 = ::bswap_16(%0);"
       },
-      "domain": "hdole/cpp/voidPtr",
+      "domain": "voidPtr",
       "codomain": "hdole/nat/N16"
     },
     {
@@ -3226,7 +3226,7 @@
       "code": {
         "cpp": "%1 = ::bswap_32(%0);"
       },
-      "domain": "hdole/cpp/voidPtr",
+      "domain": "voidPtr",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3237,7 +3237,7 @@
       "code": {
         "cpp": "%0 = *(double*)%0;"
       },
-      "domain": "hdole/cpp/voidPtr",
+      "domain": "voidPtr",
       "codomain": "hdole/floats/F64"
     },
     {
@@ -3248,7 +3248,7 @@
       "code": {
         "cpp": "{\n\tstruct dbl\n\t{\n\t\tunsigned char mantissa:56;\n\t\tunsigned char exponent:7;\n\t\tunsigned char sign:1;\n\t};\n\tconst dbl data = ::bswap_64(%0);\n\tauto val = ldexp((double)(data.mantissa), 4 * dbl.exponent - 312);\n\t%1 = dbl.sign ? -val : val;\n}"
       },
-      "domain": "hdole/cpp/voidPtr",
+      "domain": "voidPtr",
       "codomain": "hdole/floats/F64"
     },
     {
@@ -3259,7 +3259,7 @@
       "code": {
         "cpp": "%1 = std::string((const char *)%0);"
       },
-      "domain": "hdole/cpp/voidPtr",
+      "domain": "voidPtr",
       "codomain": "hdole/str/str"
     },
     {
@@ -3270,7 +3270,7 @@
       "code": {
         "cpp": "%2 = std::string(%0, %1);"
       },
-      "domain": "hdole/cpp/Po{voidPtr,hdole/nat/N64}oP",
+      "domain": "Po{voidPtr,hdole/nat/N64}oP",
       "codomain": "hdole/str/str"
     },
     {
@@ -3281,8 +3281,8 @@
       "code": {
         "cpp": "%1 = %0 + 2;"
       },
-      "domain": "hdole/cpp/voidPtr",
-      "codomain": "hdole/cpp/voidPtr"
+      "domain": "voidPtr",
+      "codomain": "voidPtr"
     },
     {
       "description": "Increment void pointer by 4",
@@ -3292,8 +3292,8 @@
       "code": {
         "cpp": "%1 = %0 + 4;"
       },
-      "domain": "hdole/cpp/voidPtr",
-      "codomain": "hdole/cpp/voidPtr"
+      "domain": "voidPtr",
+      "codomain": "voidPtr"
     },
     {
       "description": "Increment void pointer by 8",
@@ -3303,8 +3303,8 @@
       "code": {
         "cpp": "%1 = %0 + 8;"
       },
-      "domain": "hdole/cpp/voidPtr",
-      "codomain": "hdole/cpp/voidPtr"
+      "domain": "voidPtr",
+      "codomain": "voidPtr"
     },
     {
       "description": "Increment void pointer by an unsigned short",
@@ -3314,8 +3314,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/cpp/Po{voidPtr,hdole/nat/N16}oP",
-      "codomain": "hdole/cpp/voidPtr"
+      "domain": "Po{voidPtr,hdole/nat/N16}oP",
+      "codomain": "voidPtr"
     },
     {
       "basename": "stdinToN8",
@@ -3324,7 +3324,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/nat/N8"
     },
     {
@@ -3334,7 +3334,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/nat/N16"
     },
     {
@@ -3344,7 +3344,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/nat/N32"
     },
     {
@@ -3354,7 +3354,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/nat/N128"
     },
     {
@@ -3365,7 +3365,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/nat/N8",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "basename": "N16ToStdout",
@@ -3375,7 +3375,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "basename": "N32ToStdout",
@@ -3385,7 +3385,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/nat/N32",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "basename": "N128ToStdout",
@@ -3395,7 +3395,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/nat/N128",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "basename": "stdinToZ8",
@@ -3404,7 +3404,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/int/Z8"
     },
     {
@@ -3414,7 +3414,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/int/Z16"
     },
     {
@@ -3424,7 +3424,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/int/Z64"
     },
     {
@@ -3434,7 +3434,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/int/Z128"
     },
     {
@@ -3444,7 +3444,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/floats/F32"
     },
     {
@@ -3454,7 +3454,7 @@
       "code": {
         "cpp": "std::cin >> %1;"
       },
-      "domain": "hdole/cpp/stdin",
+      "domain": "stdin",
       "codomain": "hdole/floats/F128"
     },
     {
@@ -3465,7 +3465,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/int/Z8",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "basename": "Z16ToStdout",
@@ -3475,7 +3475,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/int/Z16",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "basename": "Z32ToStdout",
@@ -3485,7 +3485,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/int/Z32",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "basename": "Z128ToStdout",
@@ -3495,7 +3495,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/int/Z128",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "basename": "F32ToStdout",
@@ -3505,7 +3505,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/floats/F32",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "basename": "F128ToStdout",
@@ -3515,7 +3515,7 @@
         "cpp": "std::cout << %0;"
       },
       "domain": "hdole/floats/F128",
-      "codomain": "hdole/cpp/stdout"
+      "codomain": "stdout"
     },
     {
       "basename": "N8ToStderr",
@@ -3525,7 +3525,7 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/nat/N8",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "basename": "Z8ToStderr",
@@ -3535,7 +3535,7 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/int/Z8",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "basename": "N16ToStderr",
@@ -3545,7 +3545,7 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "basename": "Z16ToStderr",
@@ -3555,7 +3555,7 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/int/Z16",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "basename": "N32ToStderr",
@@ -3565,7 +3565,7 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/nat/N32",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "basename": "Z32ToStderr",
@@ -3575,14 +3575,14 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/int/Z32",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "basename": "F32ToStderr",
       "prototype": "Morphism",
       "properName": "err",
       "domain": "hdole/floats/F32",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "basename": "N128ToStderr",
@@ -3592,7 +3592,7 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/nat/N128",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "basename": "Z128ToStderr",
@@ -3602,14 +3602,14 @@
         "cpp": "std::cerr << %0;"
       },
       "domain": "hdole/int/Z128",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "basename": "F128ToStderr",
       "prototype": "Morphism",
       "properName": "err",
       "domain": "hdole/floats/F128",
-      "codomain": "hdole/cpp/stderr"
+      "codomain": "stderr"
     },
     {
       "description": "Convert size_t to N64",
@@ -3619,7 +3619,7 @@
       "code": {
         "cpp": "%1 = %0;"
       },
-      "domain": "hdole/cpp/size_t",
+      "domain": "size_t",
       "codomain": "hdole/nat/N64"
     },
     {
@@ -3629,7 +3629,7 @@
       "code": {
         "cpp": "%1 = %0;"
       },
-      "domain": "hdole/cpp/off_t",
+      "domain": "off_t",
       "codomain": "hdole/int/Z64"
     },
     {
@@ -3639,7 +3639,7 @@
       "code": {
         "cpp": "%1 = %0;"
       },
-      "domain": "hdole/cpp/voidPtr",
+      "domain": "voidPtr",
       "codomain": "hdole/nat/N64"
     },
     {
@@ -3649,7 +3649,7 @@
       "code": {
         "cpp": "%1 = ::errno;"
       },
-      "domain": "hdole/cpp/Errno",
+      "domain": "Errno",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -3660,7 +3660,7 @@
         "cpp": "%1 = %0;"
       },
       "domain": "hdole/int/Z64",
-      "codomain": "hdole/cpp/off_t"
+      "codomain": "off_t"
     },
     {
       "basename": "N64toVoidPtr",
@@ -3670,7 +3670,7 @@
         "cpp": "%1 = %0;"
       },
       "domain": "hdole/nat/N64",
-      "codomain": "hdole/cpp/voidPtr"
+      "codomain": "voidPtr"
     },
     {
       "basename": "NULL",
@@ -3678,8 +3678,8 @@
       "code": {
         "cpp": "%0 = NULL;"
       },
-      "domain": "hdole/cpp/#1",
-      "codomain": "hdole/cpp/voidPtr"
+      "domain": "#1",
+      "codomain": "voidPtr"
     },
     {
       "basename": "filesize",
@@ -3687,8 +3687,8 @@
       "code": {
         "cpp": "%1 = %0.st_size;"
       },
-      "domain": "hdole/cpp/stat",
-      "codomain": "hdole/cpp/off_t"
+      "domain": "stat",
+      "codomain": "off_t"
     },
     {
       "basename": "N64toSize_t",
@@ -3698,12 +3698,12 @@
         "cpp": "%1 = %0;"
       },
       "domain": "hdole/nat/N64",
-      "codomain": "hdole/cpp/size_t"
+      "codomain": "size_t"
     },
     {
       "prototype": "Composite",
-      "domain": "hdole/cpp/off_t",
-      "codomain": "hdole/cpp/size_t",
+      "domain": "off_t",
+      "codomain": "size_t",
       "morphisms": [
         "off_tToZ64",
         "hdole/int/abs64",
@@ -3714,8 +3714,8 @@
       "basename": "off_tToSize_t",
       "prototype": "NamedMorphism",
       "properName": "to",
-      "domain": "hdole/cpp/off_t",
-      "codomain": "hdole/cpp/size_t",
+      "domain": "off_t",
+      "codomain": "size_t",
       "source": "hdole/cpp/Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
     },
     {
@@ -3725,21 +3725,21 @@
       "code": {
         "cpp": "%1 = %0.st_mtim;"
       },
-      "domain": "hdole/cpp/stat",
-      "codomain": "hdole/cpp/time_t"
+      "domain": "stat",
+      "codomain": "time_t"
     },
     {
       "description": "Extract nanoseconds from the timespec",
       "basename": "seconds",
       "prototype": "Morphism",
-      "domain": "hdole/cpp/timespec",
-      "codomain": "hdole/cpp/time_t"
+      "domain": "timespec",
+      "codomain": "time_t"
     },
     {
       "description": "Extract the nanoseconds from the timespec",
       "basename": "nanoseconds",
       "prototype": "Morphism",
-      "domain": "hdole/cpp/timespec",
+      "domain": "timespec",
       "codomain": "hdole/nat/N64"
     }
   ],

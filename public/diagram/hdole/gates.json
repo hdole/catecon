@@ -6,7 +6,7 @@
   "properName": "Gates",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/gates_Index",
+  "domain": "gates_Index",
   "codomain": "zf/Set",
   "references": [],
   "domainInfo": {
@@ -20,7 +20,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 200,
           "y": 400
@@ -39,7 +39,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/gates/Po{q,q}oP",
+        "to": "Po{q,q}oP",
         "xy": {
           "x": 200,
           "y": 600
@@ -68,7 +68,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 200,
           "y": 800
@@ -77,7 +77,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 400,
           "y": 800
@@ -96,7 +96,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/gates/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": 1000
@@ -105,7 +105,7 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 400,
           "y": 1000
@@ -124,7 +124,7 @@
       {
         "basename": "o_6",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 200,
           "y": 1200
@@ -133,7 +133,7 @@
       {
         "basename": "o_7",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 400,
           "y": 1200
@@ -152,7 +152,7 @@
       {
         "basename": "o_8",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 200,
           "y": 1400
@@ -161,7 +161,7 @@
       {
         "basename": "o_9",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 400,
           "y": 1400
@@ -180,7 +180,7 @@
       {
         "basename": "o_10",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 200,
           "y": 1600
@@ -189,7 +189,7 @@
       {
         "basename": "o_11",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 400,
           "y": 1600
@@ -208,7 +208,7 @@
       {
         "basename": "o_12",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 200,
           "y": 1800
@@ -217,7 +217,7 @@
       {
         "basename": "o_13",
         "prototype": "IndexObject",
-        "to": "hdole/gates/q",
+        "to": "q",
         "xy": {
           "x": 400,
           "y": 1800
@@ -226,44 +226,44 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gates/o_2",
-        "codomain": "hdole/gates/o_3",
-        "to": "hdole/gates/Id{q}dI"
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "Id{q}dI"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gates/o_4",
-        "codomain": "hdole/gates/o_5",
-        "to": "hdole/gates/basis0"
+        "domain": "o_4",
+        "codomain": "o_5",
+        "to": "basis0"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gates/o_6",
-        "codomain": "hdole/gates/o_7",
-        "to": "hdole/gates/X"
+        "domain": "o_6",
+        "codomain": "o_7",
+        "to": "X"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gates/o_8",
-        "codomain": "hdole/gates/o_9",
-        "to": "hdole/gates/Y"
+        "domain": "o_8",
+        "codomain": "o_9",
+        "to": "Y"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gates/o_10",
-        "codomain": "hdole/gates/o_11",
-        "to": "hdole/gates/Z"
+        "domain": "o_10",
+        "codomain": "o_11",
+        "to": "Z"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gates/o_12",
-        "codomain": "hdole/gates/o_13",
-        "to": "hdole/gates/H"
+        "domain": "o_12",
+        "codomain": "o_13",
+        "to": "H"
       }
     ],
     "cells": []
@@ -276,20 +276,6 @@
       "properName": "&Qopf;"
     },
     {
-      "description": "The quantum qubit",
-      "basename": "q",
-      "prototype": "CatObject",
-      "properName": "&Qopf;"
-    },
-    {
-      "description": "A pair of qubits",
-      "prototype": "TensorObject",
-      "objects": [
-        "q",
-        "q"
-      ]
-    },
-    {
       "description": "A pair of qubits",
       "prototype": "TensorObject",
       "objects": [
@@ -306,28 +292,12 @@
       "max": 1
     },
     {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "&#10034;",
-      "size": 1,
-      "min": 0,
-      "max": 1
-    },
-    {
       "description": "Identity for the object &Qopf;",
       "prototype": "Identity",
       "code": {
         "js": "\nconst oSqrt2 = 1/Math.SQRT2;\nfunction matrix_multiply(m1, m2)\n{\nlet result = [];\nfor (let i=0; i<m1.length; i++)\n{\n\tresult[i] = [];\n\tfor (let j=0; j<m2[0].length; j++)\n\t{\n\t\tlet sum = 0;\n\t\tfor (let k=0; k<m1[0].length; k++)\n\t\t\tsum += m1[i][k] * m2[k][j];\n\t\tresult[i][j] = sum;\n\t}\n}\nreturn result;\n}\n%Type_matrix = [\t[[1, 0], [0, 0]],\n\t\t\t[[0, 0], [1, 0]]];\nfunction %Type(args)\n{\nreturn matrix_multiply(%Type_matrix, args);\n}\n"
       },
-      "domain": "hdole/gates/q"
-    },
-    {
-      "description": "Identity for the object &Qopf;",
-      "prototype": "Identity",
-      "code": {
-        "js": "\nconst oSqrt2 = 1/Math.SQRT2;\nfunction matrix_multiply(m1, m2)\n{\nlet result = [];\nfor (let i=0; i<m1.length; i++)\n{\n\tresult[i] = [];\n\tfor (let j=0; j<m2[0].length; j++)\n\t{\n\t\tlet sum = 0;\n\t\tfor (let k=0; k<m1[0].length; k++)\n\t\t\tsum += m1[i][k] * m2[k][j];\n\t\tresult[i][j] = sum;\n\t}\n}\nreturn result;\n}\n%Type_matrix = [\t[[1, 0], [0, 0]],\n\t\t\t[[0, 0], [1, 0]]];\nfunction %Type(args)\n{\nreturn matrix_multiply(%Type_matrix, args);\n}\n"
-      },
-      "domain": "hdole/gates/q"
+      "domain": "q"
     },
     {
       "description": "the 0 basis vector",
@@ -337,19 +307,8 @@
       "code": {
         "js": "\nfunction %Type(args)\n{\nreturn [1, [0, 0]];\n}\n"
       },
-      "domain": "hdole/gates/#1",
-      "codomain": "hdole/gates/q"
-    },
-    {
-      "description": "the 0 basis vector",
-      "basename": "basis0",
-      "prototype": "Morphism",
-      "properName": "&VerticalBar;0&RightAngleBracket;",
-      "code": {
-        "js": "\nfunction %Type(args)\n{\nreturn [1, [0, 0]];\n}\n"
-      },
-      "domain": "hdole/gates/#1",
-      "codomain": "hdole/gates/q"
+      "domain": "#1",
+      "codomain": "q"
     },
     {
       "description": "Pauli-X gate",
@@ -358,18 +317,8 @@
       "code": {
         "js": "\n%Type_matrix = [\t[[0, 0],\t[1, 0]],\n\t\t\t[[1, 0],\t[0, 0]]];\nfunction %Type(args)\n{\nreturn matrix_multiply(%Type_matrix, args);\n}\n"
       },
-      "domain": "hdole/gates/q",
-      "codomain": "hdole/gates/q"
-    },
-    {
-      "description": "Pauli-X gate",
-      "basename": "X",
-      "prototype": "Morphism",
-      "code": {
-        "js": "\n%Type_matrix = [\t[[0, 0],\t[1, 0]],\n\t\t\t[[1, 0],\t[0, 0]]];\nfunction %Type(args)\n{\nreturn matrix_multiply(%Type_matrix, args);\n}\n"
-      },
-      "domain": "hdole/gates/q",
-      "codomain": "hdole/gates/q"
+      "domain": "q",
+      "codomain": "q"
     },
     {
       "description": "Pauli-Y gate",
@@ -378,18 +327,8 @@
       "code": {
         "js": "\n%Type_matrix = [\t[[0, 0],\t[0, -1]],\n\t\t\t[[0, 1],\t[0, 0]]];\nfunction %Type(args)\n{\nreturn matrix_multiply(%Type_matrix, args);\n}\n"
       },
-      "domain": "hdole/gates/q",
-      "codomain": "hdole/gates/q"
-    },
-    {
-      "description": "Pauli-Y gate",
-      "basename": "Y",
-      "prototype": "Morphism",
-      "code": {
-        "js": "\n%Type_matrix = [\t[[0, 0],\t[0, -1]],\n\t\t\t[[0, 1],\t[0, 0]]];\nfunction %Type(args)\n{\nreturn matrix_multiply(%Type_matrix, args);\n}\n"
-      },
-      "domain": "hdole/gates/q",
-      "codomain": "hdole/gates/q"
+      "domain": "q",
+      "codomain": "q"
     },
     {
       "description": "Pauli-Z gate",
@@ -398,18 +337,8 @@
       "code": {
         "js": "\n%Type_matrix = [\t[[1, 0],\t[0, 0]],\n\t\t\t[[0, 0],\t[-1, 0]]];\nfunction %Type(args)\n{\nreturn matrix_multiply(%Type_matrix, args);\n}\n"
       },
-      "domain": "hdole/gates/q",
-      "codomain": "hdole/gates/q"
-    },
-    {
-      "description": "Pauli-Z gate",
-      "basename": "Z",
-      "prototype": "Morphism",
-      "code": {
-        "js": "\n%Type_matrix = [\t[[1, 0],\t[0, 0]],\n\t\t\t[[0, 0],\t[-1, 0]]];\nfunction %Type(args)\n{\nreturn matrix_multiply(%Type_matrix, args);\n}\n"
-      },
-      "domain": "hdole/gates/q",
-      "codomain": "hdole/gates/q"
+      "domain": "q",
+      "codomain": "q"
     },
     {
       "description": "hademard gate",
@@ -418,18 +347,8 @@
       "code": {
         "js": "\n%Type_matrix = [\t[[oSqrt2, 0],\t[oSqrt2, 0]],\n\t\t\t[[oSqrt2, 0],\t[-oSqrt2, 0]]];\nfunction %Type(args)\n{\nreturn matrix_multiply(%Type_matrix, args);\n}\n"
       },
-      "domain": "hdole/gates/q",
-      "codomain": "hdole/gates/q"
-    },
-    {
-      "description": "hademard gate",
-      "basename": "H",
-      "prototype": "Morphism",
-      "code": {
-        "js": "\n%Type_matrix = [\t[[oSqrt2, 0],\t[oSqrt2, 0]],\n\t\t\t[[oSqrt2, 0],\t[-oSqrt2, 0]]];\nfunction %Type(args)\n{\nreturn matrix_multiply(%Type_matrix, args);\n}\n"
-      },
-      "domain": "hdole/gates/q",
-      "codomain": "hdole/gates/q"
+      "domain": "q",
+      "codomain": "q"
     }
   ],
   "user": "hdole",

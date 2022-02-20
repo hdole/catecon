@@ -6,7 +6,7 @@
   "properName": "hdole/DiagramInfo",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/DiagramInfo_Index",
+  "domain": "DiagramInfo_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/HTML",
@@ -32,7 +32,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/DiagramInfo/DiagramInfo",
+        "to": "DiagramInfo",
         "xy": {
           "x": 600,
           "y": -200
@@ -96,62 +96,62 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/DiagramInfo/o_1",
-        "codomain": "hdole/DiagramInfo/o_0",
-        "to": "hdole/DiagramInfo/categoryName"
+        "domain": "o_1",
+        "codomain": "o_0",
+        "to": "categoryName"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/DiagramInfo/o_1",
-        "codomain": "hdole/DiagramInfo/o_2",
+        "domain": "o_1",
+        "codomain": "o_2",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/DiagramInfo/userName"
+        "to": "userName"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/DiagramInfo/o_1",
-        "codomain": "hdole/DiagramInfo/o_3",
-        "to": "hdole/DiagramInfo/name"
+        "domain": "o_1",
+        "codomain": "o_3",
+        "to": "name"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/DiagramInfo/o_1",
-        "codomain": "hdole/DiagramInfo/o_4",
-        "to": "hdole/DiagramInfo/references"
+        "domain": "o_1",
+        "codomain": "o_4",
+        "to": "references"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/DiagramInfo/o_1",
-        "codomain": "hdole/DiagramInfo/o_5",
+        "domain": "o_1",
+        "codomain": "o_5",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/DiagramInfo/timestamp"
+        "to": "timestamp"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/DiagramInfo/o_1",
-        "codomain": "hdole/DiagramInfo/o_6",
+        "domain": "o_1",
+        "codomain": "o_6",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/DiagramInfo/basename"
+        "to": "basename"
       }
     ],
     "cells": []
@@ -181,29 +181,6 @@
       }
     },
     {
-      "basename": "DiagramInfo",
-      "prototype": "CatObject",
-      "code": {
-        "mysql": {
-          "morphisms": [
-            {
-              "hdole/DiagramInfo/name": [
-                "index"
-              ]
-            },
-            {
-              "hdole/DiagramInfo/userName": [
-                "index"
-              ]
-            },
-            {
-              "hdole/DiagramInfo/basename": []
-            }
-          ]
-        }
-      }
-    },
-    {
       "basename": "categoryName",
       "prototype": "Morphism",
       "properName": "category",
@@ -214,51 +191,7 @@
         },
         "mysql": "SELECT categoryName FROM DiagramInfo;"
       },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "categoryName",
-      "prototype": "Morphism",
-      "properName": "category",
-      "code": {
-        "js": {
-          "async": true,
-          "code": "async // DiagramMorphism: m_0\nfunction hdole_DiagramInfo_m_0(args)\n{\n\treturn await dbconSync.query(\"SELECT categoryName FROM DiagramInfo;\");\n}\n"
-        },
-        "mysql": "SELECT categoryName FROM DiagramInfo;"
-      },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
-    },
-    {
-      "basename": "userName",
-      "prototype": "Morphism",
-      "properName": "user",
-      "code": {
-        "js": {
-          "async": true,
-          "code": "async // DiagramMorphism: m_1\nfunction hdole_DiagramInfo_m_1(args)\n{\n\treturn await dbconSync.query(\"SELECT userName FROM DiagramInfo;\");\n}\n"
-        },
-        "mysql": "SELECT userName FROM DiagramInfo;"
-      },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
+      "domain": "DiagramInfo",
       "codomain": "hdole/str/str"
     },
     {
@@ -272,7 +205,7 @@
         },
         "mysql": "SELECT userName FROM DiagramInfo;"
       },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
+      "domain": "DiagramInfo",
       "codomain": "hdole/str/str"
     },
     {
@@ -285,20 +218,7 @@
         },
         "mysql": "SELECT name FROM DiagramInfo;"
       },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "name",
-      "prototype": "Morphism",
-      "code": {
-        "js": {
-          "async": true,
-          "code": "async // DiagramMorphism: m_2\nfunction hdole_DiagramInfo_m_2(args)\n{\n\treturn await dbconSync.query(\"SELECT name FROM DiagramInfo;\");\n}\n"
-        },
-        "mysql": "SELECT name FROM DiagramInfo;"
-      },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
+      "domain": "DiagramInfo",
       "codomain": "hdole/str/str"
     },
     {
@@ -311,20 +231,7 @@
         },
         "mysql": "SELECT references FROM DiagramInfo;"
       },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "references",
-      "prototype": "Morphism",
-      "code": {
-        "js": {
-          "async": true,
-          "code": "async // DiagramMorphism: m_3\nfunction hdole_DiagramInfo_m_3(args)\n{\n\treturn await dbconSync.query(\"SELECT references FROM DiagramInfo;\");\n}\n"
-        },
-        "mysql": "SELECT references FROM DiagramInfo;"
-      },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
+      "domain": "DiagramInfo",
       "codomain": "hdole/str/str"
     },
     {
@@ -337,20 +244,7 @@
         },
         "mysql": "SELECT timestamp FROM DiagramInfo;"
       },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/int/Z32"
-    },
-    {
-      "basename": "timestamp",
-      "prototype": "Morphism",
-      "code": {
-        "js": {
-          "async": true,
-          "code": "async // DiagramMorphism: m_4\nfunction hdole_DiagramInfo_m_4(args)\n{\n\treturn await dbconSync.query(\"SELECT timestamp FROM DiagramInfo;\");\n}\n"
-        },
-        "mysql": "SELECT timestamp FROM DiagramInfo;"
-      },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
+      "domain": "DiagramInfo",
       "codomain": "hdole/int/Z32"
     },
     {
@@ -363,20 +257,7 @@
         },
         "mysql": "SELECT basename FROM DiagramInfo;"
       },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "basename",
-      "prototype": "Morphism",
-      "code": {
-        "js": {
-          "async": true,
-          "code": "async // DiagramMorphism: m_5\nfunction hdole_DiagramInfo_m_5(args)\n{\n\treturn await dbconSync.query(\"SELECT basename FROM DiagramInfo;\");\n}\n"
-        },
-        "mysql": "SELECT basename FROM DiagramInfo;"
-      },
-      "domain": "hdole/DiagramInfo/DiagramInfo",
+      "domain": "DiagramInfo",
       "codomain": "hdole/str/str"
     }
   ],

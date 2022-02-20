@@ -6,7 +6,7 @@
   "properName": "hdole/monoid",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/monoid_Index",
+  "domain": "monoid_Index",
   "codomain": "em/Cat",
   "references": [],
   "domainInfo": {
@@ -31,7 +31,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/Po{G,G}oP",
+        "to": "Po{G,G}oP",
         "xy": {
           "x": 250,
           "y": 290
@@ -40,7 +40,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/G",
+        "to": "G",
         "xy": {
           "x": 450,
           "y": 290
@@ -49,7 +49,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/#1",
+        "to": "#1",
         "xy": {
           "x": 250,
           "y": 390
@@ -58,7 +58,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/G",
+        "to": "G",
         "xy": {
           "x": 450,
           "y": 390
@@ -67,7 +67,7 @@
       {
         "basename": "o_30",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/Po{G,G}oP",
+        "to": "Po{G,G}oP",
         "xy": {
           "x": 600,
           "y": 600
@@ -76,7 +76,7 @@
       {
         "basename": "o_32",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/Po{G,G}oP",
+        "to": "Po{G,G}oP",
         "xy": {
           "x": 300,
           "y": 800
@@ -85,7 +85,7 @@
       {
         "basename": "o_31",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/G",
+        "to": "G",
         "xy": {
           "x": 600,
           "y": 800
@@ -105,7 +105,7 @@
       {
         "basename": "o_19",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/G",
+        "to": "G",
         "xy": {
           "x": -350,
           "y": 1200
@@ -114,7 +114,7 @@
       {
         "basename": "o_22",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/Po{G,#1}oP",
+        "to": "Po{G,#1}oP",
         "xy": {
           "x": -350,
           "y": 1000
@@ -123,7 +123,7 @@
       {
         "basename": "o_24",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/G",
+        "to": "G",
         "xy": {
           "x": -150,
           "y": 1200
@@ -132,7 +132,7 @@
       {
         "basename": "o_26",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/Po{G,G}oP",
+        "to": "Po{G,G}oP",
         "xy": {
           "x": -150,
           "y": 1000
@@ -141,7 +141,7 @@
       {
         "basename": "o_20",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/G",
+        "to": "G",
         "xy": {
           "x": 300,
           "y": 1200
@@ -150,7 +150,7 @@
       {
         "basename": "o_21",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/Po{#1,G}oP",
+        "to": "Po{#1,G}oP",
         "xy": {
           "x": 300,
           "y": 1000
@@ -159,7 +159,7 @@
       {
         "basename": "o_23",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/G",
+        "to": "G",
         "xy": {
           "x": 500,
           "y": 1200
@@ -168,7 +168,7 @@
       {
         "basename": "o_27",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/Po{G,G}oP",
+        "to": "Po{G,G}oP",
         "xy": {
           "x": 500,
           "y": 1000
@@ -209,7 +209,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/G",
+        "to": "G",
         "xy": {
           "x": 0,
           "y": 290
@@ -218,7 +218,7 @@
       {
         "basename": "o_8",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/Po{G,G,G}oP",
+        "to": "Po{G,G,G}oP",
         "xy": {
           "x": 0,
           "y": 600
@@ -227,7 +227,7 @@
       {
         "basename": "o_11",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/Po{Po{G,G}oP,G}oP",
+        "to": "Po{Po{G,G}oP,G}oP",
         "xy": {
           "x": 300,
           "y": 600
@@ -236,7 +236,7 @@
       {
         "basename": "o_12",
         "prototype": "IndexObject",
-        "to": "hdole/monoid/Po{G,Po{G,G}oP}oP",
+        "to": "Po{G,Po{G,G}oP}oP",
         "xy": {
           "x": 0,
           "y": 800
@@ -245,126 +245,126 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_2",
-        "codomain": "hdole/monoid/o_1",
-        "to": "hdole/monoid/mult"
+        "domain": "o_2",
+        "codomain": "o_1",
+        "to": "mult"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_3",
-        "codomain": "hdole/monoid/o_4",
-        "to": "hdole/monoid/unit"
+        "domain": "o_3",
+        "codomain": "o_4",
+        "to": "unit"
       },
       {
         "basename": "m_28",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_32",
-        "codomain": "hdole/monoid/o_31",
-        "to": "hdole/monoid/mult"
+        "domain": "o_32",
+        "codomain": "o_31",
+        "to": "mult"
       },
       {
         "basename": "m_29",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_30",
-        "codomain": "hdole/monoid/o_31",
-        "to": "hdole/monoid/mult"
+        "domain": "o_30",
+        "codomain": "o_31",
+        "to": "mult"
       },
       {
         "basename": "m_15",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_19",
-        "codomain": "hdole/monoid/o_24",
-        "to": "hdole/monoid/Id{G}dI"
+        "domain": "o_19",
+        "codomain": "o_24",
+        "to": "Id{G}dI"
       },
       {
         "basename": "m_16",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_22",
-        "codomain": "hdole/monoid/o_26",
-        "to": "hdole/monoid/Pm{Id{G}dI,unit}mP"
+        "domain": "o_22",
+        "codomain": "o_26",
+        "to": "Pm{Id{G}dI,unit}mP"
       },
       {
         "basename": "m_17",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_26",
-        "codomain": "hdole/monoid/o_24",
-        "to": "hdole/monoid/mult"
+        "domain": "o_26",
+        "codomain": "o_24",
+        "to": "mult"
       },
       {
         "basename": "m_19",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_20",
-        "codomain": "hdole/monoid/o_23",
+        "domain": "o_20",
+        "codomain": "o_23",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/monoid/Id{G}dI"
+        "to": "Id{G}dI"
       },
       {
         "basename": "m_20",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_21",
-        "codomain": "hdole/monoid/o_27",
-        "to": "hdole/monoid/Pm{unit,Id{G}dI}mP"
+        "domain": "o_21",
+        "codomain": "o_27",
+        "to": "Pm{unit,Id{G}dI}mP"
       },
       {
         "basename": "m_21",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_27",
-        "codomain": "hdole/monoid/o_23",
-        "to": "hdole/monoid/mult"
+        "domain": "o_27",
+        "codomain": "o_23",
+        "to": "mult"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_19",
-        "codomain": "hdole/monoid/o_22",
-        "to": "hdole/monoid/Fa{G,G_,G_-1}aF"
+        "domain": "o_19",
+        "codomain": "o_22",
+        "to": "Fa{G,G_,G_-1}aF"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_20",
-        "codomain": "hdole/monoid/o_21",
-        "to": "hdole/monoid/Fa{G,G_-1,G_}aF"
+        "domain": "o_20",
+        "codomain": "o_21",
+        "to": "Fa{G,G_-1,G_}aF"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_8",
-        "codomain": "hdole/monoid/o_11",
-        "to": "hdole/monoid/Pa{Fa{Po{G,G,G}oP,G_0,G_1}aF,Fa{Po{G,G,G}oP,G_2}aF}aP"
+        "domain": "o_8",
+        "codomain": "o_11",
+        "to": "Pa{Fa{Po{G,G,G}oP,G_0,G_1}aF,Fa{Po{G,G,G}oP,G_2}aF}aP"
       },
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_8",
-        "codomain": "hdole/monoid/o_12",
+        "domain": "o_8",
+        "codomain": "o_12",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/monoid/Pa{Fa{Po{G,G,G}oP,G_0}aF,Fa{Po{G,G,G}oP,G_1,G_2}aF}aP"
+        "to": "Pa{Fa{Po{G,G,G}oP,G_0}aF,Fa{Po{G,G,G}oP,G_1,G_2}aF}aP"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_12",
-        "codomain": "hdole/monoid/o_32",
-        "to": "hdole/monoid/Pm{Id{G}dI,mult}mP"
+        "domain": "o_12",
+        "codomain": "o_32",
+        "to": "Pm{Id{G}dI,mult}mP"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
-        "domain": "hdole/monoid/o_11",
-        "codomain": "hdole/monoid/o_30",
-        "to": "hdole/monoid/Pm{mult,Id{G}dI}mP"
+        "domain": "o_11",
+        "codomain": "o_30",
+        "to": "Pm{mult,Id{G}dI}mP"
       }
     ],
     "cells": [
@@ -471,23 +471,23 @@
     {
       "basename": "mult",
       "prototype": "Morphism",
-      "domain": "hdole/monoid/Po{G,G}oP",
-      "codomain": "hdole/monoid/G"
+      "domain": "Po{G,G}oP",
+      "codomain": "G"
     },
     {
       "basename": "unit",
       "prototype": "Morphism",
-      "domain": "hdole/monoid/#1",
-      "codomain": "hdole/monoid/G"
+      "domain": "#1",
+      "codomain": "G"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/monoid/G"
+      "domain": "G"
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/monoid/Po{G,G,G}oP",
-      "codomain": "hdole/monoid/Po{G,G}oP",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "Po{G,G}oP",
       "factors": [
         [
           0
@@ -499,8 +499,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/monoid/Po{G,G,G}oP",
-      "codomain": "hdole/monoid/G",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "G",
       "factors": [
         [
           0
@@ -509,8 +509,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/monoid/Po{G,G,G}oP",
-      "codomain": "hdole/monoid/Po{G,G}oP",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "Po{G,G}oP",
       "factors": [
         [
           1
@@ -522,8 +522,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/monoid/Po{G,G,G}oP",
-      "codomain": "hdole/monoid/G",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "G",
       "factors": [
         [
           2
@@ -532,8 +532,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/monoid/Po{G,#1}oP",
-      "codomain": "hdole/monoid/Po{G,G}oP",
+      "domain": "Po{G,#1}oP",
+      "codomain": "Po{G,G}oP",
       "morphisms": [
         "Id{G}dI",
         "unit"
@@ -541,8 +541,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/monoid/Po{#1,G}oP",
-      "codomain": "hdole/monoid/Po{G,G}oP",
+      "domain": "Po{#1,G}oP",
+      "codomain": "Po{G,G}oP",
       "morphisms": [
         "unit",
         "Id{G}dI"
@@ -550,8 +550,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/monoid/G",
-      "codomain": "hdole/monoid/Po{G,#1}oP",
+      "domain": "G",
+      "codomain": "Po{G,#1}oP",
       "factors": [
         [],
         -1
@@ -559,8 +559,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/monoid/G",
-      "codomain": "hdole/monoid/Po{#1,G}oP",
+      "domain": "G",
+      "codomain": "Po{#1,G}oP",
       "factors": [
         -1,
         []
@@ -568,8 +568,8 @@
     },
     {
       "prototype": "ProductAssembly",
-      "domain": "hdole/monoid/Po{G,G,G}oP",
-      "codomain": "hdole/monoid/Po{Po{G,G}oP,G}oP",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "Po{Po{G,G}oP,G}oP",
       "morphisms": [
         "Fa{Po{G,G,G}oP,G_0,G_1}aF",
         "Fa{Po{G,G,G}oP,G_2}aF"
@@ -577,8 +577,8 @@
     },
     {
       "prototype": "ProductAssembly",
-      "domain": "hdole/monoid/Po{G,G,G}oP",
-      "codomain": "hdole/monoid/Po{G,Po{G,G}oP}oP",
+      "domain": "Po{G,G,G}oP",
+      "codomain": "Po{G,Po{G,G}oP}oP",
       "morphisms": [
         "Fa{Po{G,G,G}oP,G_0}aF",
         "Fa{Po{G,G,G}oP,G_1,G_2}aF"
@@ -586,8 +586,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/monoid/Po{G,Po{G,G}oP}oP",
-      "codomain": "hdole/monoid/Po{G,G}oP",
+      "domain": "Po{G,Po{G,G}oP}oP",
+      "codomain": "Po{G,G}oP",
       "morphisms": [
         "Id{G}dI",
         "mult"
@@ -595,8 +595,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/monoid/Po{Po{G,G}oP,G}oP",
-      "codomain": "hdole/monoid/Po{G,G}oP",
+      "domain": "Po{Po{G,G}oP,G}oP",
+      "codomain": "Po{G,G}oP",
       "morphisms": [
         "mult",
         "Id{G}dI"

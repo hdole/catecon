@@ -23,7 +23,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 990,
           "y": 280
@@ -32,7 +32,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": 790,
           "y": 480
@@ -41,7 +41,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 990,
           "y": 480
@@ -50,7 +50,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": 790,
           "y": 680
@@ -59,7 +59,7 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 990,
           "y": 680
@@ -68,7 +68,7 @@
       {
         "basename": "o_6",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": 790,
           "y": 880
@@ -77,7 +77,7 @@
       {
         "basename": "o_7",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 990,
           "y": 880
@@ -86,7 +86,7 @@
       {
         "basename": "o_9",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 1500
@@ -95,7 +95,7 @@
       {
         "basename": "o_10",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1000,
           "y": 1500
@@ -104,7 +104,7 @@
       {
         "basename": "o_11",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 2300
@@ -123,7 +123,7 @@
       {
         "basename": "o_17",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 3900
@@ -132,7 +132,7 @@
       {
         "basename": "o_18",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 3900
@@ -141,7 +141,7 @@
       {
         "basename": "o_19",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 4100
@@ -150,7 +150,7 @@
       {
         "basename": "o_20",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 4100
@@ -159,7 +159,7 @@
       {
         "basename": "o_21",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 3700
@@ -168,7 +168,7 @@
       {
         "basename": "o_22",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 3700
@@ -177,7 +177,7 @@
       {
         "basename": "o_25",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 190,
           "y": 280
@@ -196,7 +196,7 @@
       {
         "basename": "o_27",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": -10,
           "y": 480
@@ -205,7 +205,7 @@
       {
         "basename": "o_28",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 190,
           "y": 480
@@ -224,7 +224,7 @@
       {
         "basename": "o_29",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": -10,
           "y": 680
@@ -233,7 +233,7 @@
       {
         "basename": "o_30",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 190,
           "y": 680
@@ -252,7 +252,7 @@
       {
         "basename": "o_31",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": -10,
           "y": 880
@@ -261,7 +261,7 @@
       {
         "basename": "o_32",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 190,
           "y": 880
@@ -280,7 +280,7 @@
       {
         "basename": "o_33",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 1500
@@ -289,7 +289,7 @@
       {
         "basename": "o_34",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 200,
           "y": 1500
@@ -308,7 +308,7 @@
       {
         "basename": "o_35",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 1900
@@ -317,7 +317,7 @@
       {
         "basename": "o_36",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 200,
           "y": 1900
@@ -336,7 +336,7 @@
       {
         "basename": "o_37",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 2300
@@ -345,7 +345,7 @@
       {
         "basename": "o_38",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 200,
           "y": 2300
@@ -364,7 +364,7 @@
       {
         "basename": "o_39",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 2700
@@ -373,7 +373,7 @@
       {
         "basename": "o_40",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 200,
           "y": 2700
@@ -392,7 +392,7 @@
       {
         "basename": "o_41",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 2900
@@ -401,7 +401,7 @@
       {
         "basename": "o_42",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 200,
           "y": 2900
@@ -420,7 +420,7 @@
       {
         "basename": "o_43",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 3100
@@ -429,7 +429,7 @@
       {
         "basename": "o_44",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 200,
           "y": 3100
@@ -448,7 +448,7 @@
       {
         "basename": "o_45",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 3300
@@ -457,7 +457,7 @@
       {
         "basename": "o_46",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{Po{N16,N16}oP,#1}oPC",
+        "to": "CPo{Po{N16,N16}oP,#1}oPC",
         "xy": {
           "x": 230,
           "y": 3300
@@ -476,7 +476,7 @@
       {
         "basename": "o_47",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 3500
@@ -485,7 +485,7 @@
       {
         "basename": "o_48",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N16,#1}oPC",
+        "to": "CPo{N16,#1}oPC",
         "xy": {
           "x": 200,
           "y": 3500
@@ -514,7 +514,7 @@
       {
         "basename": "o_51",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 3900
@@ -523,7 +523,7 @@
       {
         "basename": "o_52",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 200,
           "y": 3900
@@ -542,7 +542,7 @@
       {
         "basename": "o_53",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 4100
@@ -551,7 +551,7 @@
       {
         "basename": "o_54",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 200,
           "y": 4100
@@ -563,7 +563,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -1480,
-          "y": -340
+          "y": -320
         },
         "height": "350",
         "weight": "bold"
@@ -571,7 +571,7 @@
       {
         "basename": "o_14",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 800,
           "y": 1100
@@ -580,7 +580,7 @@
       {
         "basename": "o_55",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N64,#1}oPC",
+        "to": "CPo{N64,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 1100
@@ -589,7 +589,7 @@
       {
         "basename": "o_13",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N64,#1}oPC",
+        "to": "CPo{N64,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 1300
@@ -598,7 +598,7 @@
       {
         "basename": "o_15",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 800,
           "y": 1300
@@ -607,7 +607,7 @@
       {
         "basename": "o_8",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 3700
@@ -616,7 +616,7 @@
       {
         "basename": "o_16",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 200,
           "y": 3700
@@ -625,7 +625,7 @@
       {
         "basename": "o_23",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": 390,
           "y": 480
@@ -634,7 +634,7 @@
       {
         "basename": "o_50",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 590,
           "y": 480
@@ -643,7 +643,7 @@
       {
         "basename": "o_56",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": 390,
           "y": 680
@@ -652,7 +652,7 @@
       {
         "basename": "o_57",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 590,
           "y": 680
@@ -661,7 +661,7 @@
       {
         "basename": "o_58",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -10,
           "y": 280
@@ -670,7 +670,7 @@
       {
         "basename": "o_62",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 590,
           "y": 280
@@ -679,7 +679,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -210,
           "y": 480
@@ -688,7 +688,7 @@
       {
         "basename": "o_24",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -210,
           "y": 680
@@ -697,7 +697,7 @@
       {
         "basename": "o_65",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 590,
           "y": 880
@@ -706,7 +706,7 @@
       {
         "basename": "o_66",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 400,
           "y": 1100
@@ -715,7 +715,7 @@
       {
         "basename": "o_67",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 10,
           "y": 1100
@@ -724,7 +724,7 @@
       {
         "basename": "o_68",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": 390,
           "y": 880
@@ -733,7 +733,7 @@
       {
         "basename": "o_70",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N32,#1}oPC",
+        "to": "CPo{N32,#1}oPC",
         "xy": {
           "x": 600,
           "y": 1100
@@ -742,7 +742,7 @@
       {
         "basename": "o_71",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N32,#1}oPC",
+        "to": "CPo{N32,#1}oPC",
         "xy": {
           "x": 600,
           "y": 1300
@@ -751,7 +751,7 @@
       {
         "basename": "o_73",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 400,
           "y": 1300
@@ -760,7 +760,7 @@
       {
         "basename": "o_59",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N16,#1}oPC",
+        "to": "CPo{N16,#1}oPC",
         "xy": {
           "x": 200,
           "y": 1100
@@ -769,7 +769,7 @@
       {
         "basename": "o_74",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": -410,
           "y": 480
@@ -778,7 +778,7 @@
       {
         "basename": "o_75",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": -410,
           "y": 680
@@ -787,7 +787,7 @@
       {
         "basename": "o_49",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": -410,
           "y": 880
@@ -796,7 +796,7 @@
       {
         "basename": "o_76",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -210,
           "y": 880
@@ -805,7 +805,7 @@
       {
         "basename": "o_79",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N8,#1}oPC",
+        "to": "CPo{N8,#1}oPC",
         "xy": {
           "x": -200,
           "y": 1300
@@ -814,7 +814,7 @@
       {
         "basename": "o_80",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N16,#1}oPC",
+        "to": "CPo{N16,#1}oPC",
         "xy": {
           "x": 200,
           "y": 1300
@@ -823,7 +823,7 @@
       {
         "basename": "o_81",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -400,
           "y": 1300
@@ -832,7 +832,7 @@
       {
         "basename": "o_82",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 0,
           "y": 1300
@@ -841,7 +841,7 @@
       {
         "basename": "o_77",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N8,#1}oPC",
+        "to": "CPo{N8,#1}oPC",
         "xy": {
           "x": -200,
           "y": 1100
@@ -850,7 +850,7 @@
       {
         "basename": "o_78",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -400,
           "y": 1100
@@ -859,7 +859,7 @@
       {
         "basename": "o_83",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -200,
           "y": 1500
@@ -868,7 +868,7 @@
       {
         "basename": "o_84",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -410,
           "y": 1500
@@ -877,7 +877,7 @@
       {
         "basename": "o_85",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 600,
           "y": 1500
@@ -886,7 +886,7 @@
       {
         "basename": "o_86",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 1500
@@ -895,7 +895,7 @@
       {
         "basename": "o_89",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 600,
           "y": 1900
@@ -904,7 +904,7 @@
       {
         "basename": "o_90",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 1900
@@ -913,7 +913,7 @@
       {
         "basename": "o_91",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 1900
@@ -922,7 +922,7 @@
       {
         "basename": "o_92",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1000,
           "y": 1900
@@ -931,7 +931,7 @@
       {
         "basename": "o_87",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 2300
@@ -940,7 +940,7 @@
       {
         "basename": "o_88",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N16,#1}oPC",
+        "to": "CPo{N16,#1}oPC",
         "xy": {
           "x": 200,
           "y": 1700
@@ -949,7 +949,7 @@
       {
         "basename": "o_93",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N8,#1}oPC",
+        "to": "CPo{N8,#1}oPC",
         "xy": {
           "x": -200,
           "y": 1700
@@ -958,7 +958,7 @@
       {
         "basename": "o_94",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N16,#1}oPC",
+        "to": "CPo{N16,#1}oPC",
         "xy": {
           "x": 200,
           "y": 2100
@@ -967,7 +967,7 @@
       {
         "basename": "o_95",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 600,
           "y": 2300
@@ -976,7 +976,7 @@
       {
         "basename": "o_97",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N64,#1}oPC",
+        "to": "CPo{N64,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 1700
@@ -985,7 +985,7 @@
       {
         "basename": "o_98",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N64,#1}oPC",
+        "to": "CPo{N64,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 2100
@@ -994,7 +994,7 @@
       {
         "basename": "o_101",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1390,
           "y": 480
@@ -1003,7 +1003,7 @@
       {
         "basename": "o_102",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1390,
           "y": 680
@@ -1012,7 +1012,7 @@
       {
         "basename": "o_103",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1000,
           "y": 2300
@@ -1021,7 +1021,7 @@
       {
         "basename": "o_104",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N32,#1}oPC",
+        "to": "CPo{N32,#1}oPC",
         "xy": {
           "x": 600,
           "y": 2100
@@ -1030,7 +1030,7 @@
       {
         "basename": "o_105",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 1900
@@ -1039,7 +1039,7 @@
       {
         "basename": "o_106",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -200,
           "y": 1900
@@ -1048,7 +1048,7 @@
       {
         "basename": "o_107",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N8,#1}oPC",
+        "to": "CPo{N8,#1}oPC",
         "xy": {
           "x": -200,
           "y": 2100
@@ -1057,7 +1057,7 @@
       {
         "basename": "o_108",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 2300
@@ -1066,7 +1066,7 @@
       {
         "basename": "o_109",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": -200,
           "y": 2300
@@ -1075,7 +1075,7 @@
       {
         "basename": "o_110",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 2700
@@ -1084,7 +1084,7 @@
       {
         "basename": "o_111",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -200,
           "y": 2700
@@ -1093,7 +1093,7 @@
       {
         "basename": "o_112",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 2900
@@ -1102,7 +1102,7 @@
       {
         "basename": "o_113",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -200,
           "y": 2900
@@ -1111,7 +1111,7 @@
       {
         "basename": "o_114",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 3100
@@ -1120,7 +1120,7 @@
       {
         "basename": "o_115",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -200,
           "y": 3100
@@ -1129,7 +1129,7 @@
       {
         "basename": "o_116",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": -10,
           "y": -120
@@ -1138,7 +1138,7 @@
       {
         "basename": "o_118",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 390,
           "y": -120
@@ -1147,7 +1147,7 @@
       {
         "basename": "o_121",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 790,
           "y": -120
@@ -1156,7 +1156,7 @@
       {
         "basename": "o_122",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1190,
           "y": -120
@@ -1165,7 +1165,7 @@
       {
         "basename": "o_63",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": 1190,
           "y": 480
@@ -1174,7 +1174,7 @@
       {
         "basename": "o_64",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": 1190,
           "y": 680
@@ -1183,7 +1183,7 @@
       {
         "basename": "o_72",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1390,
           "y": 880
@@ -1192,7 +1192,7 @@
       {
         "basename": "o_100",
         "prototype": "IndexObject",
-        "to": "hdole/nat/#1",
+        "to": "#1",
         "xy": {
           "x": 1190,
           "y": 880
@@ -1201,7 +1201,7 @@
       {
         "basename": "o_124",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "to": "CPo{N128,#1}oPC",
         "xy": {
           "x": 1400,
           "y": 1100
@@ -1210,7 +1210,7 @@
       {
         "basename": "o_125",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1200,
           "y": 1100
@@ -1219,7 +1219,7 @@
       {
         "basename": "o_126",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1200,
           "y": 1300
@@ -1228,7 +1228,7 @@
       {
         "basename": "o_127",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "to": "CPo{N128,#1}oPC",
         "xy": {
           "x": 1400,
           "y": 1300
@@ -1237,7 +1237,7 @@
       {
         "basename": "o_128",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1400,
           "y": 1500
@@ -1246,7 +1246,7 @@
       {
         "basename": "o_129",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 1500
@@ -1255,7 +1255,7 @@
       {
         "basename": "o_130",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "to": "CPo{N128,#1}oPC",
         "xy": {
           "x": 1400,
           "y": 1700
@@ -1264,7 +1264,7 @@
       {
         "basename": "o_131",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1400,
           "y": 1900
@@ -1273,7 +1273,7 @@
       {
         "basename": "o_132",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "to": "CPo{N128,#1}oPC",
         "xy": {
           "x": 1400,
           "y": 2100
@@ -1282,7 +1282,7 @@
       {
         "basename": "o_134",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "to": "CPo{N128,#1}oPC",
         "xy": {
           "x": 1400,
           "y": 2300
@@ -1291,7 +1291,7 @@
       {
         "basename": "o_136",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 1900
@@ -1300,7 +1300,7 @@
       {
         "basename": "o_138",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N32,#1}oPC",
+        "to": "CPo{N32,#1}oPC",
         "xy": {
           "x": 600,
           "y": 1700
@@ -1309,7 +1309,7 @@
       {
         "basename": "o_139",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 2700
@@ -1318,7 +1318,7 @@
       {
         "basename": "o_141",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 2900
@@ -1327,7 +1327,7 @@
       {
         "basename": "o_143",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 3100
@@ -1336,7 +1336,7 @@
       {
         "basename": "o_140",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 600,
           "y": 2700
@@ -1345,7 +1345,7 @@
       {
         "basename": "o_142",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 600,
           "y": 2900
@@ -1354,7 +1354,7 @@
       {
         "basename": "o_144",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 600,
           "y": 3100
@@ -1363,7 +1363,7 @@
       {
         "basename": "o_145",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{Po{N32,N32}oP,#1}oPC",
+        "to": "CPo{Po{N32,N32}oP,#1}oPC",
         "xy": {
           "x": 630,
           "y": 3300
@@ -1372,7 +1372,7 @@
       {
         "basename": "o_146",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 3300
@@ -1381,7 +1381,7 @@
       {
         "basename": "o_147",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N32,#1}oPC",
+        "to": "CPo{N32,#1}oPC",
         "xy": {
           "x": 600,
           "y": 3500
@@ -1390,7 +1390,7 @@
       {
         "basename": "o_148",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 3500
@@ -1399,7 +1399,7 @@
       {
         "basename": "o_150",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 3700
@@ -1408,7 +1408,7 @@
       {
         "basename": "o_149",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 3900
@@ -1417,7 +1417,7 @@
       {
         "basename": "o_151",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 4100
@@ -1426,7 +1426,7 @@
       {
         "basename": "o_152",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 600,
           "y": 3700
@@ -1435,7 +1435,7 @@
       {
         "basename": "o_153",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 600,
           "y": 3900
@@ -1444,7 +1444,7 @@
       {
         "basename": "o_154",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 600,
           "y": 4100
@@ -1453,7 +1453,7 @@
       {
         "basename": "o_155",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1400,
           "y": 3700
@@ -1462,7 +1462,7 @@
       {
         "basename": "o_156",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1400,
           "y": 3900
@@ -1471,7 +1471,7 @@
       {
         "basename": "o_157",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1400,
           "y": 4100
@@ -1480,7 +1480,7 @@
       {
         "basename": "o_158",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": -200,
           "y": 3700
@@ -1489,7 +1489,7 @@
       {
         "basename": "o_159",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": -200,
           "y": 3900
@@ -1498,7 +1498,7 @@
       {
         "basename": "o_160",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": -200,
           "y": 4100
@@ -1507,7 +1507,7 @@
       {
         "basename": "o_161",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 2700
@@ -1516,7 +1516,7 @@
       {
         "basename": "o_162",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1000,
           "y": 2700
@@ -1525,7 +1525,7 @@
       {
         "basename": "o_163",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 2900
@@ -1534,7 +1534,7 @@
       {
         "basename": "o_164",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1000,
           "y": 2900
@@ -1543,7 +1543,7 @@
       {
         "basename": "o_165",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 3100
@@ -1552,7 +1552,7 @@
       {
         "basename": "o_166",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1000,
           "y": 3100
@@ -1561,7 +1561,7 @@
       {
         "basename": "o_167",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 3300
@@ -1570,7 +1570,7 @@
       {
         "basename": "o_168",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{Po{N64,N64}oP,#1}oPC",
+        "to": "CPo{Po{N64,N64}oP,#1}oPC",
         "xy": {
           "x": 1030,
           "y": 3300
@@ -1579,7 +1579,7 @@
       {
         "basename": "o_169",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N64,#1}oPC",
+        "to": "CPo{N64,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 3500
@@ -1588,7 +1588,7 @@
       {
         "basename": "o_170",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 3500
@@ -1597,7 +1597,7 @@
       {
         "basename": "o_171",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 2700
@@ -1606,7 +1606,7 @@
       {
         "basename": "o_172",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 2900
@@ -1615,7 +1615,7 @@
       {
         "basename": "o_173",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 3100
@@ -1624,7 +1624,7 @@
       {
         "basename": "o_174",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 3300
@@ -1633,7 +1633,7 @@
       {
         "basename": "o_175",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 3500
@@ -1642,7 +1642,7 @@
       {
         "basename": "o_176",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 3700
@@ -1651,7 +1651,7 @@
       {
         "basename": "o_177",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 3900
@@ -1660,7 +1660,7 @@
       {
         "basename": "o_178",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 4100
@@ -1669,7 +1669,7 @@
       {
         "basename": "o_179",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1400,
           "y": 2700
@@ -1678,7 +1678,7 @@
       {
         "basename": "o_180",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1400,
           "y": 2900
@@ -1687,7 +1687,7 @@
       {
         "basename": "o_181",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1400,
           "y": 3100
@@ -1696,7 +1696,7 @@
       {
         "basename": "o_182",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{Po{N128,N128}oP,#1}oPC",
+        "to": "CPo{Po{N128,N128}oP,#1}oPC",
         "xy": {
           "x": 1500,
           "y": 3300
@@ -1705,7 +1705,7 @@
       {
         "basename": "o_183",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N128,#1}oPC",
+        "to": "CPo{N128,#1}oPC",
         "xy": {
           "x": 1500,
           "y": 3500
@@ -1714,7 +1714,7 @@
       {
         "basename": "o_184",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1390,
           "y": 280
@@ -1723,7 +1723,7 @@
       {
         "basename": "o_186",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 3500
@@ -1732,7 +1732,7 @@
       {
         "basename": "o_187",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 3300
@@ -1741,7 +1741,7 @@
       {
         "basename": "o_188",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 3700
@@ -1750,7 +1750,7 @@
       {
         "basename": "o_189",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 3900
@@ -1759,7 +1759,7 @@
       {
         "basename": "o_190",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 4100
@@ -1768,7 +1768,7 @@
       {
         "basename": "o_191",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{Po{N8,N8}oP,#1}oPC",
+        "to": "CPo{Po{N8,N8}oP,#1}oPC",
         "xy": {
           "x": -200,
           "y": 3300
@@ -1777,7 +1777,7 @@
       {
         "basename": "o_192",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{N8,#1}oPC",
+        "to": "CPo{N8,#1}oPC",
         "xy": {
           "x": -200,
           "y": 3500
@@ -1786,7 +1786,7 @@
       {
         "basename": "o_193",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 4300
@@ -1795,7 +1795,7 @@
       {
         "basename": "o_194",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 4500
@@ -1804,7 +1804,7 @@
       {
         "basename": "o_195",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": -200,
           "y": 4300
@@ -1813,7 +1813,7 @@
       {
         "basename": "o_196",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": -200,
           "y": 4500
@@ -1822,7 +1822,7 @@
       {
         "basename": "o_197",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 4700
@@ -1831,7 +1831,7 @@
       {
         "basename": "o_198",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -200,
           "y": 4700
@@ -1840,7 +1840,7 @@
       {
         "basename": "o_199",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 4900
@@ -1849,7 +1849,7 @@
       {
         "basename": "o_200",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -200,
           "y": 4900
@@ -1858,7 +1858,7 @@
       {
         "basename": "o_201",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -400,
           "y": 2500
@@ -1867,7 +1867,7 @@
       {
         "basename": "o_202",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -200,
           "y": 2500
@@ -1876,7 +1876,7 @@
       {
         "basename": "o_203",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 1700
@@ -1885,7 +1885,7 @@
       {
         "basename": "o_204",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 2100
@@ -1894,7 +1894,7 @@
       {
         "basename": "o_205",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 2100
@@ -1903,7 +1903,7 @@
       {
         "basename": "o_206",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 410,
           "y": 2100
@@ -1912,7 +1912,7 @@
       {
         "basename": "o_207",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 2100
@@ -1921,7 +1921,7 @@
       {
         "basename": "o_208",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 2100
@@ -1930,7 +1930,7 @@
       {
         "basename": "o_209",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 1700
@@ -1939,7 +1939,7 @@
       {
         "basename": "o_210",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 1700
@@ -1948,7 +1948,7 @@
       {
         "basename": "o_211",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 1700
@@ -1957,7 +1957,7 @@
       {
         "basename": "o_212",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 1700
@@ -1966,7 +1966,7 @@
       {
         "basename": "o_12",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 2300
@@ -1975,7 +1975,7 @@
       {
         "basename": "o_99",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 0,
           "y": 2500
@@ -1984,7 +1984,7 @@
       {
         "basename": "o_135",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 200,
           "y": 2500
@@ -1993,7 +1993,7 @@
       {
         "basename": "o_213",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 400,
           "y": 2500
@@ -2002,7 +2002,7 @@
       {
         "basename": "o_214",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 600,
           "y": 2500
@@ -2011,7 +2011,7 @@
       {
         "basename": "o_215",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 800,
           "y": 2500
@@ -2020,7 +2020,7 @@
       {
         "basename": "o_216",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1000,
           "y": 2500
@@ -2029,7 +2029,7 @@
       {
         "basename": "o_217",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1200,
           "y": 2500
@@ -2038,7 +2038,7 @@
       {
         "basename": "o_218",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1400,
           "y": 2500
@@ -2047,7 +2047,7 @@
       {
         "basename": "o_225",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 5100
@@ -2056,7 +2056,7 @@
       {
         "basename": "o_226",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -200,
           "y": 5100
@@ -2065,7 +2065,7 @@
       {
         "basename": "o_227",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N8,N8}oP",
+        "to": "Po{N8,N8}oP",
         "xy": {
           "x": -400,
           "y": 5300
@@ -2074,7 +2074,7 @@
       {
         "basename": "o_228",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": -200,
           "y": 5300
@@ -2083,7 +2083,7 @@
       {
         "basename": "o_270",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 5100
@@ -2092,7 +2092,7 @@
       {
         "basename": "o_271",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 200,
           "y": 5100
@@ -2102,7 +2102,7 @@
         "basename": "o_272",
         "prototype": "IndexObject",
         "properName": "o_273",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 5300
@@ -2111,7 +2111,7 @@
       {
         "basename": "o_273",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 200,
           "y": 5300
@@ -2120,7 +2120,7 @@
       {
         "basename": "o_280",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 5100
@@ -2129,7 +2129,7 @@
       {
         "basename": "o_281",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 600,
           "y": 5100
@@ -2139,7 +2139,7 @@
         "basename": "o_282",
         "prototype": "IndexObject",
         "properName": "o_283",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 5300
@@ -2148,7 +2148,7 @@
       {
         "basename": "o_283",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 600,
           "y": 5300
@@ -2157,7 +2157,7 @@
       {
         "basename": "o_290",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 5100
@@ -2166,7 +2166,7 @@
       {
         "basename": "o_291",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1000,
           "y": 5100
@@ -2176,7 +2176,7 @@
         "basename": "o_292",
         "prototype": "IndexObject",
         "properName": "o_293",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 5300
@@ -2185,7 +2185,7 @@
       {
         "basename": "o_293",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1000,
           "y": 5300
@@ -2194,7 +2194,7 @@
       {
         "basename": "o_300",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 5100
@@ -2203,7 +2203,7 @@
       {
         "basename": "o_301",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1400,
           "y": 5100
@@ -2213,7 +2213,7 @@
         "basename": "o_302",
         "prototype": "IndexObject",
         "properName": "o_303",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 5300
@@ -2222,7 +2222,7 @@
       {
         "basename": "o_303",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1400,
           "y": 5300
@@ -2231,7 +2231,7 @@
       {
         "basename": "o_229",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 4300
@@ -2240,7 +2240,7 @@
       {
         "basename": "o_230",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 200,
           "y": 4300
@@ -2249,7 +2249,7 @@
       {
         "basename": "o_231",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 4300
@@ -2258,7 +2258,7 @@
       {
         "basename": "o_232",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 600,
           "y": 4300
@@ -2267,7 +2267,7 @@
       {
         "basename": "o_233",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 4300
@@ -2276,7 +2276,7 @@
       {
         "basename": "o_234",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 4300
@@ -2285,7 +2285,7 @@
       {
         "basename": "o_235",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 4300
@@ -2294,7 +2294,7 @@
       {
         "basename": "o_236",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1400,
           "y": 4300
@@ -2303,7 +2303,7 @@
       {
         "basename": "o_237",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N16}oP",
+        "to": "Po{N16,N16}oP",
         "xy": {
           "x": 0,
           "y": 4500
@@ -2312,7 +2312,7 @@
       {
         "basename": "o_238",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 200,
           "y": 4500
@@ -2321,7 +2321,7 @@
       {
         "basename": "o_239",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N32}oP",
+        "to": "Po{N32,N32}oP",
         "xy": {
           "x": 400,
           "y": 4500
@@ -2330,7 +2330,7 @@
       {
         "basename": "o_240",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 600,
           "y": 4500
@@ -2339,7 +2339,7 @@
       {
         "basename": "o_241",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N64}oP",
+        "to": "Po{N64,N64}oP",
         "xy": {
           "x": 800,
           "y": 4500
@@ -2348,7 +2348,7 @@
       {
         "basename": "o_242",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1000,
           "y": 4500
@@ -2357,7 +2357,7 @@
       {
         "basename": "o_243",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N128}oP",
+        "to": "Po{N128,N128}oP",
         "xy": {
           "x": 1200,
           "y": 4500
@@ -2366,7 +2366,7 @@
       {
         "basename": "o_244",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1400,
           "y": 4500
@@ -2415,7 +2415,7 @@
       {
         "basename": "o_245",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 200,
           "y": 4700
@@ -2424,7 +2424,7 @@
       {
         "basename": "o_246",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N8}oP",
+        "to": "Po{N16,N8}oP",
         "xy": {
           "x": 0,
           "y": 4700
@@ -2433,7 +2433,7 @@
       {
         "basename": "o_247",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 600,
           "y": 4700
@@ -2442,7 +2442,7 @@
       {
         "basename": "o_248",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N8}oP",
+        "to": "Po{N32,N8}oP",
         "xy": {
           "x": 400,
           "y": 4700
@@ -2451,7 +2451,7 @@
       {
         "basename": "o_249",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1000,
           "y": 4700
@@ -2460,7 +2460,7 @@
       {
         "basename": "o_250",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N8}oP",
+        "to": "Po{N64,N8}oP",
         "xy": {
           "x": 800,
           "y": 4700
@@ -2469,7 +2469,7 @@
       {
         "basename": "o_251",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1400,
           "y": 4700
@@ -2478,7 +2478,7 @@
       {
         "basename": "o_252",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N8}oP",
+        "to": "Po{N128,N8}oP",
         "xy": {
           "x": 1200,
           "y": 4700
@@ -2487,7 +2487,7 @@
       {
         "basename": "o_96",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 200,
           "y": 4900
@@ -2496,7 +2496,7 @@
       {
         "basename": "o_253",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N16,N8}oP",
+        "to": "Po{N16,N8}oP",
         "xy": {
           "x": 0,
           "y": 4900
@@ -2505,7 +2505,7 @@
       {
         "basename": "o_254",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 600,
           "y": 4900
@@ -2514,7 +2514,7 @@
       {
         "basename": "o_255",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N32,N8}oP",
+        "to": "Po{N32,N8}oP",
         "xy": {
           "x": 400,
           "y": 4900
@@ -2523,7 +2523,7 @@
       {
         "basename": "o_256",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1000,
           "y": 4900
@@ -2532,7 +2532,7 @@
       {
         "basename": "o_257",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N64,N8}oP",
+        "to": "Po{N64,N8}oP",
         "xy": {
           "x": 800,
           "y": 4900
@@ -2541,7 +2541,7 @@
       {
         "basename": "o_258",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1400,
           "y": 4900
@@ -2550,7 +2550,7 @@
       {
         "basename": "o_259",
         "prototype": "IndexObject",
-        "to": "hdole/nat/Po{N128,N8}oP",
+        "to": "Po{N128,N8}oP",
         "xy": {
           "x": 1200,
           "y": 4900
@@ -2559,7 +2559,7 @@
       {
         "basename": "o_117",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": 190,
           "y": -120
@@ -2568,7 +2568,7 @@
       {
         "basename": "o_119",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N8",
+        "to": "N8",
         "xy": {
           "x": 190,
           "y": 80
@@ -2577,7 +2577,7 @@
       {
         "basename": "o_120",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 590,
           "y": -120
@@ -2586,7 +2586,7 @@
       {
         "basename": "o_123",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 590,
           "y": 80
@@ -2595,7 +2595,7 @@
       {
         "basename": "o_260",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 990,
           "y": -120
@@ -2604,7 +2604,7 @@
       {
         "basename": "o_261",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 990,
           "y": 80
@@ -2613,7 +2613,7 @@
       {
         "basename": "o_262",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1390,
           "y": -120
@@ -2622,7 +2622,7 @@
       {
         "basename": "o_263",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1390,
           "y": 80
@@ -2691,7 +2691,7 @@
       {
         "basename": "o_133",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": -10,
           "y": 80
@@ -2700,7 +2700,7 @@
       {
         "basename": "o_137",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 390,
           "y": 80
@@ -2709,7 +2709,7 @@
       {
         "basename": "o_219",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 790,
           "y": 80
@@ -2718,7 +2718,7 @@
       {
         "basename": "o_220",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N128",
+        "to": "N128",
         "xy": {
           "x": 1190,
           "y": 80
@@ -2727,7 +2727,7 @@
       {
         "basename": "o_26",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N16",
+        "to": "N16",
         "xy": {
           "x": 390,
           "y": 280
@@ -2736,7 +2736,7 @@
       {
         "basename": "o_60",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N32",
+        "to": "N32",
         "xy": {
           "x": 790,
           "y": 280
@@ -2745,7 +2745,7 @@
       {
         "basename": "o_61",
         "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
+        "to": "N64",
         "xy": {
           "x": 1190,
           "y": 280
@@ -2754,961 +2754,961 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_2",
-        "codomain": "hdole/nat/o_3",
-        "to": "hdole/nat/zero64"
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "zero64"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_4",
-        "codomain": "hdole/nat/o_5",
-        "to": "hdole/nat/one64"
+        "domain": "o_4",
+        "codomain": "o_5",
+        "to": "one64"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_6",
-        "codomain": "hdole/nat/o_7",
-        "to": "hdole/nat/inf64"
+        "domain": "o_6",
+        "codomain": "o_7",
+        "to": "inf64"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_9",
-        "codomain": "hdole/nat/o_10",
-        "to": "hdole/nat/add64"
+        "domain": "o_9",
+        "codomain": "o_10",
+        "to": "add64"
       },
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_17",
-        "codomain": "hdole/nat/o_18",
-        "to": "hdole/nat/lt64"
+        "domain": "o_17",
+        "codomain": "o_18",
+        "to": "lt64"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_19",
-        "codomain": "hdole/nat/o_20",
-        "to": "hdole/nat/lteq64"
+        "domain": "o_19",
+        "codomain": "o_20",
+        "to": "lteq64"
       },
       {
         "basename": "m_9",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_21",
-        "codomain": "hdole/nat/o_22",
-        "to": "hdole/nat/equ64"
+        "domain": "o_21",
+        "codomain": "o_22",
+        "to": "equ64"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_27",
-        "codomain": "hdole/nat/o_28",
-        "to": "hdole/nat/zero16"
+        "domain": "o_27",
+        "codomain": "o_28",
+        "to": "zero16"
       },
       {
         "basename": "m_12",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_29",
-        "codomain": "hdole/nat/o_30",
-        "to": "hdole/nat/one16"
+        "domain": "o_29",
+        "codomain": "o_30",
+        "to": "one16"
       },
       {
         "basename": "m_13",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_31",
-        "codomain": "hdole/nat/o_32",
-        "to": "hdole/nat/inf16"
+        "domain": "o_31",
+        "codomain": "o_32",
+        "to": "inf16"
       },
       {
         "basename": "m_14",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_33",
-        "codomain": "hdole/nat/o_34",
-        "to": "hdole/nat/add16"
+        "domain": "o_33",
+        "codomain": "o_34",
+        "to": "add16"
       },
       {
         "basename": "m_16",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_37",
-        "codomain": "hdole/nat/o_38",
-        "to": "hdole/nat/mult16"
+        "domain": "o_37",
+        "codomain": "o_38",
+        "to": "mult16"
       },
       {
         "basename": "m_17",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_39",
-        "codomain": "hdole/nat/o_40",
-        "to": "hdole/nat/and16"
+        "domain": "o_39",
+        "codomain": "o_40",
+        "to": "and16"
       },
       {
         "basename": "m_18",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_41",
-        "codomain": "hdole/nat/o_42",
-        "to": "hdole/nat/or16"
+        "domain": "o_41",
+        "codomain": "o_42",
+        "to": "or16"
       },
       {
         "basename": "m_19",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_43",
-        "codomain": "hdole/nat/o_44",
-        "to": "hdole/nat/xor16"
+        "domain": "o_43",
+        "codomain": "o_44",
+        "to": "xor16"
       },
       {
         "basename": "m_20",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_45",
-        "codomain": "hdole/nat/o_46",
-        "to": "hdole/nat/div16"
+        "domain": "o_45",
+        "codomain": "o_46",
+        "to": "div16"
       },
       {
         "basename": "m_21",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_47",
-        "codomain": "hdole/nat/o_48",
-        "to": "hdole/nat/mod16"
+        "domain": "o_47",
+        "codomain": "o_48",
+        "to": "mod16"
       },
       {
         "basename": "m_23",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_51",
-        "codomain": "hdole/nat/o_52",
-        "to": "hdole/nat/lt16"
+        "domain": "o_51",
+        "codomain": "o_52",
+        "to": "lt16"
       },
       {
         "basename": "m_24",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_53",
-        "codomain": "hdole/nat/o_54",
-        "to": "hdole/nat/lteq16"
+        "domain": "o_53",
+        "codomain": "o_54",
+        "to": "lteq16"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_14",
-        "codomain": "hdole/nat/o_55",
-        "to": "hdole/nat/succ64"
+        "domain": "o_14",
+        "codomain": "o_55",
+        "to": "succ64"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_15",
-        "codomain": "hdole/nat/o_13",
-        "to": "hdole/nat/decr"
+        "domain": "o_15",
+        "codomain": "o_13",
+        "to": "decr"
       },
       {
         "basename": "m_22",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_8",
-        "codomain": "hdole/nat/o_16",
-        "to": "hdole/nat/equ16"
+        "domain": "o_8",
+        "codomain": "o_16",
+        "to": "equ16"
       },
       {
         "basename": "m_25",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_23",
-        "codomain": "hdole/nat/o_50",
-        "to": "hdole/nat/zero32"
+        "domain": "o_23",
+        "codomain": "o_50",
+        "to": "zero32"
       },
       {
         "basename": "m_26",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_56",
-        "codomain": "hdole/nat/o_57",
-        "to": "hdole/nat/one32"
+        "domain": "o_56",
+        "codomain": "o_57",
+        "to": "one32"
       },
       {
         "basename": "m_27",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_58",
-        "codomain": "hdole/nat/o_25",
-        "to": "hdole/nat/N8ToN16"
+        "domain": "o_58",
+        "codomain": "o_25",
+        "to": "N8ToN16"
       },
       {
         "basename": "m_32",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_66",
-        "codomain": "hdole/nat/o_70",
-        "to": "hdole/nat/succ32"
+        "domain": "o_66",
+        "codomain": "o_70",
+        "to": "succ32"
       },
       {
         "basename": "m_33",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_73",
-        "codomain": "hdole/nat/o_71",
-        "to": "hdole/nat/decr32"
+        "domain": "o_73",
+        "codomain": "o_71",
+        "to": "decr32"
       },
       {
         "basename": "m_34",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_68",
-        "codomain": "hdole/nat/o_65",
-        "to": "hdole/nat/inf32"
+        "domain": "o_68",
+        "codomain": "o_65",
+        "to": "inf32"
       },
       {
         "basename": "m_38",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_67",
-        "codomain": "hdole/nat/o_59",
-        "to": "hdole/nat/succ16"
+        "domain": "o_67",
+        "codomain": "o_59",
+        "to": "succ16"
       },
       {
         "basename": "m_39",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_74",
-        "codomain": "hdole/nat/o_1",
-        "to": "hdole/nat/zero8"
+        "domain": "o_74",
+        "codomain": "o_1",
+        "to": "zero8"
       },
       {
         "basename": "m_40",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_75",
-        "codomain": "hdole/nat/o_24",
-        "to": "hdole/nat/one8"
+        "domain": "o_75",
+        "codomain": "o_24",
+        "to": "one8"
       },
       {
         "basename": "m_41",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_49",
-        "codomain": "hdole/nat/o_76",
-        "to": "hdole/nat/inf8"
+        "domain": "o_49",
+        "codomain": "o_76",
+        "to": "inf8"
       },
       {
         "basename": "m_43",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_81",
-        "codomain": "hdole/nat/o_79",
-        "to": "hdole/nat/decr8"
+        "domain": "o_81",
+        "codomain": "o_79",
+        "to": "decr8"
       },
       {
         "basename": "m_44",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_78",
-        "codomain": "hdole/nat/o_77",
-        "to": "hdole/nat/succ8"
+        "domain": "o_78",
+        "codomain": "o_77",
+        "to": "succ8"
       },
       {
         "basename": "m_45",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_82",
-        "codomain": "hdole/nat/o_80",
-        "to": "hdole/nat/decr16"
+        "domain": "o_82",
+        "codomain": "o_80",
+        "to": "decr16"
       },
       {
         "basename": "m_46",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_86",
-        "codomain": "hdole/nat/o_85",
-        "to": "hdole/nat/add32"
+        "domain": "o_86",
+        "codomain": "o_85",
+        "to": "add32"
       },
       {
         "basename": "m_42",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_84",
-        "codomain": "hdole/nat/o_83",
-        "to": "hdole/nat/add8"
+        "domain": "o_84",
+        "codomain": "o_83",
+        "to": "add8"
       },
       {
         "basename": "m_47",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_90",
-        "codomain": "hdole/nat/o_89",
-        "to": "hdole/nat/sub32"
+        "domain": "o_90",
+        "codomain": "o_89",
+        "to": "sub32"
       },
       {
         "basename": "m_51",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_11",
-        "codomain": "hdole/nat/o_103",
-        "to": "hdole/nat/mult64"
+        "domain": "o_11",
+        "codomain": "o_103",
+        "to": "mult64"
       },
       {
         "basename": "m_52",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_87",
-        "codomain": "hdole/nat/o_95",
-        "to": "hdole/nat/mult32"
+        "domain": "o_87",
+        "codomain": "o_95",
+        "to": "mult32"
       },
       {
         "basename": "m_53",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_91",
-        "codomain": "hdole/nat/o_92",
-        "to": "hdole/nat/sub64"
+        "domain": "o_91",
+        "codomain": "o_92",
+        "to": "sub64"
       },
       {
         "basename": "m_57",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_105",
-        "codomain": "hdole/nat/o_106",
-        "to": "hdole/nat/sub8"
+        "domain": "o_105",
+        "codomain": "o_106",
+        "to": "sub8"
       },
       {
         "basename": "m_59",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_108",
-        "codomain": "hdole/nat/o_109",
-        "to": "hdole/nat/mult8"
+        "domain": "o_108",
+        "codomain": "o_109",
+        "to": "mult8"
       },
       {
         "basename": "m_61",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_110",
-        "codomain": "hdole/nat/o_111",
-        "to": "hdole/nat/and8"
+        "domain": "o_110",
+        "codomain": "o_111",
+        "to": "and8"
       },
       {
         "basename": "m_62",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_112",
-        "codomain": "hdole/nat/o_113",
-        "to": "hdole/nat/or8"
+        "domain": "o_112",
+        "codomain": "o_113",
+        "to": "or8"
       },
       {
         "basename": "m_71",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_63",
-        "codomain": "hdole/nat/o_101",
-        "to": "hdole/nat/zero128"
+        "domain": "o_63",
+        "codomain": "o_101",
+        "to": "zero128"
       },
       {
         "basename": "m_72",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_64",
-        "codomain": "hdole/nat/o_102",
-        "to": "hdole/nat/one128"
+        "domain": "o_64",
+        "codomain": "o_102",
+        "to": "one128"
       },
       {
         "basename": "m_73",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_100",
-        "codomain": "hdole/nat/o_72",
-        "to": "hdole/nat/inf128"
+        "domain": "o_100",
+        "codomain": "o_72",
+        "to": "inf128"
       },
       {
         "basename": "m_74",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_125",
-        "codomain": "hdole/nat/o_124",
-        "to": "hdole/nat/succ128"
+        "domain": "o_125",
+        "codomain": "o_124",
+        "to": "succ128"
       },
       {
         "basename": "m_75",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_126",
-        "codomain": "hdole/nat/o_127",
-        "to": "hdole/nat/decr128"
+        "domain": "o_126",
+        "codomain": "o_127",
+        "to": "decr128"
       },
       {
         "basename": "m_76",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_129",
-        "codomain": "hdole/nat/o_128",
-        "to": "hdole/nat/add127"
+        "domain": "o_129",
+        "codomain": "o_128",
+        "to": "add127"
       },
       {
         "basename": "m_96",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_139",
-        "codomain": "hdole/nat/o_140",
-        "to": "hdole/nat/and32"
+        "domain": "o_139",
+        "codomain": "o_140",
+        "to": "and32"
       },
       {
         "basename": "m_97",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_161",
-        "codomain": "hdole/nat/o_162",
-        "to": "hdole/nat/and64"
+        "domain": "o_161",
+        "codomain": "o_162",
+        "to": "and64"
       },
       {
         "basename": "m_98",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_171",
-        "codomain": "hdole/nat/o_179",
-        "to": "hdole/nat/and128"
+        "domain": "o_171",
+        "codomain": "o_179",
+        "to": "and128"
       },
       {
         "basename": "m_102",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_114",
-        "codomain": "hdole/nat/o_115",
-        "to": "hdole/nat/xor8"
+        "domain": "o_114",
+        "codomain": "o_115",
+        "to": "xor8"
       },
       {
         "basename": "m_103",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_187",
-        "codomain": "hdole/nat/o_191",
-        "to": "hdole/nat/div8"
+        "domain": "o_187",
+        "codomain": "o_191",
+        "to": "div8"
       },
       {
         "basename": "m_104",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_186",
-        "codomain": "hdole/nat/o_192",
-        "to": "hdole/nat/mod8"
+        "domain": "o_186",
+        "codomain": "o_192",
+        "to": "mod8"
       },
       {
         "basename": "m_105",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_188",
-        "codomain": "hdole/nat/o_158",
-        "to": "hdole/nat/equ8"
+        "domain": "o_188",
+        "codomain": "o_158",
+        "to": "equ8"
       },
       {
         "basename": "m_106",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_150",
-        "codomain": "hdole/nat/o_152",
-        "to": "hdole/nat/equ32"
+        "domain": "o_150",
+        "codomain": "o_152",
+        "to": "equ32"
       },
       {
         "basename": "m_107",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_189",
-        "codomain": "hdole/nat/o_159",
-        "to": "hdole/nat/lt8"
+        "domain": "o_189",
+        "codomain": "o_159",
+        "to": "lt8"
       },
       {
         "basename": "m_109",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_149",
-        "codomain": "hdole/nat/o_153",
-        "to": "hdole/nat/lt32"
+        "domain": "o_149",
+        "codomain": "o_153",
+        "to": "lt32"
       },
       {
         "basename": "m_110",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_141",
-        "codomain": "hdole/nat/o_142",
-        "to": "hdole/nat/or32"
+        "domain": "o_141",
+        "codomain": "o_142",
+        "to": "or32"
       },
       {
         "basename": "m_111",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_163",
-        "codomain": "hdole/nat/o_164",
-        "to": "hdole/nat/or64"
+        "domain": "o_163",
+        "codomain": "o_164",
+        "to": "or64"
       },
       {
         "basename": "m_112",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_172",
-        "codomain": "hdole/nat/o_180",
-        "to": "hdole/nat/or128"
+        "domain": "o_172",
+        "codomain": "o_180",
+        "to": "or128"
       },
       {
         "basename": "m_113",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_151",
-        "codomain": "hdole/nat/o_154",
-        "to": "hdole/nat/lteq32"
+        "domain": "o_151",
+        "codomain": "o_154",
+        "to": "lteq32"
       },
       {
         "basename": "m_114",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_148",
-        "codomain": "hdole/nat/o_147",
-        "to": "hdole/nat/mod32"
+        "domain": "o_148",
+        "codomain": "o_147",
+        "to": "mod32"
       },
       {
         "basename": "m_115",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_146",
-        "codomain": "hdole/nat/o_145",
-        "to": "hdole/nat/div32"
+        "domain": "o_146",
+        "codomain": "o_145",
+        "to": "div32"
       },
       {
         "basename": "m_116",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_143",
-        "codomain": "hdole/nat/o_144",
-        "to": "hdole/nat/xor32"
+        "domain": "o_143",
+        "codomain": "o_144",
+        "to": "xor32"
       },
       {
         "basename": "m_117",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_178",
-        "codomain": "hdole/nat/o_157",
-        "to": "hdole/nat/lteq128"
+        "domain": "o_178",
+        "codomain": "o_157",
+        "to": "lteq128"
       },
       {
         "basename": "m_118",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_165",
-        "codomain": "hdole/nat/o_166",
-        "to": "hdole/nat/xor64"
+        "domain": "o_165",
+        "codomain": "o_166",
+        "to": "xor64"
       },
       {
         "basename": "m_119",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_167",
-        "codomain": "hdole/nat/o_168",
-        "to": "hdole/nat/div64"
+        "domain": "o_167",
+        "codomain": "o_168",
+        "to": "div64"
       },
       {
         "basename": "m_120",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_170",
-        "codomain": "hdole/nat/o_169",
-        "to": "hdole/nat/mod64"
+        "domain": "o_170",
+        "codomain": "o_169",
+        "to": "mod64"
       },
       {
         "basename": "m_121",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_173",
-        "codomain": "hdole/nat/o_181",
-        "to": "hdole/nat/xor128"
+        "domain": "o_173",
+        "codomain": "o_181",
+        "to": "xor128"
       },
       {
         "basename": "m_122",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_174",
-        "codomain": "hdole/nat/o_182",
-        "to": "hdole/nat/div128"
+        "domain": "o_174",
+        "codomain": "o_182",
+        "to": "div128"
       },
       {
         "basename": "m_123",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_175",
-        "codomain": "hdole/nat/o_183",
-        "to": "hdole/nat/mod128"
+        "domain": "o_175",
+        "codomain": "o_183",
+        "to": "mod128"
       },
       {
         "basename": "m_125",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_177",
-        "codomain": "hdole/nat/o_156",
-        "to": "hdole/nat/lt128"
+        "domain": "o_177",
+        "codomain": "o_156",
+        "to": "lt128"
       },
       {
         "basename": "m_126",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_193",
-        "codomain": "hdole/nat/o_195",
-        "to": "hdole/nat/gt8"
+        "domain": "o_193",
+        "codomain": "o_195",
+        "to": "gt8"
       },
       {
         "basename": "m_127",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_194",
-        "codomain": "hdole/nat/o_196",
-        "to": "hdole/nat/gteq8"
+        "domain": "o_194",
+        "codomain": "o_196",
+        "to": "gteq8"
       },
       {
         "basename": "m_128",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_197",
-        "codomain": "hdole/nat/o_198",
-        "to": "hdole/nat/lshf8"
+        "domain": "o_197",
+        "codomain": "o_198",
+        "to": "lshf8"
       },
       {
         "basename": "m_129",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_199",
-        "codomain": "hdole/nat/o_200",
-        "to": "hdole/nat/rshf8"
+        "domain": "o_199",
+        "codomain": "o_200",
+        "to": "rshf8"
       },
       {
         "basename": "m_130",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_201",
-        "codomain": "hdole/nat/o_202",
-        "to": "hdole/nat/not8"
+        "domain": "o_201",
+        "codomain": "o_202",
+        "to": "not8"
       },
       {
         "basename": "m_131",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_136",
-        "codomain": "hdole/nat/o_131",
-        "to": "hdole/nat/sub128"
+        "domain": "o_136",
+        "codomain": "o_131",
+        "to": "sub128"
       },
       {
         "basename": "m_15",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_35",
-        "codomain": "hdole/nat/o_36",
-        "to": "hdole/nat/sub16"
+        "domain": "o_35",
+        "codomain": "o_36",
+        "to": "sub16"
       },
       {
         "basename": "m_49",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_203",
-        "codomain": "hdole/nat/o_93",
-        "to": "hdole/nat/add8c"
+        "domain": "o_203",
+        "codomain": "o_93",
+        "to": "add8c"
       },
       {
         "basename": "m_58",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_204",
-        "codomain": "hdole/nat/o_107",
-        "to": "hdole/nat/sub8u"
+        "domain": "o_204",
+        "codomain": "o_107",
+        "to": "sub8u"
       },
       {
         "basename": "m_92",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_205",
-        "codomain": "hdole/nat/o_94",
-        "to": "hdole/nat/sub16c"
+        "domain": "o_205",
+        "codomain": "o_94",
+        "to": "sub16c"
       },
       {
         "basename": "m_56",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_206",
-        "codomain": "hdole/nat/o_104",
-        "to": "hdole/nat/sub32u"
+        "domain": "o_206",
+        "codomain": "o_104",
+        "to": "sub32u"
       },
       {
         "basename": "m_54",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_207",
-        "codomain": "hdole/nat/o_98",
-        "to": "hdole/nat/sub64u"
+        "domain": "o_207",
+        "codomain": "o_98",
+        "to": "sub64u"
       },
       {
         "basename": "m_79",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_208",
-        "codomain": "hdole/nat/o_132",
-        "to": "hdole/nat/sub128c"
+        "domain": "o_208",
+        "codomain": "o_132",
+        "to": "sub128c"
       },
       {
         "basename": "m_80",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_209",
-        "codomain": "hdole/nat/o_130",
-        "to": "hdole/nat/add128"
+        "domain": "o_209",
+        "codomain": "o_130",
+        "to": "add128"
       },
       {
         "basename": "m_55",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_210",
-        "codomain": "hdole/nat/o_97",
-        "to": "hdole/nat/add64o"
+        "domain": "o_210",
+        "codomain": "o_97",
+        "to": "add64o"
       },
       {
         "basename": "m_77",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_211",
-        "codomain": "hdole/nat/o_138",
-        "to": "hdole/nat/add32c"
+        "domain": "o_211",
+        "codomain": "o_138",
+        "to": "add32c"
       },
       {
         "basename": "m_48",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_212",
-        "codomain": "hdole/nat/o_88",
-        "to": "hdole/nat/add16c"
+        "domain": "o_212",
+        "codomain": "o_88",
+        "to": "add16c"
       },
       {
         "basename": "m_81",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_12",
-        "codomain": "hdole/nat/o_134",
-        "to": "hdole/nat/mult128c"
+        "domain": "o_12",
+        "codomain": "o_134",
+        "to": "mult128c"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_99",
-        "codomain": "hdole/nat/o_135",
-        "to": "hdole/nat/not16"
+        "domain": "o_99",
+        "codomain": "o_135",
+        "to": "not16"
       },
       {
         "basename": "m_50",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_213",
-        "codomain": "hdole/nat/o_214",
-        "to": "hdole/nat/not32"
+        "domain": "o_213",
+        "codomain": "o_214",
+        "to": "not32"
       },
       {
         "basename": "m_60",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_215",
-        "codomain": "hdole/nat/o_216",
-        "to": "hdole/nat/not64"
+        "domain": "o_215",
+        "codomain": "o_216",
+        "to": "not64"
       },
       {
         "basename": "m_82",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_217",
-        "codomain": "hdole/nat/o_218",
-        "to": "hdole/nat/not128"
+        "domain": "o_217",
+        "codomain": "o_218",
+        "to": "not128"
       },
       {
         "basename": "m_95",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_225",
-        "codomain": "hdole/nat/o_226",
-        "to": "hdole/nat/max8"
+        "domain": "o_225",
+        "codomain": "o_226",
+        "to": "max8"
       },
       {
         "basename": "m_132",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_227",
-        "codomain": "hdole/nat/o_228",
-        "to": "hdole/nat/min8"
+        "domain": "o_227",
+        "codomain": "o_228",
+        "to": "min8"
       },
       {
         "basename": "m_200",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_270",
-        "codomain": "hdole/nat/o_271",
-        "to": "hdole/nat/max16"
+        "domain": "o_270",
+        "codomain": "o_271",
+        "to": "max16"
       },
       {
         "basename": "m_201",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_272",
-        "codomain": "hdole/nat/o_273",
-        "to": "hdole/nat/min16"
+        "domain": "o_272",
+        "codomain": "o_273",
+        "to": "min16"
       },
       {
         "basename": "m_202",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_280",
-        "codomain": "hdole/nat/o_281",
-        "to": "hdole/nat/max32"
+        "domain": "o_280",
+        "codomain": "o_281",
+        "to": "max32"
       },
       {
         "basename": "m_203",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_282",
-        "codomain": "hdole/nat/o_283",
-        "to": "hdole/nat/min32"
+        "domain": "o_282",
+        "codomain": "o_283",
+        "to": "min32"
       },
       {
         "basename": "m_204",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_290",
-        "codomain": "hdole/nat/o_291",
-        "to": "hdole/nat/max64"
+        "domain": "o_290",
+        "codomain": "o_291",
+        "to": "max64"
       },
       {
         "basename": "m_205",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_292",
-        "codomain": "hdole/nat/o_293",
-        "to": "hdole/nat/min64"
+        "domain": "o_292",
+        "codomain": "o_293",
+        "to": "min64"
       },
       {
         "basename": "m_206",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_300",
-        "codomain": "hdole/nat/o_301",
-        "to": "hdole/nat/max128"
+        "domain": "o_300",
+        "codomain": "o_301",
+        "to": "max128"
       },
       {
         "basename": "m_207",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_302",
-        "codomain": "hdole/nat/o_303",
-        "to": "hdole/nat/min128"
+        "domain": "o_302",
+        "codomain": "o_303",
+        "to": "min128"
       },
       {
         "basename": "m_133",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_229",
-        "codomain": "hdole/nat/o_230",
-        "to": "hdole/nat/gt16"
+        "domain": "o_229",
+        "codomain": "o_230",
+        "to": "gt16"
       },
       {
         "basename": "m_134",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_231",
-        "codomain": "hdole/nat/o_232",
-        "to": "hdole/nat/gt32"
+        "domain": "o_231",
+        "codomain": "o_232",
+        "to": "gt32"
       },
       {
         "basename": "m_135",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_233",
-        "codomain": "hdole/nat/o_234",
-        "to": "hdole/nat/gt64"
+        "domain": "o_233",
+        "codomain": "o_234",
+        "to": "gt64"
       },
       {
         "basename": "m_136",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_235",
-        "codomain": "hdole/nat/o_236",
-        "to": "hdole/nat/gt128"
+        "domain": "o_235",
+        "codomain": "o_236",
+        "to": "gt128"
       },
       {
         "basename": "m_137",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_237",
-        "codomain": "hdole/nat/o_238",
-        "to": "hdole/nat/gte16"
+        "domain": "o_237",
+        "codomain": "o_238",
+        "to": "gte16"
       },
       {
         "basename": "m_108",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_190",
-        "codomain": "hdole/nat/o_160",
-        "to": "hdole/nat/lteq8"
+        "domain": "o_190",
+        "codomain": "o_160",
+        "to": "lteq8"
       },
       {
         "basename": "m_138",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_246",
-        "codomain": "hdole/nat/o_245",
-        "to": "hdole/nat/lshf16"
+        "domain": "o_246",
+        "codomain": "o_245",
+        "to": "lshf16"
       },
       {
         "basename": "m_139",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_248",
-        "codomain": "hdole/nat/o_247",
-        "to": "hdole/nat/lshf32"
+        "domain": "o_248",
+        "codomain": "o_247",
+        "to": "lshf32"
       },
       {
         "basename": "m_140",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_239",
-        "codomain": "hdole/nat/o_240",
-        "to": "hdole/nat/gteq32"
+        "domain": "o_239",
+        "codomain": "o_240",
+        "to": "gteq32"
       },
       {
         "basename": "m_141",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_241",
-        "codomain": "hdole/nat/o_242",
-        "to": "hdole/nat/gteq64"
+        "domain": "o_241",
+        "codomain": "o_242",
+        "to": "gteq64"
       },
       {
         "basename": "m_142",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_243",
-        "codomain": "hdole/nat/o_244",
-        "to": "hdole/nat/gteq128"
+        "domain": "o_243",
+        "codomain": "o_244",
+        "to": "gteq128"
       },
       {
         "basename": "m_143",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_250",
-        "codomain": "hdole/nat/o_249",
-        "to": "hdole/nat/lshf64"
+        "domain": "o_250",
+        "codomain": "o_249",
+        "to": "lshf64"
       },
       {
         "basename": "m_144",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_252",
-        "codomain": "hdole/nat/o_251",
-        "to": "hdole/nat/lshf128"
+        "domain": "o_252",
+        "codomain": "o_251",
+        "to": "lshf128"
       },
       {
         "basename": "m_145",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_253",
-        "codomain": "hdole/nat/o_96",
-        "to": "hdole/nat/rshf16"
+        "domain": "o_253",
+        "codomain": "o_96",
+        "to": "rshf16"
       },
       {
         "basename": "m_146",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_255",
-        "codomain": "hdole/nat/o_254",
-        "to": "hdole/nat/rshf32"
+        "domain": "o_255",
+        "codomain": "o_254",
+        "to": "rshf32"
       },
       {
         "basename": "m_147",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_257",
-        "codomain": "hdole/nat/o_256",
-        "to": "hdole/nat/rshf64"
+        "domain": "o_257",
+        "codomain": "o_256",
+        "to": "rshf64"
       },
       {
         "basename": "m_148",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_259",
-        "codomain": "hdole/nat/o_258",
-        "to": "hdole/nat/rshf128"
+        "domain": "o_259",
+        "codomain": "o_258",
+        "to": "rshf128"
       },
       {
         "basename": "m_10",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_116",
-        "codomain": "hdole/nat/o_117",
-        "to": "hdole/nat/hi8"
+        "domain": "o_116",
+        "codomain": "o_117",
+        "to": "hi8"
       },
       {
         "basename": "m_29",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_118",
-        "codomain": "hdole/nat/o_120",
-        "to": "hdole/nat/hi16"
+        "domain": "o_118",
+        "codomain": "o_120",
+        "to": "hi16"
       },
       {
         "basename": "m_63",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_121",
-        "codomain": "hdole/nat/o_260",
-        "to": "hdole/nat/hi32"
+        "domain": "o_121",
+        "codomain": "o_260",
+        "to": "hi32"
       },
       {
         "basename": "m_65",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_122",
-        "codomain": "hdole/nat/o_262",
-        "to": "hdole/nat/hi64"
+        "domain": "o_122",
+        "codomain": "o_262",
+        "to": "hi64"
       },
       {
         "basename": "m_28",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_133",
-        "codomain": "hdole/nat/o_119",
-        "to": "hdole/nat/lo8"
+        "domain": "o_133",
+        "codomain": "o_119",
+        "to": "lo8"
       },
       {
         "basename": "m_35",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_137",
-        "codomain": "hdole/nat/o_123",
-        "to": "hdole/nat/lo16"
+        "domain": "o_137",
+        "codomain": "o_123",
+        "to": "lo16"
       },
       {
         "basename": "m_64",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_219",
-        "codomain": "hdole/nat/o_261",
-        "to": "hdole/nat/lo32"
+        "domain": "o_219",
+        "codomain": "o_261",
+        "to": "lo32"
       },
       {
         "basename": "m_66",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_220",
-        "codomain": "hdole/nat/o_263",
-        "to": "hdole/nat/lo64"
+        "domain": "o_220",
+        "codomain": "o_263",
+        "to": "lo64"
       },
       {
         "basename": "m_30",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_26",
-        "codomain": "hdole/nat/o_62",
-        "to": "hdole/nat/N16ToN32"
+        "domain": "o_26",
+        "codomain": "o_62",
+        "to": "N16ToN32"
       },
       {
         "basename": "m_31",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_60",
-        "codomain": "hdole/nat/o_0",
-        "to": "hdole/nat/N32ToN64"
+        "domain": "o_60",
+        "codomain": "o_0",
+        "to": "N32ToN64"
       },
       {
         "basename": "m_99",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_61",
-        "codomain": "hdole/nat/o_184",
-        "to": "hdole/nat/N62toN128"
+        "domain": "o_61",
+        "codomain": "o_184",
+        "to": "N62toN128"
       },
       {
         "basename": "m_36",
         "prototype": "IndexMorphism",
-        "domain": "hdole/nat/o_176",
-        "codomain": "hdole/nat/o_155",
-        "to": "hdole/nat/equ128"
+        "domain": "o_176",
+        "codomain": "o_155",
+        "to": "equ128"
       }
     ],
     "cells": []
@@ -5344,11 +5344,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644734940743,
+  "timestamp": 1645265696206,
   "version": 0,
   "viewport": {
-    "x": 1253,
-    "y": -2292,
-    "scale": 0.6697838545218098
+    "x": 1243,
+    "y": 471,
+    "scale": 0.6627957084277984
   }
 }

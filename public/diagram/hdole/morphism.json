@@ -6,7 +6,7 @@
   "properName": "hdole/morphism",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/morphism_Index",
+  "domain": "morphism_Index",
   "codomain": "em/Cat",
   "references": [],
   "domainInfo": {
@@ -41,7 +41,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/morphism/A",
+        "to": "A",
         "xy": {
           "x": 450,
           "y": 2050
@@ -50,7 +50,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/morphism/B",
+        "to": "B",
         "xy": {
           "x": 580,
           "y": 2050
@@ -69,9 +69,9 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/morphism/o_0",
-        "codomain": "hdole/morphism/o_1",
-        "to": "hdole/morphism/f"
+        "domain": "o_0",
+        "codomain": "o_1",
+        "to": "f"
       }
     ],
     "cells": []
@@ -82,44 +82,14 @@
       "prototype": "CatObject"
     },
     {
-      "basename": "A",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "B",
-      "prototype": "CatObject"
-    },
-    {
       "basename": "B",
       "prototype": "CatObject"
     },
     {
       "basename": "f",
       "prototype": "Morphism",
-      "domain": "hdole/morphism/A",
-      "codomain": "hdole/morphism/B"
-    },
-    {
-      "basename": "f",
-      "prototype": "Morphism",
-      "domain": "hdole/morphism/A",
-      "codomain": "hdole/morphism/B"
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
+      "domain": "A",
+      "codomain": "B"
     }
   ],
   "user": "hdole",

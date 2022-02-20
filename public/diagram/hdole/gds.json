@@ -6,7 +6,7 @@
   "properName": "GDSII",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/gds_Index",
+  "domain": "gds_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/cpp"
@@ -22,7 +22,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/gds/etBoundary",
+        "to": "etBoundary",
         "xy": {
           "x": 200,
           "y": 200
@@ -31,7 +31,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/gds/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 200
@@ -40,7 +40,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/gds/etPath",
+        "to": "etPath",
         "xy": {
           "x": 200,
           "y": 400
@@ -49,7 +49,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/gds/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 400
@@ -58,7 +58,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/gds/etSref",
+        "to": "etSref",
         "xy": {
           "x": 200,
           "y": 600
@@ -67,7 +67,7 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/gds/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 600
@@ -76,7 +76,7 @@
       {
         "basename": "o_6",
         "prototype": "IndexObject",
-        "to": "hdole/gds/etAref",
+        "to": "etAref",
         "xy": {
           "x": 200,
           "y": 800
@@ -85,7 +85,7 @@
       {
         "basename": "o_7",
         "prototype": "IndexObject",
-        "to": "hdole/gds/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 800
@@ -94,7 +94,7 @@
       {
         "basename": "o_8",
         "prototype": "IndexObject",
-        "to": "hdole/gds/etText",
+        "to": "etText",
         "xy": {
           "x": 200,
           "y": 1000
@@ -103,7 +103,7 @@
       {
         "basename": "o_9",
         "prototype": "IndexObject",
-        "to": "hdole/gds/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 1000
@@ -112,7 +112,7 @@
       {
         "basename": "o_10",
         "prototype": "IndexObject",
-        "to": "hdole/gds/EltType",
+        "to": "EltType",
         "xy": {
           "x": 200,
           "y": 1200
@@ -121,7 +121,7 @@
       {
         "basename": "o_11",
         "prototype": "IndexObject",
-        "to": "hdole/gds/CPo{etBoundary,etPath,etSref,etAref,etText}oPC",
+        "to": "CPo{etBoundary,etPath,etSref,etAref,etText}oPC",
         "xy": {
           "x": 600,
           "y": 1200
@@ -130,7 +130,7 @@
       {
         "basename": "o_12",
         "prototype": "IndexObject",
-        "to": "hdole/gds/DBU",
+        "to": "DBU",
         "xy": {
           "x": 200,
           "y": 1400
@@ -148,7 +148,7 @@
       {
         "basename": "o_14",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Strname",
+        "to": "Strname",
         "xy": {
           "x": 200,
           "y": 1600
@@ -166,7 +166,7 @@
       {
         "basename": "o_16",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Layer",
+        "to": "Layer",
         "xy": {
           "x": 200,
           "y": 1800
@@ -184,7 +184,7 @@
       {
         "basename": "o_18",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Datatype",
+        "to": "Datatype",
         "xy": {
           "x": 200,
           "y": 2000
@@ -202,7 +202,7 @@
       {
         "basename": "o_20",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Point",
+        "to": "Point",
         "xy": {
           "x": 200,
           "y": 2200
@@ -211,7 +211,7 @@
       {
         "basename": "o_21",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP",
+        "to": "Po{hdole/int/Z32,hdole/int/Z32}oP",
         "xy": {
           "x": 400,
           "y": 2200
@@ -220,7 +220,7 @@
       {
         "basename": "o_22",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Points",
+        "to": "Points",
         "xy": {
           "x": 200,
           "y": 2400
@@ -229,7 +229,7 @@
       {
         "basename": "o_23",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Ho{hdole/nat/N16,Point}oH",
+        "to": "Ho{hdole/nat/N16,Point}oH",
         "xy": {
           "x": 400,
           "y": 2400
@@ -238,7 +238,7 @@
       {
         "basename": "o_24",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Property",
+        "to": "Property",
         "xy": {
           "x": 200,
           "y": 2600
@@ -247,7 +247,7 @@
       {
         "basename": "o_25",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP",
+        "to": "Po{hdole/nat/N16,hdole/str/str}oP",
         "xy": {
           "x": 400,
           "y": 2600
@@ -256,7 +256,7 @@
       {
         "basename": "o_26",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Properties",
+        "to": "Properties",
         "xy": {
           "x": 200,
           "y": 2800
@@ -265,7 +265,7 @@
       {
         "basename": "o_27",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Ho{hdole/nat/N16,Property}oH",
+        "to": "Ho{hdole/nat/N16,Property}oH",
         "xy": {
           "x": 400,
           "y": 2800
@@ -274,7 +274,7 @@
       {
         "basename": "o_28",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Boundary",
+        "to": "Boundary",
         "xy": {
           "x": 200,
           "y": 3000
@@ -283,7 +283,7 @@
       {
         "basename": "o_29",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Po{Layer,Datatype,Points,Properties}oP",
+        "to": "Po{Layer,Datatype,Points,Properties}oP",
         "xy": {
           "x": 600,
           "y": 3000
@@ -292,7 +292,7 @@
       {
         "basename": "o_30",
         "prototype": "IndexObject",
-        "to": "hdole/gds/ptFlush",
+        "to": "ptFlush",
         "xy": {
           "x": 200,
           "y": 3200
@@ -301,7 +301,7 @@
       {
         "basename": "o_31",
         "prototype": "IndexObject",
-        "to": "hdole/gds/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 3200
@@ -310,7 +310,7 @@
       {
         "basename": "o_32",
         "prototype": "IndexObject",
-        "to": "hdole/gds/ptRound",
+        "to": "ptRound",
         "xy": {
           "x": 200,
           "y": 3400
@@ -319,7 +319,7 @@
       {
         "basename": "o_33",
         "prototype": "IndexObject",
-        "to": "hdole/gds/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 3400
@@ -328,7 +328,7 @@
       {
         "basename": "o_34",
         "prototype": "IndexObject",
-        "to": "hdole/gds/ptSquare",
+        "to": "ptSquare",
         "xy": {
           "x": 200,
           "y": 3600
@@ -337,7 +337,7 @@
       {
         "basename": "o_35",
         "prototype": "IndexObject",
-        "to": "hdole/gds/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": 3600
@@ -346,7 +346,7 @@
       {
         "basename": "o_36",
         "prototype": "IndexObject",
-        "to": "hdole/gds/ptVariable",
+        "to": "ptVariable",
         "xy": {
           "x": 200,
           "y": 3800
@@ -355,7 +355,7 @@
       {
         "basename": "o_37",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP",
+        "to": "Po{hdole/int/Z32,hdole/int/Z32}oP",
         "xy": {
           "x": 400,
           "y": 3800
@@ -364,7 +364,7 @@
       {
         "basename": "o_38",
         "prototype": "IndexObject",
-        "to": "hdole/gds/EndType",
+        "to": "EndType",
         "xy": {
           "x": 200,
           "y": 4000
@@ -373,7 +373,7 @@
       {
         "basename": "o_39",
         "prototype": "IndexObject",
-        "to": "hdole/gds/CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC",
+        "to": "CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC",
         "xy": {
           "x": 600,
           "y": 4000
@@ -382,7 +382,7 @@
       {
         "basename": "o_40",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Width",
+        "to": "Width",
         "xy": {
           "x": 200,
           "y": 4200
@@ -400,7 +400,7 @@
       {
         "basename": "o_42",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Path",
+        "to": "Path",
         "xy": {
           "x": 200,
           "y": 4400
@@ -409,7 +409,7 @@
       {
         "basename": "o_43",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Po{Layer,Datatype,Points,Width,EndType,Properties}oP",
+        "to": "Po{Layer,Datatype,Points,Width,EndType,Properties}oP",
         "xy": {
           "x": 800,
           "y": 4400
@@ -418,7 +418,7 @@
       {
         "basename": "o_44",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Sname",
+        "to": "Sname",
         "xy": {
           "x": 200,
           "y": 4600
@@ -436,7 +436,7 @@
       {
         "basename": "o_46",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Reflection",
+        "to": "Reflection",
         "xy": {
           "x": 200,
           "y": 4800
@@ -445,7 +445,7 @@
       {
         "basename": "o_47",
         "prototype": "IndexObject",
-        "to": "hdole/gds/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 400,
           "y": 4800
@@ -454,7 +454,7 @@
       {
         "basename": "o_48",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Angle",
+        "to": "Angle",
         "xy": {
           "x": 200,
           "y": 5000
@@ -472,7 +472,7 @@
       {
         "basename": "o_50",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Mag",
+        "to": "Mag",
         "xy": {
           "x": 200,
           "y": 5200
@@ -490,7 +490,7 @@
       {
         "basename": "o_52",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Sref",
+        "to": "Sref",
         "xy": {
           "x": 200,
           "y": 5400
@@ -499,7 +499,7 @@
       {
         "basename": "o_53",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Properties}oP",
+        "to": "Po{Sname,Point,Reflection,Angle,Mag,Properties}oP",
         "xy": {
           "x": 800,
           "y": 5400
@@ -508,7 +508,7 @@
       {
         "basename": "o_54",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Rows",
+        "to": "Rows",
         "xy": {
           "x": 200,
           "y": 5600
@@ -526,7 +526,7 @@
       {
         "basename": "o_56",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Cols",
+        "to": "Cols",
         "xy": {
           "x": 200,
           "y": 5800
@@ -544,7 +544,7 @@
       {
         "basename": "o_58",
         "prototype": "IndexObject",
-        "to": "hdole/gds/RowPitch",
+        "to": "RowPitch",
         "xy": {
           "x": 200,
           "y": 6000
@@ -562,7 +562,7 @@
       {
         "basename": "o_60",
         "prototype": "IndexObject",
-        "to": "hdole/gds/ColPitch",
+        "to": "ColPitch",
         "xy": {
           "x": 200,
           "y": 6200
@@ -580,7 +580,7 @@
       {
         "basename": "o_62",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Aref",
+        "to": "Aref",
         "xy": {
           "x": 200,
           "y": 6400
@@ -589,7 +589,7 @@
       {
         "basename": "o_63",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP",
+        "to": "Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP",
         "xy": {
           "x": 1000,
           "y": 6400
@@ -598,7 +598,7 @@
       {
         "basename": "o_64",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Text",
+        "to": "Text",
         "xy": {
           "x": 200,
           "y": 6600
@@ -607,7 +607,7 @@
       {
         "basename": "o_65",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP",
+        "to": "Po{Layer,Datatype,hdole/str/str,Point,Properties}oP",
         "xy": {
           "x": 600,
           "y": 6600
@@ -616,7 +616,7 @@
       {
         "basename": "o_66",
         "prototype": "IndexObject",
-        "to": "hdole/gds/Element",
+        "to": "Element",
         "xy": {
           "x": 200,
           "y": 6800
@@ -625,7 +625,7 @@
       {
         "basename": "o_67",
         "prototype": "IndexObject",
-        "to": "hdole/gds/CPo{Boundary,Path,Sref,Aref,Text}oPC",
+        "to": "CPo{Boundary,Path,Sref,Aref,Text}oPC",
         "xy": {
           "x": 600,
           "y": 6800
@@ -645,240 +645,240 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_0",
-        "codomain": "hdole/gds/o_1",
-        "to": "hdole/gds/Id{etBoundary,#1}dI"
+        "domain": "o_0",
+        "codomain": "o_1",
+        "to": "Id{etBoundary,#1}dI"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_2",
-        "codomain": "hdole/gds/o_3",
-        "to": "hdole/gds/Id{etPath,#1}dI"
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "Id{etPath,#1}dI"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_4",
-        "codomain": "hdole/gds/o_5",
-        "to": "hdole/gds/Id{etSref,#1}dI"
+        "domain": "o_4",
+        "codomain": "o_5",
+        "to": "Id{etSref,#1}dI"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_6",
-        "codomain": "hdole/gds/o_7",
-        "to": "hdole/gds/Id{etAref,#1}dI"
+        "domain": "o_6",
+        "codomain": "o_7",
+        "to": "Id{etAref,#1}dI"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_8",
-        "codomain": "hdole/gds/o_9",
-        "to": "hdole/gds/Id{etText,#1}dI"
+        "domain": "o_8",
+        "codomain": "o_9",
+        "to": "Id{etText,#1}dI"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_10",
-        "codomain": "hdole/gds/o_11",
-        "to": "hdole/gds/Id{EltType,CPo{etBoundary,etPath,etSref,etAref,etText}oPC}dI"
+        "domain": "o_10",
+        "codomain": "o_11",
+        "to": "Id{EltType,CPo{etBoundary,etPath,etSref,etAref,etText}oPC}dI"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_12",
-        "codomain": "hdole/gds/o_13",
-        "to": "hdole/gds/Id{DBU,hdole/floats/F64}dI"
+        "domain": "o_12",
+        "codomain": "o_13",
+        "to": "Id{DBU,hdole/floats/F64}dI"
       },
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_14",
-        "codomain": "hdole/gds/o_15",
-        "to": "hdole/gds/Id{Strname,hdole/str/str}dI"
+        "domain": "o_14",
+        "codomain": "o_15",
+        "to": "Id{Strname,hdole/str/str}dI"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_16",
-        "codomain": "hdole/gds/o_17",
-        "to": "hdole/gds/Id{Layer,hdole/nat/N16}dI"
+        "domain": "o_16",
+        "codomain": "o_17",
+        "to": "Id{Layer,hdole/nat/N16}dI"
       },
       {
         "basename": "m_9",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_18",
-        "codomain": "hdole/gds/o_19",
-        "to": "hdole/gds/Id{Datatype,hdole/nat/N16}dI"
+        "domain": "o_18",
+        "codomain": "o_19",
+        "to": "Id{Datatype,hdole/nat/N16}dI"
       },
       {
         "basename": "m_10",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_20",
-        "codomain": "hdole/gds/o_21",
-        "to": "hdole/gds/Id{Point,Po{hdole/int/Z32,hdole/int/Z32}oP}dI"
+        "domain": "o_20",
+        "codomain": "o_21",
+        "to": "Id{Point,Po{hdole/int/Z32,hdole/int/Z32}oP}dI"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_22",
-        "codomain": "hdole/gds/o_23",
-        "to": "hdole/gds/Id{Points,Ho{hdole/nat/N16,Point}oH}dI"
+        "domain": "o_22",
+        "codomain": "o_23",
+        "to": "Id{Points,Ho{hdole/nat/N16,Point}oH}dI"
       },
       {
         "basename": "m_12",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_24",
-        "codomain": "hdole/gds/o_25",
-        "to": "hdole/gds/Id{Property,Po{hdole/nat/N16,hdole/str/str}oP}dI"
+        "domain": "o_24",
+        "codomain": "o_25",
+        "to": "Id{Property,Po{hdole/nat/N16,hdole/str/str}oP}dI"
       },
       {
         "basename": "m_13",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_26",
-        "codomain": "hdole/gds/o_27",
-        "to": "hdole/gds/Id{Properties,Ho{hdole/nat/N16,Property}oH}dI"
+        "domain": "o_26",
+        "codomain": "o_27",
+        "to": "Id{Properties,Ho{hdole/nat/N16,Property}oH}dI"
       },
       {
         "basename": "m_14",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_28",
-        "codomain": "hdole/gds/o_29",
-        "to": "hdole/gds/Id{Boundary,Po{Layer,Datatype,Points,Properties}oP}dI"
+        "domain": "o_28",
+        "codomain": "o_29",
+        "to": "Id{Boundary,Po{Layer,Datatype,Points,Properties}oP}dI"
       },
       {
         "basename": "m_15",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_30",
-        "codomain": "hdole/gds/o_31",
-        "to": "hdole/gds/Id{ptFlush,#1}dI"
+        "domain": "o_30",
+        "codomain": "o_31",
+        "to": "Id{ptFlush,#1}dI"
       },
       {
         "basename": "m_16",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_32",
-        "codomain": "hdole/gds/o_33",
-        "to": "hdole/gds/Id{ptRound,#1}dI"
+        "domain": "o_32",
+        "codomain": "o_33",
+        "to": "Id{ptRound,#1}dI"
       },
       {
         "basename": "m_17",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_34",
-        "codomain": "hdole/gds/o_35",
-        "to": "hdole/gds/Id{ptSquare,#1}dI"
+        "domain": "o_34",
+        "codomain": "o_35",
+        "to": "Id{ptSquare,#1}dI"
       },
       {
         "basename": "m_18",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_36",
-        "codomain": "hdole/gds/o_37",
-        "to": "hdole/gds/Id{ptVariable,Po{hdole/int/Z32,hdole/int/Z32}oP}dI"
+        "domain": "o_36",
+        "codomain": "o_37",
+        "to": "Id{ptVariable,Po{hdole/int/Z32,hdole/int/Z32}oP}dI"
       },
       {
         "basename": "m_19",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_38",
-        "codomain": "hdole/gds/o_39",
-        "to": "hdole/gds/Id{EndType,CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC}dI"
+        "domain": "o_38",
+        "codomain": "o_39",
+        "to": "Id{EndType,CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC}dI"
       },
       {
         "basename": "m_20",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_40",
-        "codomain": "hdole/gds/o_41",
-        "to": "hdole/gds/Id{Width,hdole/int/Z32}dI"
+        "domain": "o_40",
+        "codomain": "o_41",
+        "to": "Id{Width,hdole/int/Z32}dI"
       },
       {
         "basename": "m_21",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_42",
-        "codomain": "hdole/gds/o_43",
-        "to": "hdole/gds/Id{Path,Po{Layer,Datatype,Points,Width,EndType,Properties}oP}dI"
+        "domain": "o_42",
+        "codomain": "o_43",
+        "to": "Id{Path,Po{Layer,Datatype,Points,Width,EndType,Properties}oP}dI"
       },
       {
         "basename": "m_22",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_44",
-        "codomain": "hdole/gds/o_45",
-        "to": "hdole/gds/Id{Sname,hdole/str/str}dI"
+        "domain": "o_44",
+        "codomain": "o_45",
+        "to": "Id{Sname,hdole/str/str}dI"
       },
       {
         "basename": "m_23",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_46",
-        "codomain": "hdole/gds/o_47",
-        "to": "hdole/gds/Id{Reflection,CPo{#1,#1}oPC}dI"
+        "domain": "o_46",
+        "codomain": "o_47",
+        "to": "Id{Reflection,CPo{#1,#1}oPC}dI"
       },
       {
         "basename": "m_24",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_48",
-        "codomain": "hdole/gds/o_49",
-        "to": "hdole/gds/Id{Angle,hdole/floats/F64}dI"
+        "domain": "o_48",
+        "codomain": "o_49",
+        "to": "Id{Angle,hdole/floats/F64}dI"
       },
       {
         "basename": "m_25",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_50",
-        "codomain": "hdole/gds/o_51",
-        "to": "hdole/gds/Id{Mag,hdole/floats/F64}dI"
+        "domain": "o_50",
+        "codomain": "o_51",
+        "to": "Id{Mag,hdole/floats/F64}dI"
       },
       {
         "basename": "m_26",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_52",
-        "codomain": "hdole/gds/o_53",
-        "to": "hdole/gds/Id{Sref,Po{Sname,Point,Reflection,Angle,Mag,Properties}oP}dI"
+        "domain": "o_52",
+        "codomain": "o_53",
+        "to": "Id{Sref,Po{Sname,Point,Reflection,Angle,Mag,Properties}oP}dI"
       },
       {
         "basename": "m_27",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_54",
-        "codomain": "hdole/gds/o_55",
-        "to": "hdole/gds/Id{Rows,hdole/nat/N16}dI"
+        "domain": "o_54",
+        "codomain": "o_55",
+        "to": "Id{Rows,hdole/nat/N16}dI"
       },
       {
         "basename": "m_28",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_56",
-        "codomain": "hdole/gds/o_57",
-        "to": "hdole/gds/Id{Cols,hdole/nat/N16}dI"
+        "domain": "o_56",
+        "codomain": "o_57",
+        "to": "Id{Cols,hdole/nat/N16}dI"
       },
       {
         "basename": "m_29",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_58",
-        "codomain": "hdole/gds/o_59",
-        "to": "hdole/gds/Id{RowPitch,hdole/nat/N16}dI"
+        "domain": "o_58",
+        "codomain": "o_59",
+        "to": "Id{RowPitch,hdole/nat/N16}dI"
       },
       {
         "basename": "m_30",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_60",
-        "codomain": "hdole/gds/o_61",
-        "to": "hdole/gds/Id{ColPitch,hdole/nat/N16}dI"
+        "domain": "o_60",
+        "codomain": "o_61",
+        "to": "Id{ColPitch,hdole/nat/N16}dI"
       },
       {
         "basename": "m_31",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_62",
-        "codomain": "hdole/gds/o_63",
-        "to": "hdole/gds/Id{Aref,Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP}dI"
+        "domain": "o_62",
+        "codomain": "o_63",
+        "to": "Id{Aref,Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP}dI"
       },
       {
         "basename": "m_32",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_64",
-        "codomain": "hdole/gds/o_65",
-        "to": "hdole/gds/Id{Text,Po{Layer,Datatype,hdole/str/str,Point,Properties}oP}dI"
+        "domain": "o_64",
+        "codomain": "o_65",
+        "to": "Id{Text,Po{Layer,Datatype,hdole/str/str,Point,Properties}oP}dI"
       },
       {
         "basename": "m_33",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gds/o_66",
-        "codomain": "hdole/gds/o_67",
-        "to": "hdole/gds/Id{Element,CPo{Boundary,Path,Sref,Aref,Text}oPC}dI"
+        "domain": "o_66",
+        "codomain": "o_67",
+        "to": "Id{Element,CPo{Boundary,Path,Sref,Aref,Text}oPC}dI"
       }
     ],
     "cells": []
@@ -893,22 +893,6 @@
       "max": 1
     },
     {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "&#10034;",
-      "size": 1,
-      "min": 0,
-      "max": 1
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "#1",
-        "#1"
-      ]
-    },
-    {
       "prototype": "ProductObject",
       "dual": true,
       "objects": [
@@ -923,36 +907,14 @@
       "source": "hdole/gds/#1"
     },
     {
-      "description": "The boundary element type",
-      "basename": "etBoundary",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/#1"
+      "prototype": "Identity",
+      "domain": "etBoundary",
+      "codomain": "#1"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/etBoundary",
-      "codomain": "hdole/gds/#1"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/etBoundary",
-      "codomain": "hdole/gds/#1"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/etBoundary"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/etBoundary"
-    },
-    {
-      "description": "The path element type",
-      "basename": "etPath",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/#1"
+      "domain": "#1",
+      "codomain": "etBoundary"
     },
     {
       "description": "The path element type",
@@ -962,29 +924,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/etPath",
-      "codomain": "hdole/gds/#1"
+      "domain": "etPath",
+      "codomain": "#1"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/etPath",
-      "codomain": "hdole/gds/#1"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/etPath"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/etPath"
-    },
-    {
-      "description": "The sref element type",
-      "basename": "etSref",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/#1"
+      "domain": "#1",
+      "codomain": "etPath"
     },
     {
       "description": "The sref element type",
@@ -994,29 +940,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/etSref",
-      "codomain": "hdole/gds/#1"
+      "domain": "etSref",
+      "codomain": "#1"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/etSref",
-      "codomain": "hdole/gds/#1"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/etSref"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/etSref"
-    },
-    {
-      "description": "The aref element type",
-      "basename": "etAref",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/#1"
+      "domain": "#1",
+      "codomain": "etSref"
     },
     {
       "description": "The aref element type",
@@ -1026,29 +956,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/etAref",
-      "codomain": "hdole/gds/#1"
+      "domain": "etAref",
+      "codomain": "#1"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/etAref",
-      "codomain": "hdole/gds/#1"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/etAref"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/etAref"
-    },
-    {
-      "description": "The text element type",
-      "basename": "etText",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/#1"
+      "domain": "#1",
+      "codomain": "etAref"
     },
     {
       "description": "The text element type",
@@ -1058,34 +972,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/etText",
-      "codomain": "hdole/gds/#1"
+      "domain": "etText",
+      "codomain": "#1"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/etText",
-      "codomain": "hdole/gds/#1"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/etText"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/etText"
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "etBoundary",
-        "etPath",
-        "etSref",
-        "etAref",
-        "etText"
-      ]
+      "domain": "#1",
+      "codomain": "etText"
     },
     {
       "prototype": "ProductObject",
@@ -1106,37 +999,14 @@
       "source": "hdole/gds/CPo{etBoundary,etPath,etSref,etAref,etText}oPC"
     },
     {
-      "description": "The element type",
-      "basename": "EltType",
-      "prototype": "NamedObject",
-      "dual": true,
-      "source": "hdole/gds/CPo{etBoundary,etPath,etSref,etAref,etText}oPC"
+      "prototype": "Identity",
+      "domain": "EltType",
+      "codomain": "CPo{etBoundary,etPath,etSref,etAref,etText}oPC"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/EltType",
-      "codomain": "hdole/gds/CPo{etBoundary,etPath,etSref,etAref,etText}oPC"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/EltType",
-      "codomain": "hdole/gds/CPo{etBoundary,etPath,etSref,etAref,etText}oPC"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/CPo{etBoundary,etPath,etSref,etAref,etText}oPC",
-      "codomain": "hdole/gds/EltType"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/CPo{etBoundary,etPath,etSref,etAref,etText}oPC",
-      "codomain": "hdole/gds/EltType"
-    },
-    {
-      "description": "The size of a database unit in meters",
-      "basename": "DBU",
-      "prototype": "NamedObject",
-      "source": "hdole/floats/F64"
+      "domain": "CPo{etBoundary,etPath,etSref,etAref,etText}oPC",
+      "codomain": "EltType"
     },
     {
       "description": "The size of a database unit in meters",
@@ -1146,29 +1016,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/DBU",
-      "codomain": "hdole/floats/F64"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/DBU",
+      "domain": "DBU",
       "codomain": "hdole/floats/F64"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/floats/F64",
-      "codomain": "hdole/gds/DBU"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/floats/F64",
-      "codomain": "hdole/gds/DBU"
-    },
-    {
-      "description": "The name of the structure",
-      "basename": "Strname",
-      "prototype": "NamedObject",
-      "source": "hdole/str/str"
+      "codomain": "DBU"
     },
     {
       "description": "The name of the structure",
@@ -1178,29 +1032,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Strname",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Strname",
+      "domain": "Strname",
       "codomain": "hdole/str/str"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/str/str",
-      "codomain": "hdole/gds/Strname"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/str/str",
-      "codomain": "hdole/gds/Strname"
-    },
-    {
-      "description": "The chip layer on which a gds boundary or path lies",
-      "basename": "Layer",
-      "prototype": "NamedObject",
-      "source": "hdole/nat/N16"
+      "codomain": "Strname"
     },
     {
       "description": "The chip layer on which a gds boundary or path lies",
@@ -1210,29 +1048,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Layer",
-      "codomain": "hdole/nat/N16"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Layer",
+      "domain": "Layer",
       "codomain": "hdole/nat/N16"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/Layer"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/Layer"
-    },
-    {
-      "description": "The chip datatype for a gds boundary or path",
-      "basename": "Datatype",
-      "prototype": "NamedObject",
-      "source": "hdole/nat/N16"
+      "codomain": "Layer"
     },
     {
       "description": "The chip datatype for a gds boundary or path",
@@ -1242,30 +1064,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Datatype",
-      "codomain": "hdole/nat/N16"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Datatype",
+      "domain": "Datatype",
       "codomain": "hdole/nat/N16"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/Datatype"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/Datatype"
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/int/Z32",
-        "hdole/int/Z32"
-      ]
+      "codomain": "Datatype"
     },
     {
       "prototype": "ProductObject",
@@ -1281,38 +1086,14 @@
       "source": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP"
     },
     {
-      "description": "A 32-bit point",
-      "basename": "Point",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP"
+      "prototype": "Identity",
+      "domain": "Point",
+      "codomain": "Po{hdole/int/Z32,hdole/int/Z32}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Point",
-      "codomain": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Point",
-      "codomain": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP",
-      "codomain": "hdole/gds/Point"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP",
-      "codomain": "hdole/gds/Point"
-    },
-    {
-      "description": "The homset from &Nopf;&#8321;&#8326; to Point",
-      "prototype": "HomObject",
-      "objects": [
-        "hdole/nat/N16",
-        "Point"
-      ]
+      "domain": "Po{hdole/int/Z32,hdole/int/Z32}oP",
+      "codomain": "Point"
     },
     {
       "description": "The homset from &Nopf;&#8321;&#8326; to Point",
@@ -1329,37 +1110,14 @@
       "source": "hdole/gds/Ho{hdole/nat/N16,Point}oH"
     },
     {
-      "description": "A list of points",
-      "basename": "Points",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/Ho{hdole/nat/N16,Point}oH"
+      "prototype": "Identity",
+      "domain": "Points",
+      "codomain": "Ho{hdole/nat/N16,Point}oH"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Points",
-      "codomain": "hdole/gds/Ho{hdole/nat/N16,Point}oH"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Points",
-      "codomain": "hdole/gds/Ho{hdole/nat/N16,Point}oH"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Ho{hdole/nat/N16,Point}oH",
-      "codomain": "hdole/gds/Points"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Ho{hdole/nat/N16,Point}oH",
-      "codomain": "hdole/gds/Points"
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/nat/N16",
-        "hdole/str/str"
-      ]
+      "domain": "Ho{hdole/nat/N16,Point}oH",
+      "codomain": "Points"
     },
     {
       "prototype": "ProductObject",
@@ -1375,38 +1133,14 @@
       "source": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP"
     },
     {
-      "description": "A property on a gds element",
-      "basename": "Property",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP"
+      "prototype": "Identity",
+      "domain": "Property",
+      "codomain": "Po{hdole/nat/N16,hdole/str/str}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Property",
-      "codomain": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Property",
-      "codomain": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP",
-      "codomain": "hdole/gds/Property"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{hdole/nat/N16,hdole/str/str}oP",
-      "codomain": "hdole/gds/Property"
-    },
-    {
-      "description": "The homset from &Nopf;&#8321;&#8326; to Property",
-      "prototype": "HomObject",
-      "objects": [
-        "hdole/nat/N16",
-        "Property"
-      ]
+      "domain": "Po{hdole/nat/N16,hdole/str/str}oP",
+      "codomain": "Property"
     },
     {
       "description": "The homset from &Nopf;&#8321;&#8326; to Property",
@@ -1422,38 +1156,14 @@
       "source": "hdole/gds/Ho{hdole/nat/N16,Property}oH"
     },
     {
-      "basename": "Properties",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/Ho{hdole/nat/N16,Property}oH"
+      "prototype": "Identity",
+      "domain": "Properties",
+      "codomain": "Ho{hdole/nat/N16,Property}oH"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Properties",
-      "codomain": "hdole/gds/Ho{hdole/nat/N16,Property}oH"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Properties",
-      "codomain": "hdole/gds/Ho{hdole/nat/N16,Property}oH"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Ho{hdole/nat/N16,Property}oH",
-      "codomain": "hdole/gds/Properties"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Ho{hdole/nat/N16,Property}oH",
-      "codomain": "hdole/gds/Properties"
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Layer",
-        "Datatype",
-        "Points",
-        "Properties"
-      ]
+      "domain": "Ho{hdole/nat/N16,Property}oH",
+      "codomain": "Properties"
     },
     {
       "prototype": "ProductObject",
@@ -1471,36 +1181,14 @@
       "source": "hdole/gds/Po{Layer,Datatype,Points,Properties}oP"
     },
     {
-      "description": "A polygon on a chip",
-      "basename": "Boundary",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/Po{Layer,Datatype,Points,Properties}oP"
+      "prototype": "Identity",
+      "domain": "Boundary",
+      "codomain": "Po{Layer,Datatype,Points,Properties}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Boundary",
-      "codomain": "hdole/gds/Po{Layer,Datatype,Points,Properties}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Boundary",
-      "codomain": "hdole/gds/Po{Layer,Datatype,Points,Properties}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{Layer,Datatype,Points,Properties}oP",
-      "codomain": "hdole/gds/Boundary"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{Layer,Datatype,Points,Properties}oP",
-      "codomain": "hdole/gds/Boundary"
-    },
-    {
-      "description": "A path type with square ends flush with the end point",
-      "basename": "ptFlush",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/#1"
+      "domain": "Po{Layer,Datatype,Points,Properties}oP",
+      "codomain": "Boundary"
     },
     {
       "description": "A path type with square ends flush with the end point",
@@ -1510,29 +1198,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/ptFlush",
-      "codomain": "hdole/gds/#1"
+      "domain": "ptFlush",
+      "codomain": "#1"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/ptFlush",
-      "codomain": "hdole/gds/#1"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/ptFlush"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/ptFlush"
-    },
-    {
-      "description": "A path type with round ends",
-      "basename": "ptRound",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/#1"
+      "domain": "#1",
+      "codomain": "ptFlush"
     },
     {
       "description": "A path type with round ends",
@@ -1542,29 +1214,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/ptRound",
-      "codomain": "hdole/gds/#1"
+      "domain": "ptRound",
+      "codomain": "#1"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/ptRound",
-      "codomain": "hdole/gds/#1"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/ptRound"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/ptRound"
-    },
-    {
-      "description": "A path type with squares ends extending a half-width beyond the endpoint",
-      "basename": "ptSquare",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/#1"
+      "domain": "#1",
+      "codomain": "ptRound"
     },
     {
       "description": "A path type with squares ends extending a half-width beyond the endpoint",
@@ -1574,29 +1230,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/ptSquare",
-      "codomain": "hdole/gds/#1"
+      "domain": "ptSquare",
+      "codomain": "#1"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/ptSquare",
-      "codomain": "hdole/gds/#1"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/ptSquare"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/#1",
-      "codomain": "hdole/gds/ptSquare"
-    },
-    {
-      "description": "A path type with squares ends extending a specified lengths beyond the endpoints",
-      "basename": "ptVariable",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP"
+      "domain": "#1",
+      "codomain": "ptSquare"
     },
     {
       "description": "A path type with squares ends extending a specified lengths beyond the endpoints",
@@ -1606,33 +1246,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/ptVariable",
-      "codomain": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP"
+      "domain": "ptVariable",
+      "codomain": "Po{hdole/int/Z32,hdole/int/Z32}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/ptVariable",
-      "codomain": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP",
-      "codomain": "hdole/gds/ptVariable"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{hdole/int/Z32,hdole/int/Z32}oP",
-      "codomain": "hdole/gds/ptVariable"
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "ptFlush",
-        "ptRound",
-        "ptSquare",
-        "ptVariable"
-      ]
+      "domain": "Po{hdole/int/Z32,hdole/int/Z32}oP",
+      "codomain": "ptVariable"
     },
     {
       "prototype": "ProductObject",
@@ -1652,37 +1272,14 @@
       "source": "hdole/gds/CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC"
     },
     {
-      "description": "The type of a path explains what do with the endpoints",
-      "basename": "EndType",
-      "prototype": "NamedObject",
-      "dual": true,
-      "source": "hdole/gds/CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC"
+      "prototype": "Identity",
+      "domain": "EndType",
+      "codomain": "CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/EndType",
-      "codomain": "hdole/gds/CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/EndType",
-      "codomain": "hdole/gds/CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC",
-      "codomain": "hdole/gds/EndType"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC",
-      "codomain": "hdole/gds/EndType"
-    },
-    {
-      "description": "The width of a path",
-      "basename": "Width",
-      "prototype": "NamedObject",
-      "source": "hdole/int/Z32"
+      "domain": "CPo{ptFlush,ptRound,ptSquare,ptVariable}oPC",
+      "codomain": "EndType"
     },
     {
       "description": "The width of a path",
@@ -1692,34 +1289,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Width",
-      "codomain": "hdole/int/Z32"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Width",
+      "domain": "Width",
       "codomain": "hdole/int/Z32"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/int/Z32",
-      "codomain": "hdole/gds/Width"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/int/Z32",
-      "codomain": "hdole/gds/Width"
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Layer",
-        "Datatype",
-        "Points",
-        "Width",
-        "EndType",
-        "Properties"
-      ]
+      "codomain": "Width"
     },
     {
       "prototype": "ProductObject",
@@ -1739,36 +1315,14 @@
       "source": "hdole/gds/Po{Layer,Datatype,Points,Width,EndType,Properties}oP"
     },
     {
-      "description": "A path on a layer of a chip",
-      "basename": "Path",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/Po{Layer,Datatype,Points,Width,EndType,Properties}oP"
+      "prototype": "Identity",
+      "domain": "Path",
+      "codomain": "Po{Layer,Datatype,Points,Width,EndType,Properties}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Path",
-      "codomain": "hdole/gds/Po{Layer,Datatype,Points,Width,EndType,Properties}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Path",
-      "codomain": "hdole/gds/Po{Layer,Datatype,Points,Width,EndType,Properties}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{Layer,Datatype,Points,Width,EndType,Properties}oP",
-      "codomain": "hdole/gds/Path"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{Layer,Datatype,Points,Width,EndType,Properties}oP",
-      "codomain": "hdole/gds/Path"
-    },
-    {
-      "description": "The name of the cell to be placed",
-      "basename": "Sname",
-      "prototype": "NamedObject",
-      "source": "hdole/str/str"
+      "domain": "Po{Layer,Datatype,Points,Width,EndType,Properties}oP",
+      "codomain": "Path"
     },
     {
       "description": "The name of the cell to be placed",
@@ -1778,30 +1332,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Sname",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Sname",
+      "domain": "Sname",
       "codomain": "hdole/str/str"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/str/str",
-      "codomain": "hdole/gds/Sname"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/str/str",
-      "codomain": "hdole/gds/Sname"
-    },
-    {
-      "description": "The reference is to be reflected about the s-axis upon placement",
-      "basename": "Reflection",
-      "prototype": "NamedObject",
-      "dual": true,
-      "source": "hdole/gds/CPo{#1,#1}oPC"
+      "codomain": "Sname"
     },
     {
       "description": "The reference is to be reflected about the s-axis upon placement",
@@ -1812,29 +1349,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Reflection",
-      "codomain": "hdole/gds/CPo{#1,#1}oPC"
+      "domain": "Reflection",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Reflection",
-      "codomain": "hdole/gds/CPo{#1,#1}oPC"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/CPo{#1,#1}oPC",
-      "codomain": "hdole/gds/Reflection"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/CPo{#1,#1}oPC",
-      "codomain": "hdole/gds/Reflection"
-    },
-    {
-      "description": "The reference is to be rotated by degrees upon placement",
-      "basename": "Angle",
-      "prototype": "NamedObject",
-      "source": "hdole/floats/F64"
+      "domain": "CPo{#1,#1}oPC",
+      "codomain": "Reflection"
     },
     {
       "description": "The reference is to be rotated by degrees upon placement",
@@ -1844,29 +1365,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Angle",
-      "codomain": "hdole/floats/F64"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Angle",
+      "domain": "Angle",
       "codomain": "hdole/floats/F64"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/floats/F64",
-      "codomain": "hdole/gds/Angle"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/floats/F64",
-      "codomain": "hdole/gds/Angle"
-    },
-    {
-      "description": "The reference is to be magnified upon placement",
-      "basename": "Mag",
-      "prototype": "NamedObject",
-      "source": "hdole/floats/F64"
+      "codomain": "Angle"
     },
     {
       "description": "The reference is to be magnified upon placement",
@@ -1876,34 +1381,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Mag",
-      "codomain": "hdole/floats/F64"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Mag",
+      "domain": "Mag",
       "codomain": "hdole/floats/F64"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/floats/F64",
-      "codomain": "hdole/gds/Mag"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/floats/F64",
-      "codomain": "hdole/gds/Mag"
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Sname",
-        "Point",
-        "Reflection",
-        "Angle",
-        "Mag",
-        "Properties"
-      ]
+      "codomain": "Mag"
     },
     {
       "prototype": "ProductObject",
@@ -1923,36 +1407,14 @@
       "source": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Properties}oP"
     },
     {
-      "description": "The structure with the given name is placed accordingly",
-      "basename": "Sref",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Properties}oP"
+      "prototype": "Identity",
+      "domain": "Sref",
+      "codomain": "Po{Sname,Point,Reflection,Angle,Mag,Properties}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Sref",
-      "codomain": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Properties}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Sref",
-      "codomain": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Properties}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Properties}oP",
-      "codomain": "hdole/gds/Sref"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Properties}oP",
-      "codomain": "hdole/gds/Sref"
-    },
-    {
-      "description": "The number of rows in an arrayed reference",
-      "basename": "Rows",
-      "prototype": "NamedObject",
-      "source": "hdole/nat/N16"
+      "domain": "Po{Sname,Point,Reflection,Angle,Mag,Properties}oP",
+      "codomain": "Sref"
     },
     {
       "description": "The number of rows in an arrayed reference",
@@ -1962,29 +1424,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Rows",
-      "codomain": "hdole/nat/N16"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Rows",
+      "domain": "Rows",
       "codomain": "hdole/nat/N16"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/Rows"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/Rows"
-    },
-    {
-      "description": "The number of columns in an arrayed reference",
-      "basename": "Cols",
-      "prototype": "NamedObject",
-      "source": "hdole/nat/N16"
+      "codomain": "Rows"
     },
     {
       "description": "The number of columns in an arrayed reference",
@@ -1994,29 +1440,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Cols",
-      "codomain": "hdole/nat/N16"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Cols",
+      "domain": "Cols",
       "codomain": "hdole/nat/N16"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/Cols"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/Cols"
-    },
-    {
-      "description": "The distance between rows (origin-to-origin, not the gap) in an arrayed reference",
-      "basename": "RowPitch",
-      "prototype": "NamedObject",
-      "source": "hdole/nat/N16"
+      "codomain": "Cols"
     },
     {
       "description": "The distance between rows (origin-to-origin, not the gap) in an arrayed reference",
@@ -2026,29 +1456,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/RowPitch",
-      "codomain": "hdole/nat/N16"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/RowPitch",
+      "domain": "RowPitch",
       "codomain": "hdole/nat/N16"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/RowPitch"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/RowPitch"
-    },
-    {
-      "description": "The distance between columns (origin-to-origin, not the gap) in an arrayed reference",
-      "basename": "ColPitch",
-      "prototype": "NamedObject",
-      "source": "hdole/nat/N16"
+      "codomain": "RowPitch"
     },
     {
       "description": "The distance between columns (origin-to-origin, not the gap) in an arrayed reference",
@@ -2058,38 +1472,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/ColPitch",
-      "codomain": "hdole/nat/N16"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/ColPitch",
+      "domain": "ColPitch",
       "codomain": "hdole/nat/N16"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/ColPitch"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/gds/ColPitch"
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Sname",
-        "Point",
-        "Reflection",
-        "Angle",
-        "Mag",
-        "Rows",
-        "Cols",
-        "RowPitch",
-        "ColPitch",
-        "Properties"
-      ]
+      "codomain": "ColPitch"
     },
     {
       "prototype": "ProductObject",
@@ -2113,40 +1502,14 @@
       "source": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP"
     },
     {
-      "description": "The arrayed structure with the given name is placed accordingly.",
-      "basename": "Aref",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP"
+      "prototype": "Identity",
+      "domain": "Aref",
+      "codomain": "Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Aref",
-      "codomain": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Aref",
-      "codomain": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP",
-      "codomain": "hdole/gds/Aref"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP",
-      "codomain": "hdole/gds/Aref"
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "Layer",
-        "Datatype",
-        "hdole/str/str",
-        "Point",
-        "Properties"
-      ]
+      "domain": "Po{Sname,Point,Reflection,Angle,Mag,Rows,Cols,RowPitch,ColPitch,Properties}oP",
+      "codomain": "Aref"
     },
     {
       "prototype": "ProductObject",
@@ -2165,41 +1528,14 @@
       "source": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP"
     },
     {
-      "description": "The text string is placed accordingly",
-      "basename": "Text",
-      "prototype": "NamedObject",
-      "source": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP"
+      "prototype": "Identity",
+      "domain": "Text",
+      "codomain": "Po{Layer,Datatype,hdole/str/str,Point,Properties}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Text",
-      "codomain": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Text",
-      "codomain": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP",
-      "codomain": "hdole/gds/Text"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Po{Layer,Datatype,hdole/str/str,Point,Properties}oP",
-      "codomain": "hdole/gds/Text"
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "Boundary",
-        "Path",
-        "Sref",
-        "Aref",
-        "Text"
-      ]
+      "domain": "Po{Layer,Datatype,hdole/str/str,Point,Properties}oP",
+      "codomain": "Text"
     },
     {
       "prototype": "ProductObject",
@@ -2220,31 +1556,14 @@
       "source": "hdole/gds/CPo{Boundary,Path,Sref,Aref,Text}oPC"
     },
     {
-      "description": "A GDSII element is a boundary, path, aref, sref, or text.",
-      "basename": "Element",
-      "prototype": "NamedObject",
-      "dual": true,
-      "source": "hdole/gds/CPo{Boundary,Path,Sref,Aref,Text}oPC"
+      "prototype": "Identity",
+      "domain": "Element",
+      "codomain": "CPo{Boundary,Path,Sref,Aref,Text}oPC"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gds/Element",
-      "codomain": "hdole/gds/CPo{Boundary,Path,Sref,Aref,Text}oPC"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/Element",
-      "codomain": "hdole/gds/CPo{Boundary,Path,Sref,Aref,Text}oPC"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/CPo{Boundary,Path,Sref,Aref,Text}oPC",
-      "codomain": "hdole/gds/Element"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "hdole/gds/CPo{Boundary,Path,Sref,Aref,Text}oPC",
-      "codomain": "hdole/gds/Element"
+      "domain": "CPo{Boundary,Path,Sref,Aref,Text}oPC",
+      "codomain": "Element"
     }
   ],
   "user": "hdole",

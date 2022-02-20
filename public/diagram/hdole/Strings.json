@@ -22,10 +22,10 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 200,
-          "y": 200
+          "y": 250
         }
       },
       {
@@ -34,26 +34,26 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 200
+          "y": 250
         },
         "height": 24
       },
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
-          "y": 400
+          "y": 450
         }
       },
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 400,
-          "y": 400
+          "y": 450
         }
       },
       {
@@ -62,17 +62,17 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 600
+          "y": 350
         },
         "height": 24
       },
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 200,
-          "y": 600
+          "y": 350
         }
       },
       {
@@ -81,7 +81,7 @@
         "to": "hdole/nat/N64",
         "xy": {
           "x": 400,
-          "y": 600
+          "y": 350
         }
       },
       {
@@ -90,26 +90,26 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 800
+          "y": 700
         },
         "height": 24
       },
       {
         "basename": "o_7",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/Po{str,str}oP",
+        "to": "Po{str,str}oP",
         "xy": {
           "x": 200,
-          "y": 800
+          "y": 700
         }
       },
       {
         "basename": "o_8",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 400,
-          "y": 800
+          "y": 700
         }
       },
       {
@@ -118,26 +118,26 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 1000
+          "y": 850
         },
         "height": 24
       },
       {
         "basename": "o_9",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/Po{str,str}oP",
+        "to": "Po{str,str}oP",
         "xy": {
           "x": 200,
-          "y": 1000
+          "y": 850
         }
       },
       {
         "basename": "o_10",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 400,
-          "y": 1000
+          "y": 850
         }
       },
       {
@@ -146,17 +146,17 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 1200
+          "y": 1000
         },
         "height": 24
       },
       {
         "basename": "o_11",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/Po{str,str}oP",
+        "to": "Po{str,str}oP",
         "xy": {
           "x": 200,
-          "y": 1200
+          "y": 1000
         }
       },
       {
@@ -165,7 +165,7 @@
         "to": "hdole/nat/CPo{N64,#1}oPC",
         "xy": {
           "x": 400,
-          "y": 1200
+          "y": 1000
         }
       },
       {
@@ -174,26 +174,26 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 1400
+          "y": 1150
         },
         "height": 24
       },
       {
         "basename": "o_16",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/Po{str,hdole/nat/N64}oP",
+        "to": "Po{str,hdole/nat/N64}oP",
         "xy": {
           "x": 200,
-          "y": 1400
+          "y": 1150
         }
       },
       {
         "basename": "o_17",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 400,
-          "y": 1400
+          "y": 1150
         }
       },
       {
@@ -202,7 +202,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 1600
+          "y": 1350
         },
         "height": 24
       },
@@ -212,16 +212,16 @@
         "to": "hdole/nat/N64",
         "xy": {
           "x": 200,
-          "y": 1900
+          "y": 1650
         }
       },
       {
         "basename": "o_19",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 400,
-          "y": 1900
+          "y": 1650
         }
       },
       {
@@ -230,7 +230,7 @@
         "to": "hdole/nat/CPo{N64,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 1900
+          "y": 1650
         }
       },
       {
@@ -239,7 +239,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 2200
+          "y": 1950
         },
         "height": 24
       },
@@ -249,16 +249,16 @@
         "to": "hdole/int/Z64",
         "xy": {
           "x": 200,
-          "y": 2200
+          "y": 1950
         }
       },
       {
         "basename": "o_22",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 400,
-          "y": 2200
+          "y": 1950
         }
       },
       {
@@ -267,7 +267,7 @@
         "to": "hdole/int/CPo{Z64,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 2200
+          "y": 1950
         }
       },
       {
@@ -276,7 +276,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 2400
+          "y": 2150
         },
         "height": 24
       },
@@ -286,16 +286,16 @@
         "to": "hdole/floats/F64",
         "xy": {
           "x": 200,
-          "y": 2400
+          "y": 2150
         }
       },
       {
         "basename": "o_25",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 400,
-          "y": 2400
+          "y": 2150
         }
       },
       {
@@ -304,7 +304,7 @@
         "to": "hdole/floats/CPo{F64,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 2400
+          "y": 2150
         }
       },
       {
@@ -313,26 +313,26 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 2600
+          "y": 2350
         },
         "height": 24
       },
       {
         "basename": "o_27",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 200,
-          "y": 2600
+          "y": 2350
         }
       },
       {
         "basename": "o_28",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/TTY",
+        "to": "TTY",
         "xy": {
           "x": 400,
-          "y": 2600
+          "y": 2350
         }
       },
       {
@@ -352,7 +352,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 400
+          "y": 450
         },
         "height": 24
       },
@@ -362,7 +362,7 @@
         "to": "hdole/nat/N8",
         "xy": {
           "x": 200,
-          "y": 1600
+          "y": 1350
         }
       },
       {
@@ -371,7 +371,7 @@
         "to": "hdole/nat/N32",
         "xy": {
           "x": 200,
-          "y": 1800
+          "y": 1550
         }
       },
       {
@@ -380,43 +380,43 @@
         "to": "hdole/nat/N128",
         "xy": {
           "x": 200,
-          "y": 2000
+          "y": 1750
         }
       },
       {
         "basename": "o_15",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 400,
-          "y": 2000
+          "y": 1750
         }
       },
       {
         "basename": "o_29",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 400,
-          "y": 1600
+          "y": 1350
         }
       },
       {
         "basename": "o_30",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 400,
-          "y": 1800
+          "y": 1550
         }
       },
       {
         "basename": "o_32",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/CPo{hdole/nat/N8,#1}oPC",
+        "to": "CPo{hdole/nat/N8,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 1600
+          "y": 1350
         }
       },
       {
@@ -425,194 +425,236 @@
         "to": "hdole/nat/N16",
         "xy": {
           "x": 200,
-          "y": 1700
+          "y": 1450
         }
       },
       {
         "basename": "o_34",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/str",
+        "to": "str",
         "xy": {
           "x": 400,
-          "y": 1700
+          "y": 1450
         }
       },
       {
         "basename": "o_35",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/CPo{hdole/nat/N16,#1}oPC",
+        "to": "CPo{hdole/nat/N16,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 1700
+          "y": 1450
         }
       },
       {
         "basename": "o_36",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/CPo{hdole/nat/N32,#1}oPC",
+        "to": "CPo{hdole/nat/N32,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 1800
+          "y": 1550
         }
       },
       {
         "basename": "o_37",
         "prototype": "IndexObject",
-        "to": "hdole/Strings/CPo{hdole/nat/N128,#1}oPC",
+        "to": "CPo{hdole/nat/N128,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 2000
+          "y": 1750
         }
       },
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_3",
-        "codomain": "hdole/Strings/o_4",
-        "to": "hdole/Strings/empty"
+        "domain": "o_3",
+        "codomain": "o_4",
+        "to": "empty"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_5",
-        "codomain": "hdole/Strings/o_6",
-        "to": "hdole/Strings/length"
+        "domain": "o_5",
+        "codomain": "o_6",
+        "to": "length"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_7",
-        "codomain": "hdole/Strings/o_8",
-        "to": "hdole/Strings/append"
+        "domain": "o_7",
+        "codomain": "o_8",
+        "to": "append"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_9",
-        "codomain": "hdole/Strings/o_10",
-        "to": "hdole/Strings/includes"
+        "domain": "o_9",
+        "codomain": "o_10",
+        "to": "includes"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_11",
-        "codomain": "hdole/Strings/o_12",
-        "to": "hdole/Strings/indexOf"
+        "domain": "o_11",
+        "codomain": "o_12",
+        "to": "indexOf"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_16",
-        "codomain": "hdole/Strings/o_17",
-        "to": "hdole/Strings/charAt"
+        "domain": "o_16",
+        "codomain": "o_17",
+        "to": "charAt"
       },
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_18",
-        "codomain": "hdole/Strings/o_19",
-        "to": "hdole/Strings/N64ToStr"
+        "domain": "o_18",
+        "codomain": "o_19",
+        "to": "N64ToStr"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_19",
-        "codomain": "hdole/Strings/o_20",
-        "to": "hdole/Strings/strToN64"
+        "domain": "o_19",
+        "codomain": "o_20",
+        "to": "strToN64"
       },
       {
         "basename": "m_9",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_21",
-        "codomain": "hdole/Strings/o_22",
-        "to": "hdole/Strings/Z64ToStr"
+        "domain": "o_21",
+        "codomain": "o_22",
+        "to": "Z64ToStr"
       },
       {
         "basename": "m_10",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_22",
-        "codomain": "hdole/Strings/o_23",
-        "to": "hdole/Strings/strToZ64"
+        "domain": "o_22",
+        "codomain": "o_23",
+        "to": "strToZ64"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_24",
-        "codomain": "hdole/Strings/o_25",
-        "to": "hdole/Strings/F64ToStr"
+        "domain": "o_24",
+        "codomain": "o_25",
+        "to": "F64ToStr"
       },
       {
         "basename": "m_12",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_25",
-        "codomain": "hdole/Strings/o_26",
-        "to": "hdole/Strings/strToF64"
+        "domain": "o_25",
+        "codomain": "o_26",
+        "to": "strToF64"
       },
       {
         "basename": "m_13",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_27",
-        "codomain": "hdole/Strings/o_28",
-        "to": "hdole/Strings/str2tty"
+        "domain": "o_27",
+        "codomain": "o_28",
+        "to": "str2tty"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_1",
-        "codomain": "hdole/Strings/o_29",
-        "to": "hdole/Strings/N8ToStr"
+        "domain": "o_1",
+        "codomain": "o_29",
+        "to": "N8ToStr"
       },
       {
         "basename": "m_14",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_29",
-        "codomain": "hdole/Strings/o_32",
-        "to": "hdole/Strings/strToN8"
+        "domain": "o_29",
+        "codomain": "o_32",
+        "to": "strToN8"
       },
       {
         "basename": "m_15",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_33",
-        "codomain": "hdole/Strings/o_34",
-        "to": "hdole/Strings/N16ToStr"
+        "domain": "o_33",
+        "codomain": "o_34",
+        "to": "N16ToStr"
       },
       {
         "basename": "m_16",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_34",
-        "codomain": "hdole/Strings/o_35",
-        "to": "hdole/Strings/strToN16"
+        "domain": "o_34",
+        "codomain": "o_35",
+        "to": "strToN16"
       },
       {
         "basename": "m_17",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_13",
-        "codomain": "hdole/Strings/o_30",
-        "to": "hdole/Strings/N32ToStr"
+        "domain": "o_13",
+        "codomain": "o_30",
+        "to": "N32ToStr"
       },
       {
         "basename": "m_18",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_30",
-        "codomain": "hdole/Strings/o_36",
-        "to": "hdole/Strings/strToN32"
+        "domain": "o_30",
+        "codomain": "o_36",
+        "to": "strToN32"
       },
       {
         "basename": "m_19",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_14",
-        "codomain": "hdole/Strings/o_15",
-        "to": "hdole/Strings/N128ToStr"
+        "domain": "o_14",
+        "codomain": "o_15",
+        "to": "N128ToStr"
       },
       {
         "basename": "m_20",
         "prototype": "IndexMorphism",
-        "domain": "hdole/Strings/o_15",
-        "codomain": "hdole/Strings/o_37",
-        "to": "hdole/Strings/strToN128"
+        "domain": "o_15",
+        "codomain": "o_37",
+        "to": "strToN128"
+      },
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 400,
+          "y": 590
+        }
+      },
+      {
+        "basename": "m_21",
+        "prototype": "IndexMorphism",
+        "domain": "o_4",
+        "codomain": "o_2",
+        "to": "length"
+      },
+      {
+        "basename": "m_22",
+        "prototype": "IndexMorphism",
+        "domain": "o_3",
+        "codomain": "o_2",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "hdole/nat/zero64"
       }
     ],
-    "cells": []
+    "cells": [
+      {
+        "name": "hdole/Strings/{m_0,m_21},{m_22}",
+        "left": [
+          "m_0",
+          "m_21"
+        ],
+        "right": [
+          "m_22"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      }
+    ]
   },
   "elements": [
     {
@@ -640,6 +682,7 @@
       "description": "The space of all strings",
       "basename": "str",
       "prototype": "CatObject",
+      "properName": "Str",
       "code": {
         "cpp": "}\n\n#include <string>;\n\t\t\nnamespace %Namespace\n{\n\ttypedef std::string str;\n"
       }
@@ -909,11 +952,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644714015060,
+  "timestamp": 1645390992783,
   "version": 0,
   "viewport": {
-    "x": 1222,
-    "y": 435,
-    "scale": 1.6543839819791313
+    "x": 1418,
+    "y": -374,
+    "scale": 0.6235199234414899
   }
 }

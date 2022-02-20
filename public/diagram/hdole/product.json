@@ -6,7 +6,7 @@
   "properName": "hdole/product",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/product_Index",
+  "domain": "product_Index",
   "codomain": "em/Cat",
   "references": [],
   "domainInfo": {
@@ -178,6 +178,16 @@
         }
       },
       {
+        "description": "BUG: the exists! quantifier needs parenthesis",
+        "basename": "t_7",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 320,
+          "y": 710
+        },
+        "height": 24
+      },
+      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_3",
@@ -310,16 +320,6 @@
             0
           ]
         ]
-      },
-      {
-        "description": "BUG: the exists! quantifier needs parenthesis",
-        "basename": "t_7",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 320,
-          "y": 710
-        },
-        "height": 24
       }
     ],
     "cells": [
@@ -394,8 +394,8 @@
           "prototype": "FactorMorphism",
           "category": "hdole/product/D",
           "diagram": "hdole/product",
-          "domain": "hdole/product/Po{A,B}oP",
-          "codomain": "hdole/product/A",
+          "domain": "Po{A,B}oP",
+          "codomain": "A",
           "factors": [
             0
           ]
@@ -406,8 +406,8 @@
           "prototype": "FactorMorphism",
           "category": "hdole/product/D",
           "diagram": "hdole/product",
-          "domain": "hdole/product/Po{A,B}oP",
-          "codomain": "hdole/product/B",
+          "domain": "Po{A,B}oP",
+          "codomain": "B",
           "factors": [
             1
           ]
@@ -419,8 +419,8 @@
           "prototype": "Morphism",
           "category": "hdole/product/D",
           "diagram": "hdole/product",
-          "domain": "hdole/product/X",
-          "codomain": "hdole/product/A"
+          "domain": "X",
+          "codomain": "A"
         },
         {
           "description": "",
@@ -429,8 +429,8 @@
           "prototype": "Morphism",
           "category": "hdole/product/D",
           "diagram": "hdole/product",
-          "domain": "hdole/product/X",
-          "codomain": "hdole/product/B"
+          "domain": "X",
+          "codomain": "B"
         },
         {
           "description": "",
@@ -439,8 +439,8 @@
           "prototype": "Morphism",
           "category": "hdole/product/D",
           "diagram": "hdole/product",
-          "domain": "hdole/product/X",
-          "codomain": "hdole/product/Po{A,B}oP"
+          "domain": "X",
+          "codomain": "Po{A,B}oP"
         }
       ]
     }

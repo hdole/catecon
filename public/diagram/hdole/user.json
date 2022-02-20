@@ -6,7 +6,7 @@
   "properName": "hdole/user",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/user_Index",
+  "domain": "user_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/HTML"
@@ -33,7 +33,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/user/user",
+        "to": "user",
         "xy": {
           "x": -800,
           "y": 200
@@ -98,42 +98,42 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/user/o_0",
-        "codomain": "hdole/user/o_1",
-        "to": "hdole/user/name"
+        "domain": "o_0",
+        "codomain": "o_1",
+        "to": "name"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/user/o_0",
-        "codomain": "hdole/user/o_2",
-        "to": "hdole/user/phoneNumber"
+        "domain": "o_0",
+        "codomain": "o_2",
+        "to": "phoneNumber"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/user/o_0",
-        "codomain": "hdole/user/o_3",
+        "domain": "o_0",
+        "codomain": "o_3",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/user/permissions"
+        "to": "permissions"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/user/o_0",
-        "codomain": "hdole/user/o_4",
+        "domain": "o_0",
+        "codomain": "o_4",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/user/maxDiagrams"
+        "to": "maxDiagrams"
       }
     ],
     "cells": []
@@ -144,75 +144,29 @@
       "prototype": "CatObject"
     },
     {
-      "basename": "user",
-      "prototype": "CatObject"
-    },
-    {
       "basename": "name",
       "prototype": "Morphism",
-      "domain": "hdole/user/user",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "name",
-      "prototype": "Morphism",
-      "domain": "hdole/user/user",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
-    },
-    {
-      "description": "For MFA",
-      "basename": "phoneNumber",
-      "prototype": "Morphism",
-      "domain": "hdole/user/user",
+      "domain": "user",
       "codomain": "hdole/str/str"
     },
     {
       "description": "For MFA",
       "basename": "phoneNumber",
       "prototype": "Morphism",
-      "domain": "hdole/user/user",
+      "domain": "user",
       "codomain": "hdole/str/str"
     },
     {
       "basename": "permissions",
       "prototype": "Morphism",
       "properName": "privileges",
-      "domain": "hdole/user/user",
-      "codomain": "hdole/str/str"
-    },
-    {
-      "basename": "permissions",
-      "prototype": "Morphism",
-      "properName": "privileges",
-      "domain": "hdole/user/user",
+      "domain": "user",
       "codomain": "hdole/str/str"
     },
     {
       "basename": "maxDiagrams",
       "prototype": "Morphism",
-      "domain": "hdole/user/user",
-      "codomain": "hdole/int/Z32"
-    },
-    {
-      "basename": "maxDiagrams",
-      "prototype": "Morphism",
-      "domain": "hdole/user/user",
+      "domain": "user",
       "codomain": "hdole/int/Z32"
     }
   ],

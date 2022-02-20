@@ -6,7 +6,7 @@
   "properName": "GDSReader",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/gdsReader_Index",
+  "domain": "gdsReader_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/gds",
@@ -185,7 +185,7 @@
       {
         "basename": "o_51",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": -1400,
           "y": -2000
@@ -194,7 +194,7 @@
       {
         "basename": "o_52",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Halt",
+        "to": "Halt",
         "xy": {
           "x": -1400,
           "y": -1600
@@ -203,7 +203,7 @@
       {
         "basename": "o_53",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
+        "to": "Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
         "xy": {
           "x": -1000,
           "y": -2000
@@ -212,7 +212,7 @@
       {
         "basename": "o_54",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/BndryData",
+        "to": "BndryData",
         "xy": {
           "x": -1000,
           "y": -1600
@@ -221,7 +221,7 @@
       {
         "basename": "o_56",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/gds/Width,hdole/gds/EndType}oP",
+        "to": "Po{hdole/gds/Width,hdole/gds/EndType}oP",
         "xy": {
           "x": -600,
           "y": -2000
@@ -230,7 +230,7 @@
       {
         "basename": "o_57",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/PathData",
+        "to": "PathData",
         "xy": {
           "x": -600,
           "y": -1600
@@ -239,7 +239,7 @@
       {
         "basename": "o_59",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP",
+        "to": "Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP",
         "xy": {
           "x": 200,
           "y": -2000
@@ -248,7 +248,7 @@
       {
         "basename": "o_58",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
+        "to": "Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
         "xy": {
           "x": -200,
           "y": -2000
@@ -257,7 +257,7 @@
       {
         "basename": "o_60",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/SrefData",
+        "to": "SrefData",
         "xy": {
           "x": -200,
           "y": -1600
@@ -266,7 +266,7 @@
       {
         "basename": "o_61",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/ArefData",
+        "to": "ArefData",
         "xy": {
           "x": 200,
           "y": -1600
@@ -275,7 +275,7 @@
       {
         "basename": "o_12",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP",
+        "to": "Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP",
         "xy": {
           "x": -390,
           "y": 270
@@ -284,7 +284,7 @@
       {
         "basename": "o_37",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": -390,
           "y": 670
@@ -320,7 +320,7 @@
       {
         "basename": "o_50",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": 1000
@@ -329,7 +329,7 @@
       {
         "basename": "o_71",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": 800
@@ -338,7 +338,7 @@
       {
         "basename": "o_72",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": 600
@@ -347,7 +347,7 @@
       {
         "basename": "o_73",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": 400
@@ -356,7 +356,7 @@
       {
         "basename": "o_74",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": 0
@@ -365,7 +365,7 @@
       {
         "basename": "o_75",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": -200
@@ -374,7 +374,7 @@
       {
         "basename": "o_76",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": 200
@@ -383,7 +383,7 @@
       {
         "basename": "o_77",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": -400
@@ -392,7 +392,7 @@
       {
         "basename": "o_78",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": -600
@@ -401,7 +401,7 @@
       {
         "basename": "o_79",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": -1000
@@ -410,7 +410,7 @@
       {
         "basename": "o_80",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": -1400
@@ -419,7 +419,7 @@
       {
         "basename": "o_81",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": -1600
@@ -428,7 +428,7 @@
       {
         "basename": "o_83",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": -1800
@@ -468,7 +468,7 @@
       {
         "basename": "o_36",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": -1600,
           "y": 1000
@@ -486,7 +486,7 @@
       {
         "basename": "o_55",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/cell",
+        "to": "cell",
         "xy": {
           "x": 600,
           "y": -1600
@@ -504,7 +504,7 @@
       {
         "basename": "o_66",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": 150,
           "y": 2050
@@ -513,7 +513,7 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": -800
@@ -522,7 +522,7 @@
       {
         "basename": "o_87",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -2800,
           "y": -1200
@@ -540,7 +540,7 @@
       {
         "basename": "o_85",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{Ho{State,State}oH,State}oP",
+        "to": "Po{Ho{State,State}oH,State}oP",
         "xy": {
           "x": 150,
           "y": 3050
@@ -549,7 +549,7 @@
       {
         "basename": "o_16",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": 150,
           "y": 3250
@@ -558,7 +558,7 @@
       {
         "basename": "o_67",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Ho{State,G}oH",
+        "to": "Ho{State,G}oH",
         "xy": {
           "x": 210,
           "y": 270
@@ -567,7 +567,7 @@
       {
         "basename": "o_84",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Ho{State,State}oH",
+        "to": "Ho{State,State}oH",
         "xy": {
           "x": 150,
           "y": 2850
@@ -576,7 +576,7 @@
       {
         "basename": "o_88",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": 550,
           "y": 2450
@@ -596,7 +596,7 @@
       {
         "basename": "o_89",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": 2860,
           "y": -450
@@ -623,7 +623,7 @@
       {
         "basename": "o_96",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": 2860,
           "y": 550
@@ -661,7 +661,7 @@
       {
         "basename": "o_99",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": 4480,
           "y": -450
@@ -688,7 +688,7 @@
       {
         "basename": "o_102",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/RecordLength",
+        "to": "RecordLength",
         "xy": {
           "x": 1000,
           "y": -1600
@@ -697,7 +697,7 @@
       {
         "basename": "o_103",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/RecordLength",
+        "to": "RecordLength",
         "xy": {
           "x": 640,
           "y": 270
@@ -706,7 +706,7 @@
       {
         "basename": "o_106",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/RecordLength",
+        "to": "RecordLength",
         "xy": {
           "x": 4720,
           "y": -250
@@ -724,7 +724,7 @@
       {
         "basename": "o_108",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/nat/N16,hdole/nat/N16}oP",
+        "to": "Po{hdole/nat/N16,hdole/nat/N16}oP",
         "xy": {
           "x": 4800,
           "y": 90
@@ -742,7 +742,7 @@
       {
         "basename": "o_107",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": 5000,
           "y": -260
@@ -760,7 +760,7 @@
       {
         "basename": "o_112",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": 1680,
           "y": 1860
@@ -769,7 +769,7 @@
       {
         "basename": "o_115",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": 1720,
           "y": 2780
@@ -778,7 +778,7 @@
       {
         "basename": "o_117",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/cpp/voidPtr,hdole/nat/N16}oP",
+        "to": "Po{hdole/cpp/voidPtr,hdole/nat/N16}oP",
         "xy": {
           "x": 2110,
           "y": 2250
@@ -818,7 +818,7 @@
       {
         "basename": "o_95",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/cpp/voidPtr,RecordLength}oP",
+        "to": "Po{hdole/cpp/voidPtr,RecordLength}oP",
         "xy": {
           "x": 2110,
           "y": 1950
@@ -836,7 +836,7 @@
       {
         "basename": "o_93",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": 3860,
           "y": -450
@@ -854,7 +854,7 @@
       {
         "basename": "o_110",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": 3860,
           "y": 550
@@ -863,7 +863,7 @@
       {
         "basename": "o_114",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 4060,
           "y": -50
@@ -872,7 +872,7 @@
       {
         "basename": "o_116",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Halt",
+        "to": "Halt",
         "xy": {
           "x": 4060,
           "y": 150
@@ -881,7 +881,7 @@
       {
         "basename": "o_111",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/cpp/voidPtr,RecordLength}oP",
+        "to": "Po{hdole/cpp/voidPtr,RecordLength}oP",
         "xy": {
           "x": 1200,
           "y": -400
@@ -890,7 +890,7 @@
       {
         "basename": "o_118",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/RecordLength",
+        "to": "RecordLength",
         "xy": {
           "x": 1600,
           "y": -800
@@ -953,7 +953,7 @@
       {
         "basename": "o_122",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": 1800,
           "y": -800
@@ -962,7 +962,7 @@
       {
         "basename": "o_127",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": 1800,
           "y": -400
@@ -1016,7 +1016,7 @@
       {
         "basename": "o_134",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": 1790,
           "y": 390
@@ -1034,7 +1034,7 @@
       {
         "basename": "o_139",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{State,State}oP",
+        "to": "Po{State,State}oP",
         "xy": {
           "x": 2860,
           "y": 780
@@ -1072,7 +1072,7 @@
       {
         "basename": "o_15",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Halt",
+        "to": "Halt",
         "xy": {
           "x": -2600,
           "y": 1200
@@ -1081,7 +1081,7 @@
       {
         "basename": "o_143",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/State",
+        "to": "State",
         "xy": {
           "x": -1600,
           "y": 2560
@@ -1099,7 +1099,7 @@
       {
         "basename": "o_145",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/BndryData",
+        "to": "BndryData",
         "xy": {
           "x": -1000,
           "y": -800
@@ -1144,7 +1144,7 @@
       {
         "basename": "o_150",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -800,
           "y": -1200
@@ -1153,7 +1153,7 @@
       {
         "basename": "o_151",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -600,
           "y": -1200
@@ -1162,7 +1162,7 @@
       {
         "basename": "o_152",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -1000,
           "y": -1200
@@ -1171,7 +1171,7 @@
       {
         "basename": "o_153",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -1200,
           "y": -1200
@@ -1180,7 +1180,7 @@
       {
         "basename": "o_154",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/PathData",
+        "to": "PathData",
         "xy": {
           "x": -400,
           "y": -800
@@ -1207,7 +1207,7 @@
       {
         "basename": "o_157",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -400,
           "y": -1200
@@ -1216,7 +1216,7 @@
       {
         "basename": "o_158",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": -200,
           "y": -1200
@@ -1225,7 +1225,7 @@
       {
         "basename": "o_159",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/SrefData",
+        "to": "SrefData",
         "xy": {
           "x": 200,
           "y": -780
@@ -1261,7 +1261,7 @@
       {
         "basename": "o_163",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": 0,
           "y": -1200
@@ -1270,7 +1270,7 @@
       {
         "basename": "o_164",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": 200,
           "y": -1200
@@ -1279,7 +1279,7 @@
       {
         "basename": "o_165",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/#1",
+        "to": "#1",
         "xy": {
           "x": 400,
           "y": -1200
@@ -1288,7 +1288,7 @@
       {
         "basename": "o_168",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{#1,#1,#1}oP",
+        "to": "Po{#1,#1,#1}oP",
         "xy": {
           "x": 200,
           "y": -600
@@ -1297,7 +1297,7 @@
       {
         "basename": "o_169",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
+        "to": "Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
         "xy": {
           "x": 200,
           "y": -400
@@ -1306,7 +1306,7 @@
       {
         "basename": "o_166",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{#1,#1}oP",
+        "to": "Po{#1,#1}oP",
         "xy": {
           "x": -400,
           "y": -600
@@ -1315,7 +1315,7 @@
       {
         "basename": "o_167",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/gds/Width,hdole/gds/EndType}oP",
+        "to": "Po{hdole/gds/Width,hdole/gds/EndType}oP",
         "xy": {
           "x": -400,
           "y": -400
@@ -1324,7 +1324,7 @@
       {
         "basename": "o_170",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{#1,#1,#1,#1}oP",
+        "to": "Po{#1,#1,#1,#1}oP",
         "xy": {
           "x": -1000,
           "y": -600
@@ -1333,7 +1333,7 @@
       {
         "basename": "o_171",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
+        "to": "Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
         "xy": {
           "x": -1000,
           "y": -400
@@ -1342,7 +1342,7 @@
       {
         "basename": "o_172",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/SrefData",
+        "to": "SrefData",
         "xy": {
           "x": 200,
           "y": -200
@@ -1351,7 +1351,7 @@
       {
         "basename": "o_173",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/PathData",
+        "to": "PathData",
         "xy": {
           "x": -400,
           "y": -200
@@ -1387,7 +1387,7 @@
       {
         "basename": "o_0",
         "prototype": "IndexObject",
-        "to": "hdole/nat/CPo{#1,#1}oPC",
+        "to": "CPo{#1,#1}oPC",
         "xy": {
           "x": 1780,
           "y": 210
@@ -1405,7 +1405,7 @@
       {
         "basename": "o_19",
         "prototype": "IndexObject",
-        "to": "hdole/gdsReader/CPo{hdole/cpp/voidPtr,#1}oPC",
+        "to": "CPo{hdole/cpp/voidPtr,#1}oPC",
         "xy": {
           "x": -210,
           "y": 1660
@@ -1414,22 +1414,22 @@
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_2",
-        "codomain": "hdole/gdsReader/o_4",
+        "domain": "o_2",
+        "codomain": "o_4",
         "to": "hdole/cpp/voidPtrPlus2"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_4",
-        "codomain": "hdole/gdsReader/o_6",
+        "domain": "o_4",
+        "codomain": "o_6",
         "to": "hdole/cpp/voidPtrPlus2"
       },
       {
         "basename": "m_36",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_41",
-        "codomain": "hdole/gdsReader/o_42",
+        "domain": "o_41",
+        "codomain": "o_42",
         "attributes": [
           [
             "flipName",
@@ -1441,209 +1441,239 @@
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_52",
-        "codomain": "hdole/gdsReader/o_51",
-        "to": "hdole/gdsReader/Id{Halt,CPo{#1,#1}oPC}dI"
+        "domain": "o_52",
+        "codomain": "o_51",
+        "to": "Id{Halt,CPo{#1,#1}oPC}dI"
       },
       {
         "basename": "m_9",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_51",
-        "codomain": "hdole/gdsReader/o_52",
-        "homsetIndex": 1,
-        "to": "hdole/gdsReader/Id{CPo{#1,#1}oPC,Halt}dI"
+        "domain": "o_51",
+        "codomain": "o_52",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ]
+        ],
+        "to": "Id{CPo{#1,#1}oPC,Halt}dI"
       },
       {
         "basename": "m_10",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_54",
-        "codomain": "hdole/gdsReader/o_53",
-        "to": "hdole/gdsReader/Id{BndryData,Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP}dI"
+        "domain": "o_54",
+        "codomain": "o_53",
+        "to": "Id{BndryData,Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP}dI"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_53",
-        "codomain": "hdole/gdsReader/o_54",
-        "homsetIndex": 1,
-        "to": "hdole/gdsReader/Id{Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP,BndryData}dI"
+        "domain": "o_53",
+        "codomain": "o_54",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ]
+        ],
+        "to": "Id{Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP,BndryData}dI"
       },
       {
         "basename": "m_17",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_57",
-        "codomain": "hdole/gdsReader/o_56",
-        "to": "hdole/gdsReader/Id{PathData,Po{hdole/gds/Width,hdole/gds/EndType}oP}dI"
+        "domain": "o_57",
+        "codomain": "o_56",
+        "to": "Id{PathData,Po{hdole/gds/Width,hdole/gds/EndType}oP}dI"
       },
       {
         "basename": "m_18",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_56",
-        "codomain": "hdole/gdsReader/o_57",
-        "homsetIndex": 1,
-        "to": "hdole/gdsReader/Id{Po{hdole/gds/Width,hdole/gds/EndType}oP,PathData}dI"
+        "domain": "o_56",
+        "codomain": "o_57",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ]
+        ],
+        "to": "Id{Po{hdole/gds/Width,hdole/gds/EndType}oP,PathData}dI"
       },
       {
         "basename": "m_19",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_60",
-        "codomain": "hdole/gdsReader/o_58",
-        "to": "hdole/gdsReader/Id{SrefData,Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP}dI"
+        "domain": "o_60",
+        "codomain": "o_58",
+        "to": "Id{SrefData,Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP}dI"
       },
       {
         "basename": "m_30",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_58",
-        "codomain": "hdole/gdsReader/o_60",
-        "homsetIndex": 1,
-        "to": "hdole/gdsReader/Id{Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP,SrefData}dI"
+        "domain": "o_58",
+        "codomain": "o_60",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ]
+        ],
+        "to": "Id{Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP,SrefData}dI"
       },
       {
         "basename": "m_32",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_61",
-        "codomain": "hdole/gdsReader/o_59",
-        "to": "hdole/gdsReader/Id{ArefData,Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP}dI"
+        "domain": "o_61",
+        "codomain": "o_59",
+        "to": "Id{ArefData,Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP}dI"
       },
       {
         "basename": "m_37",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_59",
-        "codomain": "hdole/gdsReader/o_61",
-        "homsetIndex": 1,
-        "to": "hdole/gdsReader/Id{Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP,ArefData}dI"
+        "domain": "o_59",
+        "codomain": "o_61",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ]
+        ],
+        "to": "Id{Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP,ArefData}dI"
       },
       {
         "basename": "m_24",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_37",
-        "codomain": "hdole/gdsReader/o_12",
-        "to": "hdole/gdsReader/Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI"
+        "domain": "o_37",
+        "codomain": "o_12",
+        "to": "Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI"
       },
       {
         "basename": "m_38",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_12",
-        "codomain": "hdole/gdsReader/o_37",
-        "homsetIndex": 1,
-        "to": "hdole/gdsReader/Id{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,State}dI"
+        "domain": "o_12",
+        "codomain": "o_37",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ]
+        ],
+        "to": "Id{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,State}dI"
       },
       {
         "basename": "m_47",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_12",
-        "codomain": "hdole/gdsReader/o_62",
+        "domain": "o_12",
+        "codomain": "o_62",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF"
+        "to": "Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF"
       },
       {
         "basename": "m_48",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_37",
-        "codomain": "hdole/gdsReader/o_62",
-        "to": "hdole/gdsReader/Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC"
+        "domain": "o_37",
+        "codomain": "o_62",
+        "to": "Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC"
       },
       {
         "basename": "m_34",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_50",
-        "codomain": "hdole/gdsReader/o_70",
-        "to": "hdole/gdsReader/data_0"
+        "domain": "o_50",
+        "codomain": "o_70",
+        "to": "data_0"
       },
       {
         "basename": "m_53",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_71",
-        "codomain": "hdole/gdsReader/o_49",
-        "to": "hdole/gdsReader/data_1"
+        "domain": "o_71",
+        "codomain": "o_49",
+        "to": "data_1"
       },
       {
         "basename": "m_54",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_72",
-        "codomain": "hdole/gdsReader/o_69",
-        "to": "hdole/gdsReader/data_2"
+        "domain": "o_72",
+        "codomain": "o_69",
+        "to": "data_2"
       },
       {
         "basename": "m_55",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_73",
-        "codomain": "hdole/gdsReader/o_47",
-        "to": "hdole/gdsReader/data_3"
+        "domain": "o_73",
+        "codomain": "o_47",
+        "to": "data_3"
       },
       {
         "basename": "m_56",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_74",
-        "codomain": "hdole/gdsReader/o_43",
-        "to": "hdole/gdsReader/data_4"
+        "domain": "o_74",
+        "codomain": "o_43",
+        "to": "data_4"
       },
       {
         "basename": "m_57",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_75",
-        "codomain": "hdole/gdsReader/o_46",
-        "to": "hdole/gdsReader/data_5"
+        "domain": "o_75",
+        "codomain": "o_46",
+        "to": "data_5"
       },
       {
         "basename": "m_58",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_76",
-        "codomain": "hdole/gdsReader/o_40",
-        "to": "hdole/gdsReader/data_6"
+        "domain": "o_76",
+        "codomain": "o_40",
+        "to": "data_6"
       },
       {
         "basename": "m_59",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_77",
-        "codomain": "hdole/gdsReader/o_17",
-        "to": "hdole/gdsReader/data_7"
+        "domain": "o_77",
+        "codomain": "o_17",
+        "to": "data_7"
       },
       {
         "basename": "m_60",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_78",
-        "codomain": "hdole/gdsReader/o_28",
-        "to": "hdole/gdsReader/data_8"
+        "domain": "o_78",
+        "codomain": "o_28",
+        "to": "data_8"
       },
       {
         "basename": "m_61",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_79",
-        "codomain": "hdole/gdsReader/o_11",
-        "to": "hdole/gdsReader/initialDatatype"
+        "domain": "o_79",
+        "codomain": "o_11",
+        "to": "initialDatatype"
       },
       {
         "basename": "m_62",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_80",
-        "codomain": "hdole/gdsReader/o_10",
-        "to": "hdole/gdsReader/initialLayer"
+        "domain": "o_80",
+        "codomain": "o_10",
+        "to": "initialLayer"
       },
       {
         "basename": "m_63",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_81",
-        "codomain": "hdole/gdsReader/o_8",
-        "to": "hdole/gdsReader/data_11"
+        "domain": "o_81",
+        "codomain": "o_8",
+        "to": "data_11"
       },
       {
         "basename": "m_65",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_83",
-        "codomain": "hdole/gdsReader/o_7",
-        "to": "hdole/gdsReader/data_12"
+        "domain": "o_83",
+        "codomain": "o_7",
+        "to": "data_12"
       },
       {
         "basename": "m_35",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_2",
-        "codomain": "hdole/gdsReader/o_20",
+        "domain": "o_2",
+        "codomain": "o_20",
         "attributes": [
           [
             "flipName",
@@ -1655,8 +1685,8 @@
       {
         "basename": "m_66",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_41",
-        "codomain": "hdole/gdsReader/o_2",
+        "domain": "o_41",
+        "codomain": "o_2",
         "attributes": [
           [
             "assyMorphism",
@@ -1667,193 +1697,198 @@
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{hdole/cpp/Po{voidPtr,hdole/nat/N16}oP,hdole/cpp/voidPtr_0}aF"
+        "to": "Fa{hdole/cpp/Po{voidPtr,hdole/nat/N16}oP,hdole/cpp/voidPtr_0}aF"
       },
       {
         "basename": "m_67",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_41",
-        "codomain": "hdole/gdsReader/o_20",
+        "domain": "o_41",
+        "codomain": "o_20",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{hdole/cpp/Po{voidPtr,hdole/nat/N16}oP,hdole/nat/N16_1}aF"
+        "to": "Fa{hdole/cpp/Po{voidPtr,hdole/nat/N16}oP,hdole/nat/N16_1}aF"
       },
       {
         "basename": "m_64",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_70",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/ColPitch_7,3}aF"
+        "domain": "o_36",
+        "codomain": "o_70",
+        "to": "Fa{State,hdole/gds/ColPitch_7,3}aF"
       },
       {
         "basename": "m_70",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_49",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/RowPitch_7,2}aF"
+        "domain": "o_36",
+        "codomain": "o_49",
+        "to": "Fa{State,hdole/gds/RowPitch_7,2}aF"
       },
       {
         "basename": "m_73",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_47",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/Rows_7,0}aF"
+        "domain": "o_36",
+        "codomain": "o_47",
+        "to": "Fa{State,hdole/gds/Rows_7,0}aF"
       },
       {
         "basename": "m_74",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_69",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/Cols_7,1}aF"
+        "domain": "o_36",
+        "codomain": "o_69",
+        "to": "Fa{State,hdole/gds/Cols_7,1}aF"
       },
       {
         "basename": "m_75",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_43",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/Angle_6,1}aF"
+        "domain": "o_36",
+        "codomain": "o_43",
+        "to": "Fa{State,hdole/gds/Angle_6,1}aF"
       },
       {
         "basename": "m_76",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_40",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/Reflection_6,0}aF"
+        "domain": "o_36",
+        "codomain": "o_40",
+        "to": "Fa{State,hdole/gds/Reflection_6,0}aF"
       },
       {
         "basename": "m_77",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_46",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/Mag_6,2}aF"
+        "domain": "o_36",
+        "codomain": "o_46",
+        "to": "Fa{State,hdole/gds/Mag_6,2}aF"
       },
       {
         "basename": "m_78",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_28",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/EndType_5,1}aF"
+        "domain": "o_36",
+        "codomain": "o_28",
+        "to": "Fa{State,hdole/gds/EndType_5,1}aF"
       },
       {
         "basename": "m_79",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_17",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/Width_5,0}aF"
+        "domain": "o_36",
+        "codomain": "o_17",
+        "to": "Fa{State,hdole/gds/Width_5,0}aF"
       },
       {
         "basename": "m_80",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_18",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/Properties_4,3}aF"
+        "domain": "o_36",
+        "codomain": "o_18",
+        "to": "Fa{State,hdole/gds/Properties_4,3}aF"
       },
       {
         "basename": "m_81",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_13",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/Points_4,2}aF"
+        "domain": "o_36",
+        "codomain": "o_13",
+        "to": "Fa{State,hdole/gds/Points_4,2}aF"
       },
       {
         "basename": "m_82",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_11",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/Datatype_4,1}aF"
+        "domain": "o_36",
+        "codomain": "o_11",
+        "to": "Fa{State,hdole/gds/Datatype_4,1}aF"
       },
       {
         "basename": "m_83",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_10",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/Layer_4,0}aF"
+        "domain": "o_36",
+        "codomain": "o_10",
+        "to": "Fa{State,hdole/gds/Layer_4,0}aF"
       },
       {
         "basename": "m_84",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_8",
-        "to": "hdole/gdsReader/Fa{State,hdole/str/str_3}aF"
+        "domain": "o_36",
+        "codomain": "o_8",
+        "to": "Fa{State,hdole/str/str_3}aF"
       },
       {
         "basename": "m_85",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_7",
-        "to": "hdole/gdsReader/Fa{State,hdole/gds/EltType_2}aF"
+        "domain": "o_36",
+        "codomain": "o_7",
+        "to": "Fa{State,hdole/gds/EltType_2}aF"
       },
       {
         "basename": "m_71",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_55",
-        "codomain": "hdole/gdsReader/o_48",
-        "to": "hdole/gdsReader/Id{cell,hdole/str/str}dI"
+        "domain": "o_55",
+        "codomain": "o_48",
+        "to": "Id{cell,hdole/str/str}dI"
       },
       {
         "basename": "m_72",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_48",
-        "codomain": "hdole/gdsReader/o_55",
-        "homsetIndex": 1,
-        "to": "hdole/gdsReader/Id{hdole/str/str,cell}dI"
+        "domain": "o_48",
+        "codomain": "o_55",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ]
+        ],
+        "to": "Id{hdole/str/str,cell}dI"
       },
       {
         "basename": "m_86",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_66",
-        "codomain": "hdole/gdsReader/o_2",
+        "domain": "o_66",
+        "codomain": "o_2",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{State,hdole/cpp/voidPtr_1}aF"
+        "to": "Fa{State,hdole/cpp/voidPtr_1}aF"
       },
       {
         "basename": "m_89",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_5",
-        "codomain": "hdole/gdsReader/o_18",
-        "to": "hdole/gdsReader/noProperties"
+        "domain": "o_5",
+        "codomain": "o_18",
+        "to": "noProperties"
       },
       {
         "basename": "m_90",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_87",
-        "codomain": "hdole/gdsReader/o_13",
-        "to": "hdole/gdsReader/noPointsFn"
+        "domain": "o_87",
+        "codomain": "o_13",
+        "to": "noPointsFn"
       },
       {
         "basename": "m_46",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_85",
-        "codomain": "hdole/gdsReader/o_16",
-        "to": "hdole/gdsReader/Ev{Po{Ho{State,State}oH,State}oP}vE"
+        "domain": "o_85",
+        "codomain": "o_16",
+        "to": "Ev{Po{Ho{State,State}oH,State}oP}vE"
       },
       {
         "basename": "m_49",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_16",
-        "codomain": "hdole/gdsReader/o_42",
+        "domain": "o_16",
+        "codomain": "o_42",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{State,hdole/cpp/voidPtr_1}aF"
+        "to": "Fa{State,hdole/cpp/voidPtr_1}aF"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_85",
-        "codomain": "hdole/gdsReader/o_84",
+        "domain": "o_85",
+        "codomain": "o_84",
         "attributes": [
           [
             "flipName",
@@ -1864,13 +1899,13 @@
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{Po{Ho{State,State}oH,State}oP,Ho{State,State}oH_0}aF"
+        "to": "Fa{Po{Ho{State,State}oH,State}oP,Ho{State,State}oH_0}aF"
       },
       {
         "basename": "m_39",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_85",
-        "codomain": "hdole/gdsReader/o_88",
+        "domain": "o_85",
+        "codomain": "o_88",
         "attributes": [
           [
             "flipName",
@@ -1881,33 +1916,33 @@
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{Po{Ho{State,State}oH,State}oP,State_1}aF"
+        "to": "Fa{Po{Ho{State,State}oH,State}oP,State_1}aF"
       },
       {
         "basename": "m_52",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_88",
-        "codomain": "hdole/gdsReader/o_6",
+        "domain": "o_88",
+        "codomain": "o_6",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{State,hdole/cpp/voidPtr_1}aF"
+        "to": "Fa{State,hdole/cpp/voidPtr_1}aF"
       },
       {
         "basename": "m_69",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_14",
-        "codomain": "hdole/gdsReader/o_84",
-        "to": "hdole/gdsReader/getHandler"
+        "domain": "o_14",
+        "codomain": "o_84",
+        "to": "getHandler"
       },
       {
         "basename": "m_91",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_88",
-        "codomain": "hdole/gdsReader/o_66",
+        "domain": "o_88",
+        "codomain": "o_66",
         "attributes": [
           [
             "flipName",
@@ -1918,606 +1953,616 @@
             true
           ]
         ],
-        "to": "hdole/gdsReader/Id{State}dI"
+        "to": "Id{State}dI"
       },
       {
         "basename": "m_92",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_89",
-        "codomain": "hdole/gdsReader/o_90",
-        "to": "hdole/gdsReader/Fa{State,hdole/cpp/voidPtr_1}aF"
+        "domain": "o_89",
+        "codomain": "o_90",
+        "to": "Fa{State,hdole/cpp/voidPtr_1}aF"
       },
       {
         "basename": "m_99",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_91",
-        "codomain": "hdole/gdsReader/o_97",
+        "domain": "o_91",
+        "codomain": "o_97",
         "to": "hdole/gds/Id{hdole/floats/F64,DBU}dI"
       },
       {
         "basename": "m_100",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_99",
-        "codomain": "hdole/gdsReader/o_100",
-        "to": "hdole/gdsReader/Fa{State,hdole/cpp/voidPtr_1}aF"
+        "domain": "o_99",
+        "codomain": "o_100",
+        "to": "Fa{State,hdole/cpp/voidPtr_1}aF"
       },
       {
         "basename": "m_101",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_102",
-        "codomain": "hdole/gdsReader/o_101",
-        "to": "hdole/gdsReader/Id{RecordLength,hdole/nat/N16}dI"
+        "domain": "o_102",
+        "codomain": "o_101",
+        "to": "Id{RecordLength,hdole/nat/N16}dI"
       },
       {
         "basename": "m_102",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_101",
-        "codomain": "hdole/gdsReader/o_102",
-        "homsetIndex": 1,
-        "to": "hdole/gdsReader/Id{hdole/nat/N16,RecordLength}dI"
+        "domain": "o_101",
+        "codomain": "o_102",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ]
+        ],
+        "to": "Id{hdole/nat/N16,RecordLength}dI"
       },
       {
         "basename": "m_103",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_106",
-        "codomain": "hdole/gdsReader/o_104",
-        "to": "hdole/gdsReader/Id{RecordLength,hdole/nat/N16}dI"
+        "domain": "o_106",
+        "codomain": "o_104",
+        "to": "Id{RecordLength,hdole/nat/N16}dI"
       },
       {
         "basename": "m_104",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_108",
-        "codomain": "hdole/gdsReader/o_104",
-        "to": "hdole/gdsReader/Fa{Po{hdole/nat/N16,hdole/nat/N16}oP,hdole/nat/N16_0}aF"
+        "domain": "o_108",
+        "codomain": "o_104",
+        "to": "Fa{Po{hdole/nat/N16,hdole/nat/N16}oP,hdole/nat/N16_0}aF"
       },
       {
         "basename": "m_105",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_108",
-        "codomain": "hdole/gdsReader/o_105",
-        "to": "hdole/gdsReader/Fa{Po{hdole/nat/N16,hdole/nat/N16}oP,hdole/nat/N16_1}aF"
+        "domain": "o_108",
+        "codomain": "o_105",
+        "to": "Fa{Po{hdole/nat/N16,hdole/nat/N16}oP,hdole/nat/N16_1}aF"
       },
       {
         "basename": "m_106",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_107",
-        "codomain": "hdole/gdsReader/o_105",
-        "to": "hdole/gdsReader/data_14"
+        "domain": "o_107",
+        "codomain": "o_105",
+        "to": "data_14"
       },
       {
         "basename": "m_107",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_99",
-        "codomain": "hdole/gdsReader/o_106",
-        "to": "hdole/gdsReader/state2recsize"
+        "domain": "o_99",
+        "codomain": "o_106",
+        "to": "state2recsize"
       },
       {
         "basename": "m_108",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_90",
-        "codomain": "hdole/gdsReader/o_109",
+        "domain": "o_90",
+        "codomain": "o_109",
         "to": "hdole/cpp/voidPtrPlus8"
       },
       {
         "basename": "m_109",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_96",
-        "codomain": "hdole/gdsReader/o_97",
-        "to": "hdole/gdsReader/State2DBU"
+        "domain": "o_96",
+        "codomain": "o_97",
+        "to": "State2DBU"
       },
       {
         "basename": "m_110",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_89",
-        "codomain": "hdole/gdsReader/o_96",
-        "to": "hdole/gdsReader/Id{State}dI"
+        "domain": "o_89",
+        "codomain": "o_96",
+        "to": "Id{State}dI"
       },
       {
         "basename": "m_116",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_112",
-        "codomain": "hdole/gdsReader/o_115",
-        "to": "hdole/gdsReader/Id{State}dI"
+        "domain": "o_112",
+        "codomain": "o_115",
+        "to": "Id{State}dI"
       },
       {
         "basename": "m_114",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_117",
-        "codomain": "hdole/gdsReader/o_119",
+        "domain": "o_117",
+        "codomain": "o_119",
         "to": "hdole/cpp/voidPtrPlusN"
       },
       {
         "basename": "m_115",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_115",
-        "codomain": "hdole/gdsReader/o_119",
-        "to": "hdole/gdsReader/Fa{State,hdole/cpp/voidPtr_1}aF"
+        "domain": "o_115",
+        "codomain": "o_119",
+        "to": "Fa{State,hdole/cpp/voidPtr_1}aF"
       },
       {
         "basename": "m_96",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_95",
-        "codomain": "hdole/gdsReader/o_117",
-        "to": "hdole/gdsReader/Pm{Id{hdole/cpp/voidPtr}dI,Id{RecordLength,hdole/nat/N16}dI}mP"
+        "domain": "o_95",
+        "codomain": "o_117",
+        "to": "Pm{Id{hdole/cpp/voidPtr}dI,Id{RecordLength,hdole/nat/N16}dI}mP"
       },
       {
         "basename": "m_95",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_112",
-        "codomain": "hdole/gdsReader/o_95",
-        "to": "hdole/gdsReader/State2voidSxN16"
+        "domain": "o_112",
+        "codomain": "o_95",
+        "to": "State2voidSxN16"
       },
       {
         "basename": "m_94",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_112",
-        "codomain": "hdole/gdsReader/o_119",
-        "to": "hdole/gdsReader/Cm{State2voidSxN16,Pm{Id{hdole/cpp/voidPtr}dI,Id{RecordLength,hdole/nat/N16}dI}mP,hdole/cpp/voidPtrPlusN}mC"
+        "domain": "o_112",
+        "codomain": "o_119",
+        "to": "Cm{State2voidSxN16,Pm{Id{hdole/cpp/voidPtr}dI,Id{RecordLength,hdole/nat/N16}dI}mP,hdole/cpp/voidPtrPlusN}mC"
       },
       {
         "basename": "m_97",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_112",
-        "codomain": "hdole/gdsReader/o_119",
-        "homsetIndex": 1,
-        "to": "hdole/gdsReader/updateRecSize"
+        "domain": "o_112",
+        "codomain": "o_119",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ]
+        ],
+        "to": "updateRecSize"
       },
       {
         "basename": "m_98",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_89",
-        "codomain": "hdole/gdsReader/o_92",
-        "to": "hdole/gdsReader/updateRecSize"
+        "domain": "o_89",
+        "codomain": "o_92",
+        "to": "updateRecSize"
       },
       {
         "basename": "m_111",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_96",
-        "codomain": "hdole/gdsReader/o_92",
-        "to": "hdole/gdsReader/Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC"
+        "domain": "o_96",
+        "codomain": "o_92",
+        "to": "Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC"
       },
       {
         "basename": "m_112",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_93",
-        "codomain": "hdole/gdsReader/o_94",
+        "domain": "o_93",
+        "codomain": "o_94",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "hdole/gdsReader/updateRecSize"
+        "to": "updateRecSize"
       },
       {
         "basename": "m_113",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_110",
-        "codomain": "hdole/gdsReader/o_94",
-        "to": "hdole/gdsReader/Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC"
+        "domain": "o_110",
+        "codomain": "o_94",
+        "to": "Cm{Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI,Fa{Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP,hdole/cpp/voidPtr_1}aF}mC"
       },
       {
         "basename": "m_117",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_93",
-        "codomain": "hdole/gdsReader/o_110",
-        "to": "hdole/gdsReader/Id{State}dI"
+        "domain": "o_93",
+        "codomain": "o_110",
+        "to": "Id{State}dI"
       },
       {
         "basename": "m_121",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_114",
-        "codomain": "hdole/gdsReader/o_116",
-        "to": "hdole/gdsReader/Id{CPo{#1,#1}oPC,Halt}dI"
+        "domain": "o_114",
+        "codomain": "o_116",
+        "to": "Id{CPo{#1,#1}oPC,Halt}dI"
       },
       {
         "basename": "m_122",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_110",
-        "codomain": "hdole/gdsReader/o_116",
-        "to": "hdole/gdsReader/Fa{State,Halt_0}aF"
+        "domain": "o_110",
+        "codomain": "o_116",
+        "to": "Fa{State,Halt_0}aF"
       },
       {
         "basename": "m_119",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_111",
-        "codomain": "hdole/gdsReader/o_118",
-        "to": "hdole/gdsReader/Fa{Po{hdole/cpp/voidPtr,RecordLength}oP,RecordLength_1}aF"
+        "domain": "o_111",
+        "codomain": "o_118",
+        "to": "Fa{Po{hdole/cpp/voidPtr,RecordLength}oP,RecordLength_1}aF"
       },
       {
         "basename": "m_123",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_118",
-        "codomain": "hdole/gdsReader/o_120",
-        "to": "hdole/gdsReader/Id{RecordLength,hdole/nat/N16}dI"
+        "domain": "o_118",
+        "codomain": "o_120",
+        "to": "Id{RecordLength,hdole/nat/N16}dI"
       },
       {
         "basename": "m_124",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_123",
-        "codomain": "hdole/gdsReader/o_120",
-        "to": "hdole/gdsReader/Fa{Po{hdole/nat/N16,hdole/nat/N16}oP,hdole/nat/N16_0}aF"
+        "domain": "o_123",
+        "codomain": "o_120",
+        "to": "Fa{Po{hdole/nat/N16,hdole/nat/N16}oP,hdole/nat/N16_0}aF"
       },
       {
         "basename": "m_125",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_123",
-        "codomain": "hdole/gdsReader/o_121",
-        "to": "hdole/gdsReader/Fa{Po{hdole/nat/N16,hdole/nat/N16}oP,hdole/nat/N16_1}aF"
+        "domain": "o_123",
+        "codomain": "o_121",
+        "to": "Fa{Po{hdole/nat/N16,hdole/nat/N16}oP,hdole/nat/N16_1}aF"
       },
       {
         "basename": "m_127",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_123",
-        "codomain": "hdole/gdsReader/o_124",
+        "domain": "o_123",
+        "codomain": "o_124",
         "to": "hdole/nat/and16"
       },
       {
         "basename": "m_128",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_125",
-        "codomain": "hdole/gdsReader/o_124",
-        "to": "hdole/gdsReader/Fa{hdole/nat/Po{N16,N16}oP,hdole/nat/N16_0}aF"
+        "domain": "o_125",
+        "codomain": "o_124",
+        "to": "Fa{hdole/nat/Po{N16,N16}oP,hdole/nat/N16_0}aF"
       },
       {
         "basename": "m_129",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_125",
-        "codomain": "hdole/gdsReader/o_126",
-        "to": "hdole/gdsReader/Fa{hdole/nat/Po{N16,N16}oP,hdole/nat/N16_1}aF"
+        "domain": "o_125",
+        "codomain": "o_126",
+        "to": "Fa{hdole/nat/Po{N16,N16}oP,hdole/nat/N16_1}aF"
       },
       {
         "basename": "m_126",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_122",
-        "codomain": "hdole/gdsReader/o_121",
+        "domain": "o_122",
+        "codomain": "o_121",
         "to": "hdole/nat/one16"
       },
       {
         "basename": "m_130",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_127",
-        "codomain": "hdole/gdsReader/o_126",
+        "domain": "o_127",
+        "codomain": "o_126",
         "to": "hdole/nat/zero16"
       },
       {
         "basename": "m_132",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_130",
-        "codomain": "hdole/gdsReader/o_129",
+        "domain": "o_130",
+        "codomain": "o_129",
         "to": "hdole/cpp/mem2str"
       },
       {
         "basename": "m_133",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_131",
-        "codomain": "hdole/gdsReader/o_132",
+        "domain": "o_131",
+        "codomain": "o_132",
         "to": "hdole/cpp/memRec2str"
       },
       {
         "basename": "m_134",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_111",
-        "codomain": "hdole/gdsReader/o_133",
-        "to": "hdole/gdsReader/Fa{Po{hdole/cpp/voidPtr,RecordLength}oP,hdole/cpp/voidPtr_0}aF"
+        "domain": "o_111",
+        "codomain": "o_133",
+        "to": "Fa{Po{hdole/cpp/voidPtr,RecordLength}oP,hdole/cpp/voidPtr_0}aF"
       },
       {
         "basename": "m_137",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_131",
-        "codomain": "hdole/gdsReader/o_133",
-        "to": "hdole/gdsReader/Fa{hdole/cpp/Po{voidPtr,hdole/nat/N64}oP,hdole/cpp/voidPtr_0}aF"
+        "domain": "o_131",
+        "codomain": "o_133",
+        "to": "Fa{hdole/cpp/Po{voidPtr,hdole/nat/N64}oP,hdole/cpp/voidPtr_0}aF"
       },
       {
         "basename": "m_145",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_96",
-        "codomain": "hdole/gdsReader/o_139",
-        "to": "hdole/gdsReader/Fa{State,State_,State_}aF"
+        "domain": "o_96",
+        "codomain": "o_139",
+        "to": "Fa{State,State_,State_}aF"
       },
       {
         "basename": "m_136",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_140",
-        "codomain": "hdole/gdsReader/o_141",
-        "to": "hdole/gdsReader/noPoints"
+        "domain": "o_140",
+        "codomain": "o_141",
+        "to": "noPoints"
       },
       {
         "basename": "m_31",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_130",
-        "codomain": "hdole/gdsReader/o_134",
-        "to": "hdole/gdsReader/Fa{hdole/cpp/voidPtr,hdole/cpp/voidPtr_-1}aF"
+        "domain": "o_130",
+        "codomain": "o_134",
+        "to": "Fa{hdole/cpp/voidPtr,hdole/cpp/voidPtr_-1}aF"
       },
       {
         "basename": "m_141",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_15",
-        "to": "hdole/gdsReader/Fa{State,Halt_0}aF"
+        "domain": "o_36",
+        "codomain": "o_15",
+        "to": "Fa{State,Halt_0}aF"
       },
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_143",
-        "codomain": "hdole/gdsReader/o_63",
+        "domain": "o_143",
+        "codomain": "o_63",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{State,hdole/cpp/voidPtr_1}aF"
+        "to": "Fa{State,hdole/cpp/voidPtr_1}aF"
       },
       {
         "basename": "m_144",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_36",
-        "codomain": "hdole/gdsReader/o_144",
-        "to": "hdole/gdsReader/Fa{State,hdole/cpp/voidPtr_1}aF"
+        "domain": "o_36",
+        "codomain": "o_144",
+        "to": "Fa{State,hdole/cpp/voidPtr_1}aF"
       },
       {
         "basename": "m_147",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_145",
-        "codomain": "hdole/gdsReader/o_146",
+        "domain": "o_145",
+        "codomain": "o_146",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{BndryData,hdole/gds/Layer_0}aF"
+        "to": "Fa{BndryData,hdole/gds/Layer_0}aF"
       },
       {
         "basename": "m_148",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_145",
-        "codomain": "hdole/gdsReader/o_147",
+        "domain": "o_145",
+        "codomain": "o_147",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{BndryData,hdole/gds/Datatype_1}aF"
+        "to": "Fa{BndryData,hdole/gds/Datatype_1}aF"
       },
       {
         "basename": "m_149",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_145",
-        "codomain": "hdole/gdsReader/o_148",
+        "domain": "o_145",
+        "codomain": "o_148",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{BndryData,hdole/gds/Points_2}aF"
+        "to": "Fa{BndryData,hdole/gds/Points_2}aF"
       },
       {
         "basename": "m_150",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_145",
-        "codomain": "hdole/gdsReader/o_149",
+        "domain": "o_145",
+        "codomain": "o_149",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{BndryData,hdole/gds/Properties_3}aF"
+        "to": "Fa{BndryData,hdole/gds/Properties_3}aF"
       },
       {
         "basename": "m_151",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_150",
-        "codomain": "hdole/gdsReader/o_149",
-        "to": "hdole/gdsReader/noProperties"
+        "domain": "o_150",
+        "codomain": "o_149",
+        "to": "noProperties"
       },
       {
         "basename": "m_152",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_151",
-        "codomain": "hdole/gdsReader/o_146",
-        "to": "hdole/gdsReader/initialLayer"
+        "domain": "o_151",
+        "codomain": "o_146",
+        "to": "initialLayer"
       },
       {
         "basename": "m_153",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_152",
-        "codomain": "hdole/gdsReader/o_148",
-        "to": "hdole/gdsReader/noPointsFn"
+        "domain": "o_152",
+        "codomain": "o_148",
+        "to": "noPointsFn"
       },
       {
         "basename": "m_154",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_153",
-        "codomain": "hdole/gdsReader/o_147",
-        "to": "hdole/gdsReader/initialDatatype"
+        "domain": "o_153",
+        "codomain": "o_147",
+        "to": "initialDatatype"
       },
       {
         "basename": "m_155",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_154",
-        "codomain": "hdole/gdsReader/o_155",
+        "domain": "o_154",
+        "codomain": "o_155",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{PathData,hdole/gds/Width_0}aF"
+        "to": "Fa{PathData,hdole/gds/Width_0}aF"
       },
       {
         "basename": "m_156",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_154",
-        "codomain": "hdole/gdsReader/o_156",
+        "domain": "o_154",
+        "codomain": "o_156",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{PathData,hdole/gds/EndType_1}aF"
+        "to": "Fa{PathData,hdole/gds/EndType_1}aF"
       },
       {
         "basename": "m_157",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_157",
-        "codomain": "hdole/gdsReader/o_155",
-        "to": "hdole/gdsReader/data_7"
+        "domain": "o_157",
+        "codomain": "o_155",
+        "to": "data_7"
       },
       {
         "basename": "m_158",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_158",
-        "codomain": "hdole/gdsReader/o_156",
-        "to": "hdole/gdsReader/data_8"
+        "domain": "o_158",
+        "codomain": "o_156",
+        "to": "data_8"
       },
       {
         "basename": "m_159",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_159",
-        "codomain": "hdole/gdsReader/o_160",
+        "domain": "o_159",
+        "codomain": "o_160",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{SrefData,hdole/gds/Reflection_0}aF"
+        "to": "Fa{SrefData,hdole/gds/Reflection_0}aF"
       },
       {
         "basename": "m_160",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_159",
-        "codomain": "hdole/gdsReader/o_161",
+        "domain": "o_159",
+        "codomain": "o_161",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{SrefData,hdole/gds/Angle_1}aF"
+        "to": "Fa{SrefData,hdole/gds/Angle_1}aF"
       },
       {
         "basename": "m_161",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_159",
-        "codomain": "hdole/gdsReader/o_162",
+        "domain": "o_159",
+        "codomain": "o_162",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/Fa{SrefData,hdole/gds/Mag_2}aF"
+        "to": "Fa{SrefData,hdole/gds/Mag_2}aF"
       },
       {
         "basename": "m_162",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_163",
-        "codomain": "hdole/gdsReader/o_160",
-        "to": "hdole/gdsReader/data_6"
+        "domain": "o_163",
+        "codomain": "o_160",
+        "to": "data_6"
       },
       {
         "basename": "m_163",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_164",
-        "codomain": "hdole/gdsReader/o_161",
-        "to": "hdole/gdsReader/data_4"
+        "domain": "o_164",
+        "codomain": "o_161",
+        "to": "data_4"
       },
       {
         "basename": "m_164",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_165",
-        "codomain": "hdole/gdsReader/o_162",
-        "to": "hdole/gdsReader/data_5"
+        "domain": "o_165",
+        "codomain": "o_162",
+        "to": "data_5"
       },
       {
         "basename": "m_166",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_168",
-        "codomain": "hdole/gdsReader/o_169",
-        "to": "hdole/gdsReader/Pm{data_6,data_4,data_5}mP"
+        "domain": "o_168",
+        "codomain": "o_169",
+        "to": "Pm{data_6,data_4,data_5}mP"
       },
       {
         "basename": "m_165",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_166",
-        "codomain": "hdole/gdsReader/o_167",
-        "to": "hdole/gdsReader/Pm{data_7,data_8}mP"
+        "domain": "o_166",
+        "codomain": "o_167",
+        "to": "Pm{data_7,data_8}mP"
       },
       {
         "basename": "m_167",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_170",
-        "codomain": "hdole/gdsReader/o_171",
-        "to": "hdole/gdsReader/Pm{initialLayer,initialDatatype,noPointsFn,noProperties}mP"
+        "domain": "o_170",
+        "codomain": "o_171",
+        "to": "Pm{initialLayer,initialDatatype,noPointsFn,noProperties}mP"
       },
       {
         "basename": "m_168",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_169",
-        "codomain": "hdole/gdsReader/o_172",
-        "to": "hdole/gdsReader/Id{Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP,SrefData}dI"
+        "domain": "o_169",
+        "codomain": "o_172",
+        "to": "Id{Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP,SrefData}dI"
       },
       {
         "basename": "m_169",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_167",
-        "codomain": "hdole/gdsReader/o_173",
-        "to": "hdole/gdsReader/Id{Po{hdole/gds/Width,hdole/gds/EndType}oP,PathData}dI"
+        "domain": "o_167",
+        "codomain": "o_173",
+        "to": "Id{Po{hdole/gds/Width,hdole/gds/EndType}oP,PathData}dI"
       },
       {
         "basename": "m_170",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_171",
-        "codomain": "hdole/gdsReader/o_174",
+        "domain": "o_171",
+        "codomain": "o_174",
         "to": "hdole/gds/Id{Po{Layer,Datatype,Points,Properties}oP,Boundary}dI"
       },
       {
         "basename": "m_139",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_143",
-        "codomain": "hdole/gdsReader/o_142",
-        "to": "hdole/gdsReader/Fa{State,hdole/cpp/voidPtr_1}aF"
+        "domain": "o_143",
+        "codomain": "o_142",
+        "to": "Fa{State,hdole/cpp/voidPtr_1}aF"
       },
       {
         "basename": "m_138",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_63",
-        "codomain": "hdole/gdsReader/o_176",
+        "domain": "o_63",
+        "codomain": "o_176",
         "attributes": [
           [
             "assyMorphism",
             true
           ]
         ],
-        "to": "hdole/gdsReader/CFa{hdole/cpp/CPo{voidPtr,Errno}oPC,hdole/cpp/voidPtr_0}aFC"
+        "to": "CFa{hdole/cpp/CPo{voidPtr,Errno}oPC,hdole/cpp/voidPtr_0}aFC"
       },
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_125",
-        "codomain": "hdole/gdsReader/o_0",
+        "domain": "o_125",
+        "codomain": "o_0",
         "to": "hdole/nat/lt16"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_134",
-        "codomain": "hdole/gdsReader/o_0",
-        "to": "hdole/gdsReader/CFa{hdole/nat/CPo{#1,#1}oPC,#1_1}aFC"
+        "domain": "o_134",
+        "codomain": "o_0",
+        "to": "CFa{hdole/nat/CPo{#1,#1}oPC,#1_1}aFC"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/gdsReader/o_1",
-        "codomain": "hdole/gdsReader/o_19",
-        "to": "hdole/gdsReader/mmap"
+        "domain": "o_1",
+        "codomain": "o_19",
+        "to": "mmap"
       }
     ],
     "cells": []
@@ -2547,13 +2592,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/Halt",
-      "codomain": "hdole/gdsReader/CPo{#1,#1}oPC"
+      "domain": "Halt",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/CPo{#1,#1}oPC",
-      "codomain": "hdole/gdsReader/Halt"
+      "domain": "CPo{#1,#1}oPC",
+      "codomain": "Halt"
     },
     {
       "prototype": "ProductObject",
@@ -2571,13 +2616,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/BndryData",
-      "codomain": "hdole/gdsReader/Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP"
+      "domain": "BndryData",
+      "codomain": "Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
-      "codomain": "hdole/gdsReader/BndryData"
+      "domain": "Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
+      "codomain": "BndryData"
     },
     {
       "prototype": "ProductObject",
@@ -2593,13 +2638,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/PathData",
-      "codomain": "hdole/gdsReader/Po{hdole/gds/Width,hdole/gds/EndType}oP"
+      "domain": "PathData",
+      "codomain": "Po{hdole/gds/Width,hdole/gds/EndType}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/Po{hdole/gds/Width,hdole/gds/EndType}oP",
-      "codomain": "hdole/gdsReader/PathData"
+      "domain": "Po{hdole/gds/Width,hdole/gds/EndType}oP",
+      "codomain": "PathData"
     },
     {
       "prototype": "ProductObject",
@@ -2625,13 +2670,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/SrefData",
-      "codomain": "hdole/gdsReader/Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP"
+      "domain": "SrefData",
+      "codomain": "Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
-      "codomain": "hdole/gdsReader/SrefData"
+      "domain": "Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
+      "codomain": "SrefData"
     },
     {
       "basename": "ArefData",
@@ -2640,13 +2685,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/ArefData",
-      "codomain": "hdole/gdsReader/Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP"
+      "domain": "ArefData",
+      "codomain": "Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP",
-      "codomain": "hdole/gdsReader/ArefData"
+      "domain": "Po{hdole/gds/Rows,hdole/gds/Cols,hdole/gds/RowPitch,hdole/gds/ColPitch}oP",
+      "codomain": "ArefData"
     },
     {
       "prototype": "ProductObject",
@@ -2668,13 +2713,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/State",
-      "codomain": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP"
+      "domain": "State",
+      "codomain": "Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP"
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP",
-      "codomain": "hdole/gdsReader/State"
+      "domain": "Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP",
+      "codomain": "State"
     },
     {
       "description": "A cell contains a collection of elements.",
@@ -2685,13 +2730,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/cell",
+      "domain": "cell",
       "codomain": "hdole/str/str"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/str/str",
-      "codomain": "hdole/gdsReader/cell"
+      "codomain": "cell"
     },
     {
       "basename": "G",
@@ -2727,13 +2772,13 @@
     },
     {
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/RecordLength",
+      "domain": "RecordLength",
       "codomain": "hdole/nat/N16"
     },
     {
       "prototype": "Identity",
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/gdsReader/RecordLength"
+      "codomain": "RecordLength"
     },
     {
       "prototype": "ProductObject",
@@ -2797,7 +2842,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP",
+      "domain": "Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP",
       "codomain": "hdole/cpp/voidPtr",
       "factors": [
         1
@@ -2806,7 +2851,7 @@
     {
       "description": "The morphism &lt;void*&#x2081;&gt;&#8728;&#8797; is the composite of &#8797;, &lt;void*&#x2081;&gt;.",
       "prototype": "Composite",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/cpp/voidPtr",
       "morphisms": [
         "Id{State,Po{Halt,hdole/cpp/voidPtr,hdole/gds/EltType,hdole/str/str,BndryData,PathData,SrefData,ArefData}oP}dI",
@@ -2817,7 +2862,7 @@
       "basename": "data_0",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/ColPitch",
       "data": []
     },
@@ -2825,7 +2870,7 @@
       "basename": "data_1",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/RowPitch",
       "data": []
     },
@@ -2833,7 +2878,7 @@
       "basename": "data_2",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Cols",
       "data": []
     },
@@ -2841,7 +2886,7 @@
       "basename": "data_3",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Rows",
       "data": []
     },
@@ -2849,7 +2894,7 @@
       "basename": "data_4",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Angle",
       "data": []
     },
@@ -2857,7 +2902,7 @@
       "basename": "data_5",
       "prototype": "Morphism",
       "properName": "&#39;1&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Mag",
       "data": [
         [
@@ -2870,7 +2915,7 @@
       "basename": "data_6",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Reflection",
       "data": []
     },
@@ -2878,7 +2923,7 @@
       "basename": "data_7",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Width",
       "data": []
     },
@@ -2886,7 +2931,7 @@
       "basename": "data_8",
       "prototype": "Morphism",
       "properName": "ptFlush",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/EndType",
       "data": [
         [
@@ -2902,7 +2947,7 @@
       "basename": "initialDatatype",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Datatype",
       "data": []
     },
@@ -2910,7 +2955,7 @@
       "basename": "initialLayer",
       "prototype": "Morphism",
       "properName": "&#39;0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Layer",
       "data": []
     },
@@ -2918,7 +2963,7 @@
       "basename": "data_11",
       "prototype": "Morphism",
       "properName": "&#39;&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/str/str",
       "data": []
     },
@@ -2926,7 +2971,7 @@
       "basename": "data_12",
       "prototype": "Morphism",
       "properName": "&#39;0,0&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/EltType",
       "data": [
         [
@@ -2956,7 +3001,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/ColPitch",
       "factors": [
         [
@@ -2967,7 +3012,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/RowPitch",
       "factors": [
         [
@@ -2978,7 +3023,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/Rows",
       "factors": [
         [
@@ -2989,7 +3034,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/Cols",
       "factors": [
         [
@@ -3000,7 +3045,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/Angle",
       "factors": [
         [
@@ -3011,7 +3056,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/Reflection",
       "factors": [
         [
@@ -3022,7 +3067,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/Mag",
       "factors": [
         [
@@ -3033,7 +3078,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/EndType",
       "factors": [
         [
@@ -3044,7 +3089,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/Width",
       "factors": [
         [
@@ -3055,7 +3100,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/Properties",
       "factors": [
         [
@@ -3066,7 +3111,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/Points",
       "factors": [
         [
@@ -3077,7 +3122,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/Datatype",
       "factors": [
         [
@@ -3088,7 +3133,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/Layer",
       "factors": [
         [
@@ -3099,7 +3144,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/str/str",
       "factors": [
         [
@@ -3109,7 +3154,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/EltType",
       "factors": [
         [
@@ -3119,7 +3164,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/cpp/voidPtr",
       "factors": [
         [
@@ -3130,28 +3175,28 @@
     {
       "basename": "noProperties",
       "prototype": "Morphism",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Properties"
     },
     {
       "basename": "Ev{Po{Ho{State,State}oH,State}oP}vE",
       "prototype": "Evaluation",
       "properName": "&#119890;",
-      "domain": "hdole/gdsReader/Po{Ho{State,State}oH,State}oP",
-      "codomain": "hdole/gdsReader/State"
+      "domain": "Po{Ho{State,State}oH,State}oP",
+      "codomain": "State"
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/Po{Ho{State,State}oH,State}oP",
-      "codomain": "hdole/gdsReader/Ho{State,State}oH",
+      "domain": "Po{Ho{State,State}oH,State}oP",
+      "codomain": "Ho{State,State}oH",
       "factors": [
         0
       ]
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/Po{Ho{State,State}oH,State}oP",
-      "codomain": "hdole/gdsReader/State",
+      "domain": "Po{Ho{State,State}oH,State}oP",
+      "codomain": "State",
       "factors": [
         1
       ]
@@ -3161,16 +3206,16 @@
       "basename": "getHandler",
       "prototype": "Morphism",
       "domain": "hdole/nat/N8",
-      "codomain": "hdole/gdsReader/Ho{State,State}oH"
+      "codomain": "Ho{State,State}oH"
     },
     {
       "description": "Identity for the object State",
       "prototype": "Identity",
-      "domain": "hdole/gdsReader/State"
+      "domain": "State"
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/Po{hdole/nat/N16,hdole/nat/N16}oP",
+      "domain": "Po{hdole/nat/N16,hdole/nat/N16}oP",
       "codomain": "hdole/nat/N16",
       "factors": [
         [
@@ -3180,7 +3225,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/Po{hdole/nat/N16,hdole/nat/N16}oP",
+      "domain": "Po{hdole/nat/N16,hdole/nat/N16}oP",
       "codomain": "hdole/nat/N16",
       "factors": [
         [
@@ -3192,7 +3237,7 @@
       "basename": "data_14",
       "prototype": "Morphism",
       "properName": "&#39;4&#39;",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/nat/N16",
       "data": []
     },
@@ -3200,14 +3245,14 @@
       "basename": "state2recsize",
       "prototype": "Morphism",
       "properName": "&lt;&gt;",
-      "domain": "hdole/gdsReader/State",
-      "codomain": "hdole/gdsReader/RecordLength"
+      "domain": "State",
+      "codomain": "RecordLength"
     },
     {
       "basename": "State2DBU",
       "prototype": "Morphism",
       "properName": "&lt;&gt;",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/gds/DBU"
     },
     {
@@ -3217,8 +3262,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/gdsReader/Po{hdole/cpp/voidPtr,RecordLength}oP",
-      "codomain": "hdole/gdsReader/Po{hdole/cpp/voidPtr,hdole/nat/N16}oP",
+      "domain": "Po{hdole/cpp/voidPtr,RecordLength}oP",
+      "codomain": "Po{hdole/cpp/voidPtr,hdole/nat/N16}oP",
       "morphisms": [
         "Id{hdole/cpp/voidPtr}dI",
         "Id{RecordLength,hdole/nat/N16}dI"
@@ -3228,13 +3273,13 @@
       "basename": "State2voidSxN16",
       "prototype": "Morphism",
       "properName": "&lt;&gt;",
-      "domain": "hdole/gdsReader/State",
-      "codomain": "hdole/gdsReader/Po{hdole/cpp/voidPtr,RecordLength}oP"
+      "domain": "State",
+      "codomain": "Po{hdole/cpp/voidPtr,RecordLength}oP"
     },
     {
       "description": "The morphism +n&#8728;(Id&times;&#8797;)&#8728;&lt;&gt; is the composite of &lt;&gt;, Id&times;&#8797;, +n.",
       "prototype": "Composite",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/cpp/voidPtr",
       "morphisms": [
         "State2voidSxN16",
@@ -3245,14 +3290,14 @@
     {
       "basename": "updateRecSize",
       "prototype": "NamedMorphism",
-      "domain": "hdole/gdsReader/State",
+      "domain": "State",
       "codomain": "hdole/cpp/voidPtr",
       "source": "hdole/gdsReader/Cm{State2voidSxN16,Pm{Id{hdole/cpp/voidPtr}dI,Id{RecordLength,hdole/nat/N16}dI}mP,hdole/cpp/voidPtrPlusN}mC"
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
-      "codomain": "hdole/gdsReader/Halt",
+      "domain": "State",
+      "codomain": "Halt",
       "factors": [
         [
           0
@@ -3261,8 +3306,8 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/Po{hdole/cpp/voidPtr,RecordLength}oP",
-      "codomain": "hdole/gdsReader/RecordLength",
+      "domain": "Po{hdole/cpp/voidPtr,RecordLength}oP",
+      "codomain": "RecordLength",
       "factors": [
         1
       ]
@@ -3289,7 +3334,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/Po{hdole/cpp/voidPtr,RecordLength}oP",
+      "domain": "Po{hdole/cpp/voidPtr,RecordLength}oP",
       "codomain": "hdole/cpp/voidPtr",
       "factors": [
         0
@@ -3308,15 +3353,15 @@
     {
       "prototype": "FactorMorphism",
       "domain": "hdole/cpp/voidPtr",
-      "codomain": "hdole/gdsReader/#1",
+      "codomain": "#1",
       "factors": [
         -1
       ]
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/State",
-      "codomain": "hdole/gdsReader/Po{State,State}oP",
+      "domain": "State",
+      "codomain": "Po{State,State}oP",
       "factors": [
         [],
         []
@@ -3332,13 +3377,13 @@
     {
       "basename": "noPointsFn",
       "prototype": "Morphism",
-      "domain": "hdole/gdsReader/#1",
+      "domain": "#1",
       "codomain": "hdole/gds/Points",
       "data": []
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/BndryData",
+      "domain": "BndryData",
       "codomain": "hdole/gds/Layer",
       "factors": [
         [
@@ -3348,7 +3393,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/BndryData",
+      "domain": "BndryData",
       "codomain": "hdole/gds/Datatype",
       "factors": [
         [
@@ -3358,7 +3403,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/BndryData",
+      "domain": "BndryData",
       "codomain": "hdole/gds/Points",
       "factors": [
         [
@@ -3368,7 +3413,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/BndryData",
+      "domain": "BndryData",
       "codomain": "hdole/gds/Properties",
       "factors": [
         [
@@ -3378,7 +3423,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/PathData",
+      "domain": "PathData",
       "codomain": "hdole/gds/Width",
       "factors": [
         [
@@ -3388,7 +3433,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/PathData",
+      "domain": "PathData",
       "codomain": "hdole/gds/EndType",
       "factors": [
         [
@@ -3398,7 +3443,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/SrefData",
+      "domain": "SrefData",
       "codomain": "hdole/gds/Reflection",
       "factors": [
         [
@@ -3408,7 +3453,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/SrefData",
+      "domain": "SrefData",
       "codomain": "hdole/gds/Angle",
       "factors": [
         [
@@ -3418,7 +3463,7 @@
     },
     {
       "prototype": "FactorMorphism",
-      "domain": "hdole/gdsReader/SrefData",
+      "domain": "SrefData",
       "codomain": "hdole/gds/Mag",
       "factors": [
         [
@@ -3428,8 +3473,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/gdsReader/Po{#1,#1,#1}oP",
-      "codomain": "hdole/gdsReader/Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
+      "domain": "Po{#1,#1,#1}oP",
+      "codomain": "Po{hdole/gds/Reflection,hdole/gds/Angle,hdole/gds/Mag}oP",
       "morphisms": [
         "data_6",
         "data_4",
@@ -3438,8 +3483,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/gdsReader/Po{#1,#1}oP",
-      "codomain": "hdole/gdsReader/Po{hdole/gds/Width,hdole/gds/EndType}oP",
+      "domain": "Po{#1,#1}oP",
+      "codomain": "Po{hdole/gds/Width,hdole/gds/EndType}oP",
       "morphisms": [
         "data_7",
         "data_8"
@@ -3447,8 +3492,8 @@
     },
     {
       "prototype": "ProductMorphism",
-      "domain": "hdole/gdsReader/Po{#1,#1,#1,#1}oP",
-      "codomain": "hdole/gdsReader/Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
+      "domain": "Po{#1,#1,#1,#1}oP",
+      "codomain": "Po{hdole/gds/Layer,hdole/gds/Datatype,hdole/gds/Points,hdole/gds/Properties}oP",
       "morphisms": [
         "initialLayer",
         "initialDatatype",
@@ -3478,7 +3523,7 @@
       "basename": "mmap",
       "prototype": "Morphism",
       "domain": "hdole/str/str",
-      "codomain": "hdole/gdsReader/CPo{hdole/cpp/voidPtr,#1}oPC"
+      "codomain": "CPo{hdole/cpp/voidPtr,#1}oPC"
     }
   ],
   "user": "hdole",

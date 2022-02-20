@@ -30,7 +30,7 @@
       {
         "basename": "o_2",
         "prototype": "IndexObject",
-        "to": "hdole/identity/A",
+        "to": "A",
         "attributes": [
           [
             "level",
@@ -45,7 +45,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/identity/B",
+        "to": "B",
         "xy": {
           "x": 760,
           "y": 460
@@ -54,7 +54,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/identity/A",
+        "to": "A",
         "xy": {
           "x": 950,
           "y": 290
@@ -63,7 +63,7 @@
       {
         "basename": "o_7",
         "prototype": "IndexObject",
-        "to": "hdole/identity/B",
+        "to": "B",
         "xy": {
           "x": 1160,
           "y": 290
@@ -80,77 +80,77 @@
         "height": 24
       },
       {
-        "basename": "m_1",
-        "prototype": "IndexMorphism",
-        "domain": "hdole/identity/o_2",
-        "codomain": "hdole/identity/o_3",
-        "to": "hdole/identity/f"
-      },
-      {
-        "basename": "m_2",
-        "prototype": "IndexMorphism",
-        "domain": "hdole/identity/o_4",
-        "codomain": "hdole/identity/o_2",
-        "to": "hdole/identity/id"
-      },
-      {
-        "basename": "m_5",
-        "prototype": "IndexMorphism",
-        "domain": "hdole/identity/o_7",
-        "codomain": "hdole/identity/o_4",
-        "attributes": [
-          [
-            "quantifier",
-            "forall"
-          ],
-          [
-            "level",
-            1
-          ],
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "hdole/identity/g"
-      },
-      {
-        "basename": "m_6",
-        "prototype": "IndexMorphism",
-        "domain": "hdole/identity/o_7",
-        "codomain": "hdole/identity/o_2",
-        "to": "hdole/identity/g"
-      },
-      {
-        "basename": "m_3",
-        "prototype": "IndexMorphism",
-        "domain": "hdole/identity/o_4",
-        "codomain": "hdole/identity/o_3",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ],
-          [
-            "level",
-            1
-          ],
-          [
-            "quantifier",
-            "forall"
-          ]
-        ],
-        "to": "hdole/identity/f"
-      },
-      {
         "description": "BUG:  All quantified morphisms should show the quantifer.",
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
-          "x": 1060,
-          "y": 460
+          "x": 1020,
+          "y": 470
         },
         "height": 24
+      },
+      {
+        "basename": "m_1",
+        "prototype": "IndexMorphism",
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "f"
+      },
+      {
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "o_4",
+        "codomain": "o_2",
+        "to": "id"
+      },
+      {
+        "basename": "m_5",
+        "prototype": "IndexMorphism",
+        "domain": "o_7",
+        "codomain": "o_4",
+        "attributes": [
+          [
+            "quantifier",
+            "forall"
+          ],
+          [
+            "level",
+            1
+          ],
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "g"
+      },
+      {
+        "basename": "m_6",
+        "prototype": "IndexMorphism",
+        "domain": "o_7",
+        "codomain": "o_2",
+        "to": "g"
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "o_4",
+        "codomain": "o_3",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ],
+          [
+            "level",
+            1
+          ],
+          [
+            "quantifier",
+            "forall"
+          ]
+        ],
+        "to": "f"
       }
     ],
     "cells": [
@@ -209,7 +209,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644747952216,
+  "timestamp": 1645343891425,
   "version": 0,
   "viewport": {
     "x": -622,

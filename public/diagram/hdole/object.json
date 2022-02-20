@@ -6,7 +6,7 @@
   "properName": "hdole/object",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/object_Index",
+  "domain": "object_Index",
   "codomain": "em/Cat",
   "references": [],
   "domainInfo": {

@@ -4,9 +4,9 @@
   "name": "hdole/sha256",
   "prototype": "Diagram",
   "properName": "hdole/sha256",
-  "category": "sys/CAT",
+  "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/sha256_Index",
+  "domain": "sha256_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/str"
@@ -16,7 +16,7 @@
     "basename": "sha256_Index",
     "name": "hdole/sha256_Index",
     "prototype": "IndexCategory",
-    "category": "sys/CAT",
+    "category": "em/CAT",
     "diagram": "hdole/hdole",
     "elements": [
       {
@@ -31,7 +31,7 @@
       {
         "basename": "o_1",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 800
@@ -60,7 +60,7 @@
       {
         "basename": "o_3",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 1000
@@ -69,7 +69,7 @@
       {
         "basename": "o_4",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 1200
@@ -78,7 +78,7 @@
       {
         "basename": "o_5",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 1400
@@ -177,7 +177,7 @@
       {
         "basename": "o_16",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 1600
@@ -186,7 +186,7 @@
       {
         "basename": "o_17",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 1800
@@ -195,7 +195,7 @@
       {
         "basename": "o_18",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 2000
@@ -204,7 +204,7 @@
       {
         "basename": "o_19",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 2200
@@ -213,7 +213,7 @@
       {
         "basename": "o_20",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 2400
@@ -222,7 +222,7 @@
       {
         "basename": "o_21",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 2600
@@ -231,7 +231,7 @@
       {
         "basename": "o_22",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 2800
@@ -240,7 +240,7 @@
       {
         "basename": "o_23",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 3000
@@ -249,7 +249,7 @@
       {
         "basename": "o_24",
         "prototype": "IndexObject",
-        "to": "hdole/sha256/Hash",
+        "to": "Hash",
         "xy": {
           "x": 500,
           "y": 600
@@ -268,86 +268,86 @@
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_0",
-        "codomain": "hdole/sha256/o_1",
-        "to": "hdole/sha256/N8ToHash"
+        "domain": "o_0",
+        "codomain": "o_1",
+        "to": "N8ToHash"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_2",
-        "codomain": "hdole/sha256/o_3",
-        "to": "hdole/sha256/N16ToHash"
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "N16ToHash"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_6",
-        "codomain": "hdole/sha256/o_4",
-        "to": "hdole/sha256/N32ToHash"
+        "domain": "o_6",
+        "codomain": "o_4",
+        "to": "N32ToHash"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_7",
-        "codomain": "hdole/sha256/o_5",
-        "to": "hdole/sha256/N64ToHash"
+        "domain": "o_7",
+        "codomain": "o_5",
+        "to": "N64ToHash"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_8",
-        "codomain": "hdole/sha256/o_16",
-        "to": "hdole/sha256/N128ToHash"
+        "domain": "o_8",
+        "codomain": "o_16",
+        "to": "N128ToHash"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_9",
-        "codomain": "hdole/sha256/o_17",
-        "to": "hdole/sha256/Z8ToHash"
+        "domain": "o_9",
+        "codomain": "o_17",
+        "to": "Z8ToHash"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_10",
-        "codomain": "hdole/sha256/o_18",
-        "to": "hdole/sha256/Z16ToHash"
+        "domain": "o_10",
+        "codomain": "o_18",
+        "to": "Z16ToHash"
       },
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_11",
-        "codomain": "hdole/sha256/o_19",
-        "to": "hdole/sha256/Z32ToHash"
+        "domain": "o_11",
+        "codomain": "o_19",
+        "to": "Z32ToHash"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_12",
-        "codomain": "hdole/sha256/o_20",
-        "to": "hdole/sha256/Z64ToHash"
+        "domain": "o_12",
+        "codomain": "o_20",
+        "to": "Z64ToHash"
       },
       {
         "basename": "m_9",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_13",
-        "codomain": "hdole/sha256/o_21",
-        "to": "hdole/sha256/Z128ToHash"
+        "domain": "o_13",
+        "codomain": "o_21",
+        "to": "Z128ToHash"
       },
       {
         "basename": "m_10",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_14",
-        "codomain": "hdole/sha256/o_22",
-        "to": "hdole/sha256/F32ToHash"
+        "domain": "o_14",
+        "codomain": "o_22",
+        "to": "F32ToHash"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
-        "domain": "hdole/sha256/o_15",
-        "codomain": "hdole/sha256/o_23",
-        "to": "hdole/sha256/F64ToHash"
+        "domain": "o_15",
+        "codomain": "o_23",
+        "to": "F64ToHash"
       }
     ],
     "cells": []
@@ -365,7 +365,7 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/nat/N8",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "N16ToHash",
@@ -375,7 +375,7 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "N32ToHash",
@@ -385,7 +385,7 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/nat/N32",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "N64ToHash",
@@ -395,7 +395,7 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/nat/N64",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "N128ToHash",
@@ -405,7 +405,7 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/nat/N128",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "Z8ToHash",
@@ -415,7 +415,7 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/int/Z8",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "Z16ToHash",
@@ -425,7 +425,7 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/int/Z16",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "Z32ToHash",
@@ -435,7 +435,7 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/int/Z32",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "Z64ToHash",
@@ -445,14 +445,14 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/int/Z64",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "Z128ToHash",
       "prototype": "Morphism",
       "properName": "hash",
       "domain": "hdole/int/Z128",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "F32ToHash",
@@ -462,7 +462,7 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/floats/F32",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     },
     {
       "basename": "F64ToHash",
@@ -472,7 +472,7 @@
         "js": "function %Type(args)\n{\n\treturn sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(args));\n}\n"
       },
       "domain": "hdole/floats/F64",
-      "codomain": "hdole/sha256/Hash"
+      "codomain": "Hash"
     }
   ],
   "user": "hdole",
