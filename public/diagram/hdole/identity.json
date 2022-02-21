@@ -3,9 +3,10 @@
   "basename": "identity",
   "name": "hdole/identity",
   "prototype": "Diagram",
+  "properName": "hdole/identity",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/identity_Index",
+  "domain": "identity_Index",
   "codomain": "em/Cat",
   "references": [],
   "domainInfo": {
@@ -38,8 +39,8 @@
           ]
         ],
         "xy": {
-          "x": 950,
-          "y": 460
+          "x": 840,
+          "y": 640
         }
       },
       {
@@ -47,8 +48,8 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 760,
-          "y": 460
+          "x": 650,
+          "y": 640
         }
       },
       {
@@ -56,8 +57,8 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 950,
-          "y": 290
+          "x": 840,
+          "y": 470
         }
       },
       {
@@ -65,8 +66,8 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 1160,
-          "y": 290
+          "x": 1050,
+          "y": 470
         }
       },
       {
@@ -84,10 +85,46 @@
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
-          "x": 1020,
-          "y": 470
+          "x": 490,
+          "y": 730
         },
         "height": 24
+      },
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": 1010,
+          "y": 280
+        }
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 1177.8243827819824,
+          "y": 280
+        }
+      },
+      {
+        "basename": "o_5",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 840,
+          "y": 200
+        }
+      },
+      {
+        "basename": "o_6",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 840,
+          "y": 380
+        }
       },
       {
         "basename": "m_1",
@@ -151,6 +188,39 @@
           ]
         ],
         "to": "f"
+      },
+      {
+        "description": "",
+        "basename": "e_0",
+        "prototype": "IndexElement",
+        "domain": "o_0",
+        "codomain": "o_1",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
+      },
+      {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "o_5",
+        "codomain": "o_6",
+        "to": "id"
+      },
+      {
+        "description": "",
+        "basename": "e_1",
+        "prototype": "IndexElement",
+        "domain": "m_0",
+        "codomain": "o_0",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
       }
     ],
     "cells": [
@@ -182,39 +252,64 @@
   },
   "elements": [
     {
-      "basename": "A",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "B",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "f",
-      "prototype": "Morphism",
-      "domain": "hdole/identity/A",
-      "codomain": "hdole/identity/B"
-    },
-    {
-      "basename": "id",
-      "prototype": "Morphism",
-      "domain": "hdole/identity/A",
-      "codomain": "hdole/identity/A"
-    },
-    {
-      "basename": "g",
-      "prototype": "Morphism",
-      "domain": "hdole/identity/B",
-      "codomain": "hdole/identity/A"
+      "basename": "D",
+      "prototype": "Category",
+      "elements": [
+        {
+          "description": "",
+          "basename": "A",
+          "name": "hdole/identity/A",
+          "prototype": "CatObject",
+          "category": "hdole/identity/D",
+          "diagram": "hdole/identity"
+        },
+        {
+          "description": "",
+          "basename": "B",
+          "name": "hdole/identity/B",
+          "prototype": "CatObject",
+          "category": "hdole/identity/D",
+          "diagram": "hdole/identity"
+        },
+        {
+          "description": "",
+          "basename": "f",
+          "name": "hdole/identity/f",
+          "prototype": "Morphism",
+          "category": "hdole/identity/D",
+          "diagram": "hdole/identity",
+          "domain": "A",
+          "codomain": "B"
+        },
+        {
+          "description": "",
+          "basename": "id",
+          "name": "hdole/identity/id",
+          "prototype": "Morphism",
+          "category": "hdole/identity/D",
+          "diagram": "hdole/identity",
+          "domain": "A",
+          "codomain": "A"
+        },
+        {
+          "description": "",
+          "basename": "g",
+          "name": "hdole/identity/g",
+          "prototype": "Morphism",
+          "category": "hdole/identity/D",
+          "diagram": "hdole/identity",
+          "domain": "B",
+          "codomain": "A"
+        }
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1645343891425,
+  "timestamp": 1645474117200,
   "version": 0,
   "viewport": {
-    "x": -622,
-    "y": 146,
-    "scale": 2.30823697961899
-  },
-  "properName": "hdole/identity"
+    "x": -204,
+    "y": 49,
+    "scale": 1.7224419732777152
+  }
 }

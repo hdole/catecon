@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": -590
+          "y": -580
         },
         "height": "76",
         "weight": "bold"
@@ -34,7 +34,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": -550
+          "y": -520
         },
         "height": "24"
       },
@@ -44,7 +44,7 @@
         "to": "A",
         "xy": {
           "x": 100,
-          "y": -400
+          "y": -300
         }
       },
       {
@@ -53,7 +53,7 @@
         "to": "B",
         "xy": {
           "x": 300,
-          "y": -400
+          "y": -300
         }
       },
       {
@@ -62,7 +62,7 @@
         "to": "C",
         "xy": {
           "x": -150,
-          "y": -400
+          "y": -300
         }
       },
       {
@@ -71,7 +71,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": -80
+          "y": 20
         },
         "height": "24"
       },
@@ -81,7 +81,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": -250
+          "y": -150
         },
         "height": "24"
       },
@@ -91,9 +91,27 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": -150
+          "y": -50
         },
         "height": "24"
+      },
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": 200,
+          "y": -470
+        }
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 330,
+          "y": -470
+        }
       },
       {
         "basename": "m_5",
@@ -147,6 +165,32 @@
           ]
         ],
         "to": "g"
+      },
+      {
+        "description": "",
+        "basename": "e_0",
+        "prototype": "IndexElement",
+        "domain": "o_0",
+        "codomain": "o_1",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
+      },
+      {
+        "description": "",
+        "basename": "e_1",
+        "prototype": "IndexElement",
+        "domain": "m_5",
+        "codomain": "o_0",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
       }
     ],
     "cells": [
@@ -184,42 +228,72 @@
   },
   "elements": [
     {
-      "basename": "A",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "B",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "C",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "f",
-      "prototype": "Morphism",
-      "domain": "A",
-      "codomain": "B"
-    },
-    {
-      "basename": "g",
-      "prototype": "Morphism",
-      "domain": "C",
-      "codomain": "A"
-    },
-    {
-      "basename": "h",
-      "prototype": "Morphism",
-      "domain": "C",
-      "codomain": "A"
+      "basename": "D",
+      "prototype": "Category",
+      "elements": [
+        {
+          "description": "",
+          "basename": "A",
+          "name": "hdole/monomorphism/A",
+          "prototype": "CatObject",
+          "category": "hdole/monomorphism/D",
+          "diagram": "hdole/monomorphism"
+        },
+        {
+          "description": "",
+          "basename": "B",
+          "name": "hdole/monomorphism/B",
+          "prototype": "CatObject",
+          "category": "hdole/monomorphism/D",
+          "diagram": "hdole/monomorphism"
+        },
+        {
+          "description": "",
+          "basename": "C",
+          "name": "hdole/monomorphism/C",
+          "prototype": "CatObject",
+          "category": "hdole/monomorphism/D",
+          "diagram": "hdole/monomorphism"
+        },
+        {
+          "description": "",
+          "basename": "f",
+          "name": "hdole/monomorphism/f",
+          "prototype": "Morphism",
+          "category": "hdole/monomorphism/D",
+          "diagram": "hdole/monomorphism",
+          "domain": "A",
+          "codomain": "B"
+        },
+        {
+          "description": "",
+          "basename": "g",
+          "name": "hdole/monomorphism/g",
+          "prototype": "Morphism",
+          "category": "hdole/monomorphism/D",
+          "diagram": "hdole/monomorphism",
+          "domain": "C",
+          "codomain": "A"
+        },
+        {
+          "description": "",
+          "basename": "h",
+          "name": "hdole/monomorphism/h",
+          "prototype": "Morphism",
+          "category": "hdole/monomorphism/D",
+          "diagram": "hdole/monomorphism",
+          "domain": "C",
+          "codomain": "A"
+        }
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1644713442503,
+  "timestamp": 1645428549256,
   "version": 0,
   "viewport": {
-    "x": 1009,
-    "y": 2421,
-    "scale": 3.5567785682008797
+    "x": 1117,
+    "y": 1150,
+    "scale": 2.006071884268851
   }
 }

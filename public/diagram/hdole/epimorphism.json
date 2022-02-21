@@ -34,7 +34,7 @@
         "to": "A",
         "xy": {
           "x": 550,
-          "y": 550
+          "y": 650
         }
       },
       {
@@ -43,7 +43,7 @@
         "to": "B",
         "xy": {
           "x": 750,
-          "y": 550
+          "y": 650
         }
       },
       {
@@ -52,7 +52,7 @@
         "to": "C",
         "xy": {
           "x": 1000,
-          "y": 550
+          "y": 650
         }
       },
       {
@@ -71,7 +71,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 540,
-          "y": 690
+          "y": 840
         },
         "height": "24"
       },
@@ -81,7 +81,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 540,
-          "y": 830
+          "y": 930
         },
         "height": "24"
       },
@@ -91,9 +91,27 @@
         "prototype": "IndexText",
         "xy": {
           "x": 540,
-          "y": 920
+          "y": 1020
         },
         "height": "24"
+      },
+      {
+        "basename": "o_3",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": 650,
+          "y": 500
+        }
+      },
+      {
+        "basename": "o_4",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 800,
+          "y": 500
+        }
       },
       {
         "basename": "m_0",
@@ -147,6 +165,32 @@
           ]
         ],
         "to": "h"
+      },
+      {
+        "description": "",
+        "basename": "e_0",
+        "prototype": "IndexElement",
+        "domain": "o_3",
+        "codomain": "o_4",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
+      },
+      {
+        "description": "",
+        "basename": "e_1",
+        "prototype": "IndexElement",
+        "domain": "m_0",
+        "codomain": "o_3",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
       }
     ],
     "cells": [
@@ -184,42 +228,72 @@
   },
   "elements": [
     {
-      "basename": "A",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "B",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "C",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "f",
-      "prototype": "Morphism",
-      "domain": "A",
-      "codomain": "B"
-    },
-    {
-      "basename": "g",
-      "prototype": "Morphism",
-      "domain": "B",
-      "codomain": "C"
-    },
-    {
-      "basename": "h",
-      "prototype": "Morphism",
-      "domain": "B",
-      "codomain": "C"
+      "basename": "D",
+      "prototype": "Category",
+      "elements": [
+        {
+          "description": "",
+          "basename": "A",
+          "name": "hdole/epimorphism/A",
+          "prototype": "CatObject",
+          "category": "hdole/epimorphism/D",
+          "diagram": "hdole/epimorphism"
+        },
+        {
+          "description": "",
+          "basename": "B",
+          "name": "hdole/epimorphism/B",
+          "prototype": "CatObject",
+          "category": "hdole/epimorphism/D",
+          "diagram": "hdole/epimorphism"
+        },
+        {
+          "description": "",
+          "basename": "C",
+          "name": "hdole/epimorphism/C",
+          "prototype": "CatObject",
+          "category": "hdole/epimorphism/D",
+          "diagram": "hdole/epimorphism"
+        },
+        {
+          "description": "",
+          "basename": "f",
+          "name": "hdole/epimorphism/f",
+          "prototype": "Morphism",
+          "category": "hdole/epimorphism/D",
+          "diagram": "hdole/epimorphism",
+          "domain": "A",
+          "codomain": "B"
+        },
+        {
+          "description": "",
+          "basename": "g",
+          "name": "hdole/epimorphism/g",
+          "prototype": "Morphism",
+          "category": "hdole/epimorphism/D",
+          "diagram": "hdole/epimorphism",
+          "domain": "B",
+          "codomain": "C"
+        },
+        {
+          "description": "",
+          "basename": "h",
+          "name": "hdole/epimorphism/h",
+          "prototype": "Morphism",
+          "category": "hdole/epimorphism/D",
+          "diagram": "hdole/epimorphism",
+          "domain": "B",
+          "codomain": "C"
+        }
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1644268218390,
+  "timestamp": 1645412991462,
   "version": 0,
   "viewport": {
-    "x": -1797,
-    "y": -880,
-    "scale": 3.8134550121281725
+    "x": 208,
+    "y": -73,
+    "scale": 1.303629104290646
   }
 }
