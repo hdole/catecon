@@ -730,78 +730,31 @@ async function serve()
 						saveDiagramPng(name, png);
 					uploadBugs(diagram);
 				}
-				//
-				// check cache
-				//
-				if (Cat.R.catalog.has(name))
+				const info = Cat.R.catalog.get(name);
+				const oldrefs = info ? Cat.U.clone(info.references) : [];
+				Cat.R.catalog.set(name, Cat.Diagram.GetInfo(diagram));
+				updateDiagramTable(name, diagram, (error, result) =>
 				{
-					const info = Cat.R.catalog.get(name);
-					if (info.timestamp < diagram.timestamp || Cat.R.localTimestamp(name) < info.timestamp)
+					if (error)
 					{
-						const oldrefs = Cat.U.clone(info.references);
-						const nuInfo = Cat.Diagram.GetInfo(diagram);
-						Cat.R.catalog.set(name, nuInfo);
-						updateDiagramTable(name, diagram, (error, result) =>
-						{
-							if (error)
-							{
-								console.log({error});
-								res.status(HTTP.INTERNAL_ERROR).send({message:'cannot update diagram info'}).end();
-								return;
-							}
-							try
-							{
-								finalProcessing();
-								updateRefcnts(oldrefs, diagram.references);
-								res.status(HTTP.OK).end();
-							}
-							catch(x)
-							{
-								res.status(HTTP.INSUFFICIENT_STORAGE).end();
-							}
-						}, info.cloudTimestamp);
-					}
-					if (png)
-						saveDiagramPng(name, png);
-					res.status(HTTP.OK).end();
-					return;
-				}
-				else
-				{
-					const user = userInfo.get(req.body.user);
-					//
-					// max number of diagrams for user?
-					//
-					if (user.diagramCount >= process.env.CAT_DIAGRAM_USER_LIMIT)
-					{
-						res.status(HTTP.INSUFFICIENT_STORAGE).end('too many diagrams');
+						console.log({error});
+						res.status(HTTP.INTERNAL_ERROR).send({message:'cannot update diagram info'}).end();
 						return;
 					}
-					//
-					// new diagram to system
-					// no need to set refcnt; it must be 0
-					//
-					const sql = 'INSERT into Catecon.diagrams (name, basename, user, description, properName, refs, timestamp, codomain, category, prototype) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-					dbcon.query(sql, [name, diagram.basename, diagram.user, diagram.description, diagram.properName, JSON.stringify(diagram.references), diagram.timestamp, diagram.codomain, diagram.category, diagram.prototype], (error, result) =>
+					try
 					{
-						if (error)
-						{
-							console.log({error});
-							res.status(HTTP.INTERNAL_ERROR).send({error, message:'cannot insert new diagram'}).end();
-							return;
-						}
-						const info = Cat.Diagram.GetInfo(diagram);
-						info.refcnt = 0;
-						updateRefcnts([], info.references);
-						Cat.R.catalog.set(name, info);
-						//
-						// user owns one more
-						//
-						user.diagramCount++;
 						finalProcessing();
+						updateRefcnts(oldrefs, diagram.references);
 						res.status(HTTP.OK).end();
-					});
-				}
+					}
+					catch(x)
+					{
+						res.status(HTTP.INSUFFICIENT_STORAGE).end();
+					}
+				}, info ? info.cloudTimestamp : 0);
+				if (png)
+					saveDiagramPng(name, png);
+				res.status(HTTP.OK).end();
 			}
 			catch(x)
 			{
