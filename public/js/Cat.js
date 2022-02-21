@@ -895,7 +895,7 @@ class Runtime
 					}
 					else
 					{
-						console.error('readDiatgram, diagram not found', name);
+						R.recordError('readDiatgram, diagram not found ' + name);
 						return;
 					}
 					this.sync = sync;
@@ -1014,19 +1014,16 @@ class Runtime
 					{
 						if (jsons.length > 0)
 							doSave(jsons.shift());
-						else
-							fn && fn();
+						else if (R.canLoad(name))
+							diagram = R.loadDiagram(name, fn);
 					});
 				};
 				jsons.length > 0 && doSave(jsons[0]);
 			};
 			await downloader();
-			diagram = diagrams.length > 0 && diagrams[diagrams.length -1];
 		}
 		else if (R.canLoad(name))
-			diagram = await R.loadDiagram(name, fn);
-		fn && fn(e);
-		return diagram;
+			await R.loadDiagram(name, fn);
 	}
 	//
 	// primary means of displaying a diagram
@@ -1057,15 +1054,24 @@ class Runtime
 			R.default.debug && console.log('SelectDiagram', name);
 			R.diagram = null;
 			let diagram = name instanceof Diagram ? name : name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
+			const doit = _ =>
+			{
+				R.diagram = diagram;
+				D && D.emitCATEvent('default', diagram, eventAction);
+				fn && fn(diagram);
+			};
 			if (!diagram)
 			{
-				diagram = await this.DownloadDiagram(name);
-				if (!diagram)	// did not find it
-					return;
+				this.DownloadDiagram(name, _ =>
+				{
+					diagram = R.$CAT.getElement(name);
+					if (!diagram)	// did not find it
+						return;
+					doit();
+				});
 			}
-			R.diagram = diagram;
-			D && D.emitCATEvent('default', diagram, eventAction);
-			fn && fn(diagram);
+			else
+				doit();
 		}
 		catch(x)
 		{
@@ -1973,7 +1979,7 @@ class Navbar
 		{
 			this.updateCategory();
 			D.removeChildren(this.diagramElt);
-			this.diagramElt.appendChild(H3.span('.navtxt-link', info.properName, {onclick:e => Runtime.SelectDiagram(info.name, 'default'), title:`View diagram ${info.name}`}));
+			this.diagramElt.appendChild(H3.span('.navtxt-link', info.properName === info.name ? info.basename : info.properName, {onclick:e => Runtime.SelectDiagram(info.name, 'default'), title:`View diagram ${info.name}`}));
 			this.diagramElt.appendChild(H3.span('.italic', ' by ', info.user));
 		}
 		else
@@ -3737,6 +3743,7 @@ class Display
 					},
 					icon:			32,		// px
 					layoutGrid:		10,		// px
+					lineDeltaY:		1.3,	// em
 					majorGridMult:	5,		// times
 					margin:			5,		// px
 					pan:			{scale:	0.05},
@@ -5305,8 +5312,8 @@ class Display
 		window.addEventListener('Morphism', e => this.updateMorphismDisplay(e));
 		window.addEventListener('Text', e => this.updateTextDisplay(e));
 		window.addEventListener('mousemove', e => this.mousemove(e));
-		this.topSVG.addEventListener('mousedown', e => this.mousedown(e), true);
-		this.topSVG.addEventListener('mouseup', e => this.mouseup(e), true);
+		this.topSVG.addEventListener('mousedown', e => this.mousedown(e));
+		this.topSVG.addEventListener('mouseup', e => this.mouseup(e));
 		this.topSVG.addEventListener('drop', e => this.drop(e), true);
 		this.topSVG.addEventListener('mousemove', e => this.statusbar.element.style.display === 'block' && D2.dist(this.statusbar.xy, {x:e.clientX, y:e.clientY}) > this.default.statusbar.hideDistance && this.statusbar.hide());
 		this.topSVG.ondragover = e => e.preventDefault();
@@ -9039,7 +9046,7 @@ class IndexText extends Element
 	}
 	lineDeltaY()
 	{
-		return '1.1em';
+		return `${D.default.lineDeltaY}em`;
 	}
 	ssStyle()
 	{
@@ -9255,54 +9262,52 @@ class IndexText extends Element
 		div.onmouseleave = _ => this.emphasis(false);
 		return div;
 	}
+	focusout(e)
+	{
+		const text = e.target.innerText;
+		if (text !== this.description)
+			R.diagram.commitElementText(e, this.name, e.target, 'description');
+		this.foreign.parentNode && this.foreign.remove();		// do not do this earlier or the textbox gets corrupted
+		D.closeActiveTextEdit();
+		this.svgText.classList.remove('hidden');
+		this.hidden.remove();
+		delete this.foreign;
+		delete this.hidden;
+	};
 	textEditor()
 	{
 		D.toolbar.hide();
 		D.closeActiveTextEdit();
 		const bbox = this.svgText.getBBox();
 		this.svgText.classList.add('hidden');
-		const hidden = H3.div(this.description, '.text-editor', {style:`font-size:${this.height}px; font-weight:${this.weight}`});
-		hidden.style.visibility = 'visible';
-		hidden.style.display = 'none';
-		hidden.style.whiteSpace = 'pre-wrap';
-		hidden.style.wordWrap = 'break-word';
+		const hidden = H3.div(this.description, '.text-editor', {style:`font-size:${this.height}px; font-weight:${this.weight}, visibility:'visible', display:'none', whiteSpace:'pre-wrap', wordWrap:'break-word'}`});
+		this.hidden = hidden;
 		document.body.appendChild(hidden);
 		const div = H3.div('##foreign-text.text-editor', this.description,
 		{
 			style:`${this.ssStyle()}; line-height:${this.lineDeltaY()}; white-space:pre-wrap; word-wrap:break-word; width:fit-content;`,
 			contentEditable:true,
 		});
-		div.addEventListener('mousedown', e => e.stopPropagation());
-		const foreign = H3.foreignObject(div, {width:4 + bbox.width + 'px', height:4 + bbox.height + 'px', y:`-${this.height}px`});
+		this.foreign = H3.foreignObject(div, {width:4 + bbox.width + 'px', height:4 + bbox.height + 'px', y:`-${this.height}px`});
 		const onkeydown = e =>
 		{
 			hidden.innerHTML = div.innerHTML;
 			hidden.style.visibility = 'hidden';
 			hidden.style.display = 'block';
 			hidden.style.width = 'fit-content';
-			foreign.style.width = (D.default.icon + hidden.offsetWidth) + 'px';
-			foreign.style.height = hidden.offsetHeight + 'px';
+			this.foreign.style.width = (D.default.icon + hidden.offsetWidth) + 'px';
+			this.foreign.style.height = hidden.offsetHeight + 'px';
 			if (e.key === 'Escape')
 				D.closeActiveTextEdit();
 			e.stopPropagation();
 		};
-		this.svgText.parentNode.appendChild(foreign);
+		this.svgText.parentNode.appendChild(this.foreign);
 		div.focus();
-		const onfocusout = e =>
-		{
-			const text = e.target.innerText;
-			div.removeEventListener('focusout', onfocusout);	// avoid calling this function again
-			if (text !== this.description)
-				R.diagram.commitElementText(e, this.name, e.target, 'description');
-			foreign.parentNode && foreign.remove();		// do not do this earlier or the textbox gets corrupted
-			D.closeActiveTextEdit();
-			this.svgText.classList.remove('hidden');
-			hidden.remove();
-		};
-		div.addEventListener('focusout', onfocusout);
-		div.onfocusout = onfocusout;	// do this to get to the handler
-		div.addEventListener('keydown', onkeydown);
-		div.addEventListener('keyup', onkeydown);
+		div.addEventListener('focusout', e => this.focusout(e));
+		this.foreign.addEventListener('keydown', onkeydown);
+		this.foreign.addEventListener('keyup', onkeydown);
+		this.foreign.addEventListener('mousedown', e => e.stopPropagation());
+		this.foreign.addEventListener('mouseup', e => e.stopPropagation());
 		D.editElement = div;
 	}
 	wipeSvg()
@@ -9334,30 +9339,40 @@ class IndexText extends Element
 	}
 }
 
-class IndexCode extends IndexText
+class IndexCode extends IndexText		// description holds the code
 {
 	constructor(diagram, args)
 	{
 		super(diagram, args);
-		if ('code' in args)
-			this.attributes.set('code', args.code);
-		if ('morphism' in args)
-			this.attributes.set('morphism', args.morphism);
+		this.ext = args.ext;
+		this.element = diagram.getElement(args.element);
+	}
+	json()
+	{
+		const a = super.json();
+		a.ext = this.ext;
+		a.element = this.element.refName(this.diagram);
+		return a;
 	}
 	mouseenter(e)
 	{
 		super.mouseenter(e);
-		this.diagram.emphasis(this.diagram.getElement(this.attributes.get('morphism')), true);
+		this.diagram.emphasis(this.diagram.getElement(this.element), true);
 	}
 	mouseout(e)
 	{
 		super.mouseout(e);
-		this.diagram.emphasis(this.diagram.getElement(this.attributes.get('morphism')), false);
+		this.diagram.emphasis(this.diagram.getElement(this.element), false);
 	}
-	makeSvg()
+	makeSVG(node)
 	{
-		super.makeSVG();
+		super.makeSVG(node);
 		this.svg.querySelectorAll('tspan').forEach(tsp => tsp.classList.add('code'));
+	}
+	focusout(e)
+	{
+		super.focusout(e);
+		this.element.code[this.ext] = this.description;
 	}
 }
 
@@ -10258,7 +10273,7 @@ class MorphismAssemblyAction extends Action
 	{
 		if (ary.length === 1 && ary[0].isEditable() && ary[0] instanceof IndexObject)
 		{
-			if (diagram.blobs.length === 1 && diagram.blobs[0].objects.has(ary[0]) && diagram.blobs[0].morphisms.size > 1)
+			if (diagram.blobs.length === 1 && diagram.blobs[0].objects.has(ary[0]) && diagram.blobs[0].morphisms.size > 1 && diagram.blobs[0].quantifiers.size === 0)
 				return true;
 		}
 		return false;
@@ -13779,6 +13794,11 @@ const Arrow =
 		this.svg_name && boxes.push(this.getSvgNameBBox());
 		return D2.mergeBoxes(...boxes);
 	},
+	getXY()
+	{
+		const bbox = this.getBBox();
+		return new D2({x:bbox.x + bbox.width/2, y:bbox.y + bbox.height/2});
+	},
 	intersect(bbox, side, m = D.default.arrow.margin)
 	{
 		let pnt = new D2();
@@ -14190,11 +14210,6 @@ class IndexMorphism extends Morphism
 	checkCells()
 	{
 		this.getCells().forEach(cell => D.emitCellEvent(this.diagram, 'check', cell));
-	}
-	getXY()
-	{
-		const bbox = this.getBBox();
-		return new D2({x:bbox.x + bbox.width/2, y:bbox.y + bbox.height/2});
 	}
 	updateProperName()
 	{
@@ -16743,6 +16758,7 @@ class Diagram extends Functor
 	json(delBasename = true)
 	{
 		const a = super.json();
+		a.codomain = this.codomain.name;		// prevent local name from being used
 		a.references = [...this.references.keys()];
 		this.purge();
 		a.domainInfo = this.domain.json();
@@ -16872,7 +16888,7 @@ class Diagram extends Functor
 		if (elt instanceof IndexText)
 			return null;
 		const obj = elt instanceof IndexMorphism ? elt.domain : elt instanceof Cell ? elt.left[0].domain : elt;
-		for (let i=0; i<this.blobs.elngth; ++i)
+		for (let i=0; i<this.blobs.length; ++i)
 		{
 			const blob = this.blobs[i];
 			if (blob.objects.has(obj))
@@ -16918,7 +16934,11 @@ class Diagram extends Functor
 				const blob = this.getBlob(elt);
 				!blob && this.blobs.push(new DiagramBlob(elt));
 			}
-			this.selected.filter(m => Arrow.isArrow(m)).map(m => this.deselect(m.domain, m.codomain));
+			this.selected.filter(m => Arrow.isArrow(m)).map(m =>
+			{
+				m instanceof IndexMorphism && this.deselect(m.domain);
+				m instanceof IndexMorphism && this.deselect(m.codomain);
+			});
 			D.emitDiagramEvent(this, 'select', elt);
 		}
 	}
@@ -16964,9 +16984,9 @@ class Diagram extends Functor
 		let selected = [];
 		this.domain.elements.forEach(elt =>
 		{
-			if (Arrow.isArrow(elt) && D2.inside(p, elt.domain, q) && D2.inside(p, elt.codomain, q))
+			if (Arrow.isArrow(elt) && D2.inside(p, elt.domain.getXY(), q) && D2.inside(p, elt.codomain.getXY(), q))
 				selected.push(elt);
-			else if (D2.inside(p, elt, q))
+			else if (D2.inside(p, elt.getXY(), q))
 				selected.push(elt);
 		});
 		this.makeSelected(...selected);
@@ -16984,8 +17004,22 @@ class Diagram extends Functor
 		{
 			if (Arrow.isArrow(elt))
 			{
-				dragObjects.add(elt.domain);
-				dragObjects.add(elt.codomain);
+				if (elt instanceof IndexMorphism)
+				{
+					dragObjects.add(elt.domain);
+					dragObjects.add(elt.codomain);
+				}
+				else if (elt instanceof IndexElement)
+				{
+					if (elt.domain instanceof IndexObject)
+						dragObjects.add(elt.domain);
+					else
+					{
+						dragObjects.add(elt.domain.domain);
+						dragObjects.add(elt.domain.codomain);
+					}
+					dragObjects.add(elt.codomain);
+				}
 				elt.domains.forEach(att => attachments.add(att));
 				elt.codomains.forEach(att => attachments.add(att));
 			}
@@ -17508,16 +17542,18 @@ class Diagram extends Functor
 	{
 		if (name instanceof Element)
 			return name;
+		let elt = null;
 		if (cat)
 		{
 			const category = this.getCategory(cat);
 			if (category)
-				return category.getElement(name);
+				elt = category.getElement(name);
 		}
-		let elt = this.domain.getElement(name);		// does the requested element live in the domain category?
+		if (!elt)
+			elt = this.domain.getElement(name);		// does the requested element live in the domain category?
 		if (elt)
 			return elt;
-		if (typeof name === 'string')
+		else if (typeof name === 'string')
 		{
 			if (this.elements.has(name))
 				return this.elements.get(name);
@@ -17574,6 +17610,10 @@ class Diagram extends Functor
 	forEachText(fn)
 	{
 		this.domain.elements.forEach(e => e instanceof IndexText && fn(e));
+	}
+	forEachCode(fn)
+	{
+		this.domain.elements.forEach(e => e instanceof IndexCode && fn(e));
 	}
 	showGraph(m)
 	{
@@ -18630,7 +18670,7 @@ class Diagram extends Functor
 	showCode(ext)
 	{
 		const scanned = new Set();
-		this.forEachText(txt => txt.attributes.has('code') && txt.attributes.get('code') === ext && scanned.add(this.getElement(txt.attributes.get('morphism'))));
+		this.forEachCode(txt => txt.ext === ext && scanned.add(this.getElement(txt.element)));
 		if (scanned.size > 0)
 		{
 			this.hideCode(ext);
@@ -18638,27 +18678,37 @@ class Diagram extends Functor
 		}
 		[...this.domain.elements.values()].map(elt =>
 		{
-			if (elt instanceof IndexMorphism && 'code' in elt.to && ext in elt.to.code)
+			if (elt instanceof IndexMorphism && 'code' in elt.to && ext in elt.to.code && !scanned.has(elt.to))
 			{
-				if (!scanned.has(elt.to))
+				const foundIt = this.svgRoot.querySelector(`g[data-morphism="${elt.to.name}"]`);
+				if (!foundIt)
 				{
-					const foundIt = this.svgRoot.querySelector(`g[data-morphism="${elt.to.name}"]`);
-					if (!foundIt)
-					{
-						const description = elt.to.code[ext];
-						let xy = new D2(elt.start);
-						const height = 6;
-						xy = xy.add({x:0, y:height + D.default.font.height});
-						const txt = new IndexCode(this, {description, xy, height, weight:'normal', code:ext, morphism:elt.to.name});
-					}
-					scanned.add(elt.to);
+					const description = elt.to.code[ext];
+					let xy = new D2(elt.start);
+					const height = 6;
+					xy = xy.add({x:0, y:height + D.default.font.height});
+					const txt = new IndexCode(this, {description, xy, height, weight:'normal', ext, element:elt.to});
 				}
+				scanned.add(elt.to);
+			}
+			else if (elt instanceof IndexObject && 'code' in elt.to && ext in elt.to.code && elt.domains.size === 0 && elt.codomains.size === 0 && !scanned.has(elt.to))
+			{
+				const foundIt = this.svgRoot.querySelector(`g[data-morphism="${elt.to.name}"]`);
+				if (!foundIt)
+				{
+					const description = elt.to.code[ext];
+					let xy = new D2(elt.getXY());
+					const height = 6;
+					xy = xy.add({x:0, y:height + D.default.font.height});
+					const txt = new IndexCode(this, {description, xy, height, weight:'normal', ext, element:elt.to});
+				}
+				scanned.add(elt.to);
 			}
 		});
 	}
 	hideCode(ext)
 	{
-		this.forEachText(txt => txt.attributes.has('code') && txt.attributes.get('code') === ext && txt.decrRefcnt());
+		this.forEachCode(txt => txt.ext === ext && txt.decrRefcnt());
 	}
 	static Codename(args)
 	{
