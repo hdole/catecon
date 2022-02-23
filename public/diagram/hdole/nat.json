@@ -9,7 +9,7 @@
   "code": {
     "cpp": "#include <algorithm>"
   },
-  "domain": "hdole/nat_Index",
+  "domain": "nat_Index",
   "codomain": "zf/Set",
   "references": [],
   "domainInfo": {
@@ -3709,6 +3709,1660 @@
         "domain": "o_176",
         "codomain": "o_155",
         "to": "equ128"
+      },
+      {
+        "description": "%0 = 0;",
+        "basename": "t_0",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 810,
+          "y": 510
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "zero64"
+      },
+      {
+        "description": "%0 = 1;",
+        "basename": "t_1",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 810,
+          "y": 710
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "one64"
+      },
+      {
+        "description": "%0 = ULONG_MAX;",
+        "basename": "t_5",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 810,
+          "y": 910
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "inf64"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_6",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 1530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add64"
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_9",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 3930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lt64"
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_10",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 4130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lteq64"
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_14",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 3730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "equ64"
+      },
+      {
+        "description": "%0 = 0;",
+        "basename": "t_33",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 10,
+          "y": 510
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "zero16"
+      },
+      {
+        "description": "%0 = 1;",
+        "basename": "t_34",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 10,
+          "y": 710
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "one16"
+      },
+      {
+        "description": "%0 = 0xffff;",
+        "basename": "t_35",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 10,
+          "y": 910
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "inf16"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_36",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 1530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add16"
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_37",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 2330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "mult16"
+      },
+      {
+        "description": "%2 = %0 & %1;",
+        "basename": "t_38",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 2730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "and16"
+      },
+      {
+        "description": "%2 = %0 | %1;",
+        "basename": "t_39",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 2930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "or16"
+      },
+      {
+        "description": "%2 = %0 ^ %1;",
+        "basename": "t_40",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 3130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "xor16"
+      },
+      {
+        "description": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_41",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 3330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "div16"
+      },
+      {
+        "description": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_42",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 3530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "mod16"
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_43",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 3930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lt16"
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_44",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 4130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lteq16"
+      },
+      {
+        "description": "if (%0 != 0xffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_45",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 840,
+          "y": 1130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "succ64"
+      },
+      {
+        "description": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_46",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 840,
+          "y": 1330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "decr"
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_47",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 3730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "equ16"
+      },
+      {
+        "description": "%0 = 0;\n",
+        "basename": "t_48",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 410,
+          "y": 510
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "zero32"
+      },
+      {
+        "description": "%0 = 1;\n",
+        "basename": "t_49",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 410,
+          "y": 710
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "one32"
+      },
+      {
+        "description": "%1 = %0;\n",
+        "basename": "t_50",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 20,
+          "y": 310
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N8ToN16"
+      },
+      {
+        "description": "if (%0 != 0xffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_51",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 440,
+          "y": 1130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "succ32"
+      },
+      {
+        "description": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_52",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 440,
+          "y": 1330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "decr32"
+      },
+      {
+        "description": "%0 = 0xffffffff;",
+        "basename": "t_53",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 410,
+          "y": 910
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "inf32"
+      },
+      {
+        "description": "if (%0 != 0xffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_54",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 50,
+          "y": 1130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "succ16"
+      },
+      {
+        "description": "%0 = 0;\n",
+        "basename": "t_55",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -390,
+          "y": 510
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "zero8"
+      },
+      {
+        "description": "%0 = 1;\n",
+        "basename": "t_56",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -390,
+          "y": 710
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "one8"
+      },
+      {
+        "description": "%0 = 0xff;\n",
+        "basename": "t_57",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -390,
+          "y": 910
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "inf8"
+      },
+      {
+        "description": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_58",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -370,
+          "y": 1330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "decr8"
+      },
+      {
+        "description": "if (%0 != 0xff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;",
+        "basename": "t_59",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -370,
+          "y": 1130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "succ8"
+      },
+      {
+        "description": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_60",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 40,
+          "y": 1330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "decr16"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_61",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 1530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add32"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_62",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -350,
+          "y": 1530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add8"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_63",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 1930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "sub32"
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_64",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 2330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "mult64"
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_65",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 2330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "mult32"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_66",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 1930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "sub64"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_67",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 1930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "sub8"
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_68",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 2330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "mult8"
+      },
+      {
+        "description": "%2 = %0 & %1;",
+        "basename": "t_69",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 2730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "and8"
+      },
+      {
+        "description": "%2 = %0 | %1;",
+        "basename": "t_70",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 2930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "or8"
+      },
+      {
+        "description": "%0 = 0;",
+        "basename": "t_71",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1210,
+          "y": 510
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "zero128"
+      },
+      {
+        "description": "%0 = 1;",
+        "basename": "t_72",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1210,
+          "y": 710
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "one128"
+      },
+      {
+        "description": "%0 = 0xffffffffffffffffffffffffffffffff;",
+        "basename": "t_73",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1210,
+          "y": 910
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "inf128"
+      },
+      {
+        "description": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_74",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1240,
+          "y": 1130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "succ128"
+      },
+      {
+        "description": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_75",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1240,
+          "y": 1330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "decr128"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_76",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 1530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add127"
+      },
+      {
+        "description": "%2 = %0 & %1;",
+        "basename": "t_77",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 2730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "and32"
+      },
+      {
+        "description": "%2 = %0 & %1;",
+        "basename": "t_78",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 2730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "and64"
+      },
+      {
+        "description": "%2 = %0 & %1;",
+        "basename": "t_79",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 2730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "and128"
+      },
+      {
+        "description": "%2 = %0 ^ %1;",
+        "basename": "t_80",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 3130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "xor8"
+      },
+      {
+        "description": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_81",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 3330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "div8"
+      },
+      {
+        "description": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_82",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 3530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "mod8"
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_83",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 3730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "equ8"
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_84",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 3730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "equ32"
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_85",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 3930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lt8"
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_86",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 3930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lt32"
+      },
+      {
+        "description": "%2 = %0 | %1;",
+        "basename": "t_87",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 2930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "or32"
+      },
+      {
+        "description": "%2 = %0 | %1;",
+        "basename": "t_88",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 2930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "or64"
+      },
+      {
+        "description": "%2 = %0 | %1;",
+        "basename": "t_89",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 2930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "or128"
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_90",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 4130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lteq32"
+      },
+      {
+        "description": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_91",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 3530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "mod32"
+      },
+      {
+        "description": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n",
+        "basename": "t_92",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 3330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "div32"
+      },
+      {
+        "description": "%2 = %0 ^ %1;",
+        "basename": "t_93",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 3130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "xor32"
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_94",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 4130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lteq128"
+      },
+      {
+        "description": "%2 = %0 ^ %1;",
+        "basename": "t_95",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 3130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "xor64"
+      },
+      {
+        "description": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n",
+        "basename": "t_96",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 3330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "div64"
+      },
+      {
+        "description": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_97",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 3530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "mod64"
+      },
+      {
+        "description": "%2 = %0 ^ %1;",
+        "basename": "t_98",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 3130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "xor128"
+      },
+      {
+        "description": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n",
+        "basename": "t_99",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 3330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "div128"
+      },
+      {
+        "description": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_100",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 3530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "mod128"
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_101",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 3930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lt128"
+      },
+      {
+        "description": "%2 = %0 > %1;",
+        "basename": "t_102",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 4330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "gt8"
+      },
+      {
+        "description": "%2 = %0 >= %1;",
+        "basename": "t_103",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 4530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "gteq8"
+      },
+      {
+        "description": "%2 = %0 << %1;",
+        "basename": "t_104",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 4730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lshf8"
+      },
+      {
+        "description": "%2 = %0 >> %1;",
+        "basename": "t_105",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 4930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "rshf8"
+      },
+      {
+        "description": "%1 = ~ %0;",
+        "basename": "t_106",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -370,
+          "y": 2530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "not8"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_107",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 1930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "sub128"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_108",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 1930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "sub16"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_109",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 1730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add8c"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_110",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 2130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "sub8u"
+      },
+      {
+        "description": "%2.c = 0;\n%2.v = %0 - %1;",
+        "basename": "t_111",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 2130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "sub16c"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_112",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 480,
+          "y": 2130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "sub32u"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_113",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 2130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "sub64u"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_114",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 2130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "sub128c"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_115",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 1730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add128"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_116",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 1730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add64o"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_117",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 1730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add32c"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_118",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 1730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add16c"
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_119",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 2330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "mult128c"
+      },
+      {
+        "description": "%1 = ~ %0;",
+        "basename": "t_120",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 40,
+          "y": 2530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "not16"
+      },
+      {
+        "description": "%1 = ~ %0;",
+        "basename": "t_121",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 440,
+          "y": 2530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "not32"
+      },
+      {
+        "description": "%1 = ~ %0;",
+        "basename": "t_122",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 840,
+          "y": 2530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "not64"
+      },
+      {
+        "description": "%1 = ~ %0;",
+        "basename": "t_123",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1240,
+          "y": 2530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "not128"
+      },
+      {
+        "description": "%2 = std::max(%0, %1);",
+        "basename": "t_124",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 5130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "max8"
+      },
+      {
+        "description": "%2 = std::min(%0, %1);",
+        "basename": "t_125",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 5330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "min8"
+      },
+      {
+        "description": "%2 = std::max(%0, %1);",
+        "basename": "t_126",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 5130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "max16"
+      },
+      {
+        "description": "%2 = std::min(%0, %1);",
+        "basename": "t_127",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 5330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "min16"
+      },
+      {
+        "description": "%2 = std::max(%0, %1);",
+        "basename": "t_128",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 5130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "max32"
+      },
+      {
+        "description": "%2 = std::min(%0, %1);",
+        "basename": "t_129",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 5330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "min32"
+      },
+      {
+        "description": "%2 = std::max(%0, %1);",
+        "basename": "t_130",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 5130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "max64"
+      },
+      {
+        "description": "%2 = std::min(%0, %1);",
+        "basename": "t_131",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 5330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "min64"
+      },
+      {
+        "description": "%2 = std::max(%0, %1);",
+        "basename": "t_132",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 5130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "max128"
+      },
+      {
+        "description": "%2 = std::min(%0, %1);",
+        "basename": "t_133",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 5330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "min128"
+      },
+      {
+        "description": "%2 = %0 > %1;",
+        "basename": "t_134",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 4330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "gt16"
+      },
+      {
+        "description": "%2 = %0 > %1;",
+        "basename": "t_135",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 4330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "gt32"
+      },
+      {
+        "description": "%2 = %0 > %1;",
+        "basename": "t_136",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 4330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "gt64"
+      },
+      {
+        "description": "%2 = %0 > %1;",
+        "basename": "t_137",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 4330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "gt128"
+      },
+      {
+        "description": "%2 = %0 >= %1;",
+        "basename": "t_138",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 70,
+          "y": 4530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "gte16"
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_139",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": -340,
+          "y": 4130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lteq8"
+      },
+      {
+        "description": "%2 = %0 << %1;",
+        "basename": "t_140",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 60,
+          "y": 4730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lshf16"
+      },
+      {
+        "description": "%2 = %0 << %1;",
+        "basename": "t_141",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 460,
+          "y": 4730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lshf32"
+      },
+      {
+        "description": "%2 = %0 >= %1;",
+        "basename": "t_142",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 470,
+          "y": 4530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "gteq32"
+      },
+      {
+        "description": "%2 = %0 >= %1;",
+        "basename": "t_143",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 870,
+          "y": 4530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "gteq64"
+      },
+      {
+        "description": "%2 = %0 >= %1;",
+        "basename": "t_144",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 4530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "gteq128"
+      },
+      {
+        "description": "%2 = %0 << %1;",
+        "basename": "t_145",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 860,
+          "y": 4730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lshf64"
+      },
+      {
+        "description": "%2 = %0 << %1;",
+        "basename": "t_146",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1270,
+          "y": 4730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lshf128"
+      },
+      {
+        "description": "%2 = %0 >> %1;",
+        "basename": "t_147",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 60,
+          "y": 4930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "rshf16"
+      },
+      {
+        "description": "%2 = %0 >> %1;",
+        "basename": "t_148",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 460,
+          "y": 4930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "rshf32"
+      },
+      {
+        "description": "%2 = %0 >> %1;",
+        "basename": "t_149",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 860,
+          "y": 4930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "rshf64"
+      },
+      {
+        "description": "%2 = %0 >> %1;",
+        "basename": "t_150",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1270,
+          "y": 4930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "rshf128"
+      },
+      {
+        "description": "%1 = %0 >> 8;",
+        "basename": "t_151",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 30,
+          "y": -90
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "hi8"
+      },
+      {
+        "description": "%1 = %1 >> 16;",
+        "basename": "t_152",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 430,
+          "y": -90
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "hi16"
+      },
+      {
+        "description": "%1 = %0 >> 32;",
+        "basename": "t_153",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 830,
+          "y": -90
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "hi32"
+      },
+      {
+        "description": "%1 = %0 >> 64;",
+        "basename": "t_154",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1230,
+          "y": -90
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "hi64"
+      },
+      {
+        "description": "%1 = (uint8_t)%0;",
+        "basename": "t_155",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 30,
+          "y": 110
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lo8"
+      },
+      {
+        "description": "%1 = (uint16_t)%0;",
+        "basename": "t_156",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 430,
+          "y": 110
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lo16"
+      },
+      {
+        "description": "%1 = (uint32_t)%0;",
+        "basename": "t_157",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 830,
+          "y": 110
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lo32"
+      },
+      {
+        "description": "%1 = (uint64_t)%0;",
+        "basename": "t_158",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1230,
+          "y": 110
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "lo64"
+      },
+      {
+        "description": "%1 = %0;\n",
+        "basename": "t_159",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 430,
+          "y": 310
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N16ToN32"
+      },
+      {
+        "description": "%1 = %0;\n",
+        "basename": "t_160",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 830,
+          "y": 310
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N32ToN64"
+      },
+      {
+        "description": "%1 = %0;\n",
+        "basename": "t_161",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1230,
+          "y": 310
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N62toN128"
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_162",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1280,
+          "y": 3730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "equ128"
+      },
+      {
+        "description": "BUG: C++ code for overflow missing",
+        "basename": "t_163",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 450,
+          "y": 1760
+        },
+        "height": "12"
       }
     ],
     "cells": []
@@ -3929,8 +5583,8 @@
       "code": {
         "cpp": "%0 = 0;"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N64"
+      "domain": "#1",
+      "codomain": "N64"
     },
     {
       "description": "The natural number one",
@@ -3940,8 +5594,8 @@
       "code": {
         "cpp": "%0 = 1;"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N64"
+      "domain": "#1",
+      "codomain": "N64"
     },
     {
       "description": "The maximum safe natural number",
@@ -3951,8 +5605,8 @@
       "code": {
         "cpp": "%0 = ULONG_MAX;"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N64"
+      "domain": "#1",
+      "codomain": "N64"
     },
     {
       "description": "Addition of two natural numbers with rollover",
@@ -3962,8 +5616,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/N64"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "N64"
     },
     {
       "description": "Is the first 64-bit natural number less than the second",
@@ -3973,8 +5627,8 @@
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "description": "Is the first natural number less than or equal to the second",
@@ -3984,8 +5638,8 @@
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "description": "compare two 64-bit natural numbers for equality",
@@ -3995,8 +5649,8 @@
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "description": "Sixteen bit zero",
@@ -4006,8 +5660,8 @@
       "code": {
         "cpp": "%0 = 0;"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N16"
+      "domain": "#1",
+      "codomain": "N16"
     },
     {
       "description": "Sixteen bit one",
@@ -4017,8 +5671,8 @@
       "code": {
         "cpp": "%0 = 1;"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N16"
+      "domain": "#1",
+      "codomain": "N16"
     },
     {
       "description": "Max sixteen bit number 65535",
@@ -4026,10 +5680,10 @@
       "prototype": "Morphism",
       "properName": "∞₁₆",
       "code": {
-        "cpp": "%0 = 65535;"
+        "cpp": "%0 = 0xffff;"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N16"
+      "domain": "#1",
+      "codomain": "N16"
     },
     {
       "description": "Addition of two 16-bit natural (unsigned) numbers with rollover",
@@ -4039,8 +5693,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/N16"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "N16"
     },
     {
       "description": "Mulitiplication of two 16-bit natural (unsigned) numbers",
@@ -4050,8 +5704,8 @@
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/N32"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "N32"
     },
     {
       "description": "Bit-wise and of two 16-bit natural (unsigned) numbers",
@@ -4061,8 +5715,8 @@
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/N16"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "N16"
     },
     {
       "description": "Bit-wise or of two 16-bit natural (unsigned) numbers",
@@ -4072,8 +5726,8 @@
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/N16"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "N16"
     },
     {
       "description": "Bit-wise exclusive or of two 16-bit natural (unsigned) numbers",
@@ -4083,8 +5737,8 @@
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/N16"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "N16"
     },
     {
       "description": "Division of one 16-bit natural (unsigned) number of the other, or an exception",
@@ -4094,8 +5748,8 @@
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/CPo{Po{N16,N16}oP,#1}oPC"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "CPo{Po{N16,N16}oP,#1}oPC"
     },
     {
       "description": "Modulus of one 16-bit natural (unsigned) number of the other, or an exception",
@@ -4105,8 +5759,8 @@
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/CPo{N16,#1}oPC"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "CPo{N16,#1}oPC"
     },
     {
       "description": "Is the 16-bit natural number less than to the second",
@@ -4116,8 +5770,8 @@
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "description": "Is the 16-bit natural number less than or equal to the second",
@@ -4127,8 +5781,8 @@
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "description": "The successor function for 64-bit natural numbers",
@@ -4136,10 +5790,10 @@
       "prototype": "Morphism",
       "properName": "incr₆₄",
       "code": {
-        "cpp": "if (%0 != 0xffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\n\t%1.c = 1;"
       },
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/nat/CPo{N64,#1}oPC"
+      "domain": "N64",
+      "codomain": "CPo{N64,#1}oPC"
     },
     {
       "description": "Decrement function for natural numbers",
@@ -4149,8 +5803,8 @@
       "code": {
         "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/nat/CPo{N64,#1}oPC"
+      "domain": "N64",
+      "codomain": "CPo{N64,#1}oPC"
     },
     {
       "description": "Test for equality of two 16-bit natural numbers",
@@ -4160,8 +5814,8 @@
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "description": "32-bit zero",
@@ -4171,8 +5825,8 @@
       "code": {
         "cpp": "%0 = 0;\n"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N32"
+      "domain": "#1",
+      "codomain": "N32"
     },
     {
       "description": "The number one",
@@ -4182,8 +5836,8 @@
       "code": {
         "cpp": "%0 = 1;\n"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N32"
+      "domain": "#1",
+      "codomain": "N32"
     },
     {
       "basename": "N8ToN16",
@@ -4192,8 +5846,8 @@
       "code": {
         "cpp": "%1 = %0;\n"
       },
-      "domain": "hdole/nat/N8",
-      "codomain": "hdole/nat/N16"
+      "domain": "N8",
+      "codomain": "N16"
     },
     {
       "basename": "N16ToN32",
@@ -4202,8 +5856,8 @@
       "code": {
         "cpp": "%1 = %0;\n"
       },
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/nat/N32"
+      "domain": "N16",
+      "codomain": "N32"
     },
     {
       "basename": "N32ToN64",
@@ -4212,18 +5866,18 @@
       "code": {
         "cpp": "%1 = %0;\n"
       },
-      "domain": "hdole/nat/N32",
-      "codomain": "hdole/nat/N64"
+      "domain": "N32",
+      "codomain": "N64"
     },
     {
       "basename": "succ32",
       "prototype": "Morphism",
       "properName": "incr₃₂",
       "code": {
-        "cpp": "if (%0 != 0xffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\n\t%1.c = 1;"
       },
-      "domain": "hdole/nat/N32",
-      "codomain": "hdole/nat/CPo{N32,#1}oPC"
+      "domain": "N32",
+      "codomain": "CPo{N32,#1}oPC"
     },
     {
       "basename": "decr32",
@@ -4232,8 +5886,8 @@
       "code": {
         "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
-      "domain": "hdole/nat/N32",
-      "codomain": "hdole/nat/CPo{N32,#1}oPC"
+      "domain": "N32",
+      "codomain": "CPo{N32,#1}oPC"
     },
     {
       "basename": "inf32",
@@ -4242,18 +5896,18 @@
       "code": {
         "cpp": "%0 = 0xffffffff;"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N32"
+      "domain": "#1",
+      "codomain": "N32"
     },
     {
       "basename": "succ16",
       "prototype": "Morphism",
       "properName": "incr₁₆",
       "code": {
-        "cpp": "if (%0 != 0xffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\n\t%1.c = 1;"
       },
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/nat/CPo{N16,#1}oPC"
+      "domain": "N16",
+      "codomain": "CPo{N16,#1}oPC"
     },
     {
       "description": "Zero for unsigned eight bit numbers",
@@ -4263,8 +5917,8 @@
       "code": {
         "cpp": "%0 = 0;\n"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N8"
+      "domain": "#1",
+      "codomain": "N8"
     },
     {
       "description": "One in the eight bit unsigned numbers",
@@ -4274,8 +5928,8 @@
       "code": {
         "cpp": "%0 = 1;\n"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N8"
+      "domain": "#1",
+      "codomain": "N8"
     },
     {
       "description": "The maximum safe unsigned eight bit number",
@@ -4285,8 +5939,8 @@
       "code": {
         "cpp": "%0 = 0xff;\n"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N8"
+      "domain": "#1",
+      "codomain": "N8"
     },
     {
       "description": "Decrement an eight bit unsigned number.",
@@ -4296,8 +5950,8 @@
       "code": {
         "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
-      "domain": "hdole/nat/N8",
-      "codomain": "hdole/nat/CPo{N8,#1}oPC"
+      "domain": "N8",
+      "codomain": "CPo{N8,#1}oPC"
     },
     {
       "description": "The successor for eight bit unsigned numbers.",
@@ -4307,8 +5961,8 @@
       "code": {
         "cpp": "if (%0 != 0xff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
       },
-      "domain": "hdole/nat/N8",
-      "codomain": "hdole/nat/CPo{N8,#1}oPC"
+      "domain": "N8",
+      "codomain": "CPo{N8,#1}oPC"
     },
     {
       "description": "The decrement of a sixteen bit unsigned number.",
@@ -4318,8 +5972,8 @@
       "code": {
         "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/nat/CPo{N16,#1}oPC"
+      "domain": "N16",
+      "codomain": "CPo{N16,#1}oPC"
     },
     {
       "description": "Addition of two 32 bit unsigned numbers",
@@ -4329,8 +5983,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/N32"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "N32"
     },
     {
       "description": "Addition of eight bit unsigned numbers",
@@ -4340,8 +5994,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "N8"
     },
     {
       "description": "Subtraction of two 32 bit numbers",
@@ -4351,8 +6005,8 @@
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/N32"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "N32"
     },
     {
       "description": "Addition with carry",
@@ -4362,8 +6016,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/CPo{N16,#1}oPC"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "CPo{N16,#1}oPC"
     },
     {
       "description": "Addition with carry",
@@ -4373,8 +6027,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/CPo{N8,#1}oPC"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "CPo{N8,#1}oPC"
     },
     {
       "description": "Multiplication of two 64-bit numbers",
@@ -4384,8 +6038,8 @@
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/N128"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "N128"
     },
     {
       "description": "Multiplication of two unsigned 32-bit numbers",
@@ -4395,8 +6049,8 @@
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/N64"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "N64"
     },
     {
       "description": "Subtraction of two 64-bit unsigned numbers",
@@ -4406,8 +6060,8 @@
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/N64"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "N64"
     },
     {
       "description": "Subtraction of two 64-bit numbers with underflow",
@@ -4417,8 +6071,8 @@
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/CPo{N64,#1}oPC"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "CPo{N64,#1}oPC"
     },
     {
       "description": "Addition of two 64-bit numbers with overflow",
@@ -4428,8 +6082,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/CPo{N64,#1}oPC"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "CPo{N64,#1}oPC"
     },
     {
       "description": "Subtraction of two 32-bit unsigned numbers with underflow",
@@ -4439,8 +6093,8 @@
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/CPo{N32,#1}oPC"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "CPo{N32,#1}oPC"
     },
     {
       "description": "Subtraction of two 8-bit numbers",
@@ -4450,8 +6104,8 @@
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "N8"
     },
     {
       "description": "Subtraction of two 8-bit numbers with underflow",
@@ -4461,8 +6115,8 @@
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/CPo{N8,#1}oPC"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "CPo{N8,#1}oPC"
     },
     {
       "description": "Multiplication of two 8-bit unsigned numbers",
@@ -4472,8 +6126,8 @@
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N16"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "N16"
     },
     {
       "description": "Bit-wise and of two 8-bit unsigned numbers",
@@ -4483,8 +6137,8 @@
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "N8"
     },
     {
       "description": "Bit-wise or of two unsigned numbers",
@@ -4494,8 +6148,8 @@
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "N8"
     },
     {
       "basename": "zero128",
@@ -4504,8 +6158,8 @@
       "code": {
         "cpp": "%0 = 0;"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N128"
+      "domain": "#1",
+      "codomain": "N128"
     },
     {
       "basename": "one128",
@@ -4514,8 +6168,8 @@
       "code": {
         "cpp": "%0 = 1;"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N128"
+      "domain": "#1",
+      "codomain": "N128"
     },
     {
       "basename": "inf128",
@@ -4524,18 +6178,18 @@
       "code": {
         "cpp": "%0 = 0xffffffffffffffffffffffffffffffff;"
       },
-      "domain": "hdole/nat/#1",
-      "codomain": "hdole/nat/N128"
+      "domain": "#1",
+      "codomain": "N128"
     },
     {
       "basename": "succ128",
       "prototype": "Morphism",
       "properName": "incr&#x2081;&#x2082;&#x2088;",
       "code": {
-        "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%0.c = 0;\n\t%0.m_0 = %0 + 1;\n}\nelse\n\t%0.c = 1;"
+        "cpp": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\n\t%1.c = 1;"
       },
-      "domain": "hdole/nat/N128",
-      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+      "domain": "N128",
+      "codomain": "CPo{N128,#1}oPC"
     },
     {
       "basename": "decr128",
@@ -4544,8 +6198,8 @@
       "code": {
         "cpp": "if (%0 != 0)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 - 1;\n}\nelse\n\t%1.c = 1;"
       },
-      "domain": "hdole/nat/N128",
-      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+      "domain": "N128",
+      "codomain": "CPo{N128,#1}oPC"
     },
     {
       "basename": "add127",
@@ -4554,8 +6208,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/N128"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "N128"
     },
     {
       "basename": "add32c",
@@ -4564,8 +6218,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/CPo{N32,#1}oPC"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "CPo{N32,#1}oPC"
     },
     {
       "basename": "add128",
@@ -4574,8 +6228,8 @@
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "CPo{N128,#1}oPC"
     },
     {
       "basename": "sub128c",
@@ -4584,8 +6238,8 @@
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "CPo{N128,#1}oPC"
     },
     {
       "basename": "and32",
@@ -4594,8 +6248,8 @@
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/N32"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "N32"
     },
     {
       "basename": "and64",
@@ -4604,8 +6258,8 @@
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/N64"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "N64"
     },
     {
       "basename": "and128",
@@ -4614,8 +6268,8 @@
       "code": {
         "cpp": "%2 = %0 & %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/N128"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "N128"
     },
     {
       "basename": "N62toN128",
@@ -4624,8 +6278,8 @@
       "code": {
         "cpp": "%1 = %0;\n"
       },
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/nat/N128"
+      "domain": "N64",
+      "codomain": "N128"
     },
     {
       "basename": "xor8",
@@ -4634,8 +6288,8 @@
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "N8"
     },
     {
       "basename": "div8",
@@ -4644,8 +6298,8 @@
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n\t%2.m_1 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/CPo{Po{N8,N8}oP,#1}oPC"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "CPo{Po{N8,N8}oP,#1}oPC"
     },
     {
       "basename": "mod8",
@@ -4654,8 +6308,8 @@
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/CPo{N8,#1}oPC"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "CPo{N8,#1}oPC"
     },
     {
       "basename": "equ8",
@@ -4664,8 +6318,8 @@
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "equ32",
@@ -4674,8 +6328,8 @@
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "lt8",
@@ -4684,8 +6338,8 @@
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "lt32",
@@ -4694,8 +6348,8 @@
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "or32",
@@ -4704,8 +6358,8 @@
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/N32"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "N32"
     },
     {
       "basename": "or64",
@@ -4714,8 +6368,8 @@
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/N64"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "N64"
     },
     {
       "basename": "or128",
@@ -4724,8 +6378,8 @@
       "code": {
         "cpp": "%2 = %0 | %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/N128"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "N128"
     },
     {
       "basename": "lteq32",
@@ -4734,8 +6388,8 @@
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "mod32",
@@ -4744,8 +6398,8 @@
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/CPo{N32,#1}oPC"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "CPo{N32,#1}oPC"
     },
     {
       "basename": "div32",
@@ -4754,8 +6408,8 @@
       "code": {
         "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/CPo{Po{N32,N32}oP,#1}oPC"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "CPo{Po{N32,N32}oP,#1}oPC"
     },
     {
       "basename": "xor32",
@@ -4764,8 +6418,8 @@
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/N32"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "N32"
     },
     {
       "basename": "lteq128",
@@ -4774,8 +6428,8 @@
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "xor64",
@@ -4784,8 +6438,8 @@
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/N64"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "N64"
     },
     {
       "basename": "div64",
@@ -4794,8 +6448,8 @@
       "code": {
         "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/CPo{Po{N64,N64}oP,#1}oPC"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "CPo{Po{N64,N64}oP,#1}oPC"
     },
     {
       "basename": "mod64",
@@ -4804,8 +6458,8 @@
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/CPo{N64,#1}oPC"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "CPo{N64,#1}oPC"
     },
     {
       "basename": "xor128",
@@ -4814,8 +6468,8 @@
       "code": {
         "cpp": "%2 = %0 ^ %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/N128"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "N128"
     },
     {
       "basename": "div128",
@@ -4824,8 +6478,8 @@
       "code": {
         "cpp": "if (%1 > 0)\n\t\t{\n\t\t\t%2 = 0;\n\t\t\t%3 = %0 / %1;\n\t\t}\n\t\telse\n\t\t{\n\t\t\t%2 = 1;\n\t\t\t%3 = 0;\n\t\t}\n\t}\n"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/CPo{Po{N128,N128}oP,#1}oPC"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "CPo{Po{N128,N128}oP,#1}oPC"
     },
     {
       "basename": "mod128",
@@ -4834,8 +6488,8 @@
       "code": {
         "cpp": "if (%1 > 0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 % %1;\n}\nelse\n\t%2.c = 1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "CPo{N128,#1}oPC"
     },
     {
       "basename": "lt128",
@@ -4844,8 +6498,8 @@
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "gt8",
@@ -4854,8 +6508,8 @@
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "gteq8",
@@ -4864,8 +6518,8 @@
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "lshf8",
@@ -4874,8 +6528,8 @@
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "N8"
     },
     {
       "basename": "rshf8",
@@ -4884,8 +6538,8 @@
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "N8"
     },
     {
       "description": "Bit-wise not operation of an eight bit number",
@@ -4895,8 +6549,8 @@
       "code": {
         "cpp": "%1 = ~ %0;"
       },
-      "domain": "hdole/nat/N8",
-      "codomain": "hdole/nat/N8"
+      "domain": "N8",
+      "codomain": "N8"
     },
     {
       "basename": "sub128",
@@ -4905,8 +6559,8 @@
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/N128"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "N128"
     },
     {
       "basename": "sub16",
@@ -4915,8 +6569,8 @@
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/N16"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "N16"
     },
     {
       "basename": "sub16c",
@@ -4925,8 +6579,8 @@
       "code": {
         "cpp": "%2.c = 0;\n%2.v = %0 - %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/CPo{N16,#1}oPC"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "CPo{N16,#1}oPC"
     },
     {
       "basename": "mult128c",
@@ -4935,8 +6589,8 @@
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/CPo{N128,#1}oPC"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "CPo{N128,#1}oPC"
     },
     {
       "basename": "not16",
@@ -4945,8 +6599,8 @@
       "code": {
         "cpp": "%1 = ~ %0;"
       },
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/nat/N16"
+      "domain": "N16",
+      "codomain": "N16"
     },
     {
       "basename": "not32",
@@ -4955,8 +6609,8 @@
       "code": {
         "cpp": "%1 = ~ %0;"
       },
-      "domain": "hdole/nat/N32",
-      "codomain": "hdole/nat/N32"
+      "domain": "N32",
+      "codomain": "N32"
     },
     {
       "basename": "not64",
@@ -4965,8 +6619,8 @@
       "code": {
         "cpp": "%1 = ~ %0;"
       },
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/nat/N64"
+      "domain": "N64",
+      "codomain": "N64"
     },
     {
       "basename": "not128",
@@ -4975,8 +6629,8 @@
       "code": {
         "cpp": "%1 = ~ %0;"
       },
-      "domain": "hdole/nat/N128",
-      "codomain": "hdole/nat/N128"
+      "domain": "N128",
+      "codomain": "N128"
     },
     {
       "basename": "max8",
@@ -4985,8 +6639,8 @@
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "N8"
     },
     {
       "basename": "min8",
@@ -4995,8 +6649,8 @@
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/N8"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "N8"
     },
     {
       "basename": "gt16",
@@ -5005,8 +6659,8 @@
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "gt32",
@@ -5015,8 +6669,8 @@
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "gt64",
@@ -5025,8 +6679,8 @@
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "gt128",
@@ -5035,8 +6689,8 @@
       "code": {
         "cpp": "%2 = %0 > %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "gte16",
@@ -5045,8 +6699,8 @@
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "lteq8",
@@ -5055,8 +6709,8 @@
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
-      "domain": "hdole/nat/Po{N8,N8}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N8,N8}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "lshf16",
@@ -5065,8 +6719,8 @@
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
-      "domain": "hdole/nat/Po{N16,N8}oP",
-      "codomain": "hdole/nat/N16"
+      "domain": "Po{N16,N8}oP",
+      "codomain": "N16"
     },
     {
       "basename": "lshf32",
@@ -5075,8 +6729,8 @@
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
-      "domain": "hdole/nat/Po{N32,N8}oP",
-      "codomain": "hdole/nat/N32"
+      "domain": "Po{N32,N8}oP",
+      "codomain": "N32"
     },
     {
       "basename": "gteq32",
@@ -5085,8 +6739,8 @@
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "gteq64",
@@ -5095,8 +6749,8 @@
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "gteq128",
@@ -5105,8 +6759,8 @@
       "code": {
         "cpp": "%2 = %0 >= %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "basename": "lshf64",
@@ -5115,8 +6769,8 @@
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
-      "domain": "hdole/nat/Po{N64,N8}oP",
-      "codomain": "hdole/nat/N64"
+      "domain": "Po{N64,N8}oP",
+      "codomain": "N64"
     },
     {
       "basename": "lshf128",
@@ -5125,8 +6779,8 @@
       "code": {
         "cpp": "%2 = %0 << %1;"
       },
-      "domain": "hdole/nat/Po{N128,N8}oP",
-      "codomain": "hdole/nat/N128"
+      "domain": "Po{N128,N8}oP",
+      "codomain": "N128"
     },
     {
       "basename": "rshf16",
@@ -5135,8 +6789,8 @@
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
-      "domain": "hdole/nat/Po{N16,N8}oP",
-      "codomain": "hdole/nat/N16"
+      "domain": "Po{N16,N8}oP",
+      "codomain": "N16"
     },
     {
       "basename": "rshf32",
@@ -5145,8 +6799,8 @@
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
-      "domain": "hdole/nat/Po{N32,N8}oP",
-      "codomain": "hdole/nat/N32"
+      "domain": "Po{N32,N8}oP",
+      "codomain": "N32"
     },
     {
       "basename": "rshf64",
@@ -5155,8 +6809,8 @@
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
-      "domain": "hdole/nat/Po{N64,N8}oP",
-      "codomain": "hdole/nat/N64"
+      "domain": "Po{N64,N8}oP",
+      "codomain": "N64"
     },
     {
       "basename": "rshf128",
@@ -5165,8 +6819,8 @@
       "code": {
         "cpp": "%2 = %0 >> %1;"
       },
-      "domain": "hdole/nat/Po{N128,N8}oP",
-      "codomain": "hdole/nat/N128"
+      "domain": "Po{N128,N8}oP",
+      "codomain": "N128"
     },
     {
       "basename": "max16",
@@ -5175,8 +6829,8 @@
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/N16"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "N16"
     },
     {
       "basename": "min16",
@@ -5185,8 +6839,8 @@
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N16,N16}oP",
-      "codomain": "hdole/nat/N16"
+      "domain": "Po{N16,N16}oP",
+      "codomain": "N16"
     },
     {
       "basename": "max32",
@@ -5195,8 +6849,8 @@
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/N32"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "N32"
     },
     {
       "basename": "min32",
@@ -5205,8 +6859,8 @@
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N32,N32}oP",
-      "codomain": "hdole/nat/N32"
+      "domain": "Po{N32,N32}oP",
+      "codomain": "N32"
     },
     {
       "basename": "max64",
@@ -5215,8 +6869,8 @@
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/N64"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "N64"
     },
     {
       "basename": "min64",
@@ -5225,8 +6879,8 @@
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N64,N64}oP",
-      "codomain": "hdole/nat/N64"
+      "domain": "Po{N64,N64}oP",
+      "codomain": "N64"
     },
     {
       "basename": "max128",
@@ -5235,8 +6889,8 @@
       "code": {
         "cpp": "%2 = std::max(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/N128"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "N128"
     },
     {
       "basename": "min128",
@@ -5245,8 +6899,8 @@
       "code": {
         "cpp": "%2 = std::min(%0, %1);"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/N128"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "N128"
     },
     {
       "description": "The high order eight bits",
@@ -5256,8 +6910,8 @@
       "code": {
         "cpp": "%1 = %0 >> 8;"
       },
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/nat/N8"
+      "domain": "N16",
+      "codomain": "N8"
     },
     {
       "description": "The low order eight bits",
@@ -5267,8 +6921,8 @@
       "code": {
         "cpp": "%1 = (uint8_t)%0;"
       },
-      "domain": "hdole/nat/N16",
-      "codomain": "hdole/nat/N8"
+      "domain": "N16",
+      "codomain": "N8"
     },
     {
       "description": "The high order 16 bits.",
@@ -5278,8 +6932,8 @@
       "code": {
         "cpp": "%1 = %1 >> 16;"
       },
-      "domain": "hdole/nat/N32",
-      "codomain": "hdole/nat/N16"
+      "domain": "N32",
+      "codomain": "N16"
     },
     {
       "basename": "lo16",
@@ -5288,8 +6942,8 @@
       "code": {
         "cpp": "%1 = (uint16_t)%0;"
       },
-      "domain": "hdole/nat/N32",
-      "codomain": "hdole/nat/N16"
+      "domain": "N32",
+      "codomain": "N16"
     },
     {
       "description": "The high order 32 bits.",
@@ -5299,8 +6953,8 @@
       "code": {
         "cpp": "%1 = %0 >> 32;"
       },
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/nat/N32"
+      "domain": "N64",
+      "codomain": "N32"
     },
     {
       "basename": "lo32",
@@ -5309,8 +6963,8 @@
       "code": {
         "cpp": "%1 = (uint32_t)%0;"
       },
-      "domain": "hdole/nat/N64",
-      "codomain": "hdole/nat/N32"
+      "domain": "N64",
+      "codomain": "N32"
     },
     {
       "basename": "hi64",
@@ -5319,8 +6973,8 @@
       "code": {
         "cpp": "%1 = %0 >> 64;"
       },
-      "domain": "hdole/nat/N128",
-      "codomain": "hdole/nat/N64"
+      "domain": "N128",
+      "codomain": "N64"
     },
     {
       "basename": "lo64",
@@ -5329,8 +6983,8 @@
       "code": {
         "cpp": "%1 = (uint64_t)%0;"
       },
-      "domain": "hdole/nat/N128",
-      "codomain": "hdole/nat/N64"
+      "domain": "N128",
+      "codomain": "N64"
     },
     {
       "basename": "equ128",
@@ -5339,16 +6993,16 @@
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
-      "domain": "hdole/nat/Po{N128,N128}oP",
-      "codomain": "hdole/nat/CPo{#1,#1}oPC"
+      "domain": "Po{N128,N128}oP",
+      "codomain": "CPo{#1,#1}oPC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1645265696206,
+  "timestamp": 1645519013568,
   "version": 0,
   "viewport": {
-    "x": 1243,
-    "y": 471,
-    "scale": 0.6627957084277984
+    "x": -1296,
+    "y": -6028,
+    "scale": 3.8248439894222512
   }
 }

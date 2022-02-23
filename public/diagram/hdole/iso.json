@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 910,
-          "y": 560
+          "y": 570
         },
         "height": "111",
         "weight": "bold",
@@ -66,7 +66,7 @@
         }
       },
       {
-        "description": "f is invertible (an isomorphism) if there exists a\nmorphism f⁻¹ such that the following diagram\ncommutes.",
+        "description": "The morphism f:A-->B in the category D is invertible\n(an isomorphism) if there exists a morphism f⁻¹:B-->A\nsuch that the following diagram commutes.",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
@@ -80,10 +80,28 @@
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
-          "x": 610,
-          "y": 1000
+          "x": 590,
+          "y": 1210
         },
         "height": "24"
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": 950,
+          "y": 1030
+        }
+      },
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 950,
+          "y": 1150
+        }
       },
       {
         "basename": "m_2",
@@ -132,6 +150,32 @@
         "domain": "o_5",
         "codomain": "o_8",
         "to": "Id{B}dI"
+      },
+      {
+        "description": "",
+        "basename": "e_0",
+        "prototype": "IndexElement",
+        "domain": "m_5",
+        "codomain": "o_1",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
+      },
+      {
+        "description": "",
+        "basename": "e_1",
+        "prototype": "IndexElement",
+        "domain": "o_1",
+        "codomain": "o_2",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
       }
     ],
     "cells": [
@@ -163,42 +207,69 @@
   },
   "elements": [
     {
-      "basename": "A",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "B",
-      "prototype": "CatObject"
-    },
-    {
-      "basename": "f",
-      "prototype": "Morphism",
-      "domain": "A",
-      "codomain": "B"
-    },
-    {
-      "description": "Inverse of f",
-      "basename": "finv",
-      "prototype": "Morphism",
-      "properName": "f⁻¹",
-      "domain": "B",
-      "codomain": "A"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "A"
-    },
-    {
-      "prototype": "Identity",
-      "domain": "B"
+      "basename": "D",
+      "prototype": "Category",
+      "elements": [
+        {
+          "description": "",
+          "basename": "A",
+          "name": "hdole/iso/A",
+          "prototype": "CatObject",
+          "category": "hdole/iso/D",
+          "diagram": "hdole/iso"
+        },
+        {
+          "description": "",
+          "basename": "B",
+          "name": "hdole/iso/B",
+          "prototype": "CatObject",
+          "category": "hdole/iso/D",
+          "diagram": "hdole/iso"
+        },
+        {
+          "description": "",
+          "basename": "f",
+          "name": "hdole/iso/f",
+          "prototype": "Morphism",
+          "category": "hdole/iso/D",
+          "diagram": "hdole/iso",
+          "domain": "A",
+          "codomain": "B"
+        },
+        {
+          "description": "Inverse of f",
+          "basename": "finv",
+          "name": "hdole/iso/finv",
+          "prototype": "Morphism",
+          "properName": "f⁻¹",
+          "category": "hdole/iso/D",
+          "diagram": "hdole/iso",
+          "domain": "B",
+          "codomain": "A"
+        },
+        {
+          "description": "",
+          "prototype": "Identity",
+          "category": "hdole/iso/D",
+          "diagram": "hdole/iso",
+          "domain": "A"
+        },
+        {
+          "description": "",
+          "prototype": "Identity",
+          "category": "hdole/iso/D",
+          "diagram": "hdole/iso",
+          "domain": "B"
+        }
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1644743475019,
+  "timestamp": 1645559681386,
   "version": 0,
   "viewport": {
     "x": -1512,
-    "y": -1780,
-    "scale": 3.0678070039586123
+    "y": -1372,
+    "scale": 3.0678013612509205
   }
 }

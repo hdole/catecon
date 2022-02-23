@@ -22,8 +22,8 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 460,
-          "y": 150
+          "x": 450,
+          "y": 140
         },
         "height": "200",
         "weight": "bold"
@@ -32,15 +32,9 @@
         "basename": "o_2",
         "prototype": "IndexObject",
         "to": "A",
-        "attributes": [
-          [
-            "level",
-            1
-          ]
-        ],
         "xy": {
           "x": 840,
-          "y": 640
+          "y": 540
         }
       },
       {
@@ -48,8 +42,8 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 650,
-          "y": 640
+          "x": 660,
+          "y": 540
         }
       },
       {
@@ -58,7 +52,7 @@
         "to": "A",
         "xy": {
           "x": 840,
-          "y": 470
+          "y": 370
         }
       },
       {
@@ -66,12 +60,12 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 1050,
-          "y": 470
+          "x": 1040,
+          "y": 370
         }
       },
       {
-        "description": "A morphism id is said to be\nan identity given the following\ncommutative diagram.",
+        "description": "A morphism id:A-->A in the category D is said to be\nan identity given the following commutative diagram.",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
@@ -81,56 +75,50 @@
         "height": 24
       },
       {
-        "description": "BUG:  All quantified morphisms should show the quantifer.",
+        "description": "BUG:  All quantified morphisms on the same level should show the same quantifier.",
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
-          "x": 490,
-          "y": 730
+          "x": 500,
+          "y": 700
         },
         "height": 24
       },
       {
-        "basename": "o_0",
-        "prototype": "IndexObject",
-        "to": "D",
+        "description": "BUG:  object quantifiers do not appear",
+        "basename": "t_3",
+        "prototype": "IndexText",
         "xy": {
-          "x": 1010,
-          "y": 280
-        }
+          "x": 500,
+          "y": 750
+        },
+        "height": 24
       },
       {
-        "basename": "o_1",
-        "prototype": "IndexObject",
-        "to": "em/Cat",
+        "description": "BUG:  Emphasis not correct with quantified objects",
+        "basename": "t_4",
+        "prototype": "IndexText",
         "xy": {
-          "x": 1177.8243827819824,
-          "y": 280
-        }
-      },
-      {
-        "basename": "o_5",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": 840,
-          "y": 200
-        }
-      },
-      {
-        "basename": "o_6",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": 840,
-          "y": 380
-        }
+          "x": 500,
+          "y": 800
+        },
+        "height": 24
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_2",
         "codomain": "o_3",
+        "attributes": [
+          [
+            "quantifier",
+            "forall"
+          ],
+          [
+            "level",
+            1
+          ]
+        ],
         "to": "f"
       },
       {
@@ -147,16 +135,16 @@
         "codomain": "o_4",
         "attributes": [
           [
+            "flipName",
+            true
+          ],
+          [
             "quantifier",
             "forall"
           ],
           [
             "level",
             1
-          ],
-          [
-            "flipName",
-            true
           ]
         ],
         "to": "g"
@@ -166,6 +154,16 @@
         "prototype": "IndexMorphism",
         "domain": "o_7",
         "codomain": "o_2",
+        "attributes": [
+          [
+            "quantifier",
+            "forall"
+          ],
+          [
+            "level",
+            1
+          ]
+        ],
         "to": "g"
       },
       {
@@ -179,48 +177,15 @@
             true
           ],
           [
-            "level",
-            1
-          ],
-          [
             "quantifier",
             "forall"
+          ],
+          [
+            "level",
+            1
           ]
         ],
         "to": "f"
-      },
-      {
-        "description": "",
-        "basename": "e_0",
-        "prototype": "IndexElement",
-        "domain": "o_0",
-        "codomain": "o_1",
-        "attributes": [
-          [
-            "bezier",
-            0
-          ]
-        ]
-      },
-      {
-        "basename": "m_0",
-        "prototype": "IndexMorphism",
-        "domain": "o_5",
-        "codomain": "o_6",
-        "to": "id"
-      },
-      {
-        "description": "",
-        "basename": "e_1",
-        "prototype": "IndexElement",
-        "domain": "m_0",
-        "codomain": "o_0",
-        "attributes": [
-          [
-            "bezier",
-            0
-          ]
-        ]
       }
     ],
     "cells": [
@@ -305,11 +270,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1645474117200,
+  "timestamp": 1645574163852,
   "version": 0,
   "viewport": {
-    "x": -204,
-    "y": 49,
-    "scale": 1.7224419732777152
+    "x": -64,
+    "y": 130,
+    "scale": 1.457503796898058
   }
 }
