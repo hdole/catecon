@@ -358,7 +358,7 @@ ${header}	const r = ${name}_factors.map(f => f === -1 ? 0 : f.reduce((d, j) => j
 			htmlDiagram.incrRefcnt();
 			this.htmlDiagram = htmlDiagram;
 			const html = htmlDiagram.getElement('HTML');
-			const str = htmlDiagram.codomain.getElement('hdole/str/str');
+			const str = htmlDiagram.getElement('hdole/str/str');
 			this.formatters = new Map();
 			htmlDiagram.forEachMorphism(m =>
 			{
