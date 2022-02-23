@@ -4696,6 +4696,11 @@ class Display
 		const svg = document.getElementById('selectRect');
 		svg && svg.remove();
 	}
+	recordMouseDown(e)
+	{
+		this.mouseIsDown = true;
+		this.mouse.down = new D2(e.clientX, e.clientY - this.topSVG.parentElement.offsetTop);	// client coords
+	}
 	mousedown(e)
 	{
 		this.mouse.saveClientPosition(e);
@@ -4703,8 +4708,7 @@ class Display
 			return true;
 		if (e.button === 0)
 		{
-			this.mouseIsDown = true;
-			this.mouse.down = new D2(e.clientX, e.clientY - this.topSVG.parentElement.offsetTop);	// client coords
+			this.recordMouseDown(e);
 			const diagram = R.diagram;
 			if (diagram)
 			{
@@ -7523,7 +7527,14 @@ class Element
 				if (!category)
 					category = R.getCategory(args.category);
 			}
-			category && Object.defineProperty(this, 'category', {value: category,	writable: false});
+			if (category)
+			{
+				Object.defineProperty(this, 'category', {value: category,	writable: false});
+				if (category.elements.has(name))
+					throw `Element with given name ${U.HtmlSafe(name)} already exists in category ${U.HtmlSafe(category.name)}`;
+				category.elements.set(name, this);
+				category.refcnt++;
+			}
 		}
 		else
 			Object.defineProperty(this, 'category', {value:diagram.codomain,	writable: false});
@@ -7796,7 +7807,7 @@ class Element
 	}
 	isBare()
 	{
-		return true;
+		return !('code' in this);
 	}
 	isTerminal() { return false; }		// fitb
 	static Basename(diagram, args)	{ return args.basename; }
@@ -9102,7 +9113,7 @@ class IndexText extends Element
 						{
 							const height = Number.parseInt(this.height);
 							const oldOffset = - 0.8 * height;
-							const offset = -0.8 * height + i * height;
+							const offset = -0.8 * height + D.default.lineDeltaY * i * height;
 							const use = H3.use({href:`#icon-${matches[3]}`, width:this.height, height:this.height, x, y:offset});
 							use.onmousedown = e => Cat.R.diagram.userSelectElement(e, this);
 							this.svg.appendChild(use);
@@ -9607,7 +9618,7 @@ class IndexObject extends CatObject
 			const txt = this.svg.querySelector('text');
 			const quant = this.getQuantifier();
 			let properName = this.to.properName;
-			if (quant)
+			if (quant !== 'none')
 			{
 				const level = this.getLevel();
 				properName = '('.repeat(level) + R.Actions.expression.symbols[quant] + properName + ')'.repeat(level);
@@ -9684,7 +9695,7 @@ class IndexObject extends CatObject
 	}
 	setQuantifier(quant)
 	{
-		if (quant)
+		if (quant !== 'none')
 		{
 			this.attributes.set('quantifier', quant);
 			if (!this.attributes.has('level'))
@@ -9695,10 +9706,11 @@ class IndexObject extends CatObject
 			this.attributes.delete('quantifier');
 			this.attributes.delete('level');
 		}
+		D && D.emitObjectEvent(this.diagram, 'update', this);
 	}
 	getQuantifier()
 	{
-		return this.attributes.has('quantifier') ? this.attributes.get('quantifier') : null;
+		return this.attributes.has('quantifier') ? this.attributes.get('quantifier') : 'none';
 	}
 	getLevel()
 	{
@@ -12029,14 +12041,14 @@ class ExpressionAction extends Action
 		super(diagram, args);
 		Object.defineProperties(this,
 		{
-			quantifiers:	{value:	['forall', 'exists', 'existsUnique'],	writable:	false},
+			quantifiers:	{value:	['none', 'forall', 'exists', 'existsUnique'],	writable:	false},
 			symbols:		{value:	{forall:'&#8704;', exists:'&#8707;', existsUnique:'&#8707;!'},	writable:	false},
 		});
 		D && D.replayCommands.set(this.basename, this);
 	}
-	getQuantifier(morphism)
+	getQuantifier(element)
 	{
-		return morphism.attributes.has('quantifier') ? morphism.attributes.get('quantifier') : null;
+		return element.attributes.has('quantifier') ? element.attributes.get('quantifier') : 'none';
 	}
 	setLevel(e, diagram, item, val)
 	{
@@ -12048,11 +12060,10 @@ class ExpressionAction extends Action
 	{
 		const obj = item instanceof IndexMorphism ? item.domain : item instanceof Cell ? item.left[0].domain : item;
 		let blob = diagram.getBlob(obj);
-		if (!blob)
-			blob = new DiagramBlob(obj);
 		const body = D.toolbar.body;
 		body.appendChild(H3.h4('Expression from Blob'));
 		const selected = diagram.getSelected();
+		const shown = new Set();
 		blob.levels.map((lvl, i) =>
 		{
 			if (lvl === undefined)
@@ -12062,8 +12073,19 @@ class ExpressionAction extends Action
 			}
 			lvl.map(item =>
 			{
+				if (shown.has(item.to))
+					return;
+				shown.add(item.to);
 				const ons = {onmouseenter:e => item.emphasis(true), onmouseleave:e => item.emphasis(false)};
-				if (item instanceof IndexMorphism)
+				if (item instanceof IndexObject)
+				{
+					const quant = this.getQuantifier(item);
+					const span = H3.span('.term', quant ? H3.strong(this.symbols[quant]) : null, item.to.properName, ons);
+					if (i === 0 && quant && (quant === 'exists' || quant === 'existsUnique'))
+						span.classList.add('badGlow');
+					body.appendChild(span);
+				}
+				else if (item instanceof IndexMorphism)
 				{
 					const quant = this.getQuantifier(item);
 					const span = H3.span('.term', quant ? H3.strong(this.symbols[quant]) : null, item.to.getArrowRep(), ons);
@@ -12117,11 +12139,9 @@ class ExpressionAction extends Action
 		super.html();
 		const body = D.toolbar.body;
 		const item = ary[0];
-		let oldQuant = 'getQuantifier' in this ? this.getQuantifier(item) : null;
-		body.appendChild(H3.h3('expression'));
+		let oldQuant = this.getQuantifier(item);
+		body.appendChild(H3.h3('Expression'));
 		let blob = diagram.getBlob(item);
-		if (!blob)
-			blob = new DiagramBlob(item);
 		let foundIt = false;
 		blob.morphisms.forEach(m =>
 		{
@@ -12131,39 +12151,39 @@ class ExpressionAction extends Action
 				oldQuant = this.getQuantifier(m);
 			}
 		});
-		body.appendChild(H3.h4('Current quantifier: ' + this.symbols[oldQuant]));
-		if (!foundIt)
-		{
-			const quantDiv = H3.div('.center');
-			body.appendChild(quantDiv);
-			oldQuant && quantDiv.appendChild(D.getIcon('expression-none', 'expression-none', e => this.action(e, diagram, item, null), {title:'Remove quantifier'}));
-			this.quantifiers.filter(q => q !== oldQuant).map(q => quantDiv.appendChild(D.getIcon(`expression-${q}`, `expression-${q}`, e => this.action(e, diagram, item, q), {title:'Set quantifier'})));
-		}
+		body.appendChild(H3.h4(`Quantifier on ${item instanceof IndexObject ? 'Object' : 'Morphism'}`));
+		const quantDiv = H3.div('.center');
+		body.appendChild(quantDiv);
+		this.quantifiers.map(q => quantDiv.appendChild(D.getIcon(`expression-${q}`, `expression-${q}`, e => this.action(e, diagram, item, q), {title:'Set quantifier', id:`expression-${q}`})));
+		D.setActiveIcon(document.getElementById(`expression-${oldQuant}`), true);
 		this.quantifierHtml(diagram, item);
 	}
 	isValid(quantifier)
 	{
 		return quantifier === null || this.quantifiers.includes(quantifier);
 	}
-	action(e, diagram, morphism, quantifier)
+	action(e, diagram, element, quantifier)
 	{
 		if (!this.isValid(quantifier))
 			throw 'invalid quantifier';
-		const oldQuant = this.getQuantifier(morphism);
-		if (this.doit(e, diagram, morphism, quantifier))
+		const oldQuant = this.getQuantifier(element);
+		if (this.doit(e, diagram, element, quantifier))
 		{
-			D.emitMorphismEvent(diagram, 'update', morphism);
+			D.emitMorphismEvent(diagram, 'update', element);
 			diagram.log({command:'quantifier', quantifier});
 			diagram.antilog({command:'quantifier', quantifier:oldQuant});
-			this.html(e, diagram, [morphism]);
+			this.html(e, diagram, [element]);
 		}
 	}
-	doit(e, diagram, morphism, quantifier)
+	doit(e, diagram, element, quantifier)
 	{
-		if (quantifier === null)
-			morphism.attributes.delete('quantifier');
-		else
-			morphism.setQuantifier(quantifier);
+		const blob = diagram.getBlob(element);
+		blob.getInstances(element.to).map(ins => ins.setQuantifier('none'));	// remove all quantifiers on the element
+		if (quantifier !== 'none')
+		{
+			const lvl = blob.levels[element.getLevel()];
+			lvl.filter(elt => elt.to === element.to).map(elt => elt.setQuantifier(quantifier));
+		}
 		return true;
 	}
 	replay(e, diagram, args)
@@ -12174,17 +12194,26 @@ class ExpressionAction extends Action
 		if (diagram.isEditable() && ary.length === 1)
 		{
 			const item = ary[0];
-			if (item instanceof IndexText)
+			if (item instanceof IndexText || item instanceof IndexElement || item instanceof Cell || !item.to.isBare())
 				return false;
-			let blob = diagram.getBlob(item);
-			if (!blob)
-				blob = new DiagramBlob(item);
+			const blob = diagram.getBlob(item);
+			if (blob.hasReference())
+				return false;			// references and expressions do not mix
 			if (item instanceof IndexMorphism)
 			{
-				if (item.to.isBare() && !('code' in item.to))
+				if (blob.morphisms.size > 1)
 				{
-					if (blob.morphisms.size > 1 && !blob.hasReference())
-						return true;
+					let minLevel = blob.levels.length - 1;
+					for (let i=0; i< blob.levels.length; ++i)
+					{
+						const lvl = blob.levels[i];
+						if (lvl.includes(item))
+						{
+							minLevel = i;
+							break;
+						}
+					}
+					return blob.levels[minLevel].includes(item);
 				}
 			}
 			else if (item instanceof IndexObject)
@@ -13602,7 +13631,6 @@ const Arrow =
 	{
 		if ('to' in this)
 		{
-			this.updateQuantifier();
 			if (this.to.properName === '')
 			{
 				this.svg_name && this.svg_name.remove();
@@ -13611,7 +13639,7 @@ const Arrow =
 			}
 			let properName = this.to.properName;
 			const quant = this.getQuantifier();
-			if (quant)
+			if (quant !== 'none')
 			{
 				const level = this.getLevel() -1;
 				properName = '('.repeat(level) + R.Actions.expression.symbols[quant] + properName + ')'.repeat(level);
@@ -14079,7 +14107,8 @@ class IndexMorphism extends Morphism
 	}
 	setQuantifier(quant)
 	{
-		if (quant)
+		const changed = quant !== this.attributes.get('quantifier');
+		if (quant !== 'none')
 		{
 			this.attributes.set('quantifier', quant);
 			if (!this.attributes.has('level'))
@@ -14090,15 +14119,11 @@ class IndexMorphism extends Morphism
 			this.attributes.delete('quantifier');
 			this.attributes.delete('level');
 		}
-	}
-	updateQuantifier()
-	{
-		if (this.attributes.has('quantifier'))
-			this.setQuantifier(this.attributes.get('quantifier'));
+		changed && D && D.emitMorphismEvent(this.diagram, 'update', this);
 	}
 	getQuantifier()
 	{
-		return this.attributes.has('quantifier') ? this.attributes.get('quantifier') : null;
+		return this.attributes.has('quantifier') ? this.attributes.get('quantifier') : 'none';
 	}
 	getLevel()
 	{
@@ -14321,7 +14346,7 @@ class IndexElement extends Element
 	}
 	getQuantifier()
 	{
-		return null;
+		return 'none';
 	}
 	getLevel()
 	{
@@ -14990,59 +15015,68 @@ class DiagramBlob
 {
 	constructor(elt)		// index object or morphism
 	{
+		Object.defineProperties(this,
+		{
+			'objects':		{value:new Set(),	writable: false},
+			'morphisms':	{value:new Set(),	writable: false},
+			'levels':		{value:[],			writable: true},
+			'cells':		{value:new Set(),	writable: false},
+			'quantifiers':	{value:new Set(),	writable: false},
+		});
 		const ndxObj = DiagramBlob.getObject(elt);
 		const scanning = [ndxObj];
 		const scanned = new Set();
-		const objects = new Set();
-		const morphisms = new Set();
-		const cells = new Set();
 		while(scanning.length > 0)
 		{
 			const domain = scanning.pop();
 			scanned.add(domain);
-			objects.add(domain);
+			this.objects.add(domain);
 			const scan = scanning;		// jshint
 			domain.domains.forEach(m =>
 			{
-				if (morphisms.has(m))
+				if (this.morphisms.has(m))
 					return;
-				morphisms.add(m);
+				this.morphisms.add(m);
 				// propagate down the arrow
 				!scanned.has(m.codomain) && scan.push(m.codomain);
 			});
 			// propagate back up the arrow
 			domain.codomains.forEach(m => !scanned.has(m.domain) && m.domain instanceof IndexObject && scan.push(m.domain));
 		}
-		const levels = [[...morphisms].filter(m => !m.getQuantifier())];		// level 0 are the ground terms
-		const quantifiers = new Set();
-		morphisms.forEach(m =>
+		this.objects.forEach(o => o.cells.forEach(cell => this.cells.add(cell)));
+		this.updateLevels();
+	}
+	updateLevels()
+	{
+		const base = [...this.morphisms].filter(m => m.getQuantifier() === 'none');		// level 0 are the ground terms
+		const baseObjects = new Set();
+		base.filter(m => !m.isBare()).map(m =>
 		{
-			if (m.getQuantifier())
+			baseObjects.add(m.domain);
+			baseObjects.add(m.codomain);
+		});
+		this.levels = [[...baseObjects, ...base.filter(m => m.isBare())]];
+		this.quantifiers.clear();
+		this.morphisms.forEach(m =>
+		{
+			const quant = m.getQuantifier();
+			if (quant !== 'none')
 			{
-				quantifiers.add(m);
+				this.quantifiers.add(m);
 				const lvl = m.getLevel();
-				if (levels[lvl] === undefined)
-					levels[lvl] = [];
-				const onLevel = levels[lvl];
+				if (this.levels[lvl] === undefined)
+					this.levels[lvl] = [];
+				const onLevel = this.levels[lvl];
 				onLevel.push(m);
 			}
 		});
-		objects.forEach(o => o.cells.forEach(cell => cells.add(cell)));
-		cells.forEach(cell =>
+		this.cells.forEach(cell =>
 		{
 			const lvl = cell.getLevel();
-			if (levels[lvl] === undefined)
-				levels[lvl] = [];
-			const onLevel = levels[lvl];
+			if (this.levels[lvl] === undefined)
+				this.levels[lvl] = [];
+			const onLevel = this.levels[lvl];
 			onLevel.push(cell);
-		});
-		Object.defineProperties(this,
-		{
-			'objects':		{value:objects,		writable: false},
-			'morphisms':	{value:morphisms,	writable: false},
-			'levels':		{value:levels,		writable: false},
-			'cells':		{value:cells,		writable: false},
-			'quantifiers':	{value:quantifiers,	writable: false},
 		});
 	}
 	getLevel()
@@ -15096,6 +15130,10 @@ class DiagramBlob
 	has(...elts)
 	{
 		return elts.reduce((r, elt) => this.objects.has(elt) || this.morphisms.has(elt), true);
+	}
+	getInstances(to)
+	{
+		return [...this[to instanceof CatObject ? 'objects' : 'morphisms']].filter(o => o.to === to);
 	}
 	static getObject(elt)
 	{
@@ -16013,7 +16051,7 @@ class LambdaMorphism extends Morphism
 {
 	constructor(diagram, args)
 	{
-		const preCurry = typeof args.preCurry === 'string' ? diagram.codomain.getElement(args.preCurry, args.category) : args.preCurry;
+		const preCurry = typeof args.preCurry === 'string' ? diagram.getElement(args.preCurry, args.category) : args.preCurry;
 		const nuArgs = U.clone(args);
 		nuArgs.domain = LambdaMorphism.Domain(diagram, preCurry, args.domFactors);
 		nuArgs.codomain = LambdaMorphism.Codomain(diagram, preCurry, args.homFactors);
@@ -16208,7 +16246,7 @@ class LambdaMorphism extends Morphism
 	}
 	static Basename(diagram, args)
 	{
-		const preCur = diagram.codomain.getElement(args.preCurry, 'category' in args ? args.category : null);
+		const preCur = diagram.getElement(args.preCurry, 'category' in args ? args.category : null);
 		const basename = `Lm{${preCur.refName(diagram)}:${U.a2s(args.domFactors)}:${U.a2s(args.homFactors)}}mL`;
 		return basename;
 	}
@@ -16703,9 +16741,6 @@ class Diagram extends Functor
 		const isIndex = U.isIndexItem(elt);
 		if (elt.category)
 		{
-			if (elt.category.elements.has(elt.name))
-				throw `Element with given name ${U.HtmlSafe(elt.name)} already exists in category ${U.HtmlSafe(elt.category.name)}`;
-			elt.category.elements.set(elt.name, elt);
 			if (!isIndex && elt.diagram === this)
 			{
 				if (this.elements.has(elt.basename))
@@ -16887,7 +16922,7 @@ class Diagram extends Functor
 	{
 		if (elt instanceof IndexText)
 			return null;
-		const obj = elt instanceof IndexMorphism ? elt.domain : elt instanceof Cell ? elt.left[0].domain : elt;
+		const obj = Arrow.isArrow(elt) ? elt.domain : elt instanceof Cell ? elt.left[0].domain : elt;
 		for (let i=0; i<this.blobs.length; ++i)
 		{
 			const blob = this.blobs[i];
@@ -16961,6 +16996,7 @@ class Diagram extends Functor
 	}
 	userSelectElement(e, name)
 	{
+		D.recordMouseDown(e);
 		let elt = this.getElement(name);
 		if (elt)
 		{
@@ -17233,18 +17269,15 @@ class Diagram extends Functor
 			R.recordError(x);
 		}
 	}
-	placeIndexElementOfByObject(e, domain, select = true, xy = null)
+	placeIndexElementOfByObject(e, domain)
 	{
 		try
 		{
-			if (!xy)
-			{
-				const length = D.textWidth(this.domain.properName)/2 + D.textWidth(this.codomain.properName)/2 + 4 * D.textWidth('&emsp;');
-				xy = this.findAngle(domain, length);
-			}
+			const length = D.textWidth(this.domain.properName)/2 + D.textWidth(this.codomain.properName)/2 + 4 * D.textWidth('&emsp;');
+			const xy = this.findAngle(domain, length);
 			const codomain = new IndexObject(this, {xy, to:domain.to.category});
 			const ndxElement = new IndexElement(this, {domain, codomain});
-			select && this.makeSelected(ndxElement);
+			this.makeSelected(ndxElement);
 			return ndxElement;
 		}
 		catch(x)
