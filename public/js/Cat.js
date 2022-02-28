@@ -8662,11 +8662,11 @@ class MultiObject extends CatObject
 		const obs = reverse ? objects.slice().reverse() : objects;
 		return obs.map(o => Array.isArray(o) ? MultiObject.ProperName(sep, o, reverse) : o.needsParens() ? `(${o.properName})` : o.properName).join(sep);
 	}
-	static GetObjects(diagram, objects)
+	static GetObjects(diagram, objects, category)
 	{
 		return objects.map(o =>
 		{
-			const ob = diagram.getElement(o);
+			const ob = diagram.getElement(o, category);
 			if (!ob)
 				throw `cannot get object ${o}`;
 			return ob;
@@ -8680,7 +8680,7 @@ class ProductObject extends MultiObject
 	{
 		const dual = U.getArg(args, 'dual', false);
 		const nuArgs = U.clone(args);
-		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects);
+		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects, args.category);
 		nuArgs.basename = 'basename' in nuArgs ? nuArgs.basename : ProductObject.Basename(diagram, {objects:nuArgs.objects, dual});
 		nuArgs.properName = 'properName' in nuArgs ? nuArgs.properName : ProductObject.ProperName(nuArgs.objects, dual);
 		super(diagram, nuArgs);
