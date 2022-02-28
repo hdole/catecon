@@ -7,7 +7,7 @@
   "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "group_Index",
-  "codomain": "zf/Set",
+  "codomain": "em/Cat",
   "references": [],
   "domainInfo": {
     "description": "index category for diagram hdole/group",

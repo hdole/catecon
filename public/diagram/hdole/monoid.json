@@ -224,6 +224,34 @@
         }
       },
       {
+        "basename": "o_5",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": 0,
+          "y": 220
+        }
+      },
+      {
+        "basename": "o_6",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 170,
+          "y": 220
+        }
+      },
+      {
+        "description": "[CWM Intro fig(3)]",
+        "basename": "t_1",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 620,
+          "y": 940
+        },
+        "height": 24
+      },
+      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_2",
@@ -341,15 +369,6 @@
         "to": "Fa{Po{#1,G}oP,G_1}aF"
       },
       {
-        "basename": "o_5",
-        "prototype": "IndexObject",
-        "to": "D",
-        "xy": {
-          "x": 0,
-          "y": 220
-        }
-      },
-      {
         "description": "",
         "basename": "e_0",
         "prototype": "IndexElement",
@@ -363,15 +382,6 @@
         ]
       },
       {
-        "basename": "o_6",
-        "prototype": "IndexObject",
-        "to": "em/Cat",
-        "xy": {
-          "x": 170,
-          "y": 220
-        }
-      },
-      {
         "description": "",
         "basename": "e_1",
         "prototype": "IndexElement",
@@ -383,16 +393,6 @@
             0
           ]
         ]
-      },
-      {
-        "description": "[CWM Intro fig(3)]",
-        "basename": "t_1",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 600,
-          "y": 1000
-        },
-        "height": 24
       }
     ],
     "cells": [
@@ -447,17 +447,11 @@
         {
           "description": "",
           "basename": "G",
-          "name": "hdole/monoid/G",
           "prototype": "CatObject",
-          "properName": "M",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid"
+          "properName": "M"
         },
         {
-          "name": "hdole/monoid/Po{G,G}oP",
           "prototype": "ProductObject",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "objects": [
             "G",
             "G"
@@ -466,20 +460,14 @@
         {
           "description": "",
           "basename": "#1",
-          "name": "hdole/monoid/#1",
           "prototype": "FiniteObject",
           "properName": "1",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "size": 1,
           "min": 0,
           "max": 1
         },
         {
-          "name": "hdole/monoid/Po{G,G,G}oP",
           "prototype": "ProductObject",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "objects": [
             "G",
             "G",
@@ -487,40 +475,28 @@
           ]
         },
         {
-          "name": "hdole/monoid/Po{G,#1}oP",
           "prototype": "ProductObject",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "objects": [
             "G",
             "#1"
           ]
         },
         {
-          "name": "hdole/monoid/Po{#1,G}oP",
           "prototype": "ProductObject",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "objects": [
             "#1",
             "G"
           ]
         },
         {
-          "name": "hdole/monoid/Po{Po{G,G}oP,G}oP",
           "prototype": "ProductObject",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "objects": [
             "Po{G,G}oP",
             "G"
           ]
         },
         {
-          "name": "hdole/monoid/Po{G,Po{G,G}oP}oP",
           "prototype": "ProductObject",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "objects": [
             "G",
             "Po{G,G}oP"
@@ -529,36 +505,25 @@
         {
           "description": "",
           "basename": "mult",
-          "name": "hdole/monoid/mult",
           "prototype": "Morphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{G,G}oP",
           "codomain": "G"
         },
         {
           "description": "",
           "basename": "unit",
-          "name": "hdole/monoid/unit",
           "prototype": "Morphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "#1",
           "codomain": "G"
         },
         {
           "description": "",
           "prototype": "Identity",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "G"
         },
         {
           "description": "",
-          "name": "hdole/monoid/Fa{Po{G,G,G}oP,G_0,G_1}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{G,G,G}oP",
           "codomain": "Po{G,G}oP",
           "factors": [
@@ -572,10 +537,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Fa{Po{G,G,G}oP,G_0}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{G,G,G}oP",
           "codomain": "G",
           "factors": [
@@ -586,10 +548,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Fa{Po{G,G,G}oP,G_1,G_2}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{G,G,G}oP",
           "codomain": "Po{G,G}oP",
           "factors": [
@@ -603,10 +562,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Fa{Po{G,G,G}oP,G_2}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{G,G,G}oP",
           "codomain": "G",
           "factors": [
@@ -617,10 +573,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Pm{Id{G}dI,unit}mP",
           "prototype": "ProductMorphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{G,#1}oP",
           "codomain": "Po{G,G}oP",
           "morphisms": [
@@ -630,10 +583,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Pm{unit,Id{G}dI}mP",
           "prototype": "ProductMorphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{#1,G}oP",
           "codomain": "Po{G,G}oP",
           "morphisms": [
@@ -643,10 +593,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Pa{Fa{Po{G,G,G}oP,G_0,G_1}aF,Fa{Po{G,G,G}oP,G_2}aF}aP",
           "prototype": "ProductAssembly",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{G,G,G}oP",
           "codomain": "Po{Po{G,G}oP,G}oP",
           "morphisms": [
@@ -656,10 +603,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Pa{Fa{Po{G,G,G}oP,G_0}aF,Fa{Po{G,G,G}oP,G_1,G_2}aF}aP",
           "prototype": "ProductAssembly",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{G,G,G}oP",
           "codomain": "Po{G,Po{G,G}oP}oP",
           "morphisms": [
@@ -669,10 +613,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Pm{Id{G}dI,mult}mP",
           "prototype": "ProductMorphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{G,Po{G,G}oP}oP",
           "codomain": "Po{G,G}oP",
           "morphisms": [
@@ -682,10 +623,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Pm{mult,Id{G}dI}mP",
           "prototype": "ProductMorphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{Po{G,G}oP,G}oP",
           "codomain": "Po{G,G}oP",
           "morphisms": [
@@ -695,10 +633,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Fa{Po{G,#1}oP,G_0}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{G,#1}oP",
           "codomain": "G",
           "factors": [
@@ -707,10 +642,7 @@
         },
         {
           "description": "",
-          "name": "hdole/monoid/Fa{Po{#1,G}oP,G_1}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/monoid/D",
-          "diagram": "hdole/monoid",
           "domain": "Po{#1,G}oP",
           "codomain": "G",
           "factors": [
@@ -721,7 +653,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1646075823514,
+  "timestamp": 1646078627588,
   "version": 0,
   "viewport": {
     "x": 1336,
