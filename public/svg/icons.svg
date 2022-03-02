@@ -209,23 +209,6 @@
 		<line class="svgstrThinGray" x1="160" y1="100" x2="160" y2="170"/>
 		<line class="svgstrThinGray" x1="160" y1="210" x2="160" y2="250"/>
 	</symbol>
-	<symbol id="icon-expression" class="icon" viewbox="0 0 320 320">
-		<path class="icon-bold" d="M40,40 L160,280 L280,40 M100,140 L220,140"/>
-	</symbol>
-	<symbol id="icon-expression-none" class="icon" viewbox="0 0 320 320">
-		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#128711;</text>
-	</symbol>
-	<symbol id="icon-expression-forall" class="icon" viewbox="0 0 320 320">
-		<path class="icon-bold" d="M40,40 L160,280 L280,40 M100,140 L220,140"/>
-	</symbol>
-	<symbol id="icon-expression-exists" class="icon" viewbox="0 0 320 320">
-		<path class="icon-bold" d="M100,60 L220,60 L220,280 L100,280 M220,160 L120,160"/>
-	</symbol>
-	<symbol id="icon-expression-existsUnique" class="icon" viewbox="0 0 320 320">
-		<path class="icon-bold" d="M40,60 L160,60 L160,280 L40,280 M160,160 L60,160"/>
-		<line class="icon-bold" x1="260" y1="40" x2="260" y2="220"/>
-		<circle cx="260" cy="280" r="60" fill="url(#radgrad1)"/>
-	</symbol>
 	<symbol id="icon-finiteObject" class="icon" viewbox="0 0 320 320">
 		<circle cx="80" cy="80" r="60" fill="url(#radgrad2)"/>
 		<circle cx="80" cy="160" r="60" fill="url(#radgrad1)"/>
@@ -411,6 +394,23 @@
 		<line class="arrow9" x1="2200" y1="40" x2="40" y2="40"/>
 		<line class="arrow9" x1="40" y1="220" x2="40" y2="40"/>
 		<line class="icon-bold" x1="240" y1="240" x2="100" y2="100" marker-end="url(#arrowhead)"/>
+	</symbol>
+	<symbol id="icon-quantifier" class="icon" viewbox="0 0 320 320">
+		<path class="icon-bold" d="M40,40 L160,280 L280,40 M100,140 L220,140"/>
+	</symbol>
+	<symbol id="icon-quantifier-none" class="icon" viewbox="0 0 320 320">
+		<text text-anchor="middle" x="160" y="280" class="svgQuantifier" style="font-size:340px">&#128711;</text>
+	</symbol>
+	<symbol id="icon-quantifier-forall" class="icon" viewbox="0 0 320 320">
+		<path class="icon-bold" d="M40,40 L160,280 L280,40 M100,140 L220,140"/>
+	</symbol>
+	<symbol id="icon-quantifier-exists" class="icon" viewbox="0 0 320 320">
+		<path class="icon-bold" d="M100,60 L220,60 L220,280 L100,280 M220,160 L120,160"/>
+	</symbol>
+	<symbol id="icon-quantifier-existsUnique" class="icon" viewbox="0 0 320 320">
+		<path class="icon-bold" d="M40,60 L160,60 L160,280 L40,280 M160,160 L60,160"/>
+		<line class="icon-bold" x1="260" y1="40" x2="260" y2="220"/>
+		<circle cx="260" cy="280" r="60" fill="url(#radgrad1)"/>
 	</symbol>
 	<symbol id="icon-recursion" class="icon" viewbox="0 0 320 320">
 		<line class="icon-std" x1="40" y1="60" x2="280" y2="60" marker-end="url(#arrowhead)"/>
