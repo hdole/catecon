@@ -135,6 +135,12 @@ th
 	font-weight:	bold;
 }
 
+.quantifier
+{
+	font-size:		20px;
+	font-weight:	bold;
+}
+
 .tty
 {
 	display:		block;
