@@ -75,32 +75,12 @@
         "height": 24
       },
       {
-        "description": "BUG:  All quantified morphisms on the same level should show the same quantifier.",
-        "basename": "t_2",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 500,
-          "y": 700
-        },
-        "height": 24
-      },
-      {
         "description": "BUG:  object quantifiers do not appear",
         "basename": "t_3",
         "prototype": "IndexText",
         "xy": {
           "x": 500,
           "y": 750
-        },
-        "height": 24
-      },
-      {
-        "description": "BUG:  Emphasis not correct with quantified objects",
-        "basename": "t_4",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 500,
-          "y": 800
         },
         "height": 24
       },
@@ -223,46 +203,31 @@
         {
           "description": "",
           "basename": "A",
-          "name": "hdole/identity/A",
-          "prototype": "CatObject",
-          "category": "hdole/identity/D",
-          "diagram": "hdole/identity"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "B",
-          "name": "hdole/identity/B",
-          "prototype": "CatObject",
-          "category": "hdole/identity/D",
-          "diagram": "hdole/identity"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "f",
-          "name": "hdole/identity/f",
           "prototype": "Morphism",
-          "category": "hdole/identity/D",
-          "diagram": "hdole/identity",
           "domain": "A",
           "codomain": "B"
         },
         {
           "description": "",
           "basename": "id",
-          "name": "hdole/identity/id",
           "prototype": "Morphism",
-          "category": "hdole/identity/D",
-          "diagram": "hdole/identity",
           "domain": "A",
           "codomain": "A"
         },
         {
           "description": "",
           "basename": "g",
-          "name": "hdole/identity/g",
           "prototype": "Morphism",
-          "category": "hdole/identity/D",
-          "diagram": "hdole/identity",
           "domain": "B",
           "codomain": "A"
         }
@@ -270,11 +235,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1645949394794,
+  "timestamp": 1646120641813,
   "version": 0,
   "viewport": {
-    "x": -64,
-    "y": 130,
-    "scale": 1.457503796898058
+    "x": -517,
+    "y": -236,
+    "scale": 1.8979127174022752
   }
 }

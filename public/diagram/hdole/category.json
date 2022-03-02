@@ -113,7 +113,7 @@
         "to": "C0",
         "xy": {
           "x": 750,
-          "y": 1150
+          "y": 1100
         }
       },
       {
@@ -467,7 +467,7 @@
         "height": 24
       },
       {
-        "description": "From the above pullback there must be a morphism\ngiving the composition of the two morphisms.",
+        "description": "The composite of two morphisms can now be\nexpressed with the pullback object above as\nthe domain of the composition morphism.",
         "basename": "t_8",
         "prototype": "IndexText",
         "xy": {
@@ -874,19 +874,6 @@
         "domain": "o_4",
         "codomain": "o_5",
         "to": "dom"
-      },
-      {
-        "basename": "m_2",
-        "prototype": "IndexMorphism",
-        "domain": "o_4",
-        "codomain": "o_7",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "cod"
       },
       {
         "basename": "m_3",
@@ -1563,6 +1550,19 @@
             0
           ]
         ]
+      },
+      {
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "o_4",
+        "codomain": "o_7",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "cod"
       }
     ],
     "cells": [
@@ -1664,26 +1664,17 @@
         {
           "description": "objects in this category",
           "basename": "C0",
-          "name": "hdole/category/C0",
           "prototype": "CatObject",
-          "properName": "C&#8320;",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category"
+          "properName": "C&#8320;"
         },
         {
           "description": "morphisms in this category",
           "basename": "C1",
-          "name": "hdole/category/C1",
           "prototype": "CatObject",
-          "properName": "C&#8321;",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category"
+          "properName": "C&#8321;"
         },
         {
-          "name": "hdole/category/Pb{cod,dom}bP",
           "prototype": "PullbackObject",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "objects": [
             "C1",
             "C1"
@@ -1694,10 +1685,7 @@
           ]
         },
         {
-          "name": "hdole/category/Pb{Id{C0}dI,dom}bP",
           "prototype": "PullbackObject",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "objects": [
             "C0",
             "C1"
@@ -1708,10 +1696,7 @@
           ]
         },
         {
-          "name": "hdole/category/Pb{cod,Id{C0}dI}bP",
           "prototype": "PullbackObject",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "objects": [
             "C1",
             "C0"
@@ -1722,10 +1707,7 @@
           ]
         },
         {
-          "name": "hdole/category/Pb{Cm{comp,cod}mC,dom}bP",
           "prototype": "PullbackObject",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "objects": [
             "Pb{cod,dom}bP",
             "C1"
@@ -1736,10 +1718,7 @@
           ]
         },
         {
-          "name": "hdole/category/Pb{cod,Cm{comp,dom}mC}bP",
           "prototype": "PullbackObject",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "objects": [
             "C1",
             "Pb{cod,dom}bP"
@@ -1751,10 +1730,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Fa{Pb{cod,dom}bP,C1_0}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,dom}bP",
           "codomain": "C1",
           "factors": [
@@ -1763,10 +1739,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Fa{Pb{cod,dom}bP,C1_1}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,dom}bP",
           "codomain": "C1",
           "factors": [
@@ -1775,10 +1748,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Id{C0}dI,dom}bP",
           "codomain": "C0",
           "factors": [
@@ -1787,10 +1757,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Id{C0}dI,dom}bP",
           "codomain": "C1",
           "factors": [
@@ -1799,10 +1766,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,Id{C0}dI}bP",
           "codomain": "C1",
           "factors": [
@@ -1811,10 +1775,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,Id{C0}dI}bP",
           "codomain": "C0",
           "factors": [
@@ -1824,63 +1785,44 @@
         {
           "description": "identity morphism of an object",
           "basename": "id",
-          "name": "hdole/category/id",
           "prototype": "Morphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "C0",
           "codomain": "C1"
         },
         {
           "description": "the domain object of a morphism",
           "basename": "dom",
-          "name": "hdole/category/dom",
           "prototype": "Morphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "C1",
           "codomain": "C0"
         },
         {
           "description": "the codomain object of a morphism",
           "basename": "cod",
-          "name": "hdole/category/cod",
           "prototype": "Morphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "C1",
           "codomain": "C0"
         },
         {
           "description": "Identity for the object C0",
           "prototype": "Identity",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "C0"
         },
         {
           "description": "",
           "basename": "comp",
-          "name": "hdole/category/comp",
           "prototype": "Morphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,dom}bP",
           "codomain": "C1"
         },
         {
           "description": "",
           "prototype": "Identity",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "C1"
         },
         {
           "description": "",
-          "name": "hdole/category/Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC",
           "prototype": "Composite",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Id{C0}dI,dom}bP",
           "codomain": "C1",
           "morphisms": [
@@ -1890,10 +1832,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC",
           "prototype": "Composite",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Id{C0}dI,dom}bP",
           "codomain": "C1",
           "morphisms": [
@@ -1903,10 +1842,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Pu{Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC,Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC}uP",
           "prototype": "PullbackAssembly",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Id{C0}dI,dom}bP",
           "codomain": "Pb{cod,dom}bP",
           "morphisms": [
@@ -1916,10 +1852,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC",
           "prototype": "Composite",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,Id{C0}dI}bP",
           "codomain": "C1",
           "morphisms": [
@@ -1929,10 +1862,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC",
           "prototype": "Composite",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,Id{C0}dI}bP",
           "codomain": "C1",
           "morphisms": [
@@ -1942,10 +1872,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Pu{Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC}uP",
           "prototype": "PullbackAssembly",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,Id{C0}dI}bP",
           "codomain": "Pb{cod,dom}bP",
           "morphisms": [
@@ -1955,10 +1882,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Cm{comp,cod}mC",
           "prototype": "Composite",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,dom}bP",
           "codomain": "C0",
           "morphisms": [
@@ -1968,10 +1892,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Cm{comp,cod}mC,dom}bP",
           "codomain": "Pb{cod,dom}bP",
           "factors": [
@@ -1980,10 +1901,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Cm{comp,cod}mC,dom}bP",
           "codomain": "C1",
           "factors": [
@@ -1992,10 +1910,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Cm{comp,dom}mC",
           "prototype": "Composite",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,dom}bP",
           "codomain": "C0",
           "morphisms": [
@@ -2005,10 +1920,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,Cm{comp,dom}mC}bP",
           "codomain": "C1",
           "factors": [
@@ -2017,10 +1929,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,Cm{comp,dom}mC}bP",
           "codomain": "Pb{cod,dom}bP",
           "factors": [
@@ -2029,10 +1938,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC",
           "prototype": "Composite",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Cm{comp,cod}mC,dom}bP",
           "codomain": "C1",
           "morphisms": [
@@ -2042,10 +1948,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC",
           "prototype": "Composite",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Cm{comp,cod}mC,dom}bP",
           "codomain": "C1",
           "morphisms": [
@@ -2055,10 +1958,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP",
           "prototype": "PullbackAssembly",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Cm{comp,cod}mC,dom}bP",
           "codomain": "Pb{cod,dom}bP",
           "morphisms": [
@@ -2068,10 +1968,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF,Id{C1}dI}mC",
           "prototype": "Composite",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,Cm{comp,dom}mC}bP",
           "codomain": "C1",
           "morphisms": [
@@ -2081,10 +1978,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC",
           "prototype": "Composite",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,Cm{comp,dom}mC}bP",
           "codomain": "C1",
           "morphisms": [
@@ -2094,10 +1988,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Pu{Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP",
           "prototype": "PullbackAssembly",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{cod,Cm{comp,dom}mC}bP",
           "codomain": "Pb{cod,dom}bP",
           "morphisms": [
@@ -2107,10 +1998,7 @@
         },
         {
           "description": "",
-          "name": "hdole/category/Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP}uP",
           "prototype": "PullbackAssembly",
-          "category": "hdole/category/D",
-          "diagram": "hdole/category",
           "domain": "Pb{Cm{comp,cod}mC,dom}bP",
           "codomain": "Pb{cod,Cm{comp,dom}mC}bP",
           "morphisms": [
@@ -2122,11 +2010,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1646070436143,
+  "timestamp": 1646197321212,
   "version": 0,
   "viewport": {
-    "x": 513,
-    "y": -4410,
-    "scale": 1.2552939152356413
+    "x": 1076,
+    "y": 488,
+    "scale": 0.3886054633115823
   }
 }

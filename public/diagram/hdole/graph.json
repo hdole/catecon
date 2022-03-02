@@ -588,6 +588,16 @@
         "domain": "o_41",
         "codomain": "o_0",
         "to": "CPm{Id{A}dI,Id{B}dI}mPC"
+      },
+      {
+        "description": "BUG:  bad nested hom graph",
+        "basename": "t_3",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 130,
+          "y": 1390
+        },
+        "height": 24
       }
     ],
     "cells": []
@@ -995,11 +1005,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1645607188531,
+  "timestamp": 1646119882430,
   "version": 0,
   "viewport": {
     "x": 323,
-    "y": -233,
+    "y": -1745,
     "scale": 1.437587646420699
   }
 }

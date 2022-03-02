@@ -234,54 +234,36 @@
         {
           "description": "",
           "basename": "A",
-          "name": "hdole/epimorphism/A",
-          "prototype": "CatObject",
-          "category": "hdole/epimorphism/D",
-          "diagram": "hdole/epimorphism"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "B",
-          "name": "hdole/epimorphism/B",
-          "prototype": "CatObject",
-          "category": "hdole/epimorphism/D",
-          "diagram": "hdole/epimorphism"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "C",
-          "name": "hdole/epimorphism/C",
-          "prototype": "CatObject",
-          "category": "hdole/epimorphism/D",
-          "diagram": "hdole/epimorphism"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "f",
-          "name": "hdole/epimorphism/f",
           "prototype": "Morphism",
-          "category": "hdole/epimorphism/D",
-          "diagram": "hdole/epimorphism",
           "domain": "A",
           "codomain": "B"
         },
         {
           "description": "",
           "basename": "g",
-          "name": "hdole/epimorphism/g",
           "prototype": "Morphism",
-          "category": "hdole/epimorphism/D",
-          "diagram": "hdole/epimorphism",
           "domain": "B",
           "codomain": "C"
         },
         {
           "description": "",
           "basename": "h",
-          "name": "hdole/epimorphism/h",
           "prototype": "Morphism",
-          "category": "hdole/epimorphism/D",
-          "diagram": "hdole/epimorphism",
           "domain": "B",
           "codomain": "C"
         }

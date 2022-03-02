@@ -23,13 +23,13 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": -580
+          "y": -590
         },
         "height": "76",
         "weight": "bold"
       },
       {
-        "description": "f is a monomorphism iff for any two g and h\nwith fg = fh then g = h.",
+        "description": "The morphism f:A→B in the category D is a monomorphism\niff for any two g:C&rarr;A and h:C&rarr;A with fg = fh then g = h.",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
@@ -127,16 +127,16 @@
         "codomain": "o_3",
         "attributes": [
           [
+            "bezier",
+            -1
+          ],
+          [
             "quantifier",
             "forall"
           ],
           [
             "level",
             1
-          ],
-          [
-            "bezier",
-            -1
           ]
         ],
         "to": "h"
@@ -234,54 +234,36 @@
         {
           "description": "",
           "basename": "A",
-          "name": "hdole/monomorphism/A",
-          "prototype": "CatObject",
-          "category": "hdole/monomorphism/D",
-          "diagram": "hdole/monomorphism"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "B",
-          "name": "hdole/monomorphism/B",
-          "prototype": "CatObject",
-          "category": "hdole/monomorphism/D",
-          "diagram": "hdole/monomorphism"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "C",
-          "name": "hdole/monomorphism/C",
-          "prototype": "CatObject",
-          "category": "hdole/monomorphism/D",
-          "diagram": "hdole/monomorphism"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "f",
-          "name": "hdole/monomorphism/f",
           "prototype": "Morphism",
-          "category": "hdole/monomorphism/D",
-          "diagram": "hdole/monomorphism",
           "domain": "A",
           "codomain": "B"
         },
         {
           "description": "",
           "basename": "g",
-          "name": "hdole/monomorphism/g",
           "prototype": "Morphism",
-          "category": "hdole/monomorphism/D",
-          "diagram": "hdole/monomorphism",
           "domain": "C",
           "codomain": "A"
         },
         {
           "description": "",
           "basename": "h",
-          "name": "hdole/monomorphism/h",
           "prototype": "Morphism",
-          "category": "hdole/monomorphism/D",
-          "diagram": "hdole/monomorphism",
           "domain": "C",
           "codomain": "A"
         }
@@ -289,11 +271,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1645517401345,
+  "timestamp": 1646195045994,
   "version": 0,
   "viewport": {
-    "x": 1009,
-    "y": 2385,
-    "scale": 3.5568115625241576
+    "x": 904,
+    "y": 2128,
+    "scale": 3.2107157119442085
   }
 }

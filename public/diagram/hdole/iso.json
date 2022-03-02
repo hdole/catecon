@@ -213,52 +213,36 @@
         {
           "description": "",
           "basename": "A",
-          "name": "hdole/iso/A",
-          "prototype": "CatObject",
-          "category": "hdole/iso/D",
-          "diagram": "hdole/iso"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "B",
-          "name": "hdole/iso/B",
-          "prototype": "CatObject",
-          "category": "hdole/iso/D",
-          "diagram": "hdole/iso"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "f",
-          "name": "hdole/iso/f",
           "prototype": "Morphism",
-          "category": "hdole/iso/D",
-          "diagram": "hdole/iso",
           "domain": "A",
           "codomain": "B"
         },
         {
           "description": "Inverse of f",
           "basename": "finv",
-          "name": "hdole/iso/finv",
           "prototype": "Morphism",
           "properName": "f⁻¹",
-          "category": "hdole/iso/D",
-          "diagram": "hdole/iso",
           "domain": "B",
           "codomain": "A"
         },
         {
           "description": "",
           "prototype": "Identity",
-          "category": "hdole/iso/D",
-          "diagram": "hdole/iso",
           "domain": "A"
         },
         {
           "description": "",
           "prototype": "Identity",
-          "category": "hdole/iso/D",
-          "diagram": "hdole/iso",
           "domain": "B"
         }
       ]

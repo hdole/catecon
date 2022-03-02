@@ -6,7 +6,7 @@
   "properName": "hdole/Strings",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
-  "domain": "hdole/Strings_Index",
+  "domain": "Strings_Index",
   "codomain": "zf/Set",
   "references": [
     "hdole/floats"
@@ -465,6 +465,15 @@
         }
       },
       {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "hdole/nat/N64",
+        "xy": {
+          "x": 400,
+          "y": 590
+        }
+      },
+      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_3",
@@ -612,15 +621,6 @@
         "to": "strToN128"
       },
       {
-        "basename": "o_2",
-        "prototype": "IndexObject",
-        "to": "hdole/nat/N64",
-        "xy": {
-          "x": 400,
-          "y": 590
-        }
-      },
-      {
         "basename": "m_21",
         "prototype": "IndexMorphism",
         "domain": "o_4",
@@ -741,8 +741,8 @@
       "code": {
         "cpp": "%0 = std::string('');"
       },
-      "domain": "hdole/Strings/#1",
-      "codomain": "hdole/Strings/str",
+      "domain": "#1",
+      "codomain": "str",
       "data": []
     },
     {
@@ -753,7 +753,7 @@
         "js": "function %Type(args)\n{\n\treturn args.length;\n}\n",
         "cpp": "%1 = %0.length;"
       },
-      "domain": "hdole/Strings/str",
+      "domain": "str",
       "codomain": "hdole/nat/N64"
     },
     {
@@ -764,8 +764,8 @@
         "js": "function %Type(args)\n{\n\treturn args[0].concat(args[1]);\n}\n",
         "cpp": "%2 = %0 + %1;"
       },
-      "domain": "hdole/Strings/Po{str,str}oP",
-      "codomain": "hdole/Strings/str"
+      "domain": "Po{str,str}oP",
+      "codomain": "str"
     },
     {
       "description": "is the second string included in the first",
@@ -775,8 +775,8 @@
         "js": "function %Type(args)\n{\n\treturn args[1].includes(args[0]);\n}\n",
         "cpp": "%2 = %0.find(%1) != std::string::npos;"
       },
-      "domain": "hdole/Strings/Po{str,str}oP",
-      "codomain": "hdole/Strings/CPo{#1,#1}oPC"
+      "domain": "Po{str,str}oP",
+      "codomain": "CPo{#1,#1}oPC"
     },
     {
       "description": "Where in the first string is the second",
@@ -787,7 +787,7 @@
         "js": "\nfunction %Type(args)\n{\n\tconst i = args[0].indexOf(args[1]);\n\treturn i > -1 ? [0, i] : [1, 1]\n}\n",
         "cpp": "{auto i = %0.find(%1);\nif (i != std::string::npos)\n{\n\t%2.c = 0;\n\t%2.v = i;\n}\nelse\n{\n\t%2.c = 1;\n\t%2.v = 0;\n}\n}"
       },
-      "domain": "hdole/Strings/Po{str,str}oP",
+      "domain": "Po{str,str}oP",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
     },
     {
@@ -798,8 +798,8 @@
         "js": "function %Type(args)\n{\n\treturn args[0].charAt(args[1]);\n}\n",
         "cpp": "%2 = std::string(%0[%1]);"
       },
-      "domain": "hdole/Strings/Po{str,hdole/nat/N64}oP",
-      "codomain": "hdole/Strings/str"
+      "domain": "Po{str,hdole/nat/N64}oP",
+      "codomain": "str"
     },
     {
       "description": "convert a natural number to a string",
@@ -811,7 +811,7 @@
         "cpp": "%1 = std::to_string(%0);"
       },
       "domain": "hdole/nat/N64",
-      "codomain": "hdole/Strings/str"
+      "codomain": "str"
     },
     {
       "description": "convert a string to a natural number",
@@ -822,7 +822,7 @@
         "js": "function %Type(args)\n{\n\tconst v = parseInt(args);\n\tif (!isNan(v) && v >= 0)\n\t\treturn [0, v];\n\telse\n\t\treturn [1, 0];\n}\n",
         "cpp": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
-      "domain": "hdole/Strings/str",
+      "domain": "str",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
     },
     {
@@ -835,7 +835,7 @@
         "cpp": "%1 = std::to_string(%0);"
       },
       "domain": "hdole/int/Z64",
-      "codomain": "hdole/Strings/str"
+      "codomain": "str"
     },
     {
       "description": "convert a string to an integer",
@@ -846,7 +846,7 @@
         "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
         "cpp": "try\n{\n\t\t%1.v = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t\t%1.c = 0;\n}"
       },
-      "domain": "hdole/Strings/str",
+      "domain": "str",
       "codomain": "hdole/int/CPo{Z64,#1}oPC"
     },
     {
@@ -859,7 +859,7 @@
         "cpp": "try\n{\n\t%1.v = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
       "domain": "hdole/floats/F64",
-      "codomain": "hdole/Strings/str"
+      "codomain": "str"
     },
     {
       "description": "convert a string to a floating point number",
@@ -870,7 +870,7 @@
         "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
         "cpp": "try\n{\n\t%1.v = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
-      "domain": "hdole/Strings/str",
+      "domain": "str",
       "codomain": "hdole/floats/CPo{F64,#1}oPC"
     },
     {
@@ -882,8 +882,8 @@
         "js": "\nfunction %Type(args)\n{\n\tpostMessage(['str2tty', args]);\n}\n",
         "cpp": "#include <iostream>\nstd::cout << %0;"
       },
-      "domain": "hdole/Strings/str",
-      "codomain": "hdole/Strings/TTY"
+      "domain": "str",
+      "codomain": "TTY"
     },
     {
       "basename": "N8ToStr",
@@ -893,14 +893,14 @@
         "cpp": "%1 = std::to_string(%0);"
       },
       "domain": "hdole/nat/N8",
-      "codomain": "hdole/Strings/str"
+      "codomain": "str"
     },
     {
       "basename": "strToN8",
       "prototype": "Morphism",
       "properName": "to",
-      "domain": "hdole/Strings/str",
-      "codomain": "hdole/Strings/CPo{hdole/nat/N8,#1}oPC"
+      "domain": "str",
+      "codomain": "CPo{hdole/nat/N8,#1}oPC"
     },
     {
       "basename": "N16ToStr",
@@ -910,14 +910,14 @@
         "cpp": "%1 = std::to_string(%0);"
       },
       "domain": "hdole/nat/N16",
-      "codomain": "hdole/Strings/str"
+      "codomain": "str"
     },
     {
       "basename": "strToN16",
       "prototype": "Morphism",
       "properName": "to",
-      "domain": "hdole/Strings/str",
-      "codomain": "hdole/Strings/CPo{hdole/nat/N16,#1}oPC"
+      "domain": "str",
+      "codomain": "CPo{hdole/nat/N16,#1}oPC"
     },
     {
       "basename": "N32ToStr",
@@ -927,28 +927,28 @@
         "cpp": "%1 = std::to_string(%0);"
       },
       "domain": "hdole/nat/N32",
-      "codomain": "hdole/Strings/str"
+      "codomain": "str"
     },
     {
       "basename": "strToN32",
       "prototype": "Morphism",
       "properName": "to",
-      "domain": "hdole/Strings/str",
-      "codomain": "hdole/Strings/CPo{hdole/nat/N32,#1}oPC"
+      "domain": "str",
+      "codomain": "CPo{hdole/nat/N32,#1}oPC"
     },
     {
       "basename": "N128ToStr",
       "prototype": "Morphism",
       "properName": "to",
       "domain": "hdole/nat/N128",
-      "codomain": "hdole/Strings/str"
+      "codomain": "str"
     },
     {
       "basename": "strToN128",
       "prototype": "Morphism",
       "properName": "to",
-      "domain": "hdole/Strings/str",
-      "codomain": "hdole/Strings/CPo{hdole/nat/N128,#1}oPC"
+      "domain": "str",
+      "codomain": "CPo{hdole/nat/N128,#1}oPC"
     }
   ],
   "user": "hdole",

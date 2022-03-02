@@ -357,24 +357,15 @@
         {
           "description": "",
           "basename": "A",
-          "name": "hdole/product/A",
-          "prototype": "CatObject",
-          "category": "hdole/product/D",
-          "diagram": "hdole/product"
+          "prototype": "CatObject"
         },
         {
           "description": "",
           "basename": "B",
-          "name": "hdole/product/B",
-          "prototype": "CatObject",
-          "category": "hdole/product/D",
-          "diagram": "hdole/product"
+          "prototype": "CatObject"
         },
         {
-          "name": "hdole/product/Po{A,B}oP",
           "prototype": "ProductObject",
-          "category": "hdole/product/D",
-          "diagram": "hdole/product",
           "objects": [
             "A",
             "B"
@@ -383,17 +374,11 @@
         {
           "description": "",
           "basename": "X",
-          "name": "hdole/product/X",
-          "prototype": "CatObject",
-          "category": "hdole/product/D",
-          "diagram": "hdole/product"
+          "prototype": "CatObject"
         },
         {
           "description": "",
-          "name": "hdole/product/Fa{Po{A,B}oP,A_0}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/product/D",
-          "diagram": "hdole/product",
           "domain": "Po{A,B}oP",
           "codomain": "A",
           "factors": [
@@ -402,10 +387,7 @@
         },
         {
           "description": "",
-          "name": "hdole/product/Fa{Po{A,B}oP,B_1}aF",
           "prototype": "FactorMorphism",
-          "category": "hdole/product/D",
-          "diagram": "hdole/product",
           "domain": "Po{A,B}oP",
           "codomain": "B",
           "factors": [
@@ -415,30 +397,21 @@
         {
           "description": "",
           "basename": "f",
-          "name": "hdole/product/f",
           "prototype": "Morphism",
-          "category": "hdole/product/D",
-          "diagram": "hdole/product",
           "domain": "X",
           "codomain": "A"
         },
         {
           "description": "",
           "basename": "g",
-          "name": "hdole/product/g",
           "prototype": "Morphism",
-          "category": "hdole/product/D",
-          "diagram": "hdole/product",
           "domain": "X",
           "codomain": "B"
         },
         {
           "description": "",
           "basename": "h",
-          "name": "hdole/product/h",
           "prototype": "Morphism",
-          "category": "hdole/product/D",
-          "diagram": "hdole/product",
           "domain": "X",
           "codomain": "Po{A,B}oP"
         }
