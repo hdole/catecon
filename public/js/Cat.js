@@ -560,7 +560,7 @@ class Runtime
 				value:
 				{
 					category:		'em/Cat',
-					debug:			false,
+					debug:			0,
 					showEvents:		false,
 				},
 				writable:	true,
@@ -724,7 +724,7 @@ class Runtime
 	{
 		// function to register a diagram's actions
 		const setup = diagram => D && diagram.elements.forEach(action => {this.Actions[action.basename] = action;});
-		const actionDiagram = new Diagram(this.$CAT, {basename:'Action', codomain:'Actions', description:'actions for a diagram', user:'dyn'});
+		const actionDiagram = new Diagram(this.$CAT, {basename:'actions', codomain:'Actions', description:'actions for a diagram', user:'ctx'});
 		R.setDiagramInfo(actionDiagram, false, false);
 		this.actionDiagram = actionDiagram;
 		actionDiagram.sync = false;
@@ -769,9 +769,9 @@ class Runtime
 		new LambdaMorphismAction(actionDiagram);
 		new DistributeAction(actionDiagram);
 		new TensorAction(actionDiagram);
-		this.CAT.addActions('Action');
-		this.Cat.addActions('Action');
-		this.sys.Actions.addActions('Action');		// TODO restrict?
+		this.CAT.addActions('actions');
+		this.Cat.addActions('actions');
+		this.sys.Actions.addActions('actions');		// TODO restrict?
 		setup(actionDiagram);
 	}
 	setupSet()
@@ -796,7 +796,7 @@ class Runtime
 			D && D.emitApplicationEvent('start');
 			fn && fn();
 			const end = Date.now();
-			R.default.debug && console.log(`R initialization ${end - start}ms`);
+			R.debug(1) && console.log(`R initialization ${end - start}ms`);
 		});
 	}
 	getUserDiagram(user)		// the user's diagram of their diagrams
@@ -892,7 +892,7 @@ class Runtime
 						const userDiagram = this.getUserDiagram(args.user);
 						diagram = new Cat[args.prototype](userDiagram, args);
 						diagram.check();
-						R.default.debug && console.log('readDiagram loaded diagram', args.name);
+						R.debug(1) && console.log('readDiagram loaded diagram', args.name);
 					}
 					else
 					{
@@ -1052,7 +1052,7 @@ class Runtime
 				fn && fn(R.diagram);
 				return;
 			}
-			R.default.debug && console.log('SelectDiagram', name);
+			R.debug(1) && console.log('SelectDiagram', name);
 			R.diagram = null;
 			let diagram = name instanceof Diagram ? name : name !== 'sys/$CAT' ? R.$CAT.getElement(name) : R.$CAT;		// already loaded?
 			const doit = _ =>
@@ -1131,7 +1131,7 @@ class Runtime
 		const diagram = this.$CAT.getElement(name);
 		if (diagram)
 			return diagram;
-		return await this.readDiagram(name, _ => R.default.debug && console.log('loadOne', name));
+		return await this.readDiagram(name, _ => R.debug(1) && console.log('loadOne', name));
 	}
 	setDiagramInfo(diagram, makeLocal = false, writeCatalog = true)
 	{
@@ -1202,7 +1202,7 @@ class Runtime
 	{
 		const process = data =>
 		{
-			R.default.debug && console.log('processing catalog data');
+			R.debug(1) && console.log('processing catalog data');
 			if (D)
 				this.cloudURL = data.cloudURL;
 			data.diagrams.map(d =>
@@ -1230,13 +1230,13 @@ class Runtime
 						if (cursor)
 						{
 							const diagram = cursor.value;
-							R.default.debug && console.log('cataloging local diagram ' + diagram.name);
+							R.debug(1) && console.log('cataloging local diagram ' + diagram.name);
 							const info = this.catalog.get(diagram.name);
 							if (info)
 							{
 								if (0 < diagram.timestamp && diagram.timestamp < info.timestamp)	// override with cloud info
 								{
-									R.default.debug && console.log('downloading newer diagram from server', info.name, 'local:', U.localtime(diagram.timestamp), 'remote:', U.localtime(info.timestamp));
+									R.debug(1) && console.log('downloading newer diagram from server', info.name, 'local:', U.localtime(diagram.timestamp), 'remote:', U.localtime(info.timestamp));
 									this.downloadDiagramData(info.name, false, Number.parseInt(info.timestamp));		// TODO may be sync problem
 								}
 								else
@@ -1267,11 +1267,11 @@ class Runtime
 		};
 		if (D || this.cloudURL)
 		{
-			R.default.debug && console.log('fetch catalog from server');
+			R.debug(1) && console.log('fetch catalog from server');
 			const url = this.getURL('catalog');
 			fetch(url).then(response =>
 			{
-				R.default.debug && console.log('diagram catalog response received');
+				R.debug(1) && console.log('diagram catalog response received');
 				if (response.ok)
 					response.json().then(data => process(data));
 				else
@@ -1375,7 +1375,7 @@ class Runtime
 				alert(`Warning! timestamp discrepancy ${json.timestamp} vs ${timestamp}`);
 				json.timestamp = timestamp;
 			}
-			R.saveDiagram(json, e => R.default.debug && console.log('doanloadDiagramData', json.name));
+			R.saveDiagram(json, e => R.debug(1) && console.log('doanloadDiagramData', json.name));
 		});
 	}
 	authFetch(url, body)
@@ -1445,7 +1445,7 @@ class Runtime
 		const png = D.diagramPNGs.get(diagram.name);
 		if (png)
 			body.png = png;
-		R.default.debug && console.log('uploading', diagram.name);
+		R.debug(1) && console.log('uploading', diagram.name);
 		if (local)
 			return this.authFetch(this.getURL('upload', local), body).then(res => fn(res)).catch(err => R.recordError(err));
 		// keep local server up to date after update to cloud
@@ -1619,6 +1619,11 @@ class Runtime
 	setCategory(cat)
 	{
 		R.category = cat;
+	}
+	debug(level)
+	{
+if (R.default.debug === false)R.default.debug = 0;
+		return level <= R.default.debug;
 	}
 }
 
@@ -3031,7 +3036,7 @@ class DiagramTool extends ElementTool
 				D.toolbar.showError(diagram);		// did not work
 			else
 			{
-				R.saveDiagram(diagram, e => R.default.debug && console.log('diagramTool.copy', diagram.name));
+				R.saveDiagram(diagram, e => R.debug(1) && console.log('diagramTool.copy', diagram.name));
 				diagram.savePng();
 				this.bpd.reset();
 				D.emitCATEvent('new', diagram);
@@ -3648,7 +3653,7 @@ class Session
 	loadAction(action) { }
 	loadDiagrams(fn)
 	{
-		const diagrams = [...this.diagrams.keys()];
+		const diagrams = [...this.diagrams.keys()].filter(dgrm => !(dgrm.user === 'ctx' || dgrm.user === 'sys'));
 		const loader = d => 
 		{
 			if (diagrams.length > 0)
@@ -3698,7 +3703,7 @@ class Session
 			if (diagram)
 				diagram.makeSVG();
 			else
-				R.default.debug && console.log('diagram not open', name);
+				R.debug(1) && console.log('diagram not open', name);
 		});
 	}
 }
@@ -4522,13 +4527,13 @@ class Display
 		this.autohide();
 		this.setupReplay();
 		this.url = window.URL || window.webkitURL || window;
-		this.loadScript('js/javascript.js', _ => R.default.debug && console.log('javascript loaded'));
+		this.loadScript('js/javascript.js', _ => R.debug(1) && console.log('javascript loaded'));
 		this.loadScript('js/cpp.js');
 // TODO?		this.loadScript('js/mysql.js');
 		this.params = (new URL(document.location)).searchParams;	// TODO node.js
 		if (this.params.has('debug'))
 		{
-			R.default.debug = true;
+			R.default.debug = Number.parseInt(this.params.get('debug'));
 			console.log('debug mode turned on');
 		}
 		this.local = document.location.hostname === 'localhost';
@@ -4643,7 +4648,7 @@ class Display
 		{
 			if (this.mouse.onGUI)
 				return;
-			if (R.default.debug)
+			if (R.debug(1))
 				return;
 			this.topSVG.style.cursor = 'none';
 			this.topSVG.querySelectorAll('.borderAlert').forEach(elt => elt.classList.add('hidden'));
@@ -4668,7 +4673,7 @@ class Display
 			if (timestamp === diagram.timestamp)	// timestamp has not changed in the interim
 			{
 				diagram.setViewport();
-				R.saveDiagram(diagram, e => R.default.debug && console.log('autosave', diagram.name));
+				R.saveDiagram(diagram, e => R.debug(1) && console.log('autosave', diagram.name));
 				if (this.local && !this.textEditActive())
 					diagram.upload();
 			}
@@ -5291,9 +5296,6 @@ class Display
 						this.session.setNoCurrentDiagram();
 					this.emitViewEvent('diagram', diagram, action);
 					break;
-				case 'download':
-					R.default.debug && R.saveDiagram(diagram, e => R.default.debug && console.log('downloaded', diagram.name));
-					break;
 				case 'close':
 				case 'delete':
 					if (R.diagram === diagram)
@@ -5403,7 +5405,7 @@ class Display
 				document.getElementById('diagramView').classList.remove('hidden');
 				if (diagram)
 				{
-					if (diagram.user === 'sys')
+					if (diagram.user === 'sys' || diagram.user === 'ctx')		// TODO better autoplace detection
 						diagram.autoplace();
 					this.diagramSVG.classList.remove('hidden');
 					diagram.show();
@@ -6570,7 +6572,7 @@ class Display
 		}
 		this.emitViewEvent('diagram', null);	// needed if this.diagram = diagram since old.decrRefcnt() puts it into catalog view
 		const diagram = new Cat[json.prototype](this.getUserDiagram(this.user.name), json);
-		this.saveDiagram(diagram, e => R.default.debug && console.log('uploadJSON saved', diagram.name));
+		this.saveDiagram(diagram, e => R.debug(1) && console.log('uploadJSON saved', diagram.name));
 		diagram.savePng();
 		this.emitCATEvent('new', iagram);
 		Runtime.SelectDiagram(diagram.name);
@@ -7448,7 +7450,7 @@ class SettingsPanel extends Panel
 	constructor()
 	{
 		super('settings');
-		const debugChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.debug = !Cat.R.default.debug; D.saveDefaults();}, id:'check-debug'});
+		const debugChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.debug = Cat.R.default.debug > 0 ? 0 : 1; D.saveDefaults();}, id:'check-debug'});
 		const gridChkbox = H3.input({type:"checkbox", onchange:e => {Cat.D.gridding = !D.gridding; D.saveDefaults();}});
 		if (D.gridding)
 			gridChkbox.checked = true;
@@ -9751,10 +9753,13 @@ class Action extends CatObject
 			actionOnly:		{value:U.getArg(nuArgs, 'actionOnly', false),	writable:	false},
 			priority:		{value:U.getArg(nuArgs, 'priority', 0),			writable:	false},
 		});
+		this.setSignature();
+		D && D.emitElementEvent(diagram, 'new', this);
 	}
 	help()
 	{
-		super.help(H3.tr(H3.td('Type:'), H3.td('Action')));
+		super.help();
+		D.toolbar.table.appendChild(H3.tr(H3.td('Type:'), H3.td('Action')));
 	}
 	action(e, diagram, ary) {}	// fitb
 	hasForm(diagram, ary) {return false;}	// fitb
@@ -12107,19 +12112,10 @@ class QuantifierAction extends Action
 		const objects = new Set();
 		const morphisms = new Set();
 		const cells = new Set();
-		blob.objects.forEach(o => o.to.isBare() && objects.add(o.to));
-		blob.morphisms.forEach(m =>
-		{
-			if (m.to.isBare())
-			{
-				morphisms.add(m.to);
-				objects.delete(m.domain.to);
-				objects.delete(m.codomain.to);
-			}
-		});
+		blob.objects.forEach(o => o.to.isBare() && o.getLevel() > 0 && objects.add(o.to));
+		blob.morphisms.forEach(m => m.to.isBare() && m.getLevel() > 0 && morphisms.add(o.to));
 		blob.cells.forEach(cell => cell.commutes !== 'pullback' && cell.assertion && cells.add(cell));
-		const doit = (elt, i) => ((elt instanceof Cell) || i > 0) && this.showBlobItem(blob, elt);
-		objects.forEach(doit);
+		const doit = elt => this.showBlobItem(blob, elt);
 		blob.objects.forEach(o =>
 		{
 			if (objects.has(o.to))
@@ -12139,6 +12135,23 @@ class QuantifierAction extends Action
 		morphisms.forEach(doit);
 		[...cells].sort((a, b) => a.getLevel() < b.getLevel() ? -1 : b.getLevel() > a.getLevel() ? 1 : 0).map(doit);
 	}
+	getBlobs(diagram, ary)
+	{
+		const blobs = new Set();
+		ary.map(elt => blobs.add(diagram.getBlob(elt)));
+		return blobs;
+	}
+	getBase(blobs)
+	{
+		const base = new Set();
+		blobs.forEach(blob => blob.levels[0].map(elt => U.isIndexItem(elt) && elt.to.isBare() && base.add(elt.to)));
+		[...base].filter(elt => elt instanceof Morphism).map(m =>
+		{
+			m.domain.isBare() && base.add(m.domain);
+			m.codomain.isBare() && base.add(m.codomain);
+		});
+		return base;
+	}
 	html(e, diagram, ary)
 	{
 		super.html();
@@ -12146,21 +12159,14 @@ class QuantifierAction extends Action
 		[	H3.h3('Create Definition'),
 			H3.label('Definition basename:', {for:'new-definition'}),
 			H3.input('##new-definition.ifocus', {placeholder:'Definition', title:'Definitione', onkeyup:e => D.inputBasenameSearch(e, R.actionDiagram, e => e.stopPropagation(), null, R.user.name + '/')}),
-			D.getIcon('edit', 'edit', e => this.doit(e, diagram, diagram.selected), {title:'Create definition'}),
+			D.getIcon('edit', 'edit', e => this.makeDefinition(e, diagram, diagram.selected), {title:'Create definition'}),
 			H3.br(),
 			H3.small('.italic', `Full name has the form sys/Action/${R.user.name}/basename`),
 			H3.br(),
 			H3.div('.center', H3.small('.bold', 'Following are selected for the definition')),
 		].map(elt => body.appendChild(elt));
-		const blobs = new Set();
-		ary.map(elt => blobs.add(diagram.getBlob(elt)));
-		const base = new Set();
-		blobs.forEach(blob => blob.levels[0].map(elt => U.isIndexItem(elt) && elt.to.isBare() && base.add(elt.to)));
-		[...base].filter(elt => elt instanceof Morphism).map(m =>
-		{
-			base.delete(m.domain);
-			base.delete(m.codomain);
-		});
+		const blobs = this.getBlobs(diagram, ary);
+		const base = this.getBase(blobs);
 		base.forEach(elt =>
 		{
 			const row = elt.getHtmlRow();
@@ -12201,6 +12207,12 @@ class QuantifierAction extends Action
 	}
 	replay(e, diagram, args)
 	{
+	}
+	makeDefinition(e, diagram, ary)
+	{
+		const blobs = this.getBlobs(diagram, ary);
+		const base = this.getBase(blobs);
+		const sequence = [...base];
 	}
 	hasForm(diagram, ary)
 	{
@@ -12502,7 +12514,7 @@ class Category extends CatObject
 			actions:		{value:	new Map(),	writable:	false},
 			user:			{value:args.user,	writable:false},
 		});
-		R.$CAT && this.addActions('Action');
+		R.$CAT && this.addActions('actions');
 		'elements' in nuArgs && this.process(diagram, nuArgs.elements);
 		if (this.constructor.name === 'Category')
 		{
@@ -12935,7 +12947,7 @@ class Morphism extends Element
 		const domGraph = this.domain.getGraph(data);
 		const codGraph = this.codomain.getGraph(codData);
 		const graph = new Graph(this, {position:data.position, width:0, graphs:[domGraph, codGraph]});
-		R.default.debug && graph.check();
+		R.debug(1) && graph.check();
 		return graph;
 	}
 	hasInverse()
@@ -15401,7 +15413,7 @@ class Composite extends MultiMorphism
 	getCompositeGraph()
 	{
 		const graphs = this.morphisms.map(m => m.getGraph());
-		R.default.debug && graphs.map((g, i) => g.check());
+		R.debug(1) && graphs.map((g, i) => g.check());
 		const objects = this.morphisms.map(m => m.domain);
 		objects.push(this.morphisms[this.morphisms.length -1].codomain);
 		const sequence = this.diagram.get('ProductObject', {objects, silent:true});
@@ -15417,7 +15429,7 @@ class Composite extends MultiMorphism
 			graph.graphs[i+1].cod = m;
 		});
 		graph.element = this;
-		R.default.debug && graph.check();
+		R.debug(1) && graph.check();
 		return graph;
 	}
 	getGraph(data = {position:0})
@@ -15836,7 +15848,7 @@ class FactorMorphism extends Morphism
 			}
 		});
 		graph.tagGraph(this.dual ? 'Cofactor' : 'Factor');
-		R.default.debug && graph.check();
+		R.debug(1) && graph.check();
 		return graph;
 	}
 	loadItem()
@@ -16277,7 +16289,7 @@ class HomMorphism extends MultiMorphism
 		graph.graphs[1].graphs[0].copyGraph({src:lo.graphs[0], map:loMap});		// domain of lo
 		graph.graphs[0].graphs[1].copyGraph({src:hi.graphs[0], map:hiMap});		// domain of hi
 		graph.graphs[1].graphs[1].copyGraph({src:hi.graphs[1], map:hiMap});		// codomain of hi
-		R.default.debug && graph.check();
+		R.debug(1) && graph.check();
 		return graph;
 	}
 	isBare()
@@ -16340,7 +16352,7 @@ class Evaluation extends Morphism
 		domain.graphs[1].bindGraph({cod:domHom.graphs[0],	index:[], domRoot:[0, 1],	codRoot:[0, 0, 0],	offset:0});
 		domHom.graphs[1].bindGraph({cod:codomain, 			index:[], domRoot:[0, 0, 1], codRoot:[1],		offset:0});
 		graph.tagGraph(this.constructor.name);
-		R.default.debug && graph.check();
+		R.debug(1) && graph.check();
 		return graph;
 	}
 	getHtmlRep(idPrefix, config = {})
@@ -16433,7 +16445,7 @@ class Distribute extends Morphism
 			g.graphs[opFctr].bindGraph({cod:dteeGraph.graphs[i], index:[1, i, opFctr], tag:this.constructor.name, domRoot:[1, i, opFctr], codRoot:[0, opFctr, i], offset:offset++});
 		});
 		graph.tagGraph('distribute');
-		R.default.debug && graph.check();
+		R.debug(1) && graph.check();
 		return graph;
 	}
 	isBare()
@@ -17037,7 +17049,7 @@ class Diagram extends Functor
 				compBox = elt.getSvgNameBBox();
 			else
 				compBox = svg.getBBox();
-			if (debug && svg instanceof SVGTextElement)
+			if (debug > 0 && svg instanceof SVGTextElement)
 				this.svgBase.appendChild(H3.rect({x:`${compBox.x}px`, y:`${compBox.y}px`, width:`${compBox.width}px`, height:`${compBox.height}px`, fill:'none', stroke:'blue'}));
 			if (D2.overlap(box, new D2(compBox)))
 				return true;
@@ -17272,7 +17284,7 @@ class Diagram extends Functor
 			D.diagramSVG.appendChild(this.svgRoot);
 			this.svgBase = H3.g({id:`${this.elementId()}-base`});
 			this.svgTranslate = H3.g({id:this.elementId('T')}, this.svgBase);
-			if (R.default.debug)
+			if (R.debug(1))
 			{
 				this.svgTranslate.appendChild(H3.path({stroke:'red', d:"M-30 0 L30 0"}));
 				this.svgTranslate.appendChild(H3.path({stroke:'red', d:"M0 -30 L0 30"}));
@@ -17328,7 +17340,7 @@ class Diagram extends Functor
 						R.recordError(res.statusText);
 						return;
 					}
-					R.default.debug && console.log('uploaded', this.name);
+					R.debug(1) && console.log('uploaded', this.name);
 					const info = R.getDiagramInfo(this.name);
 					info.cloudTimestamp = info.timestamp;
 					R.setDiagramInfo(info, true);
@@ -17336,7 +17348,7 @@ class Diagram extends Functor
 					if (e)
 					{
 						D.statusbar.show(e, 'Uploaded diagram', 1);
-						R.default.debug && console.log('diagram uploaded ms:', delta);
+						R.debug(1) && console.log('diagram uploaded ms:', delta);
 						D.emitCATEvent('upload', this.name);
 					}
 				});
@@ -17722,7 +17734,7 @@ class Diagram extends Functor
 	{
 		this.domain.cells.forEach(cell => cell.check());
 	}
-	emphasis(item, on)
+	emphasis(item, on)		// item can be index item or not
 	{
 		let rtrn = null;
 		let elt = 'to' in item ? item.to : this.getElement(item);
@@ -17739,7 +17751,7 @@ class Diagram extends Functor
 			{
 				item.emphasis(on);
 				const emphs = [...this.svgRoot.querySelectorAll(`g[data-sig="${elt.signature}"], path[data-sig="${elt.signature}"], text[data-sig="${elt.signature}"]`)];
-				if (item instanceof IndexObject)
+				if (item instanceof CatObject)
 					emphs.map(emph => item.svg !== emph && emph.querySelectorAll('text').forEach(text => text.classList[on ? 'add' : 'remove']('emphasis2')));
 				else
 					emphs.map(elt => item.svg_path !== elt && item.svg_name !== elt && elt.classList[on ? 'add' : 'remove']('emphasis2'));
@@ -18042,7 +18054,7 @@ class Diagram extends Functor
 		{
 			const obj = D.replayCommands.get(cmd.command);
 			obj.replay(e, R.diagram, cmd);
-			R.default.debug && console.log('replay', cmd);
+			R.debug(1) && console.log('replay', cmd);
 		}
 		else if (cmd.command === 'multiple')	// replay multiple commands like for undo
 			cmd.commands.map(c => this.replay(e, c));
@@ -18217,8 +18229,15 @@ class Diagram extends Functor
 				indexed.add(elt.to);
 		});
 		locations.sort();
+		const scanned = new Set();
 		const unindexed = [];
-		this.elements.forEach(elt => (elt instanceof CatObject || elt instanceof Morphism) && !indexed.has(elt) && unindexed.push(elt));
+		this.elements.forEach(elt =>
+		{
+			if (scanned.has(elt))
+				return;
+			scanned.add(elt);
+			(elt instanceof CatObject || elt instanceof Morphism) && !indexed.has(elt) && unindexed.push(elt);
+		});
 		let x = grid;
 		let y = 2* grid;
 		unindexed.map(elt =>
@@ -18228,13 +18247,14 @@ class Diagram extends Functor
 				if (loc === elt.y)
 					y += grid;
 			});
+			const height = D.default.font.height;
 			if (elt instanceof CatObject)
 			{
 				this.placeObject(elt, {x, y}, false);
 				if (elt instanceof Action)
-					new IndexText(this, {xy:{x:x - grid/4, y:y + grid/4}, height:D.default.font.height, weight:'normal', description:`<icon>${elt.basename}</icon>`});
+					new IndexText(this, {xy:{x:x + grid, y:y + height/2}, height, weight:'normal', description:`<icon>${elt.basename}</icon>`});
 				if (elt.description !== '')
-					new IndexText(this, {xy:{x, y:y + grid/4}, height:D.default.font.height, weight:'normal', description:elt.description});
+					new IndexText(this, {xy:{x:x + 1.25 * grid, y:y + height/2}, height, weight:'normal', description:elt.description});
 			}
 			else if (elt instanceof Morphism)
 			{
@@ -18259,7 +18279,7 @@ class Diagram extends Functor
 		let ndx = 0;
 		let offset = new D2();
 		let rect = null;
-		if (R.default.debug)
+		if (R.debug(1))
 		{
 			rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red', 'stroke-width':'0.1px'});
 			this.svgBase.appendChild(rect);
@@ -18270,9 +18290,9 @@ class Diagram extends Functor
 			const dir = D.directions[ndx % modulo];
 			offset = dir.scale(scale * Math.trunc((modulo + ndx)/modulo));
 			nubox = nubox.add(offset.getXY());
-			if (R.default.debug)
+			if (R.debug(1))
 			{
-				//R.default.debug && rect.remove();
+				//R.debug(1) && rect.remove();
 				rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
 				this.svgBase.appendChild(rect);
 			}
@@ -18280,7 +18300,7 @@ class Diagram extends Functor
 			if (ndx > 100)	// give up; too complex
 				break;
 		}
-		R.default.debug && console.log('autoplace ndx', name, ndx);
+		R.debug(1) && console.log('autoplace ndx', name, ndx);
 		return offset.add(bbox);
 	}
 	newText(e)
@@ -18438,7 +18458,7 @@ class Diagram extends Functor
 		{
 			D.diagramPNGs.set(this.name, png);
 			const tx = D.store.transaction(['PNGs'], 'readwrite');
-			tx.onsuccess = e => R.default.debug && console.log('png stored', this.name);
+			tx.onsuccess = e => R.debug(1) && console.log('png stored', this.name);
 			tx.onerror = e => R.recordError(e);
 			const pngStore = tx.objectStore('PNGs');
 			pngStore.put({name:this.name, png});
