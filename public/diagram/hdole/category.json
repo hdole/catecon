@@ -128,7 +128,7 @@
         "weight": "bold"
       },
       {
-        "description": "C is an internal category in D if given two objects\nC0 and C1, respectively the objects and morphisms\nof C, if the following diagrams commute.",
+        "description": "The construct C is an internal category in D if given\ntwo objects C0 and C1 in D, respectively the objects\nand morphisms of C, if the following diagrams commute.",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
@@ -862,6 +862,15 @@
         "height": 24
       },
       {
+        "basename": "o_6",
+        "prototype": "IndexObject",
+        "to": "C1",
+        "xy": {
+          "x": 550,
+          "y": 250
+        }
+      },
+      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_2",
@@ -1482,6 +1491,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_74",
         "codomain": "o_75",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Pu{Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Cm{comp,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP"
       },
       {
@@ -1523,6 +1538,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_63",
         "codomain": "o_74",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Pu{Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Cm{Fa{Pb{Cm{comp,cod}mC,dom}bP,C1_1}aF,Id{C1}dI}mC}uP}uP"
       },
       {
@@ -1554,14 +1575,57 @@
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
-        "domain": "o_4",
+        "domain": "o_6",
         "codomain": "o_7",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
+        "to": "cod"
+      },
+      {
+        "description": "Definition:  category",
+        "basename": "t_13",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 1060,
+          "y": 40
+        },
+        "height": 24
+      },
+      {
+        "basename": "o_79",
+        "prototype": "IndexObject",
+        "to": "C1",
+        "xy": {
+          "x": 1090,
+          "y": 3190
+        }
+      },
+      {
+        "basename": "m_82",
+        "prototype": "IndexMorphism",
+        "domain": "o_48",
+        "codomain": "o_79",
+        "to": "Fa{Pb{cod,dom}bP,C1_1}aF"
+      },
+      {
+        "basename": "o_80",
+        "prototype": "IndexObject",
+        "to": "C1",
+        "xy": {
+          "x": 1110,
+          "y": 3590
+        }
+      },
+      {
+        "basename": "m_83",
+        "prototype": "IndexMorphism",
+        "domain": "o_57",
+        "codomain": "o_80",
+        "to": "Fa{Pb{cod,dom}bP,C1_1}aF"
+      },
+      {
+        "basename": "m_84",
+        "prototype": "IndexMorphism",
+        "domain": "o_80",
+        "codomain": "o_56",
         "to": "cod"
       }
     ],
@@ -2010,11 +2074,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1646197321212,
+  "timestamp": 1646480005632,
   "version": 0,
   "viewport": {
-    "x": 1076,
-    "y": 488,
-    "scale": 0.3886054633115823
+    "x": 520,
+    "y": -3601,
+    "scale": 1.28861655516728
   }
 }

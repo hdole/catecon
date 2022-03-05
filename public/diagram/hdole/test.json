@@ -1132,8 +1132,8 @@
         "basename": "t_3",
         "prototype": "IndexText",
         "xy": {
-          "x": -160,
-          "y": -740
+          "x": -920,
+          "y": -660
         },
         "height": "49",
         "weight": "bold"
@@ -2534,6 +2534,29 @@
       ]
     },
     {
+      "prototype": "ProductObject",
+      "objects": [
+        "A",
+        "A",
+        "B",
+        "B",
+        "C",
+        "C"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "A",
+        "A",
+        "B",
+        "B",
+        "C",
+        "C"
+      ]
+    },
+    {
       "basename": "f",
       "prototype": "Morphism",
       "domain": "A",
@@ -2884,17 +2907,6 @@
       ]
     },
     {
-      "prototype": "ProductObject",
-      "objects": [
-        "A",
-        "A",
-        "B",
-        "B",
-        "C",
-        "C"
-      ]
-    },
-    {
       "prototype": "FactorMorphism",
       "domain": "Po{A,B,C}oP",
       "codomain": "Po{A,A,B,B,C,C}oP",
@@ -2950,18 +2962,6 @@
       "codomain": "CPo{A,B,C}oPC",
       "factors": [
         0
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "dual": true,
-      "objects": [
-        "A",
-        "A",
-        "B",
-        "B",
-        "C",
-        "C"
       ]
     },
     {
@@ -3095,11 +3095,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1646186039907,
+  "timestamp": 1646338077441,
   "version": 0,
   "viewport": {
-    "x": 533,
-    "y": 3005,
-    "scale": 1.6529877031306695
+    "x": 917,
+    "y": 685,
+    "scale": 0.4782523221983883
   }
 }

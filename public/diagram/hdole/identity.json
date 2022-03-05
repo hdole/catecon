@@ -65,7 +65,7 @@
         }
       },
       {
-        "description": "A morphism id:A-->A in the category D is said to be\nan identity given the following commutative diagram.",
+        "description": "A morphism id:A&rarr;A in the category D is said to be\nan identity given the following commutative diagram.",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
@@ -235,7 +235,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1646120641813,
+  "timestamp": 1646350209561,
   "version": 0,
   "viewport": {
     "x": -517,
