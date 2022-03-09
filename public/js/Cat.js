@@ -591,7 +591,7 @@ class Runtime
 	setupWorkers()
 	{
 		// equality engine
-		const worker = new Worker((D ? '' : './public') + '/js/workerEquality.js');
+		const worker = new Worker((D ? '' : './public') + '/js/equator.js');
 		worker.onmessage = msg =>		// process return messages from the worker
 		{
 			const args = msg.data;
@@ -4072,7 +4072,7 @@ class Display
 		//			ControlKeyF(e)		BROWSER RESERVED: search on page
 					KeyG(e)
 					{
-						Cat.R.diagram.showGraphs();
+						Cat.R.diagram.activate(e, 'graph');
 						e.preventDefault();
 					},
 		//			ControlKeyG(e)		BROWSER RESERVED: find next match
@@ -4250,20 +4250,32 @@ class Display
 					Numpad9(e) { D.panHandler(e, new D2(-1, 1)); },
 					PageUp(e)
 					{
-						if (!D.default.fullscreen && Cat.R.diagram)
+						if (R.diagram)
 						{
-							const svg = Cat.R.diagram.svgRoot;
-							const nxt = svg.nextSibling;
-							nxt && svg.parentNode.insertBefore(nxt, svg);
+							if (!D.default.fullscreen)
+							{
+								const svg = Cat.R.diagram.svgRoot;
+								const nxt = svg.nextSibling;
+								nxt && svg.parentNode.insertBefore(nxt, svg);
+							}
+							else
+							{
+								D.panHandler(e, 'up', D.height() * 0.8);
+							}
 						}
 					},
 					PageDown(e)
 					{
-						if (!D.default.fullscreen && Cat.R.diagram)
+						if (R.diagram)
 						{
-							const svg = Cat.R.diagram.svgRoot;
-							const before = svg.previousSibling;
-							before && svg.parentNode.insertBefore(svg, before);
+							if (!D.default.fullscreen)
+							{
+								const svg = Cat.R.diagram.svgRoot;
+								const before = svg.previousSibling;
+								before && svg.parentNode.insertBefore(svg, before);
+							}
+							else
+								D.panHandler(e, 'down', D.height() * 0.8);
 						}
 					},
 					ShiftSlash(e)
@@ -6295,30 +6307,31 @@ class Display
 	{
 		return Math.min(this.width(), this.height()) * this.default.pan.scale;
 	}
-	panHandler(e, dir)
+	panHandler(e, dir, dist = null)		// dist in pixels
 	{
 		if (this.textEditActive())
 			return;
 		let offset = null;
 		const viewport = this.session.getCurrentViewport();
+		const screenPan = dist ? dist : this.screenPan;
 		if (typeof dir === 'string')
 			switch(dir)
 			{
 				case 'up':
-					offset = new D2(0, this.screenPan);
+					offset = new D2(0, screenPan);
 					break;
 				case 'down':
-					offset = new D2(0, -this.screenPan);
+					offset = new D2(0, -screenPan);
 					break;
 				case 'left':
-					offset = new D2(this.screenPan, 0);
+					offset = new D2(screenPan, 0);
 					break;
 				case 'right':
-					offset = new D2(-this.screenPan, 0);
+					offset = new D2(-screenPan, 0);
 					break;
 			}
 		else if (dir instanceof D2)
-			offset = new D2(dir.x * this.screenPan, dir.y * this.screenPan);
+			offset = new D2(dir.x * screenPan, dir.y * screenPan);
 		else
 			offset = new D2(e.movementX * viewport.scale, e.movementY * viewport.scale);
 		this.setSessionViewport({x:viewport.x + offset.x, y:viewport.y + offset.y, scale:viewport.scale});
@@ -6680,7 +6693,7 @@ class Display
 	}
 	deEmphasize()
 	{
-		this.emphasized.forEach(elt => elt.emphasis(false));
+		this.emphasized.forEach(elt => elt.svg && elt.emphasis(false));
 	}
 	toggleShowCommutivity(e)
 	{
@@ -6709,6 +6722,11 @@ class Display
 	{
 		R.setCategory(cat);
 		D.emitDiagramEvent(R.diagram, 'category', cat);
+	}
+	copyTo(e, str)
+	{
+		navigator.clipboard.writeText(str);
+		D.statusbar.show(e, 'Copied');
 	}
 }
 
@@ -7835,7 +7853,7 @@ class Graph
 			this.position = args.position;
 		if ('width' in args)
 			this.width = args.width;
-		this.graphs = 'graphs' in args ? args.graphs.slice() : [];
+		this.graphs = 'graphs' in args ? args.graphs.slice().map(g => g instanceof Graph ? g : new Graph(element.diagram.getElement(g.element), g)) : [];
 		this.tags = 'tags' in args ? args.tags.slice() : [];
 		this.links = 'links' in args ? args.links.slice() : [];
 		this.visited = new Set('visited' in args ? args.visited.slice() : []);
@@ -8387,6 +8405,59 @@ class Graph
 		if (term in this)
 			console.log(...ndx, term, this[term]);
 		this.graphs.map((g, i) => g.find(term, U.pushFactor(ndx, i)));
+	}
+	purge()
+	{
+		const doit = g =>
+		{
+			g.visited.clear();
+			g.links.length = 0;
+			g.graphs.map(sg => doit(sg));
+		}
+		doit(this);
+	}
+	reverse()
+	{
+		if (this.graphs.length !== 2)
+			throw 'bad graph';
+		const graphs = [this.graphs[1], this.graphs[0]];
+		const graph = new Graph(this.element, {graphs});
+		const doit = g =>
+		{
+			g.links.map(lnk =>
+			{
+				if (lnk[0] === 0)
+					lnk[0] = 1;
+				else if (lnk[0] === 1)
+					lnk[0] = 0;
+			});
+			g.graphs.map(sg => doit(sg));
+		};
+		doit(graph);
+		return graph;
+	}
+	static sequenceGraph(element, morphismGraphs)
+	{
+		R.debug(1) && morphismGraphs.map((g, i) => g.check());
+		const graphs = morphismGraphs.map(g => g.graphs[0].element.getGraph());
+		graphs.push(morphismGraphs[morphismGraphs.length -1].graphs[1].element.getGraph());
+		const graph = new Graph(element, {graphs});
+		morphismGraphs.map((g, i) =>					// merge the individual graphs into the sequence graph
+		{
+			graph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
+			graph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
+		});
+		R.debug(1) && graph.check();
+		return graph;
+	}
+	static connectSequence(element, graph, seqGraph)
+	{
+		seqGraph.traceLinks(seqGraph);
+		const cnt = seqGraph.graphs.length -1;
+		seqGraph.graphs[0].reduceLinks(cnt);
+		seqGraph.graphs[cnt].reduceLinks(cnt);
+		graph.graphs[0].copyGraph({src:seqGraph.graphs[0], map:[[[0], [0]], [[cnt], [1]]]});
+		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]], [[cnt], [1]]]});
 	}
 }
 
@@ -9479,7 +9550,7 @@ class IndexObject extends CatObject
 	}
 	help()
 	{
-		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, '.italic.small')));
+		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, D.getIcon('copyTo', 'copyTo', e => D.copyTo(e, this.basename), {title:'Copy to paste buffer'}), '.italic.small')));
 		this.to.help();
 	}
 	json()
@@ -9609,8 +9680,7 @@ class IndexObject extends CatObject
 		txt.onmouseout = e => this.mouseout(e);
 		txt.onmousedown = e => D.default.fullscreen && R.diagram && R.diagram.userSelectElement(e, name);
 		txt.onmousemove = e => this.mousemove(e);
-		if (this.isEditable())
-			txt.ondblclick = e => this.placeProjection(e);
+		txt.ondblclick = e => this.isEditable() && this.placeProjection(e);		// defer test for editablity to due authentication loading is async
 		node.appendChild(svg);
 		this.svg = svg;
 	}
@@ -10198,12 +10268,13 @@ class PullbackAssemblyAction extends Action
 				}
 			}
 			if (!foundIt)
-				return false;
+				return [];
 			foundIt = false;
 			let rightNdx = -1;
-			for (let i=right.length-1; i>=0; --i)
+			const redRight = right.filter(m => !Morphism.isIdentity(m.to));
+			for (let i=redRight.length-1; i>=0; --i)
 			{
-				if (pboNdx.to.morphisms[1].isEquivalent(diagram.comp(...right.slice(i).map(m => m.to))))
+				if (pboNdx.to.morphisms[1].isEquivalent(diagram.comp(...redRight.slice(i).map(m => m.to))))
 				{
 					foundIt = true;
 					rightNdx = i;
@@ -10211,18 +10282,18 @@ class PullbackAssemblyAction extends Action
 				}
 			}
 			if (!foundIt)
-				return false;
+				return [];
 			const cellName = Cell.Name(diagram, left, right);
 			const cell = diagram.getCell(cellName);
 			if (cell && cell.isEqual())
 				return [left.slice(0, leftNdx), right.slice(0, rightNdx)];
 			else
-				return null;
+				return [];
 		}
 		else
 		{
 			// TODO dual
-			return null;
+			return [];
 		}
 	}
 	hasForm(diagram, ary)
@@ -10239,7 +10310,7 @@ class PullbackAssemblyAction extends Action
 				return false;
 			if (left[left.length -1].codomain !== right[right.length -1].codomain)		// end must be the same
 				return false;
-			return this.getLegs(diagram, left, right, pboNdx) !== null;
+			return this.getLegs(diagram, left, right, pboNdx).length > 0;
 		}
 		return false;
 	}
@@ -10386,7 +10457,19 @@ class HomObjectAction extends Action
 			const from = ary[0];
 			let rows = [];
 			const to = from.to;
-			//	 TODO for each reference diagram
+			const doit = m =>
+			{
+				const obj = this.dual ? m.codomain : m.domain;
+				if (m instanceof Morphism && to.isEquivalent(obj))
+				{
+					const rep = m.getHtmlRep();
+					rep.classList.add('element');
+					const row = H3.tr(H3.td(rep, {colspan:2}));
+					row.onclick = e => Cat.R.Actions[this.basename].action(e, diagram, [from.name, m.name]);		// replace std action
+					rows.push(row);
+				}
+			};
+			/*
 			diagram.allReferences.forEach(ref => ref.forEachMorphism(m =>
 			{
 				const obj = this.dual ? m.codomain : m.domain;
@@ -10399,6 +10482,9 @@ class HomObjectAction extends Action
 					rows.push(row);
 				}
 			}));
+			*/
+			diagram.forEachMorphism(doit);
+			diagram.allReferences.forEach(ref => ref.forEachMorphism(doit));
 			D.toolbar.clear();
 			D.toolbar.table.appendChild(H3.tr(H3.td(H3.small(`Place morphisms ${this.dual ? 'to' : 'from'} ${to.properName}`, '.italic'))));
 			const table = H3.table('.matching-table');
@@ -13579,7 +13665,7 @@ const Arrow =
 			const args = {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, id:`${this.elementId()}_name`,
 					onmouseenter:e => this.mouseenter(e), onmouseout:e => this.mouseout(e), onmouseover:e => this.mouseover(e), onmousedown:e => Cat.R.diagram.userSelectElement(e, this.name)};
 			if (this.isEditable())
-				args.ondblclick = e => Cat.R.Actions.flipName.action(e, this.diagram, [this]),
+				args.ondblclick = e => Cat.R.Actions.flipName.action(e, this.diagram, [this]);
 			this.svg_name = H3.text('.morphTxt.grabbable', args, properName);
 			const width = D.textWidth(properName, 'morphTxt');
 			const off = this.getNameOffset();
@@ -13892,7 +13978,7 @@ class IndexMorphism extends Morphism
 	help()
 	{
 		this.to.help();
-		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, '.italic.small')));
+		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, D.getIcon('copyTo', 'copyTo', e => D.copyTo(e, this.basename), {title:'Copy to paste buffer'}), '.italic.small')));
 		const to = this.to;
 		let domainElt = null;
 		let codomainElt = null;
@@ -14228,7 +14314,7 @@ class IndexElement extends Element
 	}
 	help()
 	{
-		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, '.italic.small')));
+		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, D.getIcon('copyTo', 'copyTo', e => D.copyTo(e, this.basename), {title:'Copy to paste buffer'}), '.italic.small')));
 		super.help();
 		if (this.isEditable())
 		{
@@ -14444,7 +14530,7 @@ class Cell
 		body.appendChild(H3.h4(this.properName));
 		body.appendChild(H3.p(H3.span('Commutativity: '), H3.span('.bold', U.Cap(this.commutes))));
 		const buttons = this.getButtons();
-		body.appendChild(H3.p(H3.span('Index: '), H3.span('.bold', this.basename)));
+		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, D.getIcon('copyTo', 'copyTo', e => D.copyTo(e, this.basename), {title:'Copy to paste buffer'}), '.italic.small')));
 		body.appendChild(H3.p(buttons));
 		body.appendChild(H3.p('.bold', 'Left leg:'));
 		this.left.map(m => body.appendChild(H3.span('.element', m.to.getArrowRep(), {onmouseenter:e => m.emphasis(true), onmouseleave:e => m.emphasis(false)})));
@@ -15698,11 +15784,15 @@ class PullbackAssembly extends MultiMorphism
 	getGraph(data = {position:0})
 	{
 		const graph = super.getGraph(data);
+		const domNdx = this.dual ? 1 : 0;
+		const codNdx = this.dual ? 0 : 1;
+		const target = this.dual ? this.domain : this.codomain;
 		this.morphisms.map((m, i) =>
 		{
-			const g = m.getGraph(data);
-			graph.graphs[0].copyGraph({src:g.graphs[0], map:[[[1], [1, i]]]});
-			graph.graphs[1].graphs[i].copyGraph({src:g.graphs[1], map:[[[0], [0]]]});
+			const mGraph = m.getGraph(data);
+			const pGraph = this.diagram.fctr(target, [i]).getGraph().reverse();
+			const sequence = Graph.sequenceGraph(null, [mGraph, pGraph]);
+			Graph.connectSequence(this, graph, sequence);
 		});
 		return graph;
 	}
