@@ -602,35 +602,34 @@ class Runtime
 					const cell = diagram.getCell(args.cell);
 					if (!cell)
 						return;	// TODO bad cell request
-					if (cell.commutes !== args.isEqual)
+					let type = '';
+					let item = null;
+					if (args.item)
+						item = diagram.getElement(args.item);
+					if (args.equal === 1)
 					{
-						let type = '';
-						let item = null;
-						if (args.item)
-							item = diagram.getElement(args.item);
-						if (args.isEqual === true)
-						{
-							if (cell.commutes === 'equals')
-								type = 'equals';
-							else if (cell.cellIsComposite())
-								type = 'composite';
-							else if (cell.isNamedMorphism())
-								type = 'named';
-							else if (cell.assertion && cell.assertion === 'equals')
-								type = 'assertion';
-							else if (item instanceof PullbackObject)
-								type = item.dual ? 'pushout' : 'pullback';
-							else
-								type = 'computed';
-						}
+						if (cell.commutes === 'equals')
+							type = 'equals';
+						else if (cell.cellIsComposite())
+							type = 'composite';
+						else if (cell.isNamedMorphism())
+							type = 'named';
+						else if (cell.assertion && cell.assertion === 'equals')
+							type = 'assertion';
+						else if (item instanceof PullbackObject)
+							type = item.dual ? 'pushout' : 'pullback';
 						else
-							type = 'notEqual';
-						cell.setCommutes(type);
-						const objs = cell.getObjects();
-						if (!cell.svg)
-							diagram.addSVG(cell);
-						cell.update();
+							type = 'computed';
 					}
+					else if (args.equal === 0)
+						type = 'unknown';
+					else
+						type = 'notEqual';
+					cell.setCommutes(type);
+					const objs = cell.getObjects();
+					if (!cell.svg)
+						diagram.addSVG(cell);
+					cell.update();
 					break;
 				case 'start':
 				case 'LoadDiagrams':
@@ -10469,20 +10468,6 @@ class HomObjectAction extends Action
 					rows.push(row);
 				}
 			};
-			/*
-			diagram.allReferences.forEach(ref => ref.forEachMorphism(m =>
-			{
-				const obj = this.dual ? m.codomain : m.domain;
-				if (m instanceof Morphism && to.isEquivalent(obj))
-				{
-					const rep = m.getHtmlRep();
-					rep.classList.add('element');
-					const row = H3.tr(H3.td(rep, {colspan:2}));
-					row.onclick = e => Cat.R.Actions[this.basename].action(e, diagram, [from.name, m.name]);		// replace std action
-					rows.push(row);
-				}
-			}));
-			*/
 			diagram.forEachMorphism(doit);
 			diagram.allReferences.forEach(ref => ref.forEachMorphism(doit));
 			D.toolbar.clear();
@@ -14504,6 +14489,7 @@ class Cell
 								D.getIcon('notEqual', 'notEqual', e => this.action(e, 'notEqual'), {title:'Set to not equal'}));
 		}
 		buttons.push(D.getIcon('viewCell', 'view', e => R.Actions.zoom.action(e, R.diagram, [this]), {title:'View cell'}));
+		buttons.push(D.getIcon('edit', 'edit', e => this.check(), {title:'Check cell'}));
 		return buttons;
 	}
 	isEqual()
@@ -14528,7 +14514,7 @@ class Cell
 		const body = D.toolbar.body;
 		body.appendChild(H3.h3('Cell'));
 		body.appendChild(H3.h4(this.properName));
-		body.appendChild(H3.p(H3.span('Commutativity: '), H3.span('.bold', U.Cap(this.commutes))));
+		body.appendChild(H3.p(H3.span('Commutivity: '), H3.span('.bold', U.Cap(this.commutes))));
 		const buttons = this.getButtons();
 		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, D.getIcon('copyTo', 'copyTo', e => D.copyTo(e, this.basename), {title:'Copy to paste buffer'}), '.italic.small')));
 		body.appendChild(H3.p(buttons));
