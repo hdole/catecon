@@ -151,7 +151,6 @@ function loadEquivalences(diagram, lLeg, rLeg, equal)
 		notEquals.set(leftSig, leftSigs);
 		notEquals.set(rightSig, rightSigs);
 	}
-	return true;
 }
 
 function loadItem(diagram, item, leftLeg, rightLeg, equal)
@@ -171,11 +170,11 @@ function compareSigs(leftSig, rightSig)
 {
 	const equs = getEquals(leftSig);
 	if (equs.has(rightSig))
-		return true;
+		return 1;		// equal
 	const notEqu = notEquals.get(leftSig);
 	if (notEqu && notEqu.has(rightSig))
-		return false;
-	return 'unknown';
+		return 2;		// not equal
+	return 0;		// unkown
 }
 
 function removeIdentities(leg)
@@ -183,68 +182,72 @@ function removeIdentities(leg)
 	return leg.filter(s => !identities.has(s));
 }
 
-//function scanLeg(leg, sig, scanned, sigs)		// recursive scanning of the leg trying to match the sig
 function scanLeg(left, leftSig, right, rightSig, scanned)		// recursive scanning of the left leg trying to match the rightSig
 {
-	const result = compareSigs(rightSig, Sig(...left));
-	if (result === 'unknown')
+	const result = compareSigs(rightSig, leftSig);
+	if (result === 0)		// unkonwn
 	{
 		const len = left.length;
 		if (len > 1)
 			for (let ndx=0; ndx < len; ++ndx)
 			{
-				const maxCnt = Math.min(maxLegLength, ndx > 0 ? len - ndx : 1);
-				for (let cnt=1; cnt <= maxCnt; ++cnt)
-					if (checkLeg(left, leftSig, right, rightSig, ndx, cnt, scanned))
-						return true;
+				let scanLength = Math.min(len -1, maxLegLength);
+				scanLength = len - ndx < scanLength ? len - ndx : scanLength;
+				for (let cnt=1; cnt <= scanLength; ++cnt)
+				{
+					const equal = checkLeg(left, leftSig, right, rightSig, ndx, cnt, scanned);
+					if (equal > 0)
+						return equal;
+				}
 			}
-		return false;
+		return 0;		// unkonwn
 	}
 	return result;
 }
 
 function checkLeg(left, leftSig, right, rightSig, ndx, cnt, scanned)
 {
-	let isEqual = false;
+	let equal = 0;
 	const subLeg = left.slice(ndx, ndx + cnt);		// the subleg to replace
 	const subSig = Sig(...subLeg);
 	const equs = getEquals(subSig);		// get equivalents of the subleg
 	let nuLeg = null;
 	let nuSig = null;
+	const legs = new Set();
 	if (equs && equs.size > 1)		// try substituting sigs equal to the sub-leg
 	{
 		for (const equ of equs)
 		{
-			if (scanned.has(equ))
+			if (legs.has(equ))
 				continue;
-			nuLeg = left.slice(0, ndx);	// first part of leg
+			legs.add(equ);
 			const equalLegs = sig2legs.get(equ);
 			for (let i=0; i < equalLegs.length; ++i)
 			{
 				const equLeg = equalLegs[i];
 				if (Sig(...equLeg) === subSig)
 					continue;
+				nuLeg = left.slice(0, ndx);	// first part of leg
 				nuLeg.push(...equLeg);
 				if (ndx + cnt < left.length)			// add rest of original leg
 					nuLeg.push(...left.slice(ndx + cnt, left.length));
 				if (arrayEquals(left, nuLeg))
 					continue;
 				nuSig = Sig(...nuLeg);
+				setEquals(left, nuLeg);
 				if (nuSig === rightSig)
 				{
-					isEqual = true;
+					equal = 1;
 					break;
 				}
-				if (!isEqual)
-				{
-					isEqual = checkTrimmedLegs(nuLeg, right);
-					if (isEqual)
-						break;
-				}
+				if (equal === 0)
+					equal = checkTrimmedLegs(nuLeg, right, scanned);
+				if (equal > 0)
+					break;
 			}
 		}
 	}
-	if (!isEqual && sig2legs.has(subSig) && !scanned.has(subSig))		// try substituting shorter legs for the sub-leg and scanning that leg
+	if (equal === 0 && sig2legs.has(subSig))		// try substituting shorter legs for the sub-leg and scanning that leg
 	{
 		const subSet = sig2legs.get(subSig);
 		for (const altLeg of subSet)
@@ -255,17 +258,23 @@ function checkLeg(left, leftSig, right, rightSig, ndx, cnt, scanned)
 				nuLeg.push(...altLeg);				// push alternate leg
 				if (ndx + cnt < left.length)			// add rest of original leg
 					nuLeg.push(...left.slice(ndx + cnt, left.length));
-				nuSig = Sig(nuLeg);
-				isEqual = rightSig === nuSig ? true : equals.has(rightSig) && equals.get(rightSig).has(nuSig);
-				if (!isEqual)
-					isEqual = scanLeg(nuLeg, nuSig, right, rightSig, scanned);
-				if (!isEqual)
-					isEqual = checkTrimmedLegs(nuLeg, right);
+				nuSig = Sig(...nuLeg);
+				if (scanned.has(nuSig))
+					continue;
+				scanned.add(nuSig);
+				setEquals(left, nuLeg);
+				equal = rightSig === nuSig ? 1 : (equals.has(rightSig) && equals.get(rightSig).has(nuSig) ? 1 : 0);
+				if (equal === 0)
+					equal = scanLeg(nuLeg, nuSig, right, rightSig, scanned);
+//				if (equal === 0)
+//					equal = checkTrimmedLegs(nuLeg, right);
+				if (equal > 0)
+					break;
 			}
 		}
 	}
-	isEqual && loadEquivalences(null, left, nuLeg, true);
-	return isEqual;
+	equal === 1 && loadEquivalences(null, left, nuLeg, true);		// TODO not equal?
+	return equal;
 }
 
 function loadDiagrams(diagrams)
@@ -327,17 +336,19 @@ function trimLegs(inLeft, inRight)
 	return {left, right};
 }
 
-function checkTrimmedLegs(left, right)
+function checkTrimmedLegs(left, right, scanned)
 {
 	const trimmed = trimLegs(left, right);
 	if (trimmed.left.length < left.length)
 	{
-		const chk =check(trimmed.left, trimmed.right);
-		if (chk === 'unknown')
-			return false;
-		return chk;
+		const chk = check(trimmed.left, trimmed.right, scanned);
+		if (chk > 0)
+		{
+			setEquals(left, right);
+			return chk;
+		}
 	}
-	return false;
+	return 0;		// unknown
 }
 
 function removeIds(lLeg, rLeg)
@@ -347,25 +358,22 @@ function removeIds(lLeg, rLeg)
 	return {left, right};
 }
 
-function check(left, right)
+function check(left, right, scanned)
 {
 	const leftSig = Sig(...left);
 	const rightSig = Sig(...right);
-	let isEqual = compareSigs(leftSig, rightSig);
-	const scanned = new Set();
-	if (typeof isEqual === 'string')
+	let equal = compareSigs(leftSig, rightSig);
+	if (equal === 0)
 	{
-		let equal = scanLeg(left, leftSig, right, rightSig, scanned);
-		if (!equal)
+		equal = scanLeg(left, leftSig, right, rightSig, scanned);
+		if (equal === 0)
 			equal = scanLeg(right, rightSig, left, leftSig, scanned);
-		isEqual = equal ? true : 'unknown';
 	}
-	if (isEqual === true)
+	if (equal === 1)		// TODO not equals?
 		setEquals(left, right);
-	return isEqual;
+	return equal;
 }
 
-// cell: tracking token for client; typically the sig of a cell
 function checkEquivalence(diagram, lLeg, rLeg)		// not recursive
 {
 	if (spoiled)		// spoilage comes from editting
@@ -373,22 +381,21 @@ function checkEquivalence(diagram, lLeg, rLeg)		// not recursive
 	const {left, right} = removeIds(lLeg, rLeg);
 	const leftSig = Sig(...left);
 	const rightSig = Sig(...right);
-	let isEqual = compareSigs(leftSig, rightSig);
-	const scanned = new Set();
-	if (typeof isEqual === 'string')
+	let equal = compareSigs(leftSig, rightSig);
+	if (equal === 0)
 	{
-		let equal = scanLeg(left, leftSig, right, rightSig, scanned);
-		if (equal === false)
+		const scanned = new Set();
+		equal = scanLeg(left, leftSig, right, rightSig, scanned);
+		scanned.clear();
+		if (equal === 0)
 			equal = scanLeg(right, rightSig, left, leftSig, scanned);
-		if (equal === false)
-			equal = checkTrimmedLegs(left, right);
-//		isEqual = equal ? true : 'unknown';
-		isEqual = typeof equal === 'string' ? equal : equal ? true : 'unknown';
+		if (equal === 0)
+			equal = checkTrimmedLegs(left, right, scanned);
 	}
 	const item = getItem(lLeg, rLeg);
-	if (isEqual === true)
+	if (equal === 1)
 		setEquals(left, right);
-	return {diagram, isEqual, item};
+	return {diagram, equal, item};
 }
 
 function removeEquivalences(diagram, delItems)		// when deletion occurs due to editting
