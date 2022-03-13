@@ -2462,8 +2462,7 @@ class TextTool extends ElementTool
 			if (txt.isEditable())
 			{
 				const id = txt.elementId();
-				if (this.isEditable())
-					txtHtml.addEventListener('dblclick', e => Cat.R.diagram.editElementText(e, txt, id, 'description'));
+				txtHtml.addEventListener('dblclick', e => this.isEditable() && Cat.R.diagram.editElementText(e, txt, id, 'description'));		// defer editable check
 				const onfocusout = e =>
 				{
 					txtHtml.firstChild.contentEditable = false;
@@ -8901,7 +8900,7 @@ class PullbackObject extends ProductObject
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.dual = U.getArg(args, 'dual', false);
-		nuArgs.objects = 'objects' in nuArgs ? diagram.getElements(nuArgs.objects) : nuArgs.morphisms.map(m => m.domain);
+		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects, args.category);
 		nuArgs.basename = PullbackObject.Basename(diagram, {morphisms:nuArgs.morphisms});
 		nuArgs.name = PullbackObject.Codename(diagram, {morphisms:nuArgs.morphisms});
 		super(diagram, nuArgs);
@@ -8971,7 +8970,9 @@ class PullbackObject extends ProductObject
 	}
 	static Basename(diagram, args)
 	{
-		return `Pb{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}bP`;
+		const dual = 'dual' in args ? args.dual : false;
+		const c = dual ? 'C' : '';
+		return `${c}Pb{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}bP${c}`;
 	}
 	static Codename(diagram, args)
 	{
@@ -9145,8 +9146,7 @@ class IndexText extends Element
 	setSvgText()
 	{
 		this.svgText = H3.text(this.isEditable ? '.grabbable' : null, {'text-anchor':this.textAnchor, style:this.ssStyle(), 'data-name':this.name});
-		if (this.isEditable())
-			this.svgText.ondblclick = e => this.textEditor();
+		this.svgText.ondblclick = e => this.isEditable() && this.textEditor();		// defer editable check
 		this.svg.appendChild(this.svgText);
 	}
 	tspan()
@@ -10075,10 +10075,10 @@ class ProductAction extends Action
 		super(diagram, args);
 		D && D.replayCommands.set(this.basename, this);
 	}
-	action(e, diagram, morphisms, log = true)
+	action(e, diagram, elements, log = true)
 	{
-		const names = morphisms.map(m => m.name);
-		const elt = this.doit(e, diagram, morphisms);
+		const names = elements.map(m => m.name);
+		const elt = this.doit(e, diagram, elements);
 		log && diagram.log({command:this.name, elements:names});
 		log && diagram.antilog({command:'delete', elements:[elt.name]});
 	}
@@ -10131,7 +10131,8 @@ class PullbackAction extends Action		// pullback or pushout
 	action(e, diagram, morphisms)
 	{
 		const names = morphisms.map(m => m.name);
-		const {object, cone} = this.doit(e, diagram, morphisms);
+		const category = morphisms[0].category;		// all morphisms must be in the same cat
+		const {object, cone} = this.doit(e, diagram, morphisms, category);
 		diagram.log({command:this.name, morphisms:names});
 		// 	TODO antilog
 		diagram.makeSelected(...cone);
@@ -13649,8 +13650,7 @@ const Arrow =
 			}
 			const args = {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, id:`${this.elementId()}_name`,
 					onmouseenter:e => this.mouseenter(e), onmouseout:e => this.mouseout(e), onmouseover:e => this.mouseover(e), onmousedown:e => Cat.R.diagram.userSelectElement(e, this.name)};
-			if (this.isEditable())
-				args.ondblclick = e => Cat.R.Actions.flipName.action(e, this.diagram, [this]);
+			args.ondblclick = e => this.isEditable() && Cat.R.Actions.flipName.action(e, this.diagram, [this]);		// defer editable check
 			this.svg_name = H3.text('.morphTxt.grabbable', args, properName);
 			const width = D.textWidth(properName, 'morphTxt');
 			const off = this.getNameOffset();
@@ -13698,7 +13698,7 @@ const Arrow =
 		const svg = this.svg_path;
 		const start = this.start;
 		const end = this.end;
-		if (svg !== null && start.x !== undefined)
+		if (svg !== null && (start.x !== end.x || start.y !== end.y))
 		{
 			let startNormal = null;
 			let endNormal = null;
@@ -14489,7 +14489,7 @@ class Cell
 								D.getIcon('notEqual', 'notEqual', e => this.action(e, 'notEqual'), {title:'Set to not equal'}));
 		}
 		buttons.push(D.getIcon('viewCell', 'view', e => R.Actions.zoom.action(e, R.diagram, [this]), {title:'View cell'}));
-		buttons.push(D.getIcon('edit', 'edit', e => this.check(), {title:'Check cell'}));
+		/*R.debug(1) &&*/ buttons.push(D.getIcon('edit', 'edit', e => this.check(), {title:'Check cell'}));
 		return buttons;
 	}
 	isEqual()
@@ -15455,6 +15455,7 @@ class Composite extends MultiMorphism
 		nuArgs.domain = Composite.Domain(morphisms);
 		nuArgs.codomain = Composite.Codomain(morphisms);
 		nuArgs.morphisms = morphisms;
+		nuArgs.category = nuArgs.domain.category;		// must be in the same category
 		for(let i=0; i<morphisms.length -1; ++i)
 			if (!morphisms[i].codomain.isEquivalent(morphisms[i+1].domain))
 			{
@@ -15750,11 +15751,17 @@ class PullbackAssembly extends MultiMorphism
 		const target = dual ? 'domain' : 'codomain';
 		const source = dual ? 'codomain' : 'domain';
 		nuArgs.morphisms = diagram.getElements(args.morphisms);
-		nuArgs[source] = diagram.getElement(args[source], args.category);
-		nuArgs[target] = diagram.getElement(args[target], args.category);
+		nuArgs.category = nuArgs.morphisms[0].category;		// must be in the same category
+		nuArgs[source] = diagram.getElement(args[source], nuArgs.category);
+		nuArgs[target] = diagram.getElement(args[target], nuArgs.category);
 		if (!(nuArgs[target] instanceof PullbackObject) || dual !== nuArgs[target].dual)
 			throw 'bad object definition for pullback/pushout';
-		nuArgs.basename = PullbackAssembly.Basename(diagram, {morphisms:nuArgs.morphisms, dual});
+		const assyArgs = {morphisms:nuArgs.morphisms, dual};
+		if (dual)
+			assyArgs.domain = args.domain;
+		else
+			assyArgs.codomain = args.codomain;
+		nuArgs.basename = PullbackAssembly.Basename(diagram, assyArgs);
 		nuArgs.properName = PullbackAssembly.ProperName(nuArgs.morphisms, dual);
 		super(diagram, nuArgs);
 		if (this.constructor.name === 'PullbackAssembly')
@@ -15762,6 +15769,15 @@ class PullbackAssembly extends MultiMorphism
 			this.setSignature();
 			D && D.emitElementEvent(diagram, 'new', this);
 		}
+	}
+	json()
+	{
+		const a = super.json();
+		if (this.dual)
+			a.domain = this.domain.refName(this.diagram);
+		else
+			a.codomain = this.codomain.refName(this.diagram);
+		return a;
 	}
 	help()
 	{
@@ -15807,7 +15823,8 @@ class PullbackAssembly extends MultiMorphism
 	{
 		const dual = 'dual' in args ? args.dual : false;
 		const c = dual ? 'C' : '';
-		const basename = `${c}Pu{${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}uP${c}`;
+		const objName = dual ? (typeof args.domain === 'string' ? args.domain : args.domain.refName(diagram)) : (typeof args.codomain === 'string' ? args.codomain : args.codomain.refName(diagram));
+		const basename = `${c}Pu{${objName},${args.morphisms.map(m => typeof m === 'string' ? m : m.refName(diagram)).join(',')}}uP${c}`;
 		return basename;
 	}
 	static Codename(diagram, args)
@@ -15843,6 +15860,7 @@ class FactorMorphism extends Morphism
 			nuArgs.domain = diagram.getElement(args.domain, args.category);
 			nuArgs.codomain = FactorMorphism.Codomain(diagram, nuArgs.domain, nuArgs.factors, dual);
 		}
+		nuArgs.category = nuArgs.domain.category;		// must be in the same category
 		const bargs = {factors:nuArgs.factors, dual};
 		if (dual)
 			bargs.codomain = nuArgs.codomain;
@@ -17125,7 +17143,7 @@ class Diagram extends Functor
 				compBox = elt.getSvgNameBBox();
 			else
 				compBox = svg.getBBox();
-			if (debug > 0 && svg instanceof SVGTextElement)
+			if (R.debug(2) && svg instanceof SVGTextElement)
 				this.svgBase.appendChild(H3.rect({x:`${compBox.x}px`, y:`${compBox.y}px`, width:`${compBox.width}px`, height:`${compBox.height}px`, fill:'none', stroke:'blue'}));
 			if (D2.overlap(box, new D2(compBox)))
 				return true;
@@ -18114,7 +18132,6 @@ class Diagram extends Functor
 			});
 		}
 		from.decrRefcnt();
-		D.emitObjectEvent(this, 'fuse', target);
 		return target;
 	}
 	fuseMorphisms(e, from, target, save = true)
@@ -18355,7 +18372,7 @@ class Diagram extends Functor
 		let ndx = 0;
 		let offset = new D2();
 		let rect = null;
-		if (R.debug(1))
+		if (R.debug(2))
 		{
 			rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red', 'stroke-width':'0.1px'});
 			this.svgBase.appendChild(rect);
@@ -18366,9 +18383,9 @@ class Diagram extends Functor
 			const dir = D.directions[ndx % modulo];
 			offset = dir.scale(scale * Math.trunc((modulo + ndx)/modulo));
 			nubox = nubox.add(offset.getXY());
-			if (R.debug(1))
+			if (R.debug(2))
 			{
-				//R.debug(1) && rect.remove();
+				//R.debug(2) && rect.remove();
 				rect = H3.rect({x:`${nubox.x}px`, y:`${nubox.y}px`, width:`${nubox.width}px`, height:`${nubox.height}px`, fill:'none', stroke:'red'});
 				this.svgBase.appendChild(rect);
 			}
@@ -18376,7 +18393,7 @@ class Diagram extends Functor
 			if (ndx > 100)	// give up; too complex
 				break;
 		}
-		R.debug(1) && console.log('autoplace ndx', name, ndx);
+		R.debug(2) && console.log('autoplace ndx', name, ndx);
 		return offset.add(bbox);
 	}
 	newText(e)
@@ -18498,8 +18515,7 @@ class Diagram extends Functor
 					bkgnd = H3.rect('.diagramBackgroundActive', {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
 																		x:`${box.x}px`, y:`${box.y}px`, width:`${box.width}px`, height:`${box.height}px`});
 				}
-				if (this.isEditable())
-					bkgnd.ondblclick = e => this.newInput(e);
+				bkgnd.ondblclick = e => this.isEditable() && this.newInput(e);		// defer editable check
 				this.svgRoot.parentNode.insertBefore(bkgnd, this.svgRoot);
 				dgrmBkgnd.classList.add('hidden');
 				dgrmF4gnd.classList.add('hidden');
