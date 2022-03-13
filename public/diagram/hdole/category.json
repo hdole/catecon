@@ -122,7 +122,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": -550
+          "y": -540
         },
         "height": "374",
         "weight": "bold"
@@ -355,15 +355,6 @@
         }
       },
       {
-        "basename": "o_35",
-        "prototype": "IndexObject",
-        "to": "Pb{Id{C0}dI,dom}bP",
-        "xy": {
-          "x": 850,
-          "y": 1850
-        }
-      },
-      {
         "basename": "o_37",
         "prototype": "IndexObject",
         "to": "C1",
@@ -388,15 +379,6 @@
         "xy": {
           "x": 450,
           "y": 2550
-        }
-      },
-      {
-        "basename": "o_36",
-        "prototype": "IndexObject",
-        "to": "Pb{cod,Id{C0}dI}bP",
-        "xy": {
-          "x": 250,
-          "y": 2350
         }
       },
       {
@@ -452,7 +434,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -150,
-          "y": 1900
+          "y": 1950
         },
         "height": 24
       },
@@ -477,7 +459,7 @@
         "height": 24
       },
       {
-        "description": "The domain of the composite is the domain\nof the first morphism.",
+        "description": "The domain of the composite is the domain\nof the first morphism:  dom(A&rarr;B&rarr;C) = A",
         "basename": "t_9",
         "prototype": "IndexText",
         "xy": {
@@ -487,7 +469,7 @@
         "height": 24
       },
       {
-        "description": "The codomain of the composite is the codomain\nof the latter morphism.",
+        "description": "The codomain of the composite is the codomain\nof the latter morphism:  cod(A&rarr;B&rarr;C) = C",
         "basename": "t_10",
         "prototype": "IndexText",
         "xy": {
@@ -497,7 +479,7 @@
         "height": 24
       },
       {
-        "description": "The codomain of the identity of an object is\nthat object itself.",
+        "description": "The codomain of the identity morphism of an object is\nthat object itself.",
         "basename": "t_11",
         "prototype": "IndexText",
         "xy": {
@@ -507,22 +489,22 @@
         "height": 24
       },
       {
-        "description": "The domain of the identity of an object is\nthat object itself.",
+        "description": "The domain of the identity morphism of an object is\nthat object itself.",
         "basename": "t_12",
         "prototype": "IndexText",
         "xy": {
           "x": -150,
-          "y": 760
+          "y": 750
         },
         "height": 24
       },
       {
-        "description": "The associative law for composition of morphisms:",
+        "description": "Now we have the morphisms we need to\nstate the associative law for composition\nof morphisms:",
         "basename": "t_17",
         "prototype": "IndexText",
         "xy": {
-          "x": -320,
-          "y": 5290
+          "x": -150,
+          "y": 5300
         },
         "height": 24
       },
@@ -741,7 +723,7 @@
         "prototype": "IndexObject",
         "to": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
         "xy": {
-          "x": 250,
+          "x": 220,
           "y": 3900
         }
       },
@@ -755,21 +737,12 @@
         }
       },
       {
-        "basename": "o_107",
-        "prototype": "IndexObject",
-        "to": "Pb{cod,dom}bP",
-        "xy": {
-          "x": 2270,
-          "y": 5530
-        }
-      },
-      {
         "basename": "o_109",
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 560,
-          "y": 5740
+          "x": 550,
+          "y": 5690
         }
       },
       {
@@ -777,46 +750,9 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 2270,
-          "y": 5530
+          "x": 1090,
+          "y": 5690
         }
-      },
-      {
-        "basename": "o_106",
-        "prototype": "IndexObject",
-        "to": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
-        "xy": {
-          "x": 560,
-          "y": 5740
-        }
-      },
-      {
-        "basename": "o_92",
-        "prototype": "IndexObject",
-        "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP",
-        "xy": {
-          "x": 550,
-          "y": 4100
-        }
-      },
-      {
-        "basename": "o_112",
-        "prototype": "IndexObject",
-        "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP",
-        "xy": {
-          "x": 560,
-          "y": 5510
-        }
-      },
-      {
-        "description": "BUG: cell above should commute",
-        "basename": "t_14",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 750,
-          "y": 4300
-        },
-        "height": 24
       },
       {
         "basename": "o_66",
@@ -873,15 +809,6 @@
         }
       },
       {
-        "basename": "o_65",
-        "prototype": "IndexObject",
-        "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP",
-        "xy": {
-          "x": 550,
-          "y": 4800
-        }
-      },
-      {
         "basename": "o_105",
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
@@ -924,6 +851,79 @@
         "xy": {
           "x": 800,
           "y": 5000
+        }
+      },
+      {
+        "description": "Now require that the composite of the\nidentity 1:A&rarr;A and any f:A&rarr;B is f,\nand the composite of g:C&rarr;A and 1:A&rarr;A\nis g.",
+        "basename": "t_16",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 2800
+        },
+        "height": 24
+      },
+      {
+        "basename": "o_47",
+        "prototype": "IndexObject",
+        "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP",
+        "xy": {
+          "x": 550,
+          "y": 4100
+        }
+      },
+      {
+        "basename": "o_44",
+        "prototype": "IndexObject",
+        "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP",
+        "xy": {
+          "x": 550,
+          "y": 4850
+        }
+      },
+      {
+        "basename": "o_48",
+        "prototype": "IndexObject",
+        "to": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
+        "xy": {
+          "x": 550,
+          "y": 5300
+        }
+      },
+      {
+        "basename": "o_49",
+        "prototype": "IndexObject",
+        "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP",
+        "xy": {
+          "x": 550,
+          "y": 5500
+        }
+      },
+      {
+        "basename": "o_50",
+        "prototype": "IndexObject",
+        "to": "Pb{cod,dom}bP",
+        "xy": {
+          "x": 1090,
+          "y": 5300
+        }
+      },
+      {
+        "basename": "o_35",
+        "prototype": "IndexObject",
+        "to": "Pb{cod,Id{C0}dI}bP",
+        "xy": {
+          "x": 250,
+          "y": 2350
+        }
+      },
+      {
+        "basename": "o_36",
+        "prototype": "IndexObject",
+        "to": "Pb{Id{C0}dI,dom}bP",
+        "xy": {
+          "x": 850,
+          "y": 1850
         }
       },
       {
@@ -1146,33 +1146,6 @@
         "to": "dom"
       },
       {
-        "basename": "m_28",
-        "prototype": "IndexMorphism",
-        "domain": "o_35",
-        "codomain": "o_31",
-        "to": "Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF"
-      },
-      {
-        "basename": "m_29",
-        "prototype": "IndexMorphism",
-        "domain": "o_35",
-        "codomain": "o_34",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
-      },
-      {
-        "basename": "m_31",
-        "prototype": "IndexMorphism",
-        "domain": "o_34",
-        "codomain": "o_30",
-        "to": "Id{C1}dI"
-      },
-      {
         "basename": "m_30",
         "prototype": "IndexMorphism",
         "domain": "o_31",
@@ -1200,38 +1173,11 @@
         "to": "cod"
       },
       {
-        "basename": "m_32",
-        "prototype": "IndexMorphism",
-        "domain": "o_36",
-        "codomain": "o_37",
-        "to": "Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF"
-      },
-      {
-        "basename": "m_33",
-        "prototype": "IndexMorphism",
-        "domain": "o_36",
-        "codomain": "o_38",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF"
-      },
-      {
         "basename": "m_36",
         "prototype": "IndexMorphism",
         "domain": "o_38",
         "codomain": "o_30",
         "to": "id"
-      },
-      {
-        "basename": "m_37",
-        "prototype": "IndexMorphism",
-        "domain": "o_37",
-        "codomain": "o_28",
-        "to": "Id{C1}dI"
       },
       {
         "basename": "m_42",
@@ -1259,46 +1205,6 @@
           ]
         ],
         "to": "Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
-      },
-      {
-        "basename": "m_38",
-        "prototype": "IndexMorphism",
-        "domain": "o_35",
-        "codomain": "o_32",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "Pu{Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC,Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
-      },
-      {
-        "basename": "m_39",
-        "prototype": "IndexMorphism",
-        "domain": "o_36",
-        "codomain": "o_32",
-        "to": "Pu{Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC}uP"
-      },
-      {
-        "basename": "m_40",
-        "prototype": "IndexMorphism",
-        "domain": "o_42",
-        "codomain": "o_41",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "Pu{Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC}uP"
-      },
-      {
-        "basename": "m_41",
-        "prototype": "IndexMorphism",
-        "domain": "o_40",
-        "codomain": "o_41",
-        "to": "Pu{Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC,Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC}uP"
       },
       {
         "description": "",
@@ -1435,14 +1341,13 @@
         "prototype": "IndexMorphism",
         "domain": "o_91",
         "codomain": "o_87",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF"
-      },
-      {
-        "basename": "m_96",
-        "prototype": "IndexMorphism",
-        "domain": "o_91",
-        "codomain": "o_86",
-        "to": "Pu{Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP"
       },
       {
         "basename": "m_98",
@@ -1459,79 +1364,11 @@
         "to": "comp"
       },
       {
-        "basename": "m_119",
-        "prototype": "IndexMorphism",
-        "domain": "o_107",
-        "codomain": "o_110",
-        "to": "comp"
-      },
-      {
-        "basename": "m_104",
-        "prototype": "IndexMorphism",
-        "domain": "o_98",
-        "codomain": "o_100",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "Pu{Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP"
-      },
-      {
         "basename": "m_121",
         "prototype": "IndexMorphism",
         "domain": "o_98",
         "codomain": "o_97",
         "to": "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF"
-      },
-      {
-        "basename": "m_97",
-        "prototype": "IndexMorphism",
-        "domain": "o_100",
-        "codomain": "o_94",
-        "to": "Fa{Pb{cod,dom}bP,C1_1}aF"
-      },
-      {
-        "basename": "m_99",
-        "prototype": "IndexMorphism",
-        "domain": "o_92",
-        "codomain": "o_96",
-        "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,C1_0}aF"
-      },
-      {
-        "basename": "m_101",
-        "prototype": "IndexMorphism",
-        "domain": "o_92",
-        "codomain": "o_100",
-        "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF"
-      },
-      {
-        "basename": "m_103",
-        "prototype": "IndexMorphism",
-        "domain": "o_97",
-        "codomain": "o_96",
-        "to": "Fa{Pb{cod,dom}bP,C1_0}aF"
-      },
-      {
-        "basename": "m_107",
-        "prototype": "IndexMorphism",
-        "domain": "o_106",
-        "codomain": "o_112",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "Pu{Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_0}aF}mC,Pu{Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP}uP"
-      },
-      {
-        "basename": "m_105",
-        "prototype": "IndexMorphism",
-        "domain": "o_98",
-        "codomain": "o_92",
-        "to": "Pu{Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_0}aF}mC,Pu{Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP}uP"
       },
       {
         "basename": "m_78",
@@ -1583,45 +1420,11 @@
         "to": "dom"
       },
       {
-        "basename": "m_114",
-        "prototype": "IndexMorphism",
-        "domain": "o_66",
-        "codomain": "o_101",
-        "to": "Pu{Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP"
-      },
-      {
-        "basename": "m_115",
-        "prototype": "IndexMorphism",
-        "domain": "o_106",
-        "codomain": "o_107",
-        "to": "Pu{Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP"
-      },
-      {
-        "basename": "m_117",
-        "prototype": "IndexMorphism",
-        "domain": "o_65",
-        "codomain": "o_105",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF"
-      },
-      {
         "basename": "m_120",
         "prototype": "IndexMorphism",
         "domain": "o_105",
         "codomain": "o_113",
         "to": "comp"
-      },
-      {
-        "basename": "m_122",
-        "prototype": "IndexMorphism",
-        "domain": "o_65",
-        "codomain": "o_114",
-        "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,C1_0}aF"
       },
       {
         "basename": "m_123",
@@ -1652,22 +1455,173 @@
         "to": "Fa{Pb{cod,dom}bP,C1_1}aF"
       },
       {
-        "basename": "m_134",
+        "basename": "m_103",
         "prototype": "IndexMorphism",
-        "domain": "o_65",
-        "codomain": "o_116",
+        "domain": "o_97",
+        "codomain": "o_96",
+        "to": "Fa{Pb{cod,dom}bP,C1_0}aF"
+      },
+      {
+        "basename": "m_46",
+        "prototype": "IndexMorphism",
+        "domain": "o_100",
+        "codomain": "o_94",
+        "to": "Fa{Pb{cod,dom}bP,C1_0}aF"
+      },
+      {
+        "basename": "m_47",
+        "prototype": "IndexMorphism",
+        "domain": "o_47",
+        "codomain": "o_96",
+        "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,C1_0}aF"
+      },
+      {
+        "basename": "m_48",
+        "prototype": "IndexMorphism",
+        "domain": "o_47",
+        "codomain": "o_100",
+        "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF"
+      },
+      {
+        "basename": "m_33",
+        "prototype": "IndexMorphism",
+        "domain": "o_37",
+        "codomain": "o_28",
+        "to": "Id{C1}dI"
+      },
+      {
+        "basename": "m_37",
+        "prototype": "IndexMorphism",
+        "domain": "o_34",
+        "codomain": "o_30",
+        "to": "Id{C1}dI"
+      },
+      {
+        "basename": "m_52",
+        "prototype": "IndexMorphism",
+        "domain": "o_44",
+        "codomain": "o_105",
+        "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF"
+      },
+      {
+        "basename": "m_59",
+        "prototype": "IndexMorphism",
+        "domain": "o_50",
+        "codomain": "o_110",
+        "to": "comp"
+      },
+      {
+        "basename": "m_28",
+        "prototype": "IndexMorphism",
+        "domain": "o_35",
+        "codomain": "o_37",
+        "to": "Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF"
+      },
+      {
+        "basename": "m_29",
+        "prototype": "IndexMorphism",
+        "domain": "o_35",
+        "codomain": "o_38",
+        "to": "Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF"
+      },
+      {
+        "basename": "m_38",
+        "prototype": "IndexMorphism",
+        "domain": "o_35",
+        "codomain": "o_32",
+        "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC}uP"
+      },
+      {
+        "basename": "m_31",
+        "prototype": "IndexMorphism",
+        "domain": "o_36",
+        "codomain": "o_31",
+        "to": "Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF"
+      },
+      {
+        "basename": "m_32",
+        "prototype": "IndexMorphism",
+        "domain": "o_36",
+        "codomain": "o_34",
+        "to": "Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
+      },
+      {
+        "basename": "m_39",
+        "prototype": "IndexMorphism",
+        "domain": "o_36",
+        "codomain": "o_32",
         "attributes": [
           [
             "flipName",
             true
           ]
         ],
-        "to": "Pu{Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,C1_0}aF,Cm{Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP"
+        "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC,Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF}uP"
       },
       {
-        "basename": "m_135",
+        "basename": "m_40",
         "prototype": "IndexMorphism",
-        "domain": "o_112",
+        "domain": "o_42",
+        "codomain": "o_41",
+        "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC}uP"
+      },
+      {
+        "basename": "m_41",
+        "prototype": "IndexMorphism",
+        "domain": "o_40",
+        "codomain": "o_41",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC,Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF}uP"
+      },
+      {
+        "basename": "m_45",
+        "prototype": "IndexMorphism",
+        "domain": "o_91",
+        "codomain": "o_86",
+        "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP"
+      },
+      {
+        "basename": "m_49",
+        "prototype": "IndexMorphism",
+        "domain": "o_98",
+        "codomain": "o_100",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP"
+      },
+      {
+        "basename": "m_50",
+        "prototype": "IndexMorphism",
+        "domain": "o_98",
+        "codomain": "o_47",
+        "to": "Pu{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_0}aF}mC,Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP}uP"
+      },
+      {
+        "basename": "m_51",
+        "prototype": "IndexMorphism",
+        "domain": "o_48",
+        "codomain": "o_49",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Pu{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_0}aF}mC,Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP}uP"
+      },
+      {
+        "basename": "m_55",
+        "prototype": "IndexMorphism",
+        "domain": "o_49",
         "codomain": "o_109",
         "attributes": [
           [
@@ -1675,25 +1629,89 @@
             true
           ]
         ],
-        "to": "Pu{Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,C1_0}aF,Cm{Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP"
+        "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF"
       },
       {
-        "description": "BUG: comp",
-        "basename": "t_15",
+        "basename": "m_56",
+        "prototype": "IndexMorphism",
+        "domain": "o_48",
+        "codomain": "o_50",
+        "to": "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF"
+      },
+      {
+        "basename": "m_57",
+        "prototype": "IndexMorphism",
+        "domain": "o_66",
+        "codomain": "o_101",
+        "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP"
+      },
+      {
+        "basename": "m_53",
+        "prototype": "IndexMorphism",
+        "domain": "o_44",
+        "codomain": "o_114",
+        "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,C1_0}aF"
+      },
+      {
+        "basename": "m_58",
+        "prototype": "IndexMorphism",
+        "domain": "o_44",
+        "codomain": "o_116",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Pu{Pb{cod,dom}bP,Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,C1_0}aF,Cm{Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP"
+      },
+      {
+        "description": "Now form the pullback of the composable\ntriples in the form (A&rarr;B&rarr;C)&rarr;D.",
+        "basename": "t_14",
         "prototype": "IndexText",
         "xy": {
           "x": -150,
-          "y": -40
+          "y": 3050
         },
         "height": 24
       },
       {
-        "description": "Now require that the composite of the\nidentity 1:A&rarr;A and any f:A&rarr;B is f,\nand the composite of g:C&rarr;A and 1:A&rarr;A\nis g.",
-        "basename": "t_16",
+        "description": "Next form the lift from the composable triple\n(A→B→C)→D to the composable pair B→C→D.",
+        "basename": "t_18",
         "prototype": "IndexText",
         "xy": {
-          "x": -330,
-          "y": 2710
+          "x": -150,
+          "y": 3550
+        },
+        "height": 24
+      },
+      {
+        "description": "Next form the lift from the composable triple\n(A→B→C)→D to the composable triple A→(B→C→D).",
+        "basename": "t_15",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 4200
+        },
+        "height": 24
+      },
+      {
+        "description": "Now form the lift from the composable triple\n(A→B→C)→D to the composable pair A→C→D.",
+        "basename": "t_19",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 4600
+        },
+        "height": 24
+      },
+      {
+        "description": "Now form the lift from the composable triple\nA→(B→C→D) to the composable pair A→B→D.",
+        "basename": "t_21",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 4860
         },
         "height": 24
       }
@@ -1774,15 +1792,15 @@
         "hidden": false
       },
       {
-        "name": "hdole/category/{m_107,m_135,m_118},{m_115,m_119}",
+        "name": "hdole/category/{m_51,m_55,m_118},{m_56,m_59}",
         "left": [
-          "m_107",
-          "m_135",
+          "m_51",
+          "m_55",
           "m_118"
         ],
         "right": [
-          "m_115",
-          "m_119"
+          "m_56",
+          "m_59"
         ],
         "assertion": "equals",
         "hidden": false
@@ -1831,6 +1849,28 @@
         {
           "prototype": "PullbackObject",
           "objects": [
+            "Pb{cod,dom}bP",
+            "C1"
+          ],
+          "morphisms": [
+            "Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC",
+            "dom"
+          ]
+        },
+        {
+          "prototype": "PullbackObject",
+          "objects": [
+            "C1",
+            "Pb{cod,dom}bP"
+          ],
+          "morphisms": [
+            "cod",
+            "Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC"
+          ]
+        },
+        {
+          "prototype": "PullbackObject",
+          "objects": [
             "C1",
             "C0"
           ],
@@ -1861,34 +1901,7 @@
           "description": "",
           "prototype": "FactorMorphism",
           "domain": "Pb{Id{C0}dI,dom}bP",
-          "codomain": "C0",
-          "factors": [
-            0
-          ]
-        },
-        {
-          "description": "",
-          "prototype": "FactorMorphism",
-          "domain": "Pb{Id{C0}dI,dom}bP",
           "codomain": "C1",
-          "factors": [
-            1
-          ]
-        },
-        {
-          "description": "",
-          "prototype": "FactorMorphism",
-          "domain": "Pb{cod,Id{C0}dI}bP",
-          "codomain": "C1",
-          "factors": [
-            0
-          ]
-        },
-        {
-          "description": "",
-          "prototype": "FactorMorphism",
-          "domain": "Pb{cod,Id{C0}dI}bP",
-          "codomain": "C0",
           "factors": [
             1
           ]
@@ -1928,37 +1941,81 @@
         },
         {
           "description": "",
+          "prototype": "Composite",
+          "domain": "Pb{cod,dom}bP",
+          "codomain": "C0",
+          "morphisms": [
+            "Fa{Pb{cod,dom}bP,C1_1}aF",
+            "cod"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "FactorMorphism",
+          "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
+          "codomain": "Pb{cod,dom}bP",
+          "factors": [
+            0
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "FactorMorphism",
+          "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
+          "codomain": "C1",
+          "factors": [
+            1
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "Composite",
+          "domain": "Pb{cod,dom}bP",
+          "codomain": "C0",
+          "morphisms": [
+            "Fa{Pb{cod,dom}bP,C1_0}aF",
+            "dom"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "FactorMorphism",
+          "domain": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP",
+          "codomain": "C1",
+          "factors": [
+            0
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "FactorMorphism",
+          "domain": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP",
+          "codomain": "Pb{cod,dom}bP",
+          "factors": [
+            1
+          ]
+        },
+        {
+          "description": "",
           "prototype": "Identity",
           "domain": "C1"
         },
         {
           "description": "",
-          "prototype": "Composite",
-          "domain": "Pb{Id{C0}dI,dom}bP",
+          "prototype": "FactorMorphism",
+          "domain": "Pb{cod,Id{C0}dI}bP",
           "codomain": "C1",
-          "morphisms": [
-            "Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF",
-            "id"
+          "factors": [
+            0
           ]
         },
         {
           "description": "",
-          "prototype": "Composite",
-          "domain": "Pb{Id{C0}dI,dom}bP",
-          "codomain": "C1",
-          "morphisms": [
-            "Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF",
-            "Id{C1}dI"
-          ]
-        },
-        {
-          "description": "",
-          "prototype": "PullbackAssembly",
-          "domain": "Pb{Id{C0}dI,dom}bP",
-          "codomain": "Pb{cod,dom}bP",
-          "morphisms": [
-            "Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC",
-            "Cm{Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF,Id{C1}dI}mC"
+          "prototype": "FactorMorphism",
+          "domain": "Pb{cod,Id{C0}dI}bP",
+          "codomain": "C0",
+          "factors": [
+            1
           ]
         },
         {
@@ -1990,160 +2047,125 @@
             "Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC",
             "Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC"
           ]
+        },
+        {
+          "description": "",
+          "prototype": "FactorMorphism",
+          "domain": "Pb{Id{C0}dI,dom}bP",
+          "codomain": "C0",
+          "factors": [
+            0
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "Composite",
+          "domain": "Pb{Id{C0}dI,dom}bP",
+          "codomain": "C1",
+          "morphisms": [
+            "Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF",
+            "id"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "PullbackAssembly",
+          "domain": "Pb{Id{C0}dI,dom}bP",
+          "codomain": "Pb{cod,dom}bP",
+          "morphisms": [
+            "Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC",
+            "Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "Composite",
+          "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
+          "codomain": "C1",
+          "morphisms": [
+            "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF",
+            "Fa{Pb{cod,dom}bP,C1_1}aF"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "PullbackAssembly",
+          "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
+          "codomain": "Pb{cod,dom}bP",
+          "morphisms": [
+            "Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC",
+            "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "Composite",
+          "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
+          "codomain": "C1",
+          "morphisms": [
+            "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF",
+            "Fa{Pb{cod,dom}bP,C1_0}aF"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "PullbackAssembly",
+          "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
+          "codomain": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP",
+          "morphisms": [
+            "Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_0}aF}mC",
+            "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "Composite",
+          "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
+          "codomain": "C1",
+          "morphisms": [
+            "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF",
+            "comp"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "PullbackAssembly",
+          "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
+          "codomain": "Pb{cod,dom}bP",
+          "morphisms": [
+            "Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC",
+            "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "Composite",
+          "domain": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP",
+          "codomain": "C1",
+          "morphisms": [
+            "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF",
+            "comp"
+          ]
+        },
+        {
+          "description": "",
+          "prototype": "PullbackAssembly",
+          "domain": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP",
+          "codomain": "Pb{cod,dom}bP",
+          "morphisms": [
+            "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,C1_0}aF",
+            "Cm{Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC"
+          ]
         }
-      ]
-    },
-    {
-      "prototype": "PullbackObject",
-      "objects": [
-        "Pb{cod,dom}bP",
-        "C1"
-      ],
-      "morphisms": [
-        "Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC",
-        "dom"
-      ]
-    },
-    {
-      "prototype": "PullbackObject",
-      "objects": [
-        "C1",
-        "Pb{cod,dom}bP"
-      ],
-      "morphisms": [
-        "cod",
-        "Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "domain": "Pb{cod,dom}bP",
-      "codomain": "C0",
-      "morphisms": [
-        "Fa{Pb{cod,dom}bP,C1_1}aF",
-        "cod"
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
-      "codomain": "Pb{cod,dom}bP",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
-      "codomain": "C1",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
-      "codomain": "C1",
-      "morphisms": [
-        "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF",
-        "Fa{Pb{cod,dom}bP,C1_1}aF"
-      ]
-    },
-    {
-      "prototype": "PullbackAssembly",
-      "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
-      "codomain": "Pb{cod,dom}bP",
-      "morphisms": [
-        "Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC",
-        "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "domain": "Pb{cod,dom}bP",
-      "codomain": "C0",
-      "morphisms": [
-        "Fa{Pb{cod,dom}bP,C1_1}aF",
-        "dom"
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP",
-      "codomain": "C1",
-      "factors": [
-        0
-      ]
-    },
-    {
-      "prototype": "FactorMorphism",
-      "domain": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP",
-      "codomain": "Pb{cod,dom}bP",
-      "factors": [
-        1
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
-      "codomain": "C1",
-      "morphisms": [
-        "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF",
-        "Fa{Pb{cod,dom}bP,C1_0}aF"
-      ]
-    },
-    {
-      "prototype": "PullbackAssembly",
-      "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
-      "codomain": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP",
-      "morphisms": [
-        "Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_0}aF}mC",
-        "Pu{Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
-      "codomain": "C1",
-      "morphisms": [
-        "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF",
-        "comp"
-      ]
-    },
-    {
-      "prototype": "PullbackAssembly",
-      "domain": "Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP",
-      "codomain": "Pb{cod,dom}bP",
-      "morphisms": [
-        "Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC",
-        "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF"
-      ]
-    },
-    {
-      "prototype": "Composite",
-      "domain": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP",
-      "codomain": "C1",
-      "morphisms": [
-        "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF",
-        "comp"
-      ]
-    },
-    {
-      "prototype": "PullbackAssembly",
-      "domain": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP",
-      "codomain": "Pb{cod,dom}bP",
-      "morphisms": [
-        "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,C1_0}aF",
-        "Cm{Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_1}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC"
       ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1647116535877,
+  "timestamp": 1647158850972,
   "version": 0,
   "viewport": {
-    "x": 711,
-    "y": -2494,
-    "scale": 1.2275622741897274
+    "x": 522,
+    "y": -5651,
+    "scale": 1.3020957771091308
   }
 }
