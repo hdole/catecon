@@ -299,39 +299,29 @@ function getItem(leftLeg, rightLeg)
 
 function trimLegs(inLeft, inRight)
 {
-	if (inLeft.length <= 1 || inRight.length <= 1)
-		return {left:inLeft, right:inRight};
 	let min = Math.min(inLeft.length, inRight.length);
-	let left = null;
-	let right = null;
+	let left = inLeft.slice();
+	let right = inRight.slice();
 	for (let i=0; i<min; ++i)
 	{
-		if (inLeft.length === i + 1 || inRight.length === i + 1)
+		if (left[i] === right[i])
 		{
-			left = inLeft.slice(i);
-			right = inRight.slice(i);
-			break;
+			left.shift();
+			right.shift();
 		}
-		if (inLeft[i] === inRight[i])
-			continue;
-		left = inLeft.slice(i);
-		right = inRight.slice(i);
-		break;
+		else
+			break;
 	}
 	min = Math.min(left.length, right.length);
 	for (let i=0; i<min; ++i)
 	{
-		if (inLeft.length === i + 1 || inRight.length === i + 1)
+		if (left[left.length -1] === right[right.length -1])
 		{
-			left = left.slice(0, left.length - i);
-			right = right.slice(0, right.length - i);
-			break;
+			left.pop();
+			right.pop();
 		}
-		if (left[left.length -1 - i] === right[right.length -1 - i])
-			continue;
-		left = left.slice(0, left.length - i);
-		right = right.slice(0, right.length - i);
-		break;
+		else
+			break;
 	}
 	return {left, right};
 }
@@ -339,7 +329,7 @@ function trimLegs(inLeft, inRight)
 function checkTrimmedLegs(left, right, scanned)
 {
 	const trimmed = trimLegs(left, right);
-	if (trimmed.left.length < left.length)
+	if (trimmed.left.length > 0 && trimmed.right.length > 0 && trimmed.left.length < left.length)
 	{
 		const chk = check(trimmed.left, trimmed.right, scanned);
 		if (chk > 0)
@@ -347,6 +337,13 @@ function checkTrimmedLegs(left, right, scanned)
 			setEquals(left, right);
 			return chk;
 		}
+	}
+	else		// check for identities
+	{
+		if (trimmed.left.length === 0)
+			return identities.has(Sig(...trimmed.right)) ? 1 : 0;
+		else if (trimmed.right.length === 0)
+			return identities.has(Sig(...trimmed.left)) ? 1 : 0;
 	}
 	return 0;		// unknown
 }
