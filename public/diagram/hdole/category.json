@@ -499,7 +499,7 @@
         "height": 24
       },
       {
-        "description": "Now we have the morphisms we need to\nstate the associative law for composition\nof morphisms:",
+        "description": "We have the morphisms needed to state\nthe associative law for composition of\nmorphisms: (A→B→C)→D = A→(B→C→D)",
         "basename": "t_17",
         "prototype": "IndexText",
         "xy": {
@@ -706,7 +706,7 @@
         "to": "C1",
         "xy": {
           "x": 1000,
-          "y": 4100
+          "y": 4080
         }
       },
       {
@@ -750,7 +750,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 1090,
+          "x": 1000,
           "y": 5690
         }
       },
@@ -869,7 +869,7 @@
         "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP",
         "xy": {
           "x": 550,
-          "y": 4100
+          "y": 4080
         }
       },
       {
@@ -904,7 +904,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 1090,
+          "x": 1000,
           "y": 5300
         }
       },
@@ -925,6 +925,56 @@
           "x": 850,
           "y": 1850
         }
+      },
+      {
+        "description": "Now form the pullback of the composable\ntriples in the form (A&rarr;B&rarr;C)&rarr;D.",
+        "basename": "t_14",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 3050
+        },
+        "height": 24
+      },
+      {
+        "description": "Next form the lift from the composable triple\n(A→B→C)→D to the composable pair B→C→D.",
+        "basename": "t_18",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 3550
+        },
+        "height": 24
+      },
+      {
+        "description": "Next form the lift from the composable triple\n(A→B→C)→D to the composable triple A→(B→C→D).",
+        "basename": "t_15",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 4200
+        },
+        "height": 24
+      },
+      {
+        "description": "Form the lift from the composable triple\n(A→B→C)→D to the composable pair A→C→D.",
+        "basename": "t_19",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 4600
+        },
+        "height": 24
+      },
+      {
+        "description": "Now form the lift from the composable triple\nA→(B→C→D) to the composable pair A→B→D.",
+        "basename": "t_21",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 4860
+        },
+        "height": 24
       },
       {
         "basename": "m_0",
@@ -1619,26 +1669,6 @@
         "to": "Pu{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_0}aF}mC,Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP,C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP}uP"
       },
       {
-        "basename": "m_55",
-        "prototype": "IndexMorphism",
-        "domain": "o_49",
-        "codomain": "o_109",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF"
-      },
-      {
-        "basename": "m_56",
-        "prototype": "IndexMorphism",
-        "domain": "o_48",
-        "codomain": "o_50",
-        "to": "Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF"
-      },
-      {
         "basename": "m_57",
         "prototype": "IndexMorphism",
         "domain": "o_66",
@@ -1666,54 +1696,24 @@
         "to": "Pu{Pb{cod,dom}bP,Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,C1_0}aF,Cm{Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP"
       },
       {
-        "description": "Now form the pullback of the composable\ntriples in the form (A&rarr;B&rarr;C)&rarr;D.",
-        "basename": "t_14",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -150,
-          "y": 3050
-        },
-        "height": 24
+        "basename": "m_54",
+        "prototype": "IndexMorphism",
+        "domain": "o_49",
+        "codomain": "o_109",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Pu{Pb{cod,dom}bP,Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,C1_0}aF,Cm{Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF,comp}mC}uP"
       },
       {
-        "description": "Next form the lift from the composable triple\n(A→B→C)→D to the composable pair B→C→D.",
-        "basename": "t_18",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -150,
-          "y": 3550
-        },
-        "height": 24
-      },
-      {
-        "description": "Next form the lift from the composable triple\n(A→B→C)→D to the composable triple A→(B→C→D).",
-        "basename": "t_15",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -150,
-          "y": 4200
-        },
-        "height": 24
-      },
-      {
-        "description": "Now form the lift from the composable triple\n(A→B→C)→D to the composable pair A→C→D.",
-        "basename": "t_19",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -150,
-          "y": 4600
-        },
-        "height": 24
-      },
-      {
-        "description": "Now form the lift from the composable triple\nA→(B→C→D) to the composable pair A→B→D.",
-        "basename": "t_21",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -150,
-          "y": 4860
-        },
-        "height": 24
+        "basename": "m_55",
+        "prototype": "IndexMorphism",
+        "domain": "o_48",
+        "codomain": "o_50",
+        "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,Pb{cod,dom}bP_0}aF,comp}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP,C1_1}aF,cod}mC,dom}bP,C1_1}aF}uP"
       }
     ],
     "cells": [
@@ -1792,14 +1792,14 @@
         "hidden": false
       },
       {
-        "name": "hdole/category/{m_51,m_55,m_118},{m_56,m_59}",
+        "name": "hdole/category/{m_51,m_54,m_118},{m_55,m_59}",
         "left": [
           "m_51",
-          "m_55",
+          "m_54",
           "m_118"
         ],
         "right": [
-          "m_56",
+          "m_55",
           "m_59"
         ],
         "assertion": "equals",
@@ -2161,11 +2161,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1647158850972,
+  "timestamp": 1647334976035,
   "version": 0,
   "viewport": {
     "x": 522,
-    "y": -5651,
-    "scale": 1.3020957771091308
+    "y": -4359,
+    "scale": 1.302093032496913
   }
 }

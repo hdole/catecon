@@ -111,13 +111,6 @@
         "to": "f"
       },
       {
-        "basename": "m_3",
-        "prototype": "IndexMorphism",
-        "domain": "o_5",
-        "codomain": "o_7",
-        "to": "finv"
-      },
-      {
         "basename": "m_4",
         "prototype": "IndexMorphism",
         "domain": "o_4",
@@ -136,13 +129,6 @@
         "domain": "o_7",
         "codomain": "o_8",
         "to": "f"
-      },
-      {
-        "basename": "m_6",
-        "prototype": "IndexMorphism",
-        "domain": "o_5",
-        "codomain": "o_7",
-        "to": "finv"
       },
       {
         "basename": "m_7",
@@ -176,6 +162,13 @@
             0
           ]
         ]
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "o_5",
+        "codomain": "o_7",
+        "to": "finv"
       }
     ],
     "cells": [
@@ -192,9 +185,9 @@
         "hidden": false
       },
       {
-        "name": "hdole/iso/{m_6,m_5},{m_7}",
+        "name": "hdole/iso/{m_3,m_5},{m_7}",
         "left": [
-          "m_6",
+          "m_3",
           "m_5"
         ],
         "right": [
@@ -249,11 +242,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1645559681386,
+  "timestamp": 1647375257794,
   "version": 0,
   "viewport": {
     "x": -1512,
-    "y": -1372,
+    "y": -1984,
     "scale": 3.0678013612509205
   }
 }

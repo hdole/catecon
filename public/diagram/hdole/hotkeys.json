@@ -800,7 +800,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 3900
+          "y": 4000
         },
         "height": "36",
         "weight": "bold",
@@ -812,7 +812,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1200,
-          "y": 3900
+          "y": 4000
         },
         "height": "48"
       },
@@ -822,7 +822,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 3900
+          "y": 4000
         },
         "height": "24"
       },
@@ -832,7 +832,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 4000
+          "y": 4100
         },
         "height": "36",
         "weight": "bold",
@@ -844,7 +844,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 4000
+          "y": 4100
         },
         "height": "24"
       },
@@ -854,7 +854,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 4100
+          "y": 4200
         },
         "height": "36",
         "weight": "bold",
@@ -866,7 +866,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 4100
+          "y": 4200
         },
         "height": "24"
       },
@@ -876,7 +876,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 4300
+          "y": 4400
         },
         "height": "36",
         "weight": "bold",
@@ -888,7 +888,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 4300
+          "y": 4400
         },
         "height": "24"
       },
@@ -898,7 +898,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 4400
+          "y": 4500
         },
         "height": "36",
         "weight": "bold",
@@ -910,7 +910,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 4400
+          "y": 4500
         },
         "height": "24"
       },
@@ -920,7 +920,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 4500
+          "y": 4600
         },
         "height": "24"
       },
@@ -930,7 +930,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 4500
+          "y": 4600
         },
         "height": "36",
         "weight": "bold",
@@ -942,7 +942,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 4600
+          "y": 4700
         },
         "height": "24"
       },
@@ -952,7 +952,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 4600
+          "y": 4700
         },
         "height": "36",
         "weight": "bold",
@@ -964,7 +964,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1200,
-          "y": 4600
+          "y": 4700
         },
         "height": "48"
       },
@@ -974,7 +974,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 4700
+          "y": 4800
         },
         "height": "36",
         "weight": "bold",
@@ -986,7 +986,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 4700
+          "y": 4800
         },
         "height": "24"
       },
@@ -996,7 +996,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 4800
+          "y": 4900
         },
         "height": "36",
         "weight": "bold",
@@ -1008,7 +1008,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 4800
+          "y": 4900
         },
         "height": "24"
       },
@@ -1018,7 +1018,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 4900
+          "y": 5000
         },
         "height": "36",
         "weight": "bold",
@@ -1030,7 +1030,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 4900
+          "y": 5000
         },
         "height": "24"
       },
@@ -1040,19 +1040,19 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 5000
+          "y": 5100
         },
         "height": "36",
         "weight": "bold",
         "textAnchor": "end"
       },
       {
-        "description": "In multi-diagram viewing, the current diagram’s Z-order in the view changes up or down accordingly.",
+        "description": "In multi-diagram viewing, the current diagram’s Z-order in the view changes up or down accordingly.\nFor single diagram viewing, the page is moved up and down accordingly.",
         "basename": "t_98",
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 5000
+          "y": 5100
         },
         "height": "24"
       },
@@ -1062,7 +1062,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 5200
+          "y": 5300
         },
         "height": "36",
         "weight": "bold",
@@ -1074,7 +1074,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 5200
+          "y": 5300
         },
         "height": "24"
       },
@@ -1136,7 +1136,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 5300
+          "y": 5400
         },
         "height": "36",
         "weight": "bold",
@@ -1148,7 +1148,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 5400
+          "y": 5500
         },
         "height": "36",
         "weight": "bold",
@@ -1160,7 +1160,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 5220
+          "y": 5320
         },
         "height": "24"
       },
@@ -1170,7 +1170,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 5400
+          "y": 5500
         },
         "height": "24"
       },
@@ -1210,7 +1210,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 4200
+          "y": 4300
         },
         "height": "36",
         "weight": "bold",
@@ -1222,7 +1222,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 4200
+          "y": 4300
         },
         "height": "24"
       },
@@ -1254,7 +1254,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1200,
-          "y": 3800
+          "y": 3900
         },
         "height": "48"
       },
@@ -1274,12 +1274,12 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1200,
-          "y": 3700
+          "y": 3800
         },
         "height": "48"
       },
       {
-        "description": "If nothing selected, pan in the indicated direction for either single or multi-diagram viewing. \nOtherwise move the selected elements.",
+        "description": "Pan in the indicated direction for either single or multi-diagram viewing.",
         "basename": "t_118",
         "prototype": "IndexText",
         "xy": {
@@ -1294,7 +1294,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 3700
+          "y": 3800
         },
         "height": "24"
       },
@@ -1304,7 +1304,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 3800
+          "y": 3900
         },
         "height": "24"
       },
@@ -1314,7 +1314,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 3700
+          "y": 3800
         },
         "height": "36",
         "weight": "bold",
@@ -1326,7 +1326,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 3800
+          "y": 3900
         },
         "height": "36",
         "weight": "bold",
@@ -1358,7 +1358,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1200,
-          "y": 4100
+          "y": 4200
         },
         "height": "48"
       },
@@ -1405,17 +1405,39 @@
           "y": 3000
         },
         "height": "24"
+      },
+      {
+        "description": "shift-Arrow",
+        "basename": "t_129",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 1150,
+          "y": 3700
+        },
+        "height": "36",
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Move selected elements in the indicated direction.",
+        "basename": "t_130",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 1300,
+          "y": 3700
+        },
+        "height": "24"
       }
     ],
     "cells": []
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1645607291090,
+  "timestamp": 1647375466231,
   "version": 0,
   "viewport": {
-    "x": -973,
-    "y": 70,
-    "scale": 1.301176877358732
+    "x": 251,
+    "y": -1839,
+    "scale": 0.5943091552720957
   }
 }
