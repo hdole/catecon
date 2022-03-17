@@ -22,7 +22,7 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 910,
+          "x": 830,
           "y": 570
         },
         "height": "111",
@@ -66,17 +66,17 @@
         }
       },
       {
-        "description": "The morphism f:A-->B in the category D is invertible\n(an isomorphism) if there exists a morphism f⁻¹:B-->A\nsuch that the following diagram commutes.",
+        "description": "The morphism f:A→B in the category D is invertible\n(an isomorphism) if there exists a morphism f⁻¹:B&rarr;A\nsuch that the following diagram commutes.",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
           "x": 610,
-          "y": 660
+          "y": 650
         },
         "height": "24"
       },
       {
-        "description": "[CWMp19]",
+        "description": "[CWM 1.5]",
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
@@ -169,6 +169,24 @@
         "domain": "o_5",
         "codomain": "o_7",
         "to": "finv"
+      },
+      {
+        "description": "Definition of isomorphism",
+        "basename": "d_0",
+        "prototype": "Definition",
+        "xy": {
+          "x": 370,
+          "y": 910
+        },
+        "height": 28,
+        "defname": "isomorphism",
+        "sequence": [
+          "f",
+          "finv"
+        ],
+        "blobs": [
+          "hdole/iso/o_4"
+        ]
       }
     ],
     "cells": [
@@ -242,11 +260,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1647375257794,
+  "timestamp": 1647509186120,
   "version": 0,
   "viewport": {
-    "x": -1512,
-    "y": -1984,
-    "scale": 3.0678013612509205
+    "x": -636,
+    "y": -1065,
+    "scale": 2.362420670319687
   }
 }

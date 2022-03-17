@@ -59,7 +59,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -80,
-          "y": 370
+          "y": 380
         },
         "height": "200",
         "weight": "bold"
@@ -400,6 +400,16 @@
         }
       },
       {
+        "description": "BUG:  bad nested hom graph",
+        "basename": "t_3",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 130,
+          "y": 1390
+        },
+        "height": 24
+      },
+      {
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_2",
@@ -588,16 +598,6 @@
         "domain": "o_41",
         "codomain": "o_0",
         "to": "CPm{Id{A}dI,Id{B}dI}mPC"
-      },
-      {
-        "description": "BUG:  bad nested hom graph",
-        "basename": "t_3",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 130,
-          "y": 1390
-        },
-        "height": 24
       }
     ],
     "cells": []
@@ -1005,11 +1005,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1646119882430,
+  "timestamp": 1647509879367,
   "version": 0,
   "viewport": {
     "x": 323,
-    "y": -1745,
-    "scale": 1.437587646420699
+    "y": -230,
+    "scale": 1.4375627412524246
   }
 }
