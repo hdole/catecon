@@ -2544,17 +2544,9 @@ class TextTool extends ElementTool
 	{
 		try
 		{
-			let from = null;
 			if (!diagram.isEditable())
 				throw 'diagram is read only';
-			const basename = args.basename;
-			const name = Element.Codename(diagram, {basename});
-			if (diagram.getElement(name))
-				throw 'text name already exists';
-			const description = args.description;
-			from = diagram.placeText(args.text, args.xy);
-			diagram.makeSelected(from);
-			return from;
+			return diagram.placeText(args.text, args.xy);
 		}
 		catch(x)
 		{
@@ -3987,6 +3979,22 @@ class Display
 						if (R.Actions.detachDomain.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.detachDomain.action(e, R.diagram, R.diagram.selected);
 					},
+					ControlBracketRight(e)
+					{
+						if (R.diagram.selected.length === 1 && R.diagram.selected[0] instanceof IndexText)
+						{
+							const text = R.diagram.getSelected();
+							text.isEditable() && text.updateHeight(text.height + 4);
+						}
+					},
+					ControlBracketLeft(e)
+					{
+						if (R.diagram.selected.length === 1 && R.diagram.selected[0] instanceof IndexText)
+						{
+							const text = R.diagram.getSelected();
+							text.isEditable() && text.height > 8 && text.updateHeight(text.height - 4);
+						}
+					},
 					ControlLeft(e) { D.ctrlKey = true; },
 					ControlRight(e) { D.ctrlKey = true; },
 					Digit1(e)
@@ -4475,7 +4483,7 @@ class Display
 					path:		['fill', 'fill-rule', 'marker-end', 'stroke', 'stroke-width', 'stroke-linejoin', 'stroke-miterlimit'],
 					polyline:	['fill', 'fill-rule', 'marker-end', 'stroke', 'stroke-width', 'stroke-linejoin', 'stroke-miterlimit'],
 					stop:		['stop-color', 'stop-opacity'],
-					text:		['fill', 'font', 'margin', 'stroke', 'text-anchor'],
+					text:		['fill', 'font', 'margin', 'stroke', 'text-anchor', 'text-decoration'],
 				},
 				writable:	false,
 			},
@@ -9049,8 +9057,11 @@ class HomObject extends MultiObject
 		nuArgs.properName = HomObject.ProperName(nuArgs.objects);
 		nuArgs.description = `The homset from ${nuArgs.objects[0].properName} to ${nuArgs.objects[1].properName}`;
 		super(diagram, nuArgs);
-		this.setSignature();
-		D && D.emitElementEvent(diagram, 'new', this);
+		if (this.constructor.name === 'HomObject')
+		{
+			this.setSignature();
+			D && D.emitElementEvent(diagram, 'new', this);
+		}
 	}
 	setSignature()
 	{
@@ -9141,8 +9152,11 @@ class IndexText extends Element
 			textAnchor:		{value: U.getArg(nuArgs, 'textAnchor', 'start'),			writable:	true},
 		});
 		this.refcnt = 1;		// keep the text
-		diagram && diagram.addElement(this);
-		D && D.emitElementEvent(diagram, 'new', this);
+		if (this.constructor.name === 'IndexText')
+		{
+			this.setSignature();
+			D && D.emitElementEvent(diagram, 'new', this);
+		}
 	}
 	help()
 	{
@@ -9422,7 +9436,7 @@ class IndexText extends Element
 		D.closeActiveTextEdit();
 		const bbox = this.svgText.getBBox();
 		this.svgText.classList.add('hidden');
-		const hidden = H3.div(this.description, '.text-editor', {style:`font-size:${this.height}px; font-weight:${this.weight}, visibility:'visible', display:'none', whiteSpace:'pre-wrap', wordWrap:'break-word'}`});
+		const hidden = H3.div(this.description, '.text-editor', {style:`font-size:${this.height}px; font-weight:${this.weight}, visibility:'visible', display:'none', whiteSpace:'pre-wrap', wordWrap:'break-word'`});
 		this.hidden = hidden;
 		document.body.appendChild(hidden);
 		const div = H3.div('##foreign-text.text-editor', this.description,
@@ -9488,6 +9502,11 @@ class IndexCode extends IndexText		// description holds the code
 		super(diagram, args);
 		this.ext = args.ext;
 		this.element = diagram.getElement(args.element);
+		if (this.constructor.name === 'IndexCode')
+		{
+			this.setSignature();
+			D && D.emitElementEvent(diagram, 'new', this);
+		}
 	}
 	json()
 	{
@@ -9522,51 +9541,63 @@ class Definition extends IndexText
 {
 	constructor(diagram, args)
 	{
-		super(diagram, args);
-		const base = diagram.getElements(args.base);
-		if (base.filter(elt => !(elt instanceof IndexObject) && !(elt instanceof IndexMorphism)).length > 0)
-			throw 'bad base';
-		const blobs = blobs.map(b => b instanceof IndexBlob ? b : diagram.getBlob(b));
+		const nuArgs = U.clone(args);
+		nuArgs.basename = U.getArg(nuArgs, 'basename', diagram.getAnon('d'));
+		super(diagram, nuArgs);
+		const sequence = diagram.getElements(nuArgs.sequence);
+		if (sequence.filter(elt => !(elt instanceof CatObject) && !(elt instanceof Morphism)).length > 0)
+			throw 'bad sequence';
 		Object.defineProperties(this,
 		{
-			defname:	{value: args.defname,	writable:	false},
-			base:		{value: base,			writable:	false},
-			blobs:		{value: blobs,			writable:	false},
+			defname:	{value: nuArgs.defname,	writable:	false},
+			sequence:	{value: sequence,		writable:	false},
+			blobs:		{value: args.blobs,		writable:	true},
 		});
+		if (this.constructor.name === 'Definition')
+		{
+			this.setSignature();
+			D && D.emitElementEvent(diagram, 'new', this);
+		}
+	}
+	postload()
+	{
+		this.blobs = this.blobs.map(b => b instanceof IndexBlob ? b : new IndexBlob(this.diagram.domain.elements.get(b)));
+		this.blobs.map(b => b.forEachElement(elt => elt.incrRefcnt()));
+	}
+	decrRefcnt()
+	{
+		if (this.refcnt <= 1)
+			this.blobs.map(b => b.forEachElement(elt => elt.decrRefcnt()));
+		super.decrRefcnt();
 	}
 	help()
 	{
 		super.help()
 		D.toolbar.table.appendChild(H3.tr(H3.td(this.defname)));
-		Definition.show(this.base, this.blobs);
+		Definition.show(this.sequence, this.blobs);
 	}
 	json()
 	{
 		const a = super.json();
 		a.defname = this.defname;
-		a.base = this.base.forEach(elt => elt.refName(this.diagram));
-		a.blobs = this.blobs.forEach(b => b.getSeed().refName(this.diagram));
+		a.sequence = this.sequence.map(elt => elt.refName(this.diagram));
+		a.blobs = this.blobs.map(b => b.seed.name);
 		return a;
 	}
 	mouseenter(e)
 	{
 		super.mouseenter(e);
-		this.diagram.emphasis(this.diagram.getElement(this.element), true);
+		this.blobs.map(b => b.forEachElement(elt => elt.emphasis(true)));
 	}
 	mouseout(e)
 	{
 		super.mouseout(e);
-		this.diagram.emphasis(this.diagram.getElement(this.element), false);
+		this.blobs.map(b => b.forEachElement(elt => elt.emphasis(false)));
 	}
 	makeSVG(node)
 	{
 		super.makeSVG(node);
-		this.svg.querySelectorAll('tspan').forEach(tsp => tsp.classList.add('code'));
-	}
-	focusout(e)
-	{
-		super.focusout(e);
-		this.element.code[this.ext] = this.description;
+		this.svg.querySelectorAll('text').forEach(tsp => tsp.classList.add('definition'));
 	}
 	static showBlobItem(blob, item)
 	{
@@ -9602,9 +9633,9 @@ class Definition extends IndexText
 		}
 		D.toolbar.table.appendChild(row);
 	}
-	static showBase(base)
+	static showSetup(setup)
 	{
-		base.forEach(elt =>
+		setup.map(elt =>
 		{
 			const row = elt.getHtmlRow();
 			const tools = row.querySelector('.toolbar-element');
@@ -9646,11 +9677,11 @@ class Definition extends IndexText
 		[...cells].sort((a, b) => a.getLevel() < b.getLevel() ? -1 : b.getLevel() > a.getLevel() ? 1 : 0).map(doit);
 		didit && D.toolbar.table.appendChild(H3.tr(H3.td(H3.hr())));
 	}
-	static show(base, blob)
+	static show(setup, blobs)
 	{
-		Definition.showBase(base);
+		Definition.showSetup(setup);
 		D.toolbar.table.appendChild(H3.tr(H3.td(H3.hr())));
-		blobs.forEach(blob => Definition.showBlob(blob));
+		blobs.map(blob => Definition.showBlob(blob));
 	}
 }
 
@@ -9730,8 +9761,11 @@ class IndexObject extends CatObject
 			svg:		{value: null,				writable:	true},
 		});
 		this.setObject(nuArgs.to);
-		this.constructor.name === 'IndexObject' && this.setSignature();
-		D && this.constructor.name === 'IndexObject' && D.emitElementEvent(diagram, 'new', this);
+		if (this.constructor.name === 'IndexObject')
+		{
+			this.setSignature();
+			D && D.emitElementEvent(diagram, 'new', this);
+		}
 	}
 	help()
 	{
@@ -9888,7 +9922,7 @@ class IndexObject extends CatObject
 			if (quant !== 'none')
 			{
 				const level = this.getLevel();
-				properName = '('.repeat(level) + R.Actions.quantifier.symbols[quant] + properName + ')'.repeat(level);
+				properName = '('.repeat(level) + R.Actions.definition.symbols[quant] + properName + ')'.repeat(level);
 			}
 			txt.innerHTML = properName;
 		}
@@ -10758,7 +10792,7 @@ class HomsetAction extends Action
 	}
 	hasForm(diagram, ary)	// one object
 	{
-		return diagram.isEditable() && ary.length === 2 && ary[0] instanceof IndexObject && ary[1] instanceof IndexObject;
+		return diagram.isEditable() && ary.length === 2 && ary[0] instanceof IndexObject && ary[1] instanceof IndexObject && ary[0].category === ary[1].category;
 	}
 	create(e)
 	{
@@ -12327,34 +12361,43 @@ class DefinitionAction extends Action
 	{
 		const blobs = new Set();
 		ary.map(elt => blobs.add(diagram.getBlob(elt)));
-		return blobs;
+		return [...blobs];
 	}
-	getBase(blobs)
+	getSequence(blobs)
 	{
-		const base = new Set();
-		blobs.forEach(blob => blob.levels[0].map(elt => U.isIndexItem(elt) && elt.to.isBare() && base.add(elt.to)));
-		[...base].filter(elt => elt instanceof Morphism).map(m =>
+		const sequence = new Set();
+		blobs.map(blob => blob.levels[0].map(elt => U.isIndexItem(elt) && elt.to.isBare() && sequence.add(elt.to)));
+		[...sequence].filter(elt => elt instanceof Morphism).map(m =>
 		{
-			m.domain.isBare() && base.add(m.domain);
-			m.codomain.isBare() && base.add(m.codomain);
+			m.domain.isBare() && sequence.delete(m.domain);
+			m.codomain.isBare() && sequence.delete(m.codomain);
 		});
-		return base;
+		return [...sequence];
 	}
 	html(e, diagram, ary)
 	{
 		super.html();
+		const action = e => this.makeDefinition(e, diagram, diagram.selected);
 		const body = D.toolbar.body;
 		[	H3.h3('Create Definition'),
 			H3.label('Definition basename:', {for:'new-definition'}),
-			H3.input('##new-definition.ifocus', {placeholder:'Definition', title:'Definition', onkeyup:e => D.inputBasenameSearch(e, R.actionDiagram, e => e.stopPropagation(), null, R.user.name + '/')}),
-			D.getIcon('edit', 'edit', e => this.makeDefinition(e, diagram, diagram.selected), {title:'Create definition'}),
+			H3.input('##new-definition.ifocus',
+				{
+					placeholder:'Definition',
+					title:'Definition',
+					onkeyup:e => D.inputBasenameSearch(e, R.actionDiagram, e => e.stopPropagation(), null, R.user.name + '/'),
+					onkeydown:e => Cat.D.onEnter(e, action),
+				}),
+			D.getIcon('edit', 'edit', action, {title:'Create definition'}),
 			H3.br(),
 			H3.small('.italic', `Full name has the form sys/Action/${R.user.name}/basename`),
 			H3.br(),
 			H3.div('.center', H3.small('.bold', 'Following are selected for the definition')),
 		].map(elt => body.appendChild(elt));
+		const focus = body.querySelector('.ifocus');
+		focus && focus.focus();
 		const blobs = this.getBlobs(diagram, ary);
-		Definition.show(this.getBase(blobs), blobs);
+		Definition.show(this.getSequence(blobs), blobs);
 	}
 	isValid(quantifier)
 	{
@@ -12391,10 +12434,15 @@ class DefinitionAction extends Action
 	makeDefinition(e, diagram, ary)
 	{
 		const blobs = this.getBlobs(diagram, ary);
-		const base = this.getBase(blobs);
-		const sequence = [...base];
+		const sequence = this.getSequence(blobs);
 		const defname = D.toolbar.body.querySelector('#new-definition').value;
-		const def = new Definition(diagram, {defname, base, blobs});
+		const description = `Definition of ${defname}`;
+		const xy = D.toolbar.mouseCoords;	// use original location
+		const width = D.textWidth(description);
+		const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height/2, width, height:D.default.font.height};
+		const place = diagram.autoplaceSvg(bbox, null, 16);
+		const def = diagram.get('Definition', {description, defname, sequence, blobs, xy:{x:place.x, y:place.y}});
+		diagram.makeSelected(def);
 	}
 	hasForm(diagram, ary)
 	{
@@ -12465,20 +12513,18 @@ class ElementOfAction extends Action
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
-		const elt = this.doit(e, diagram, from);
-		diagram.log({command:'elementOf', from:from.name});
-		diagram.antilog({command:'delete', elements:[elt.name]});
+		diagram.newElement(e, 'object', elt => this.doit(e, diagram, from, elt));
 	}
-	doit(e, diagram, element)
+	doit(e, diagram, from, element)
 	{
-		return new IndexElement(diagram, {domain:ndx, codomain:element});
+		return diagram.placeIndexElementOfByObject(e, from, from.to, element);
 	}
 	hasForm(diagram, ary)	// one object
 	{
 		if (!diagram.isEditable() || ary.length !== 1)
 			return false;
 		const elt = ary[0];
-		return elt instanceof IndexObject && elt.to.category.actions.has('terminal');
+		return elt instanceof IndexObject && elt.to instanceof Category;
 	}
 }
 
@@ -12502,9 +12548,9 @@ class ElementInAction extends Action
 		diagram.log({command:'elementIn', from:from.name});
 		diagram.antilog({command:'delete', elements:[elt.name]});
 	}
-	doit(e, diagram, item)
+	doit(e, diagram, from)
 	{
-		return diagram.placeIndexElementOfByObject(e, item);
+		return diagram.placeIndexElementOfByObject(e, from, from.to.category);
 	}
 	hasForm(diagram, ary)	// one object
 	{
@@ -12803,7 +12849,7 @@ class Category extends CatObject
 						break;
 				}
 			});
-			definitions.map((def, ndx) => procElt(args, ndx));
+			definitions.map(procElt);
 			if (errMsg !== '')
 				R.recordError(errMsg);
 		}
@@ -13761,7 +13807,7 @@ const Arrow =
 			if (quant !== 'none')
 			{
 				const level = this.getLevel() -1;
-				properName = '('.repeat(level) + R.Actions.quantifier.symbols[quant] + properName + ')'.repeat(level);
+				properName = '('.repeat(level) + R.Actions.definition.symbols[quant] + properName + ')'.repeat(level);
 			}
 			const args = {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, id:`${this.elementId()}_name`,
 					onmouseenter:e => this.mouseenter(e), onmouseout:e => this.mouseout(e), onmouseover:e => this.mouseover(e), onmousedown:e => Cat.R.diagram.userSelectElement(e, this.name)};
@@ -15128,7 +15174,7 @@ class IndexBlob
 	{
 		Object.defineProperties(this,
 		{
-			'seed':			{value:seed,			writable: false},
+			'seed':			{value:seed,		writable: false},
 			'objects':		{value:new Set(),	writable: false},
 			'morphisms':	{value:new Set(),	writable: false},
 			'levels':		{value:[],			writable: true},
@@ -15247,9 +15293,10 @@ class IndexBlob
 	{
 		return [...this[to instanceof CatObject ? 'objects' : 'morphisms']].filter(o => o.to === to);
 	}
-	json()
+	forEachElement(doit)
 	{
-		return {seed:this.seed.name};
+		this.objects.forEach(o => doit(o));
+		this.morphisms.forEach(m => doit(m));
 	}
 	static getObject(seed)
 	{
@@ -17057,7 +17104,7 @@ class Diagram extends Functor
 	}
 	getBlob(name)
 	{
-		const elt = this.getElement(name);
+		const elt = typeof name === 'string' ? elt = this.domain.elements.get(name) : name;
 		if (elt instanceof IndexText)
 			return null;
 		const obj = Arrow.isArrow(elt) ? elt.domain : elt instanceof Cell ? elt.left[0].domain : elt;
@@ -17407,14 +17454,13 @@ class Diagram extends Functor
 			R.recordError(x);
 		}
 	}
-	placeIndexElementOfByObject(e, domain)
+	placeIndexElementOfByObject(e, from, cat, element = null)
 	{
 		try
 		{
-			const length = D.textWidth(this.domain.properName)/2 + D.textWidth(this.codomain.properName)/2 + 4 * D.textWidth('&emsp;');
-			const xy = this.findAngle(domain, length);
-			const codomain = new IndexObject(this, {xy, to:domain.to.category});
-			const ndxElement = new IndexElement(this, {domain, codomain});
+			const xy = this.findAngle(from, D.default.arrow.length);
+			const item = element instanceof IndexObject ? element : new IndexObject(this, {xy, to:element ? element : cat});
+			const ndxElement = new IndexElement(this, {domain: element ? item : from, codomain: element ? from : item});
 			this.makeSelected(ndxElement);
 			return ndxElement;
 		}
@@ -18517,7 +18563,7 @@ class Diagram extends Functor
 		text.textEditor();
 		this.sync = oldSync;
 	}
-	newElement(e, type)
+	newElement(e, type, fn = null)
 	{
 		const xy = this.userToDiagramCoords({x:e.clientX, y:e.clientY});
 		const oldSync = this.sync;
@@ -18536,10 +18582,12 @@ class Diagram extends Functor
 					elt = R.category.newObject(this, input);
 				if (elt)
 				{
+					let from = null;
 					if (elt instanceof CatObject && type === 'object')
-						this.placeObject(elt, text.getXY());
+						from = this.placeObject(elt, text.getXY());
 					else if (elt instanceof CatObject && type === 'morphism')
-						this.placeMorphism(elt, text.getXY());
+						from = this.placeMorphism(elt, text.getXY());
+					fn && fn(from);
 				}
 			}
 			let node = e.target.parentNode;
@@ -19642,6 +19690,7 @@ const Cat =
 	Cell,
 	Composite,
 	Dedistribute,
+	Definition,
 	Diagram,
 	IndexMorphism,
 	IndexObject,
