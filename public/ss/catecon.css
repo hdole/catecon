@@ -718,9 +718,6 @@ p
 .indexText
 {
 	fill:		var(--color-text);
-	font-size:	18px;
-	height:		auto;
-	width:		auto;
 }
 
 .txtCenter
@@ -1447,4 +1444,9 @@ tspan
 {
 	background-color:	var(--color-element-bg-hover);
 	color: 				var(--color-body);
+}
+
+.definition
+{
+	text-decoration:	underline overline;
 }
