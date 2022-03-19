@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -160,
-          "y": 40
+          "y": 80
         },
         "height": "200",
         "weight": "bold"
@@ -557,7 +557,77 @@
         "to": "Id{G}dI"
       }
     ],
-    "cells": []
+    "cells": [
+      {
+        "name": "hdole/group/{m_3,m_8,m_6},{m_7,m_4}",
+        "left": [
+          "m_3",
+          "m_8",
+          "m_6"
+        ],
+        "right": [
+          "m_7",
+          "m_4"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/group/{m_11,m_12},{m_9,m_13,m_10}",
+        "left": [
+          "m_9",
+          "m_13",
+          "m_10"
+        ],
+        "right": [
+          "m_11",
+          "m_12"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/group/{m_17,m_5,m_15},{m_18,m_19,m_14}",
+        "left": [
+          "m_18",
+          "m_19",
+          "m_14"
+        ],
+        "right": [
+          "m_17",
+          "m_5",
+          "m_15"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/group/{m_20,m_22,m_16},{m_21}",
+        "left": [
+          "m_20",
+          "m_22",
+          "m_16"
+        ],
+        "right": [
+          "m_21"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/group/{m_23,m_24,m_25},{m_26}",
+        "left": [
+          "m_23",
+          "m_24",
+          "m_25"
+        ],
+        "right": [
+          "m_26"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      }
+    ]
   },
   "elements": [
     {
@@ -792,11 +862,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641892516698,
+  "timestamp": 1647587770718,
   "version": 0,
   "viewport": {
-    "x": 905,
-    "y": 335,
-    "scale": 2.1345635774138203
+    "x": 889,
+    "y": 262,
+    "scale": 2.177249532054417
   }
 }

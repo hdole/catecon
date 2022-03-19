@@ -130,7 +130,7 @@
         "height": "24"
       },
       {
-        "description": "The portion of the diagram on the left\nside represents what happens if the\ntest returns false.  Namely, the identity\nid represents that the state does not\nupdate.  The right side is run if the\ntest returns true, whereupon the\nupdate function is invoked, followed\nby 'while'.",
+        "description": "The portion of the diagram on the left\nside represents what happens if the\ntest returns false.  Namely, the identity\n1:S&rarr;S represents that the state does not\nupdate.  The right side is run if the\ntest returns true, whereupon the\nupdate function is invoked, followed\nby 'while'.",
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
@@ -230,13 +230,6 @@
         "to": "update"
       },
       {
-        "basename": "m_11",
-        "prototype": "IndexMorphism",
-        "domain": "o_14",
-        "codomain": "o_15",
-        "to": "while"
-      },
-      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_12",
@@ -315,6 +308,13 @@
           ]
         ],
         "to": "CFa{CPo{#1,#1}oPC,#1_1}aFC"
+      },
+      {
+        "basename": "m_11",
+        "prototype": "IndexMorphism",
+        "domain": "o_14",
+        "codomain": "o_15",
+        "to": "while"
       }
     ],
     "cells": []
@@ -339,12 +339,6 @@
         "#1",
         "#1"
       ]
-    },
-    {
-      "basename": "while",
-      "prototype": "Morphism",
-      "domain": "S",
-      "codomain": "S"
     },
     {
       "basename": "update",
@@ -387,14 +381,20 @@
       "factors": [
         1
       ]
+    },
+    {
+      "basename": "while",
+      "prototype": "Morphism",
+      "domain": "S",
+      "codomain": "S"
     }
   ],
   "user": "hdole",
-  "timestamp": 1645517772891,
+  "timestamp": 1647722898147,
   "version": 0,
   "viewport": {
     "x": 342,
-    "y": 259,
+    "y": 123,
     "scale": 1.555179706303616
   }
 }
