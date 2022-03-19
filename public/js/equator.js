@@ -168,6 +168,8 @@ function loadItem(diagram, item, leftLeg, rightLeg, equal)
 
 function compareSigs(leftSig, rightSig)
 {
+	if (leftSig === rightSig)
+		return 1;
 	const equs = getEquals(leftSig);
 	if (equs.has(rightSig))
 		return 1;		// equal
@@ -179,7 +181,10 @@ function compareSigs(leftSig, rightSig)
 
 function removeIdentities(leg)
 {
-	return leg.filter(s => !identities.has(s));
+	const nuLeg = leg.filter(s => !identities.has(s));
+	if (nuLeg.length === 0)
+		nuLeg.push(leg[0]);
+	return nuLeg;
 }
 
 function scanLeg(left, leftSig, right, rightSig, scanned)		// recursive scanning of the left leg trying to match the rightSig
@@ -375,23 +380,29 @@ function checkEquivalence(diagram, lLeg, rLeg)		// not recursive
 {
 	if (spoiled)		// spoilage comes from editting
 		loadDiagrams(contextDiagrams);
-	const {left, right} = removeIds(lLeg, rLeg);
-	const leftSig = Sig(...left);
-	const rightSig = Sig(...right);
-	let equal = compareSigs(leftSig, rightSig);
+	let equal = compareSigs(Sig(...lLeg), Sig(...rLeg));
 	if (equal === 0)
 	{
-		const scanned = new Set();
-		equal = scanLeg(left, leftSig, right, rightSig, scanned);
-		scanned.clear();
+		const {left, right} = removeIds(lLeg, rLeg);
+		const leftSig = Sig(...left);
+		const rightSig = Sig(...right);
+		equal = compareSigs(leftSig, rightSig);
 		if (equal === 0)
-			equal = scanLeg(right, rightSig, left, leftSig, scanned);
-		if (equal === 0)
-			equal = checkTrimmedLegs(left, right, scanned);
+		{
+			const scanned = new Set();
+			equal = scanLeg(left, leftSig, right, rightSig, scanned);
+			scanned.clear();
+			if (equal === 0)
+				equal = scanLeg(right, rightSig, left, leftSig, scanned);
+			if (equal === 0)
+				equal = checkTrimmedLegs(left, right, scanned);
+		}
+		if (equal === 1)
+			setEquals(left, right);
 	}
+	else if (equal === 1)
+		setEquals(lLeg, rLeg);
 	const item = getItem(lLeg, rLeg);
-	if (equal === 1)
-		setEquals(left, right);
 	return {diagram, equal, item};
 }
 
