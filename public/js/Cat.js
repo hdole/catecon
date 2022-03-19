@@ -9085,9 +9085,14 @@ class HomObject extends MultiObject
 	getGraph(data = {position:0})
 	{
 		if (D)
-			return super.getGraph(this.constructor.name, data, 0, D.commaWidth, D.textWidth(this.properName));
+		{
+			data.position += D.bracketWidth;
+			const g = super.getGraph(this.constructor.name, data, 0, D.commaWidth, D.textWidth(this.properName), false);
+			data.position -= D.bracketWidth;
+			return g;
+		}
 		else
-			return super.getGraph(this.constructor.name, data, 0, 0, 0);
+			return super.getGraph(this.constructor.name, data, 0, 0, 0, false);
 	}
 	needsParens()
 	{
@@ -10686,7 +10691,8 @@ class HomObjectAction extends Action
 				}
 			};
 			diagram.forEachMorphism(doit);
-			diagram.allReferences.forEach(ref => ref.forEachMorphism(doit));
+			const diagrams = [...diagram.allReferences.keys()].map(dgrm => R.$CAT.getElement(dgrm));
+			diagrams.map(d => d.forEachMorphism(doit));
 			D.toolbar.clear();
 			D.toolbar.table.appendChild(H3.tr(H3.td(H3.small(`Place morphisms ${this.dual ? 'to' : 'from'} ${to.properName}`, '.italic'))));
 			const table = H3.table('.matching-table');
