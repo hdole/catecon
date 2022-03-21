@@ -771,9 +771,9 @@ class Runtime
 		new LambdaMorphismAction(actionDiagram);
 		new DistributeAction(actionDiagram);
 		new TensorAction(actionDiagram);
-		this.CAT.addActions('actions');
-		this.Cat.addActions('actions');
-		this.sys.Actions.addActions('actions');		// TODO restrict?
+//		this.CAT.addActions('actions');
+//		this.Cat.addActions('actions');
+//		this.sys.Actions.addActions('actions');		// TODO restrict?
 		setup(actionDiagram);
 	}
 	setupSet()
@@ -2246,7 +2246,8 @@ class Toolbar
 	showSelectedElementsToolbar(diagram, btns)
 	{
 		this.clearHeader();
-		let actions = [...diagram.codomain.actions.values()].filter(a => a.priority >= 0);
+//		let actions = [...diagram.codomain.actions.values()].filter(a => a.priority >= 0);
+		let actions = R.actionDiagram.getObjects().filter(a => a.priority >= 0);
 		actions.sort((a, b) => a.priority < b.priority ? -1 : b.priority > a.priority ? 1 : 0);
 		actions.map(action => !action.hidden() && action.hasForm(diagram, diagram.selected) &&
 				btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram[action.actionOnly ? 'activate' : 'actionHtml'](e, action.basename), {title:action.description})));
@@ -4895,6 +4896,7 @@ class Display
 							if (diagram.isIsolated(from) && diagram.isIsolated(target))
 							{
 								const ary = [target, from];
+								/*
 								const actions = diagram.codomain.actions;
 								let a = actions.has('product') ? actions.get('product') : null;
 								if (e.shiftKey && actions.has('coproduct'))
@@ -4902,6 +4904,20 @@ class Display
 								if (e.altKey && actions.has('hom'))
 									a = actions.get('hom');
 								if (a && a.hasForm(diagram, ary))
+								{
+									diagram.drop(e, a, from, target);
+									diagram.deselectAll();
+								}
+								*/
+//								const actions = diagram.codomain.actions;
+								let a = null;
+								if (e.shiftKey)
+									a = R.actionDiagram.getElement('coproduct');
+								else
+									a = R.actionDiagram.getElement('product');
+								if (e.altKey)
+									a = R.actionDiagram.getElement('hom');
+								if (a.hasForm(diagram, ary))
 								{
 									diagram.drop(e, a, from, target);
 									diagram.deselectAll();
@@ -9552,11 +9568,13 @@ class Definition extends IndexText
 		const sequence = diagram.getElements(nuArgs.sequence);
 		if (sequence.filter(elt => !(elt instanceof CatObject) && !(elt instanceof Morphism)).length > 0)
 			throw 'bad sequence';
+		const action = new UserAction(R.$CAT.getElement('actions'), {definition:this, basename:`${diagram.user}/${nuArgs.defname}`, sequence});
 		Object.defineProperties(this,
 		{
-			defname:	{value: nuArgs.defname,	writable:	false},
-			sequence:	{value: sequence,		writable:	false},
-			blobs:		{value: args.blobs,		writable:	true},
+			action:		{value: action,			writable: false},
+			defname:	{value: nuArgs.defname,	writable: false},
+			sequence:	{value: sequence,		writable: false},
+			blobs:		{value: args.blobs,		writable: true},
 		});
 		if (this.constructor.name === 'Definition')
 		{
@@ -12497,7 +12515,8 @@ class TerminalAction extends Action
 		if (ary.length > 0)
 		{
 			const elt = ary[0];
-			return elt instanceof IndexObject && elt.to.category && elt.to.category.actions.has('terminal');
+//			return elt instanceof IndexObject && elt.to.category && elt.to.category.actions.has('terminal');
+			return elt instanceof IndexObject && elt.to.category;
 		}
 		return true;		// nothing selected
 	}
@@ -12753,7 +12772,7 @@ class Category extends CatObject
 			actions:		{value:	new Map(),	writable:	false},
 			user:			{value:args.user,	writable:false},
 		});
-		R.$CAT && this.addActions('actions');
+//		R.$CAT && this.addActions('actions');
 		'elements' in nuArgs && this.process(diagram, nuArgs.elements);
 		if (this.constructor.name === 'Category')
 		{
@@ -12788,7 +12807,8 @@ class Category extends CatObject
 	help()
 	{
 		super.help();
-		D.toolbar.table.appendChild(H3.tr(H3.td('Category'), H3.td(`${this.elements.size} elements and ${this.actions.size} actions.`)));
+//		D.toolbar.table.appendChild(H3.tr(H3.td('Category'), H3.td(`${this.elements.size} elements and ${this.actions.size} actions.`)));
+		D.toolbar.table.appendChild(H3.tr(H3.td('Category')));
 	}
 	getCategorySignature()
 	{
@@ -12909,6 +12929,7 @@ class Category extends CatObject
 			D && emit && D.emitElementEvent(elt.diagram, 'delete', elt);
 		}
 	}
+	/*
 	addActions(name)
 	{
 		const ad = R.$CAT.getElement(name);
@@ -12921,6 +12942,7 @@ class Category extends CatObject
 			}, this);
 		}
 	}
+	*/
 	forEachObject(fn)
 	{
 		this.elements.forEach(e => e instanceof CatObject && fn(e));
@@ -13209,13 +13231,13 @@ class Morphism extends Element
 		const diagram = this.diagram;
 		const sig = this.signature;
 		R.loadItem(diagram, this, [this], [this]);
-		if (this.diagram.codomain.actions.has('product'))
-		{
+//		if (this.diagram.codomain.actions.has('product'))
+//		{
 			const domTermSig = FactorMorphism.Signature(diagram, this.domain);
 			const codTermSig = FactorMorphism.Signature(diagram, this.codomain);
 			R.loadSigs(diagram, this, [domTermSig], [sig, codTermSig]);
-		}
-		if (this.diagram.codomain.actions.has('coproduct'))
+//		}
+//		if (this.diagram.codomain.actions.has('coproduct'))
 			R.loadSigs(diagram, this, [FactorMorphism.Signature(diagram, this.domain)], [sig, FactorMorphism.Signature(diagram, this.codomain)]);
 		if ('data' in this)
 			this.data.forEach((d, i) =>
@@ -17093,7 +17115,8 @@ class Diagram extends Functor
 	{
 		D.toolbar.deactivateButtons();
 		D.toolbar.clearError();
-		const action = this.codomain.actions.get(name);
+//		const action = this.codomain.actions.get(name);
+		const action = R.actionDiagram.getElement(name);
 		if (action && action.hasForm(R.diagram, ary))
 		{
 			D.setActiveIcon(e.target, true);
@@ -17106,7 +17129,8 @@ class Diagram extends Functor
 		D.toolbar.deactivateButtons();
 		try
 		{
-			const action = this.codomain.actions.get(name);
+//			const action = this.codomain.actions.get(name);
+			const action = R.actionDiagram.getElement(name);
 			if (action && action.hasForm(R.diagram, this.selected))
 				args ? action.action(e, this, this.selected, args) : action.action(e, this, this.selected);
 		}
@@ -17880,11 +17904,12 @@ class Diagram extends Functor
 	}
 	downloadJS(e)
 	{
-		return this.codomain.actions.get('javascript').download(e, this);
+//		return this.codomain.actions.get('javascript').download(e, this);
+		return R.actionDiagram.getElement('javascript').download(e, this);
 	}
 	downloadCPP(e)
 	{
-		return this.codomain.actions.get('cpp').download(e, this);
+		return R.actionDiagram.getElement('cpp').download(e, this);
 	}
 	downloadPNG()
 	{
@@ -18154,8 +18179,8 @@ class Diagram extends Functor
 					elt = new Identity(this, args);
 				else
 					elt = new Cat[prototype](this, args);
-				if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
-					args.actions.map(a => elt.actions.set(a, R.Actions[a]));
+//				if (prototype === 'Category' && 'Actions' in R && 'actions' in args)	// bootstrap issue
+//					args.actions.map(a => elt.actions.set(a, R.Actions[a]));
 			}
 			if (!(elt instanceof IndexMorphism) && 'loadItem' in elt && !('postload' in elt))
 				elt.loadItem();

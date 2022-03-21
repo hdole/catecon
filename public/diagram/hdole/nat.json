@@ -565,7 +565,7 @@
           "x": -1490,
           "y": -300
         },
-        "height": "350",
+        "height": 350,
         "weight": "bold"
       },
       {
@@ -2410,7 +2410,7 @@
           "x": -1200,
           "y": 1300
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_245",
@@ -3784,7 +3784,7 @@
         "element": "sub16c"
       },
       {
-        "description": "%2 = %0 - %1;",
+        "description": "%2.c = __builtin_usub_overflow(%0, %1, &%2.v);",
         "basename": "t_112",
         "prototype": "IndexCode",
         "xy": {
@@ -3796,7 +3796,7 @@
         "element": "sub32u"
       },
       {
-        "description": "%2 = %0 - %1;",
+        "description": "%2.c = __builtin_usubl_overflow(%0, %1, &%2.v);",
         "basename": "t_113",
         "prototype": "IndexCode",
         "xy": {
@@ -3808,7 +3808,7 @@
         "element": "sub64u"
       },
       {
-        "description": "%2 = %0 - %1;",
+        "description": "%2.c = __builtin_usubll_overflow(%0, %1, &%2.v);",
         "basename": "t_114",
         "prototype": "IndexCode",
         "xy": {
@@ -3820,7 +3820,7 @@
         "element": "sub128c"
       },
       {
-        "description": "%2 = %0 + %1;",
+        "description": "%2.c = __builtin_uaddll_overflow(%0, %1, &%2.v);",
         "basename": "t_115",
         "prototype": "IndexCode",
         "xy": {
@@ -3832,7 +3832,7 @@
         "element": "add128"
       },
       {
-        "description": "%2 = %0 + %1;",
+        "description": "%2.c = __builtin_uaddl_overflow(%0, %1, &%2.v);",
         "basename": "t_116",
         "prototype": "IndexCode",
         "xy": {
@@ -3844,7 +3844,7 @@
         "element": "add64o"
       },
       {
-        "description": "%2 = %0 + %1;",
+        "description": "%2.c = __builtin_uadd_overflow(%0, %1, &%2.v);",
         "basename": "t_117",
         "prototype": "IndexCode",
         "xy": {
@@ -3868,7 +3868,7 @@
         "element": "add16c"
       },
       {
-        "description": "%2 = %0 * %1;",
+        "description": "%2.c = __builtin_umulll_overflow(%0, %1, &%2.v);",
         "basename": "t_119",
         "prototype": "IndexCode",
         "xy": {
@@ -4400,10 +4400,10 @@
         "basename": "t_163",
         "prototype": "IndexText",
         "xy": {
-          "x": 450,
-          "y": 1760
+          "x": 500,
+          "y": 1780
         },
-        "height": "12"
+        "height": 12
       },
       {
         "basename": "m_0",
@@ -6069,7 +6069,7 @@
       "prototype": "Morphism",
       "properName": "sub₆₄",
       "code": {
-        "cpp": "%2 = %0 - %1;"
+        "cpp": "%2.c = __builtin_usubl_overflow(%0, %1, &%2.v);"
       },
       "domain": "Po{N64,N64}oP",
       "codomain": "CPo{N64,#1}oPC"
@@ -6080,7 +6080,7 @@
       "prototype": "Morphism",
       "properName": "add₆₄",
       "code": {
-        "cpp": "%2 = %0 + %1;"
+        "cpp": "%2.c = __builtin_uaddl_overflow(%0, %1, &%2.v);"
       },
       "domain": "Po{N64,N64}oP",
       "codomain": "CPo{N64,#1}oPC"
@@ -6091,7 +6091,7 @@
       "prototype": "Morphism",
       "properName": "sub₃₂",
       "code": {
-        "cpp": "%2 = %0 - %1;"
+        "cpp": "%2.c = __builtin_usub_overflow(%0, %1, &%2.v);"
       },
       "domain": "Po{N32,N32}oP",
       "codomain": "CPo{N32,#1}oPC"
@@ -6216,7 +6216,7 @@
       "prototype": "Morphism",
       "properName": "add₃₂",
       "code": {
-        "cpp": "%2 = %0 + %1;"
+        "cpp": "%2.c = __builtin_uadd_overflow(%0, %1, &%2.v);"
       },
       "domain": "Po{N32,N32}oP",
       "codomain": "CPo{N32,#1}oPC"
@@ -6226,7 +6226,7 @@
       "prototype": "Morphism",
       "properName": "add&#x2081;&#x2082;&#x2088;",
       "code": {
-        "cpp": "%2 = %0 + %1;"
+        "cpp": "%2.c = __builtin_uaddll_overflow(%0, %1, &%2.v);"
       },
       "domain": "Po{N128,N128}oP",
       "codomain": "CPo{N128,#1}oPC"
@@ -6236,7 +6236,7 @@
       "prototype": "Morphism",
       "properName": "sub&#x2081;&#x2082;&#x2088;",
       "code": {
-        "cpp": "%2 = %0 - %1;"
+        "cpp": "%2.c = __builtin_usubll_overflow(%0, %1, &%2.v);"
       },
       "domain": "Po{N128,N128}oP",
       "codomain": "CPo{N128,#1}oPC"
@@ -6587,7 +6587,7 @@
       "prototype": "Morphism",
       "properName": "multr&#x2081;&#x2082;&#x2088;",
       "code": {
-        "cpp": "%2 = %0 * %1;"
+        "cpp": "%2.c = __builtin_umulll_overflow(%0, %1, &%2.v);"
       },
       "domain": "Po{N128,N128}oP",
       "codomain": "CPo{N128,#1}oPC"
@@ -6998,11 +6998,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1647509791255,
+  "timestamp": 1647752443057,
   "version": 0,
   "viewport": {
-    "x": 1243,
-    "y": 458,
-    "scale": 0.6627977101627028
+    "x": -498,
+    "y": -3197,
+    "scale": 1.7138538332545006
   }
 }

@@ -214,18 +214,8 @@
           "x": 100,
           "y": 140
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
-      },
-      {
-        "description": "BUG: commutivity for some reason",
-        "basename": "t_8",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 510,
-          "y": 870
-        },
-        "height": 24
       },
       {
         "basename": "m_0",
@@ -246,6 +236,16 @@
         "prototype": "IndexMorphism",
         "domain": "o_5",
         "codomain": "o_6",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ],
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Id{F3,Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP}dI"
       },
       {
@@ -257,6 +257,10 @@
           [
             "bezier",
             1
+          ],
+          [
+            "flipName",
+            true
           ]
         ],
         "to": "Id{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,F3}dI"
@@ -388,11 +392,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644651280202,
+  "timestamp": 1647733738631,
   "version": 0,
   "viewport": {
-    "x": 471,
-    "y": 99,
-    "scale": 2.076264243270887
+    "x": -1909,
+    "y": -3277,
+    "scale": 4.589704302495553
   }
 }

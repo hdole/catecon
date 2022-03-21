@@ -61,7 +61,7 @@
           "x": -80,
           "y": 380
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -162,7 +162,7 @@
           "x": 380,
           "y": 510
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_21",
@@ -388,7 +388,7 @@
           "x": -40,
           "y": 3310
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_0",
@@ -398,16 +398,6 @@
           "x": 800,
           "y": 1500
         }
-      },
-      {
-        "description": "BUG:  bad nested hom graph",
-        "basename": "t_3",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 130,
-          "y": 1390
-        },
-        "height": 24
       },
       {
         "basename": "m_1",
@@ -1005,11 +995,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1647509879367,
+  "timestamp": 1647732226381,
   "version": 0,
   "viewport": {
     "x": 323,
-    "y": -230,
+    "y": -2684,
     "scale": 1.4375627412524246
   }
 }

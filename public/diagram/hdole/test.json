@@ -931,16 +931,6 @@
         }
       },
       {
-        "description": "BUG:  getting graph of this coproduct assy",
-        "basename": "t_0",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 2440,
-          "y": 220
-        },
-        "height": 24
-      },
-      {
         "basename": "o_100",
         "prototype": "IndexObject",
         "to": "B",
@@ -1095,8 +1085,8 @@
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
-          "x": -1180,
-          "y": -370
+          "x": -1280,
+          "y": -350
         },
         "height": 24
       },
@@ -1199,114 +1189,6 @@
         "xy": {
           "x": -1010,
           "y": -260
-        }
-      },
-      {
-        "basename": "o_126",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -1110,
-          "y": -330
-        }
-      },
-      {
-        "basename": "o_127",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -1050,
-          "y": -330
-        }
-      },
-      {
-        "basename": "o_128",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -1010,
-          "y": -330
-        }
-      },
-      {
-        "basename": "o_129",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -980,
-          "y": -320
-        }
-      },
-      {
-        "basename": "o_130",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -930,
-          "y": -330
-        }
-      },
-      {
-        "basename": "o_131",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -910,
-          "y": -330
-        }
-      },
-      {
-        "basename": "o_132",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -1190,
-          "y": -320
-        }
-      },
-      {
-        "basename": "o_133",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -1170,
-          "y": -320
-        }
-      },
-      {
-        "basename": "o_134",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -890,
-          "y": -330
-        }
-      },
-      {
-        "basename": "o_135",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -870,
-          "y": -330
-        }
-      },
-      {
-        "basename": "o_136",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -850,
-          "y": -330
-        }
-      },
-      {
-        "basename": "o_137",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -830,
-          "y": -330
         }
       },
       {
@@ -2294,15 +2176,6 @@
         "domain": "o_118",
         "codomain": "o_121",
         "to": "f"
-      },
-      {
-        "basename": "o_138",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": -810,
-          "y": -330
-        }
       }
     ],
     "cells": []
@@ -3237,11 +3110,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1647729319972,
+  "timestamp": 1647730773748,
   "version": 0,
   "viewport": {
-    "x": 6075,
-    "y": 2503,
-    "scale": 5.511101612541838
+    "x": 920,
+    "y": 649,
+    "scale": 0.4747234867291576
   }
 }
