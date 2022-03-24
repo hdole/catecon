@@ -17162,8 +17162,11 @@ class Diagram extends Functor
 		elts.map(elt =>
 		{
 			const ndx = this.selected.indexOf(elt);
-			ndx > -1 && this.selected.splice(ndx, 1);
-			D.emitDiagramEvent(this, 'deselect', elt);
+			if (ndx > -1)
+			{
+				this.selected.splice(ndx, 1);
+				D.emitDiagramEvent(this, 'deselect', elt);
+			}
 		});
 		if (this.selected.length === 0)
 			this.blobs.length = 0;
@@ -17217,8 +17220,17 @@ class Diagram extends Functor
 	}
 	selectAll()
 	{
-		this.deselectAll();
-		this.domain.elements.forEach(e => this.addSelected(e));
+		const selected = new Set();
+		this.domain.elements.forEach(e =>
+		{
+			if (e instanceof IndexMorphism)
+			{
+				selected.delete(e.domain);
+				selected.delete(e.codomain);
+			}
+			selected.add(e);
+		});
+		this.makeSelected(...selected);
 	}
 	userSelectElement(e, name)
 	{
