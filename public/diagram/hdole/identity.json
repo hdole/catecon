@@ -23,9 +23,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": 450,
-          "y": 160
+          "y": 180
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -71,16 +71,6 @@
         "xy": {
           "x": 470,
           "y": 250
-        },
-        "height": 24
-      },
-      {
-        "description": "BUG:  object quantifiers do not appear",
-        "basename": "t_3",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 490,
-          "y": 640
         },
         "height": 24
       },
@@ -235,11 +225,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1647509801197,
+  "timestamp": 1648275825534,
   "version": 0,
   "viewport": {
-    "x": -517,
-    "y": 104,
-    "scale": 1.8979127174022752
+    "x": -997,
+    "y": 80,
+    "scale": 2.797587074707157
   }
 }
