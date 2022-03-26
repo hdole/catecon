@@ -386,7 +386,6 @@ class U		// utilities
 			catch(x)
 			{
 				R.recordError(x);
-				// TODO
 			}
 		}
 		else
@@ -395,6 +394,14 @@ class U		// utilities
 	static removefile(filename)
 	{
 		D ? localStorage.removeItem(filename) : fs.unlink('diagram/' + filename, _ => {});
+	}
+	static readTempfile(filename)
+	{
+		return sessionStorage.getItem(filename);
+	}
+	static writeTempfile(filename, data)
+	{
+		sessionStorage.setItem(filename, data);
 	}
 	static bezier(cp0, cp1, cp2, cp3, t)
 	{
@@ -888,7 +895,7 @@ class Runtime
 					if (e.target.result)
 					{
 						const args = e.target.result;
-						const localLog = U.readfile(`${name}.log`);
+						const localLog = U.readTempfile(`${name}.log`);
 						if (localLog)
 							args.log = JSON.parse(localLog);
 						const userDiagram = this.getUserDiagram(args.user);
@@ -2054,6 +2061,7 @@ class Toolbar
 			'help':			{value: document.getElementById('toolbar-help'),	writable: false},
 			'mode':			{value: null,										writable: true},
 			'mouseCoords':	{value: null,										writable: true},
+			'otherActions':	{value: [],											writable: false},
 			'sections':		{value: ['search', 'new'],							writable: false},
 			'table':		{value:	null,										writable: true},
 			'tools':		{value:	null,										writable: true},
@@ -2246,11 +2254,21 @@ class Toolbar
 	showSelectedElementsToolbar(diagram, btns)
 	{
 		this.clearHeader();
-//		let actions = [...diagram.codomain.actions.values()].filter(a => a.priority >= 0);
 		let actions = R.actionDiagram.getObjects().filter(a => a.priority >= 0);
 		actions.sort((a, b) => a.priority < b.priority ? -1 : b.priority > a.priority ? 1 : 0);
-		actions.map(action => !action.hidden() && action.hasForm(diagram, diagram.selected) &&
-				btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram[action.actionOnly ? 'activate' : 'actionHtml'](e, action.basename), {title:action.description})));
+		this.otherActions.length = 0;
+		actions.map(action =>
+		{
+			if (!action.hidden() && action.hasForm(diagram, diagram.selected))
+			{
+				const icn = document.querySelector(`#icon-${U.SafeId(action.basename)}`);
+				if (icn)
+					btns.push(D.getIcon(action.basename, action.basename, e => Cat.R.diagram[action.actionOnly ? 'activate' : 'actionHtml'](e, action.basename), {title:action.description}));
+				else
+					this.otherActions.push(action);
+			}
+		});
+		this.otherActions.length > 0 && btns.push(D.getIcon('others', 'action', e => Cat.D.toolbar.showOtherActions(e), {title:'Show other actions'}));
 		this.addButtons(btns);
 	}
 	showDiagramToolbar(diagram, btns)
@@ -2303,6 +2321,12 @@ class Toolbar
 			if (this.element.scrollHeight > screenHeight)
 				this.element.style.bottom = `${D.default.icon}px`;
 		}
+	}
+	showOtherActions(e)
+	{
+		this.clear();
+		D.setActiveIcon(e.target);
+		this.otherActions.map(action => this.table.appendChild(H3.tr(H3.td(H3.button(action.basename, {onclick:e => Cat.R.diagram[action.actionOnly ? 'activate' : 'actionHtml'](e, action.basename), title:action.description})))));
 	}
 }
 
@@ -9622,6 +9646,12 @@ class Definition extends IndexText
 		super.makeSVG(node);
 		this.svg.querySelectorAll('text').forEach(tsp => tsp.classList.add('definition'));
 	}
+	getCells()
+	{
+		const cells = [];
+		this.blobs.map(blob => blob.cells.forEach(cell => cell.commutes !== 'pullback' && cell.assertion && cells.push(cell)));
+		return cells;
+	}
 	static showBlobItem(blob, item)
 	{
 		let oldQuant = U.getQuantifier(item);
@@ -9706,6 +9736,176 @@ class Definition extends IndexText
 		D.toolbar.table.appendChild(H3.tr(H3.td(H3.hr())));
 		blobs.map(blob => Definition.showBlob(blob));
 	}
+}
+
+class Theorem extends IndexText
+{
+	constructor(diagram, args)
+	{
+		const nuArgs = U.clone(args);
+		nuArgs.basename = U.getArg(nuArgs, 'basename', diagram.getAnon('d'));
+		super(diagram, nuArgs);
+		const sequence = diagram.getElements(nuArgs.sequence);
+		if (sequence.filter(elt => !(elt instanceof CatObject) && !(elt instanceof Morphism)).length > 0)
+			throw 'bad sequence';
+		sequence.map(elt => elt.incrRefcnt());
+		const source = diagram.getElement(nuArgs.source);
+		source.incrRefcnt();
+		const target = diagram.getElement(nuArgs.target);
+		target.incrRefcnt();
+		Object.defineProperties(this,
+		{
+			source:		{value: source,			writable: false},
+			target:		{value: target,			writable: false},
+			sequence:	{value: sequence,		writable: false},
+			cells:		{value: nuArgs.cells,	writable: true},
+		});
+		if (this.constructor.name === 'Theorem')
+		{
+			this.setSignature();
+			D && D.emitElementEvent(diagram, 'new', this);
+		}
+	}
+	postload()
+	{
+		this.cells = this.cells.map(cell => cell instanceof Cell ? cell : this.category.getCell(cell));
+		this.cells.map(cell => cell.forEachElement(elt => elt.incrRefcnt()));
+		this.morphism = new Morphism(R.actionDiagram, {domain:this.source.action, codomain:this.target.action, description:this.description});
+		this.morphism.proof = this;
+	}
+	isValid()
+	{
+		return this.cells.reduce((r, cell) => r && cell.isEqual(), true);
+	}
+	decrRefcnt()
+	{
+		if (this.refcnt <= 1)
+		{
+			source.decrRefcnt();
+			target.decrRefcnt();
+			sequence.map(elt => elt.decrRefcnt());
+			this.cells.map(cell => cell.forEachElement(elt => elt.decrRefcnt()));
+		}
+		super.decrRefcnt();
+	}
+	help()
+	{
+		super.help()
+		D.toolbar.body.appendChild(H3.h3('Theorem'));
+		D.toolbar.body.appendChild(H3.p(`Definition ${this.definition.basename}`));
+		this.cells.map(cell => D.toolbar.table.appendChild(H3.tr(H3.td(cell.getHtmlRep()), H3.td(cell.commutes === 'computed' ? '⟲' : '?'))));
+	}
+	json()
+	{
+		const a = super.json();
+		a.source = this.source.name;
+		a.target = this.source.target;
+		a.sequence = this.sequence.map(elt => elt.refName(this.diagram));
+		a.cells = this.cells.map(cell => cell.name);
+		return a;
+	}
+	mouseenter(e)
+	{
+		super.mouseenter(e);
+		this.cells.map(cell => cell.forEachElement(elt => elt.emphasis(true)));
+	}
+	mouseout(e)
+	{
+		super.mouseout(e);
+		this.cells.map(cell => cell.forEachElement(elt => elt.emphasis(false)));
+	}
+	makeSVG(node)
+	{
+		super.makeSVG(node);
+		if (!isValid())
+			this.svg.querySelectorAll('text').forEach(tsp => tsp.classList.add('badGlow'));
+	}
+	/*
+	static showBlobItem(blob, item)
+	{
+		let oldQuant = U.getQuantifier(item);
+		let foundIt = false;
+		blob.morphisms.forEach(m =>
+		{
+			if (m !== item && m.to.isEquivalent(item.to) && m.attributes.has('quantifier'))
+			{
+				foundIt = true;
+				oldQuant = U.getQuantifier(m);
+			}
+		});
+		const row = item.getHtmlRow('quant');
+		const div = row.querySelector('div');
+		if (oldQuant !== 'none')
+			div.prepend(H3.span('.quantifier', R.Actions.definition.symbols[oldQuant]));
+		const tools = row.querySelector('.toolbar-element');
+		D.removeChildren(tools);
+		if (U.isIndexItem(item))		// add quantifier gui
+		{
+			const id = item.elementId('quant');
+			R.Actions.definition.quantifiers.map(q => tools.appendChild(D.getIcon(`quantifier-${q}`, `quantifier-${q}`, e => R.Actions.definition.action(e, item.diagram, item, q), {title:'Set quantifier', id:`${id}-quantifier-${q}`})));
+			D.setActiveIcon(row.querySelector(`#${id}-quantifier-${oldQuant}`), true);
+		}
+		else if (item instanceof Cell)
+		{
+			const tools = row.querySelector('#' + item.cellId('quant')).querySelector('.toolbar-element');
+			if (item.canDecreaseLevel(blob))
+				tools.appendChild(D.getIcon('level-down', 'level-down', e => R.Actions.definition.setLevel(e, item.diagram, item, -1), {title:'Lower expression level'}));
+			if (item.canIncreaseLevel(blob))
+				tools.appendChild(D.getIcon('level-up', 'level-up', e => R.Actions.definition.setLevel(e, item.diagram, item, 1), {title:'Raise expression level'}));
+		}
+		D.toolbar.table.appendChild(row);
+	}
+	static showSetup(setup)
+	{
+		setup.map(elt =>
+		{
+			const row = elt.getHtmlRow();
+			const tools = row.querySelector('.toolbar-element');
+			D.removeChildren(tools);
+			D.toolbar.table.appendChild(row);
+		});
+	}
+	static showBlob(blob)
+	{
+		const objects = new Set();
+		const morphisms = new Set();
+		const cells = new Set();
+		blob.objects.forEach(o => o.to.isBare() && o.getLevel() > 0 && objects.add(o.to));
+		blob.morphisms.forEach(m => m.to.isBare() && m.getLevel() > 0 && morphisms.add(m.to));
+		blob.cells.forEach(cell => cell.commutes !== 'pullback' && cell.assertion && cells.add(cell));
+		let didit = false;
+		const doit = elt =>
+		{
+			Definition.showBlobItem(blob, elt);
+			didit = true;
+		};
+		blob.objects.forEach(o =>
+		{
+			if (objects.has(o.to))
+			{
+				doit(o);
+				objects.delete(o.to);
+			}
+		});
+		blob.morphisms.forEach(m =>
+		{
+			if (morphisms.has(m.to))
+			{
+				doit(m);
+				morphisms.delete(m.to);
+			}
+		});
+		morphisms.forEach(doit);
+		[...cells].sort((a, b) => a.getLevel() < b.getLevel() ? -1 : b.getLevel() > a.getLevel() ? 1 : 0).map(doit);
+		didit && D.toolbar.table.appendChild(H3.tr(H3.td(H3.hr())));
+	}
+	static show(setup, blobs)
+	{
+		Definition.showSetup(setup);
+		D.toolbar.table.appendChild(H3.tr(H3.td(H3.hr())));
+		blobs.map(blob => Definition.showBlob(blob));
+	}
+	*/
 }
 
 class TensorObject extends MultiObject
@@ -12628,10 +12828,19 @@ class UserAction extends Action
 			definition:	{value:definition,	writable:	false},
 		});
 	}
+	html()
+	{
+		super.html();
+		const help = D.toolbar;
+		help.body.appendChild(H3.h3(`User Action ${U.HtmlEntitySafe(this.basename)}`));
+		help.body.appendChild(H3.span('Generate cells:', D.getIcon('edit', 'edit', e => this.action(e, R.diagram, R.diagram.selected))));
+		help.table.appendChild(H3.tr(H3.th('Source'), H3.th('Target')));
+		this.definition.sequence.map((elt, i) => help.table.appendChild(H3.tr(H3.td(elt.getHtmlRep()), H3.td(R.diagram.selected[i].getHtmlRep()))));
+	}
 	help()
 	{
 		super.help();
-		D.toolbar.table.appendChild(H3.tr(H3.td('Action')));
+		D.toolbar.table.appendChild(H3.tr(H3.td('Action'), H3.td(this.basename)));
 		// TODO
 	}
 	action(e, diagram, ary)
@@ -12689,20 +12898,25 @@ class UserAction extends Action
 				{
 					case 'FactorMorphism':
 						newElt = diagram[ref.dual ? 'cofctr' : 'fctr'](this._build(diagram, ref[ref.dual ? 'codomain' : 'domain'], eltMap), ref.factors);
+						break;
 					case 'Identity':
 						newElt = diagram.id(this._build(diagram, ref.domain, eltMap));
+						break;
 					case 'LambdaMorphism':
 						newElt = diagram.lambda(this._build(diagram, ref, eltMap), ref.domFactors, ref.homFactors);
+						break;
 					case 'Evaluation':
 						newElt = diagram.eval(this._build(diagram, ref.domain, eltMap), this._build(diagram, ref.domain.objects[0].objects[1], eltMap));
+						break;
 					case 'NamedMorphism':
 					case 'Distribute':
 					case 'Dedistribute':
 						break;	// TODO
 				}
 		}
+		if (newElt === undefined)
+			throw `type not handled: ${ref.constructor.name}`;
 		eltMap.set(ref, newElt);
-		throw `type not handled: ${ref.constructor.name}`;
 	}
 	doit(e, diagram, ary)
 	{
@@ -12710,22 +12924,78 @@ class UserAction extends Action
 		if (this.hasForm(diagram, ary, eltMap))
 		{
 			const def = this.definition;
-			const cells = [];
-			def.blobs.map(blob => blob.cells.forEach(cell => cell.commutes !== 'pullback' && cell.assertion && cells.push(cell)));
+//			const cells = [];
+//			def.blobs.map(blob => blob.cells.forEach(cell => cell.commutes !== 'pullback' && cell.assertion && cells.push(cell)));
+			const cells = def.getCells();
 			const eltMap = new Map();
-			const procLeg = m => this.build(diagram, m, eltMap);
-			cells.map(cell => {cell.left.map(procLeg); cell.right.map(procLeg);});
+			def.sequence.map((elt, i) =>
+			{
+				const to = ary[i].to;
+				eltMap.set(elt, to);
+				if (to instanceof Morphism)
+				{
+					eltMap.set(elt.domain, to.domain);
+					eltMap.set(elt.codomain, to.codomain);
+				}
+			});
+//			const sourceObjects = new Set();
+			const procMorphism = m =>
+			{
+				this._build(diagram, m.to, eltMap);
+//				sourceObjects.add(m.domain);
+//				sourceObjects.add(m.codomain);
+			};
+			cells.map(cell => {cell.left.map(procMorphism); cell.right.map(procMorphism);});
 			const bbox = diagram.svgRoot.getBBox();
-			const baseXY = new D2({x:bbox.x, y:bbox.y + bbox.height + D.default.arrow.length});
-			
-
-			const elt = this._build(diagram, ref, eltMap);
-			const last = ary[ary.length -1];
-			const xy = last instanceof Morphism ? last.domain.getXY() : last.getXY();
-			if (elt instanceof Morphism)
-				diagram.placeMorphism(elt, xy, null, true);
-			else
-				placeObject(elt, xy);
+			let baseXY = new D2({x:bbox.x, y:bbox.y + bbox.height + D.default.arrow.length});
+			const src2trgt = new Map();
+			const procObjects = cell =>
+			{
+				const objects = new Set();		// find the source objects in the cell
+				const legObjects = m =>
+				{
+					objects.add(m.domain);
+					objects.add(m.codomain);
+				};
+				cell.left.map(legObjects);
+				cell.right.map(legObjects);
+				const source = new D2({x:Number.POSITIVE_INFINITY, y:Number.POSITIVE_INFINITY});		// basepoint for the source cell
+				let bottom = 0;
+				objects.forEach(obj =>
+				{
+					source.x = Math.min(obj.x, source.x);
+					source.y = Math.min(obj.y, source.y);
+					bottom = Math.max(obj.y, bottom);
+				});
+				bottom = bottom - source.y;
+				objects.forEach(obj =>
+				{
+					const sourceOffset = new D2(obj.getXY()).subtract(source);
+					const xy = baseXY.add(sourceOffset);
+					const target = eltMap.get(obj.to);
+					src2trgt.set(obj, diagram.placeObject(target, xy, false));
+				});
+				baseXY = baseXY.add({x:0, y:bottom + D.default.arrow.length});
+			};
+			const morphisms = [];
+			const procLeg = leg =>
+			{
+				leg.map(m =>
+				{
+					const to = eltMap.get(m.to);
+					const domain = src2trgt.get(m.domain);
+					const codomain = src2trgt.get(m.codomain);
+					morphisms.push(diagram.placeMorphism(to, domain, codomain, false));
+				});
+			};
+			cells.map(cell =>
+			{
+				procObjects(cell);
+				procLeg(cell.left);
+				procLeg(cell.right);
+			});
+			diagram.makeSelected(...morphisms);
+			diagram.viewElements(...morphisms);
 		}
 	}
 	hasForm(diagram, ary, eltMap = new Map())
@@ -12772,7 +13042,6 @@ class Category extends CatObject
 			actions:		{value:	new Map(),	writable:	false},
 			user:			{value:args.user,	writable:false},
 		});
-//		R.$CAT && this.addActions('actions');
 		'elements' in nuArgs && this.process(diagram, nuArgs.elements);
 		if (this.constructor.name === 'Category')
 		{
@@ -15134,6 +15403,11 @@ class Cell
 		}
 		return fn(this.left, this.right) || fn(this.right, this.left);
 	}
+	forEachElement(fn)
+	{
+		this.left.map(m => fn(m));
+		this.right.map(m => fn(m));
+	}
 	static Signature(left, right)
 	{
 		const leftLeg = [];
@@ -16954,7 +17228,7 @@ class Diagram extends Functor
 		{
 			const name = this.name;
 			this.svgRoot && this.svgRoot.remove();
-			['.json', '.png', '.log'].map(ext => U.removefile(`${name}${ext}`));		// remove local files
+			['.json', '.png'].map(ext => U.removefile(`${name}${ext}`));		// remove local files
 			this.elements.forEach(elt => this.codomain.elements.delete(elt.name));
 			D && D.emitCATEvent('delete', this);
 		}
@@ -18288,7 +18562,7 @@ class Diagram extends Functor
 	}
 	saveLog()
 	{
-		U.writefile(`${this.name}.log`, JSON.stringify(this._log));
+		U.writeTempfile(`${this.name}.log`, JSON.stringify(this._log));
 	}
 	drop(e, action, from, target, log = true)
 	{
