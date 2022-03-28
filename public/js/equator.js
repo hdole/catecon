@@ -41,7 +41,6 @@ onmessage = e =>
 				removeEquivalences(args.diagram, args.items);
 				break;
 			case 'LoadDiagrams':
-				console.log('equality load diagrams', args.diagrams);
 				loadDiagrams(args.diagrams);
 				break;
 			case 'Info':
