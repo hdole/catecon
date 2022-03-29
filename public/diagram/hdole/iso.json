@@ -8,7 +8,9 @@
   "diagram": "hdole/hdole",
   "domain": "iso_Index",
   "codomain": "em/Cat",
-  "references": [],
+  "references": [
+    "hdole/identity"
+  ],
   "domainInfo": {
     "description": "index category for diagram hdole/iso",
     "basename": "iso_Index",
@@ -260,11 +262,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1648195130272,
+  "timestamp": 1648349716730,
   "version": 0,
   "viewport": {
-    "x": -1195,
-    "y": -1387,
-    "scale": 2.972549883460602
+    "x": 131,
+    "y": -134,
+    "scale": 0.8531959815447014
   }
 }

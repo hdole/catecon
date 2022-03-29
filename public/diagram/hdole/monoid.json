@@ -228,7 +228,7 @@
         "prototype": "IndexObject",
         "to": "D",
         "xy": {
-          "x": 110,
+          "x": 120,
           "y": 250
         }
       },
@@ -248,6 +248,16 @@
         "xy": {
           "x": 590,
           "y": 680
+        },
+        "height": 24
+      },
+      {
+        "description": "BUG: unit not included in base of definition",
+        "basename": "t_2",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -800,
+          "y": 960
         },
         "height": 24
       },
@@ -318,6 +328,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_21",
         "codomain": "o_26",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Pm{unit,Id{G}dI}mP"
       },
       {
@@ -359,6 +375,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_22",
         "codomain": "o_19",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Fa{Po{G,#1}oP,G_0}aF"
       },
       {
@@ -392,6 +414,25 @@
             "bezier",
             0
           ]
+        ]
+      },
+      {
+        "description": "Definition of monoid",
+        "basename": "d_0",
+        "prototype": "Definition",
+        "xy": {
+          "x": 70,
+          "y": 880
+        },
+        "height": 24,
+        "defname": "monoid",
+        "sequence": [
+          "mult",
+          "unit"
+        ],
+        "blobs": [
+          "hdole/monoid/o_30",
+          "hdole/monoid/o_21"
         ]
       }
     ],
@@ -653,11 +694,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1648245040780,
+  "timestamp": 1648499221087,
   "version": 0,
   "viewport": {
     "x": 1277,
-    "y": 382,
+    "y": -194,
     "scale": 1.3185556920576345
   }
 }

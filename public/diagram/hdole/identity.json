@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 450,
-          "y": 180
+          "y": 190
         },
         "height": 200,
         "weight": "bold"
@@ -156,6 +156,23 @@
           ]
         ],
         "to": "f"
+      },
+      {
+        "description": "Definition of identity",
+        "basename": "d_0",
+        "prototype": "Definition",
+        "xy": {
+          "x": 460,
+          "y": 460
+        },
+        "height": 24,
+        "defname": "identity",
+        "sequence": [
+          "id"
+        ],
+        "blobs": [
+          "hdole/identity/m_2"
+        ]
       }
     ],
     "cells": [
@@ -225,11 +242,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1648275825534,
+  "timestamp": 1648368233861,
   "version": 0,
   "viewport": {
-    "x": -997,
-    "y": 80,
-    "scale": 2.797587074707157
+    "x": -498,
+    "y": 33,
+    "scale": 2.1847092846509897
   }
 }

@@ -108,7 +108,7 @@
         "prototype": "IndexObject",
         "to": "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
         "xy": {
-          "x": 710,
+          "x": 780,
           "y": 800
         }
       },
@@ -211,7 +211,7 @@
         "basename": "t_7",
         "prototype": "IndexText",
         "xy": {
-          "x": 100,
+          "x": 120,
           "y": 140
         },
         "height": 200,
@@ -392,11 +392,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1647733738631,
+  "timestamp": 1648373067108,
   "version": 0,
   "viewport": {
-    "x": -1909,
-    "y": -3277,
-    "scale": 4.589704302495553
+    "x": 474,
+    "y": 100,
+    "scale": 2.120103701188753
   }
 }

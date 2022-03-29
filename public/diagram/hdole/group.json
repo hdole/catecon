@@ -23,9 +23,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": -160,
-          "y": 80
+          "y": 90
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -135,7 +135,7 @@
           "x": -260,
           "y": 1600
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_10",
@@ -190,7 +190,7 @@
           "x": -260,
           "y": 1890
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "G is a group object when supplied with a multiplier,\na unit in the group, and an inverse for the group\nand the following cells must commute.",
@@ -200,7 +200,7 @@
           "x": -140,
           "y": 180
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_19",
@@ -264,7 +264,7 @@
           "x": -300,
           "y": 1300
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_9",
@@ -346,7 +346,7 @@
           "x": -150,
           "y": 700
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "g = 1*g",
@@ -356,7 +356,7 @@
           "x": -200,
           "y": 1000
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_32",
@@ -862,11 +862,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1647587770718,
+  "timestamp": 1648373006813,
   "version": 0,
   "viewport": {
     "x": 889,
-    "y": 262,
+    "y": 194,
     "scale": 2.177249532054417
   }
 }
