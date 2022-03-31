@@ -596,7 +596,7 @@ class Runtime
 	}
 	setupWorkers()
 	{
-		// equality engine
+		// equator engine
 		const worker = new Worker((D ? '' : './public') + '/js/equator.js');
 		worker.onmessage = msg =>		// process return messages from the worker
 		{
@@ -649,7 +649,7 @@ class Runtime
 					break;
 			}
 		};
-		this.workers.equality = worker;
+		this.workers.equator = worker;
 		let url = '';
 		if (D)
 		{
@@ -1178,7 +1178,7 @@ class Runtime
 	}
 	loadIdentity(diagram, item)
 	{
-		item instanceof Identity && this.workers.equality.postMessage({command:'LoadIdentity', diagram:diagram.name, item:item.name, signature:item.signature});
+		item instanceof Identity && this.workers.equator.postMessage({command:'LoadIdentity', diagram:diagram.name, item:item.name, signature:item.signature});
 	}
 	loadItem(diagram, item, leftLeg, rightLeg, equal = true)
 	{
@@ -1192,15 +1192,15 @@ class Runtime
 	{
 		if (U.arrayEquals(leftLeg, rightLeg))
 			return;
-		this.workers.equality.postMessage({command:'LoadItem', diagram:diagram.name, item:item.name, leftLeg, rightLeg, equal});
+		this.workers.equator.postMessage({command:'LoadItem', diagram:diagram.name, item:item.name, leftLeg, rightLeg, equal});
 	}
 	removeEquivalences(diagram, ...items)
 	{
-		this.workers.equality.postMessage({command:'RemoveEquivalences', diagram:diagram.name, items});
+		this.workers.equator.postMessage({command:'RemoveEquivalences', diagram:diagram.name, items});
 	}
 	loadDiagramEquivalences(diagram)
 	{
-		this.workers.equality.postMessage({command:'LoadDiagrams', diagrams:[...[...diagram.allReferences.keys()].reverse(), diagram.name]});
+		this.workers.equator.postMessage({command:'LoadDiagrams', diagrams:[...[...diagram.allReferences.keys()].reverse(), diagram.name]});
 	}
 	fetchCatalog(fn)
 	{
@@ -1567,7 +1567,7 @@ class Runtime
 			const handlers = cellToCallbacks.get(cell.name);
 			handlers.push(handler);
 		}
-		this.workers.equality.postMessage(
+		this.workers.equator.postMessage(
 		{
 			command:'CheckEquivalence',
 			diagram:cell.diagram.name,
@@ -3563,13 +3563,9 @@ class DefinitionTool extends ElementTool
 		this.hasDiagramOnlyButton = false;
 		Object.defineProperties(this,
 		{
-			descriptionElt:		{value: null,		writable: true},
+			selector:			{value: null,		writable: true},
 			error:				{value: null,		writable: true},
 		});
-	}
-	addNewSection()
-	{
-		this.toolbar.appendChild(H3.tr(H3.td((`##${this.type}-new.hidden`))));
 	}
 	html(e)
 	{
@@ -3578,20 +3574,40 @@ class DefinitionTool extends ElementTool
 		searchbar.classList.add('hidden');
 		const h3 = D.toolbar.table.querySelector('h3');
 		h3.innerHTML = 'Definitions';
-		h3.parentNode.appendChild(H3.span(`Click to instantiate definition in category ${R.category.properName}:`));
+		const div = H3.div(H3.p(`Instantiate definition in category ${R.category.properName}.`), H3.p('Select a definition to instantiate.'));
+		h3.after(div);
+		const defs = R.diagram.getDefinitions();
+		defs.unshift({action:{basename:'Select a definition'}, name:null});
+		this.selector = H3.select({onchange:e => this.showDefinition(e.target.value)}, defs.map(def => H3.option(def.action.basename, {value:def.action.basename})));
+		div.after(this.selector);
 	}
-	getRows(tbl, definitions)
+	getRows(tbl, definitions) {}		// ignore
+	getMatchingElements() { return []; }		// ignore
+	getInputs(def)
 	{
-		definitions.map(def => tbl.appendChild(def.getHtmlRow()));
+		const objects = def.getSequenceObjects();
+		const inputs = [];
+		objects.forEach(o => inputs.push(document.getElementById(o.elementId('def')).value));
+		return inputs;
 	}
-	getMatchingElements()
+	showDefinition(actionBasename)
 	{
-		return R.diagram.getDefinitions();
-	}
-	reset()
-	{
-		super.reset();
-		this.descriptionElt && (this.descriptionElt.value = '');
+		let node = this.selector.nextSibling;
+		while(node)
+		{
+			node.remove();
+			node = this.selector.nextSibling;
+		}
+		const defs = R.diagram.getDefinitions();
+		const def = defs.filter(d => d.action.basename === actionBasename)[0];
+		if (def)
+		{
+			const objects = def.getSequenceObjects();
+			const rows = [...objects].map(o => H3.tr(H3.td(o.getHtmlRep()), H3.td(H3.input(`##${o.elementId('def')}`))));
+			const table = H3.table(rows);
+			this.selector.after(table);
+			table.after(D.getIcon('edit', 'edit', e => def.instantiate(this.getInputs(def))));
+		}
 	}
 }
 
@@ -7602,13 +7618,13 @@ class SettingsPanel extends Panel
 			H3.table(H3.tr(H3.td(this.closeBtnCell())), '.buttonBarRight.stdBackground'),
 			H3.button('Settings', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-actions')}),
 			H3.div(H3.table('##settings-table', settings), '##settings-actions.section'),
-			H3.button('Equality Info', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-equality')}),
-			H3.div('##settings-equality.section')
+			H3.button('Equator', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-equator')}),
+			H3.div('##settings-equator.section')
 		];
 		elts.map(elt => this.elt.appendChild(elt));
 		this.initialize();
-		this.equalityElt = document.getElementById('settings-equality');
-		R.workers.equality.addEventListener('message', msg =>
+		this.equalityElt = document.getElementById('settings-equator');
+		R.workers.equator.addEventListener('message', msg =>
 		{
 			if (msg.data.command === 'Info')
 			{
@@ -7620,7 +7636,7 @@ class SettingsPanel extends Panel
 				D.pretty(data, elt);
 			}
 			else if (msg.data.command === 'LoadDiagrams')
-				R.workers.equality.postMessage({command:'Info'});
+				R.workers.equator.postMessage({command:'Info'});
 		});
 		window.addEventListener('Login', _ => this.update());
 	}
@@ -7904,7 +7920,8 @@ class Element
 		html.classList.add('element');
 		let elementToolbar = null;
 		if (R.diagram.isEditable())
-			elementToolbar = H3.table('.toolbar-element', H3.tr(H3.td(this.getButtons())));
+//			elementToolbar = H3.table('.toolbar-element', H3.tr(H3.td(this.getButtons())));
+			elementToolbar = H3.span('.toolbar-element', this.getButtons());
 		let actions = {};
 		if (mouse)
 		{
@@ -9645,7 +9662,8 @@ class Definition extends IndexText
 	help()
 	{
 		super.help()
-		D.toolbar.table.appendChild(H3.tr(H3.td(this.defname)));
+		D.toolbar.body.appendChild(H3.h3('Definition'));
+		D.toolbar.body.appendChild(H3.p(this.defname));
 		Definition.show(this.diagram, this.sequence, this.blobs);
 		const toolbars = [...D.toolbar.table.querySelectorAll('.toolbar-element')];
 		toolbars.map(tb => tb.remove());
@@ -9692,7 +9710,22 @@ class Definition extends IndexText
 	}
 	getButtons()
 	{
-		return [D.getIcon('instantiate-definition', 'place', e => R.diagram.instantiate(this, D.mouse.diagramPosition(this.diagram)), {title:'Instantiate definition'})];
+		return [D.getIcon('instantiate-definition', 'place', e => R.diagram.instantiate(this, D.toolbar.table.querySelector('#defi-basename').value, D.mouse.diagramPosition(this.diagram)), {title:`Instantiate ${this.defname}`})];
+	}
+	getSequenceObjects()
+	{
+		const objects = new Set();
+		this.sequence.map(elt =>
+		{
+			if (elt instanceof CatObject)
+				objects.add(elt);
+			else if (elt instanceof Morphism)
+			{
+				objects.add(elt.domain);
+				objects.add(elt.codomain);
+			}
+		});
+		return objects;
 	}
 	static getIndexElement(blobs, element)
 	{
@@ -9805,6 +9838,76 @@ class Definition extends IndexText
 	}
 }
 
+class DefinitionInstance extends IndexText		// instantiate a definition in a diagram
+{
+	constructor(diagram, args)
+	{
+		super(diagram, args);
+		Object.defineProperties(this,
+		{
+			definition:		{value: args.definition,			writable: true},
+		});
+		if (this.constructor.name === 'DefinitionInstance')
+		{
+			this.setSignature();
+			D && D.emitElementEvent(diagram, 'new', this);
+		}
+	}
+	postload()
+	{
+		this.definition = this.diagram.getElement(this.definition);
+		this.definition.incrRefcnt();
+	}
+	decrRefcnt()
+	{
+		if (this.refcnt <= 1)
+			this.definition.decrRefcnt();
+		super.decrRefcnt();
+	}
+	json()
+	{
+		const a = super.json();
+		a.definition = this.definition.name;
+		return a;
+	}
+	makeSVG(node)
+	{
+		super.makeSVG(node);
+		this.svg.querySelectorAll('text').forEach(tsp => tsp.classList.add('definitionInstance'));
+	}
+	help()
+	{
+		super.help()
+		D.toolbar.body.appendChild(H3.h3('Definition Instance'));
+		D.toolbar.body.appendChild(H3.p(`Basename: ${this.basename}`));
+		Definition.show(this.diagram, this.definition.sequence, this.definition.blobs);
+		const toolbars = [...D.toolbar.table.querySelectorAll('.toolbar-element')];
+		toolbars.map(tb => U.removeChildren(tb));
+	}
+	/*
+	mouseenter(e)
+	{
+		super.mouseenter(e);
+		this.diagram.emphasis(this.diagram.getElement(this.element), true);
+	}
+	mouseout(e)
+	{
+		super.mouseout(e);
+		this.diagram.emphasis(this.diagram.getElement(this.element), false);
+	}
+	makeSVG(node)
+	{
+		super.makeSVG(node);
+		this.svg.querySelectorAll('tspan').forEach(tsp => tsp.classList.add('code'));
+	}
+	focusout(e)
+	{
+		super.focusout(e);
+		this.element.code[this.ext] = this.description;
+	}
+	*/
+}
+
 class Theorem extends IndexText
 {
 	constructor(diagram, args)
@@ -9859,7 +9962,8 @@ class Theorem extends IndexText
 	{
 		super.help()
 		D.toolbar.body.appendChild(H3.h3('Theorem'));
-		D.toolbar.body.appendChild(H3.p(`Definition ${this.definition.basename}`));
+		D.toolbar.body.appendChild(H3.p(`Source ${this.source.defname}`));
+		D.toolbar.body.appendChild(H3.p(`Target ${this.target.defname}`));
 		this.cells.map(cell => D.toolbar.table.appendChild(H3.tr(H3.td(cell.getHtmlRep()), H3.td(cell.commutes === 'computed' ? '⟲' : '?'))));
 	}
 	json()
@@ -12920,10 +13024,7 @@ class UserAction extends Action
 					eltMap.set(elt.codomain, to.codomain);
 				}
 			});
-			const procMorphism = m =>
-			{
-				this._build(diagram, m.to, eltMap);
-			};
+			const procMorphism = m => this._build(diagram, m.to, eltMap);
 			cells.map(cell => {cell.left.map(procMorphism); cell.right.map(procMorphism);});
 			const bbox = diagram.svgRoot.getBBox();
 			let baseXY = new D2({x:bbox.x, y:bbox.y + bbox.height + D.default.arrow.length});
@@ -13105,6 +13206,7 @@ class Category extends CatObject
 				}
 			});
 			const definitions = [];
+			const definitionInstances = [];
 			data.filter((args, ndx) =>
 			{
 				switch(args.prototype)
@@ -13131,9 +13233,13 @@ class Category extends CatObject
 					case 'Definition':
 						definitions.push(args);
 						break;
+					case 'DefinitionInstance':
+						definitionInstances.push(args);
+						break;
 				}
 			});
 			definitions.map(procElt);
+			definitionInstances.map(procElt);
 			if (errMsg !== '')
 				R.recordError(errMsg);
 		}
@@ -14807,7 +14913,7 @@ class Cell
 			assertion:		{value: null,											writable:true},		// specified by user
 			attributes:		{value:	attributes,										writable:true},
 			basename:		{value: Cell.Basename(diagram, args.left, args.right),	writable:false},
-			commutes:		{value: 'commutes' in args ? args.commutes : 'unknown',	writable:true},		// as determined by the equality engine
+			commutes:		{value: 'commutes' in args ? args.commutes : 'unknown',	writable:true},		// as determined by the equator engine
 			diagram:		{value: diagram,										writable:false},
 			hidden:			{value: 'hidden' in args ? args.hidden : false,			writable:true},
 			left:			{value: args.left.slice(),								writable:false},		// morphisms, one side of the cell
@@ -19221,6 +19327,10 @@ class Diagram extends Functor
 		[...R.getReferences(this.name)].map(ref => R.$CAT.getElement(ref)).map(ref => ref.forEachDefinition(def => defs.push(def)));
 		return defs;
 	}
+	instantiate(definition, basename, xy)
+	{
+		const defi = new DefinitionInstance(this, {basename, definition, xy, description:`Instantiation of ${definition.defname}`});
+	}
 	static Codename(args)
 	{
 		return `${args.user}/${args.basename}`;
@@ -19961,6 +20071,7 @@ const Cat =
 	Composite,
 	Dedistribute,
 	Definition,
+	DefinitionInstance,
 	Diagram,
 	IndexMorphism,
 	IndexObject,
