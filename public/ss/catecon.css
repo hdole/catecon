@@ -1450,3 +1450,8 @@ tspan
 {
 	text-decoration:	underline overline;
 }
+
+.definitionInstance
+{
+	text-decoration:	overline dotted;
+}
