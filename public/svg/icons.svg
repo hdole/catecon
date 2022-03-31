@@ -116,10 +116,10 @@
 		<path class="svgstr1" d="M90,190 A120,50 0 1,0 230,190"/>
 	</symbol>
 	<symbol id="icon-definition" class="icon" viewbox="0 0 320 320">
-		<circle cx="80" cy="120" r="80" fill="url(#radgrad1)"/>
-		<line class="icon-std" x1="140" y1="120" x2="280" y2="120" marker-end="url(#arrowhead)"/>
-		<circle cx="80" cy="200" r="80" fill="url(#radgrad1)"/>
-		<line class="icon-std" x1="140" y1="200" x2="280" y2="200" marker-end="url(#arrowhead)"/>
+		<circle cx="80" cy="100" r="120" fill="url(#radgrad1)"/>
+		<line class="icon-bold" x1="140" y1="100" x2="280" y2="100" marker-end="url(#arrowhead)"/>
+		<circle cx="80" cy="220" r="120" fill="url(#radgrad1)"/>
+		<line class="icon-bold" x1="140" y1="220" x2="280" y2="220" marker-end="url(#arrowhead)"/>
 	</symbol>
 	<symbol id="icon-derive" class="icon" viewbox="0 0 320 320">
 		<line class="icon-std" x1="60" y1="300" x2="60" y2="40" marker-end="url(#arrowhead)"/>
