@@ -12,8 +12,7 @@
 //			close		remove diagram from session							[DiagramTool.getButtons, Diagram.close]
 // 			default		diagram is now the default diagram for viewing		[R.SelectDiagram]
 //			delete		diagram is deleted
-// 			download	diagram came from server							[R.DownloadDiagram]
-// 			load		diagram now available for viewing, but may have no view yet		[R.readLocal, R.DownloadDiagram]
+// 			load		diagram now available for viewing, but may have no view yet		[R.readLocal]
 // 			new			new diagram exists									[DiagramTool.create, .new, D.uploadJSON, CatalogTool.createDiagram]
 // 			unload		diagram unloaded from session
 // 			upload		diagram sent to server								[Diagram.upload]
@@ -895,6 +894,7 @@ class Runtime
 						diagram = new Cat[args.prototype](userDiagram, args);
 						diagram.check();
 						R.debug(1) && console.log('readDiagram loaded diagram', args.name);
+						D.emitCATEvent('load', diagram);
 					}
 					else
 					{
@@ -990,7 +990,6 @@ class Runtime
 	}
 	static async DownloadDiagram(name, fn = null, e = null)
 	{
-		let diagram = null;
 		const cloudDiagrams = [...R.getReferences(name)].reverse().filter(d => R.catalog.has(d) && !R.catalog.get(d).isLocal);
 		if (cloudDiagrams.length > 0)
 		{
@@ -1018,7 +1017,7 @@ class Runtime
 						if (jsons.length > 0)
 							doSave(jsons.shift());
 						else if (R.canLoad(name))
-							diagram = R.loadDiagram(name, fn);
+							R.loadDiagram(name, fn);
 					});
 				};
 				jsons.length > 0 && doSave(jsons[0]);
@@ -1152,30 +1151,6 @@ class Runtime
 		this.catalog.set(diagram.name, info);
 		writeCatalog && this.writeCatalog();
 	}
-	getCategoriesInfo()
-	{
-		const info = new Map();
-		this.$CAT.codomain.elements.forEach(o =>
-		{
-			if (o instanceof Category && !(o instanceof IndexCategory))
-				info.set(o.name, o.info());
-		});
-		return info;
-	}
-	reloadDiagramFromServer()
-	{
-		const name = this.diagram.name;
-		const svg = this.diagram.svgRoot;
-		// TODO replace fetchDiagram()
-		this.cloud && this.cloud.fetchDiagram(name, false).then(data =>
-		{
-			this.diagram.clear();
-			R.saveDiagram(data);
-			svg && svg.remove();
-			this.diagram.decrRefcnt();	// remove current diagram
-			Runtime.SelectDiagram(name);
-		});
-	}
 	loadIdentity(diagram, item)
 	{
 		item instanceof Identity && this.workers.equator.postMessage({command:'LoadIdentity', diagram:diagram.name, item:item.name, signature:item.signature});
@@ -1200,6 +1175,7 @@ class Runtime
 	}
 	loadDiagramEquivalences(diagram)
 	{
+		console.log('Load diagram equivalences', [...[...diagram.allReferences.keys()].reverse(), diagram.name]);
 		this.workers.equator.postMessage({command:'LoadDiagrams', diagrams:[...[...diagram.allReferences.keys()].reverse(), diagram.name]});
 	}
 	fetchCatalog(fn)
@@ -2269,6 +2245,12 @@ class Toolbar
 		this.clearHeader();
 		const setActive = (e, mod, fn) =>
 		{
+			const toolbar2 = this.element.querySelector('#help-toolbar2');
+			if (toolbar2)
+			{
+				D.removeChildren(toolbar2.querySelector('.buttonBarLeft span'));
+				D.removeChildren(toolbar2.querySelector('.buttonBarRight span'));
+			}
 			D.setActiveIcon(e.target);
 			this.mode = mod;
 			fn(e);
@@ -2948,7 +2930,7 @@ class DiagramTool extends ElementTool
 	{
 		super.html(e);
 		const diagram = R.diagram;
-		const toolbar2 = D.toolbar.element.querySelector('tr #Diagram-toolbar2');
+		const toolbar2 = D.toolbar.element.querySelector('.help-toolbar2');
 		if (R.user.canUpload())
 		{
 			toolbar2.appendChild(D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload-json'), {title:'Upload', id:`${this.type}-upload-json-icon`}));
@@ -3565,6 +3547,7 @@ class DefinitionTool extends ElementTool
 		{
 			selector:			{value: null,		writable: true},
 			error:				{value: null,		writable: true},
+			targetCat:				{value: null,		writable: true},
 		});
 	}
 	html(e)
@@ -3574,7 +3557,15 @@ class DefinitionTool extends ElementTool
 		searchbar.classList.add('hidden');
 		const h3 = D.toolbar.table.querySelector('h3');
 		h3.innerHTML = 'Definitions';
-		const div = H3.div(H3.p(`Instantiate definition in category ${R.category.properName}.`), H3.p('Select a definition to instantiate.'));
+		const cats = R.diagram.getCategories();
+		const catSelector = H3.select({onchange:e => {this.targetCat = R.diagram.getElement(e.target.value);}}, [...cats].map(cat =>
+		{
+			const args = {value:cat.name};
+			if (cat === R.category)
+				args.selected = true;
+			return H3.option(cat.properName, args);
+		}));
+		const div = H3.div(H3.p('Instantiate definition in category ', catSelector), H3.p('Select a definition to instantiate.'));
 		h3.after(div);
 		const defs = R.diagram.getDefinitions();
 		defs.unshift({action:{basename:'Select a definition'}, name:null});
@@ -3585,9 +3576,9 @@ class DefinitionTool extends ElementTool
 	getMatchingElements() { return []; }		// ignore
 	getInputs(def)
 	{
-		const objects = def.getSequenceObjects();
+		const elements = def.getSequenceElements();
 		const inputs = [];
-		objects.forEach(o => inputs.push(document.getElementById(o.elementId('def')).value));
+		elements.forEach(o => inputs.push(document.getElementById(o.elementId('def')).value));
 		return inputs;
 	}
 	showDefinition(actionBasename)
@@ -3602,11 +3593,11 @@ class DefinitionTool extends ElementTool
 		const def = defs.filter(d => d.action.basename === actionBasename)[0];
 		if (def)
 		{
-			const objects = def.getSequenceObjects();
-			const rows = [...objects].map(o => H3.tr(H3.td(o.getHtmlRep()), H3.td(H3.input(`##${o.elementId('def')}`))));
+			const elements = def.getSequenceElements();
+			const rows = [...elements].map(o => H3.tr(H3.td(o.getHtmlRep()), H3.td(H3.input(`##${o.elementId('def')}`))));
 			const table = H3.table(rows);
 			this.selector.after(table);
-			table.after(D.getIcon('edit', 'edit', e => def.instantiate(this.getInputs(def))));
+			table.after(D.getIcon('edit', 'edit', e => def.instantiate(R.diagram, this.targetCat, this.getInputs(def), D.mouse.diagramPosition(R.diagram))));
 		}
 	}
 }
@@ -5417,7 +5408,7 @@ class Display
 			{
 				case 'load':
 					diagram.purge();
-					diagram.loadCells();
+					diagram.checkCells();
 					break;
 				case 'default':		// make it the viewable diagram
 					if (diagram)
@@ -7920,7 +7911,6 @@ class Element
 		html.classList.add('element');
 		let elementToolbar = null;
 		if (R.diagram.isEditable())
-//			elementToolbar = H3.table('.toolbar-element', H3.tr(H3.td(this.getButtons())));
 			elementToolbar = H3.span('.toolbar-element', this.getButtons());
 		let actions = {};
 		if (mouse)
@@ -9708,24 +9698,48 @@ class Definition extends IndexText
 		this.blobs.map(blob => blob.cells.forEach(cell => cell.commutes !== 'pullback' && cell.assertion && cells.push(cell)));
 		return cells;
 	}
-	getButtons()
+	getSequenceElements()
 	{
-		return [D.getIcon('instantiate-definition', 'place', e => R.diagram.instantiate(this, D.toolbar.table.querySelector('#defi-basename').value, D.mouse.diagramPosition(this.diagram)), {title:`Instantiate ${this.defname}`})];
-	}
-	getSequenceObjects()
-	{
-		const objects = new Set();
+		const elements = new Set();
 		this.sequence.map(elt =>
 		{
-			if (elt instanceof CatObject)
-				objects.add(elt);
-			else if (elt instanceof Morphism)
+			if (elt instanceof Morphism)
 			{
-				objects.add(elt.domain);
-				objects.add(elt.codomain);
+				elements.add(elt.domain);
+				elements.add(elt.codomain);
 			}
+			elements.add(elt);
 		});
-		return objects;
+		return elements;
+	}
+	instantiate(diagram, targetCat, inputs, xy)
+	{
+		if (inputs.filter(inp => inp === '').length > 0)
+			return false;
+		const elements = [...this.getSequenceElements()];
+		if (inputs.length !== elements.length)
+			return false;
+		const eltMap = new Map();
+		elements.map((elt, i) =>
+		{
+			const input = inputs[i];
+			let nuElt = null;
+			if (elt instanceof CatObject)
+				nuElt = diagram.get('CatObject', {basename:input, category:targetCat});
+			else
+				nuElt = diagram.get('Morphism', {basename:input, category:targetCat, domain:eltMap.get(elt.domain), codomain:eltMap.get(elt.codomain)});
+			eltMap.set(elt, nuElt);
+		});
+		const sequence = this.sequence.map(elt => eltMap.get(elt));
+		const defi = new DefinitionInstance(diagram, {targetCat, sequence, definition:this, xy, description:`Instantiation of ${this.defname}`});
+		diagram.makeSelected(defi);
+	}
+	getQuantifiersToCells()
+	{
+		const uni2cells = new Map();
+		this.blobs.map(blob => blob.cells.forEach(cell =>
+		{
+		}));
 	}
 	static getIndexElement(blobs, element)
 	{
@@ -9843,9 +9857,14 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 	constructor(diagram, args)
 	{
 		super(diagram, args);
+		const targetCat = diagram.getCategory(args.targetCat);
+		const sequence = diagram.getElements(args.sequence);
+		sequence.map(elt => elt.incrRefcnt());
 		Object.defineProperties(this,
 		{
+			targetCat:		{value: targetCat,					writable: false},
 			definition:		{value: args.definition,			writable: true},
+			sequence:		{value: sequence,					writable: false},
 		});
 		if (this.constructor.name === 'DefinitionInstance')
 		{
@@ -9861,13 +9880,18 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 	decrRefcnt()
 	{
 		if (this.refcnt <= 1)
+		{
 			this.definition.decrRefcnt();
+			this.sequence.map(elt => elt.decrRefcnt());
+		}
 		super.decrRefcnt();
 	}
 	json()
 	{
 		const a = super.json();
+		a.targetCat = this.targetCat.name;
 		a.definition = this.definition.name;
+		a.sequence = this.sequence.map(elt => elt.name);
 		return a;
 	}
 	makeSVG(node)
@@ -9880,32 +9904,19 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 		super.help()
 		D.toolbar.body.appendChild(H3.h3('Definition Instance'));
 		D.toolbar.body.appendChild(H3.p(`Basename: ${this.basename}`));
+		D.toolbar.body.appendChild(H3.p(`Target category: ${this.targetCat.properName}`));
 		Definition.show(this.diagram, this.definition.sequence, this.definition.blobs);
 		const toolbars = [...D.toolbar.table.querySelectorAll('.toolbar-element')];
-		toolbars.map(tb => U.removeChildren(tb));
+		toolbars.map(tb => D.removeChildren(tb));
+		const seqDivs = this.sequence.map((elt, i) => D.toolbar.table.querySelector(`#${this.definition.sequence[i].elementId()}`));
+		seqDivs.map((div, i) =>
+		{
+			const rep = this.sequence[i].getHtmlRep();
+			const xy = D.toolbar.mouseCoords;	// use original location
+			rep.appendChild(D.getIcon('place', 'place', e => R.diagram.placeElement(this.sequence[i], xy), {title:'Place sequence element'}));
+			div.parentNode.parentNode.appendChild(H3.td('.element', rep));
+		});
 	}
-	/*
-	mouseenter(e)
-	{
-		super.mouseenter(e);
-		this.diagram.emphasis(this.diagram.getElement(this.element), true);
-	}
-	mouseout(e)
-	{
-		super.mouseout(e);
-		this.diagram.emphasis(this.diagram.getElement(this.element), false);
-	}
-	makeSVG(node)
-	{
-		super.makeSVG(node);
-		this.svg.querySelectorAll('tspan').forEach(tsp => tsp.classList.add('code'));
-	}
-	focusout(e)
-	{
-		super.focusout(e);
-		this.element.code[this.ext] = this.description;
-	}
-	*/
 }
 
 class Theorem extends IndexText
@@ -11570,7 +11581,7 @@ class HelpAction extends Action
 			tools.push(D.getIcon('elementIn', 'elementIn', e => Cat.R.Actions.elementIn.action(e, Cat.R.diagram, R.diagram.selected), {title:'Show element in object'}));
 		if (diagram.codomain.name === 'zf/Set')
 			R.languages.forEach(lang => lang.hasForm(diagram, ary) && tools.push(D.getIcon(lang.basename, lang.basename, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), {title:lang.description})));
-		D.toolbar.table.appendChild(H3.tr(H3.td(H3.table(H3.tr(H3.td(H3.span(tools), '.buttonBarLeft'), H3.td(H3.span(), '.buttonBarRight')), '##help-toolbar2.w100'), {colspan:2})));
+		D.toolbar.element.querySelector('.toolbar-buttons').appendChild(H3.tr(H3.td(H3.table(H3.tr(H3.td(H3.span(tools), '.buttonBarLeft'), H3.td(H3.span(), '.buttonBarRight')), '##help-toolbar2.w100'), {colspan:2})));
 		from.help();
 	}
 }
@@ -13590,8 +13601,8 @@ class Morphism extends Element
 	{
 		const id = this.elementId();
 		const items = [];
-		items.push(this.properName !== '' & this.properName !== this.basename ? H3.span('.smallBold', this.properName) : H3.span('.smallBold', this.basename));
-		items.push(H3.span('&nbsp;:&nbsp;' + this.domain.properName + '&rarr;' + this.codomain.properName));
+		const txt = this.properName !== '' && this.properName !== this.basename ? this.properName : this.basename;
+		items.push(H3.span('.bold', txt + '&nbsp;:&nbsp;' + this.domain.properName + '&rarr;' + this.codomain.properName));
 		this.description !== '' && items.push(H3.span('.diagramRowDescription', this.description));
 		items.push(H3.br(), H3.span(U.limit(this.name), '.tinyPrint'));
 		return H3.div({id}, items);
@@ -14486,7 +14497,7 @@ class IndexMorphism extends Morphism
 		let domainElt = null;
 		let codomainElt = null;
 		const diagram = R.diagram;
-		if (this.isEditable() && this.refcnt <= 1)
+		if (this.isEditable() && this.refcnt <= 1 && this.to.refcnt <= 1)
 		{
 			const objects = this.diagram.getObjects();
 			if (this.domain.refcnt === 2)
@@ -15328,12 +15339,12 @@ class Cell
 		buttons.map(btn => tools.appendChild(btn));
 		const onmouseenter = e =>
 		{
-			this.emphasis(true);
+			this.diagram === R.diagram && this.emphasis(true);
 			tools.style.opacity = 100;
 		};
 		const onmouseleave = e =>
 		{
-			this.emphasis(false);
+			this.diagram === R.diagram && this.emphasis(false);
 			tools.style.opacity = 0;
 		};
 		return H3.tr(H3.td(html), {onclick:e => {}, onmouseenter, onmouseleave});
@@ -15518,17 +15529,6 @@ class Cell
 	static Name(diagram, leftLeg, rightLeg)
 	{
 		return diagram.name + '/' + Cell.Basename(diagram, leftLeg, rightLeg);
-	}
-	static legHasObject(leg, object)
-	{
-		let ndx = -1;
-		for (let i=0; i < leg.length -1; ++i)
-			if (leg[i].codomain === object)
-			{
-				ndx = i + 1;
-				break;
-			}
-		return ndx;
 	}
 }
 
@@ -18340,7 +18340,7 @@ class Diagram extends Functor
 	}
 	loadCells()
 	{
-		this.domain.cells.size === 0 && this.domain.loadCells();
+		this.domain.loadCells();
 	}
 	checkCells()
 	{
@@ -19327,9 +19327,12 @@ class Diagram extends Functor
 		[...R.getReferences(this.name)].map(ref => R.$CAT.getElement(ref)).map(ref => ref.forEachDefinition(def => defs.push(def)));
 		return defs;
 	}
-	instantiate(definition, basename, xy)
+	getCategories()
 	{
-		const defi = new DefinitionInstance(this, {basename, definition, xy, description:`Instantiation of ${definition.defname}`});
+		const cats = new Set();
+		this.elements.forEach(o => o instanceof Category && cats.add(o));
+		cats.add(this.codomain);
+		return cats;
 	}
 	static Codename(args)
 	{
