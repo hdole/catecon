@@ -106,6 +106,24 @@
         }
       },
       {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "Foo",
+        "xy": {
+          "x": 1250,
+          "y": 1040
+        }
+      },
+      {
+        "basename": "o_3",
+        "prototype": "IndexObject",
+        "to": "Foo",
+        "xy": {
+          "x": 1400,
+          "y": 1040
+        }
+      },
+      {
         "basename": "m_2",
         "prototype": "IndexMorphism",
         "domain": "o_4",
@@ -173,6 +191,13 @@
         "to": "finv"
       },
       {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "o_0",
+        "codomain": "o_3",
+        "to": "id"
+      },
+      {
         "description": "Definition of isomorphism",
         "basename": "d_0",
         "prototype": "Definition",
@@ -188,6 +213,21 @@
         ],
         "blobs": [
           "hdole/iso/o_4"
+        ]
+      },
+      {
+        "description": "Instantiation of identity",
+        "basename": "t_3",
+        "prototype": "DefinitionInstance",
+        "xy": {
+          "x": 1170,
+          "y": 770
+        },
+        "height": 24,
+        "targetCat": "hdole/iso/D",
+        "definition": "hdole/identity/d_0",
+        "sequence": [
+          "hdole/iso/id"
         ]
       }
     ],
@@ -235,6 +275,11 @@
         },
         {
           "description": "",
+          "basename": "Foo",
+          "prototype": "CatObject"
+        },
+        {
+          "description": "",
           "basename": "f",
           "prototype": "Morphism",
           "domain": "A",
@@ -257,15 +302,22 @@
           "description": "",
           "prototype": "Identity",
           "domain": "B"
+        },
+        {
+          "description": "",
+          "basename": "id",
+          "prototype": "Morphism",
+          "domain": "Foo",
+          "codomain": "Foo"
         }
       ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1648711454692,
+  "timestamp": 1649057582460,
   "version": 0,
   "viewport": {
-    "x": -114,
+    "x": -182,
     "y": -737,
     "scale": 1.6728842146139726
   }

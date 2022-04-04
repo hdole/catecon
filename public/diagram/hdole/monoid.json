@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -770,
-          "y": 100
+          "y": 110
         },
         "height": 400,
         "weight": "bold"
@@ -33,7 +33,7 @@
         "prototype": "IndexObject",
         "to": "Po{G,G}oP",
         "xy": {
-          "x": 0,
+          "x": -50,
           "y": 350
         }
       },
@@ -42,7 +42,7 @@
         "prototype": "IndexObject",
         "to": "G",
         "xy": {
-          "x": 200,
+          "x": 120,
           "y": 350
         }
       },
@@ -51,7 +51,7 @@
         "prototype": "IndexObject",
         "to": "#1",
         "xy": {
-          "x": -10,
+          "x": -50,
           "y": 460
         }
       },
@@ -60,7 +60,7 @@
         "prototype": "IndexObject",
         "to": "G",
         "xy": {
-          "x": 190,
+          "x": 120,
           "y": 460
         }
       },
@@ -252,16 +252,6 @@
         "height": 24
       },
       {
-        "description": "BUG: unit not included in base of definition",
-        "basename": "t_2",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -800,
-          "y": 960
-        },
-        "height": 24
-      },
-      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_2",
@@ -421,8 +411,8 @@
         "basename": "d_0",
         "prototype": "Definition",
         "xy": {
-          "x": 70,
-          "y": 880
+          "x": -640,
+          "y": 1320
         },
         "height": 24,
         "defname": "monoid",
@@ -694,11 +684,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1648499221087,
+  "timestamp": 1648962840821,
   "version": 0,
   "viewport": {
     "x": 1277,
-    "y": -194,
-    "scale": 1.3185556920576345
+    "y": 343,
+    "scale": 1.3384588116861034
   }
 }
