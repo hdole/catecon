@@ -82,16 +82,22 @@ th
 	font-weight:	bold;
 }
 
-.smallPrint
+.bold
 {
-	font-weight:	lighter;
-	font-size:		10px;
+	font-weight:	bold;
 	margin:			5px;
 }
 
 .smallBold
 {
 	font-weight:	bold;
+	font-size:		10px;
+	margin:			5px;
+}
+
+.smallPrint
+{
+	font-weight:	lighter;
 	font-size:		10px;
 	margin:			5px;
 }
@@ -123,16 +129,12 @@ th
 .italic
 {
 	font-style:		italic;
+	margin:			5px;
 }
 
 .underline
 {
 	text-decoration:	underline dotted;
-}
-
-.bold
-{
-	font-weight:	bold;
 }
 
 .quantifier
@@ -1453,5 +1455,5 @@ tspan
 
 .definitionInstance
 {
-	text-decoration:	overline dotted;
+	text-decoration:	underline overline;
 }
