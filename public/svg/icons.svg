@@ -515,6 +515,11 @@
 		<line class="icon-std" x1="120" y1="180" x2="120" y2="40" marker-end="url(#arrowhead)"/>
 		<line class="icon-std" x1="120" y1="180" x2="40" y2="280" marker-end="url(#arrowhead)"/>
 	</symbol>
+	<symbol id="icon-theorem" class="icon" viewbox="0 0 320 320">
+		<circle cx="160" cy="120" r="100" fill="url(#radgrad1)"/>
+		<circle cx="100" cy="220" r="100" fill="url(#radgrad1)"/>
+		<circle cx="220" cy="220" r="100" fill="url(#radgrad1)"/>
+	</symbol>
 	<symbol id="icon-threeD_bottom" class="icon" viewbox="0 0 320 320">
 		<polygon class="svgfil1" points="120,180 280,180 200,280 40,280"/>
 		<use href="#threeD_base" x="0" y="0"/>
