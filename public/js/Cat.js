@@ -752,6 +752,7 @@ class Runtime
 		new AlignVerticalAction(actionDiagram);
 		new RecursionAction(actionDiagram);
 		new DefinitionAction(actionDiagram);
+		new TheoremAction(actionDiagram);
 		new TerminalAction(actionDiagram);
 		new ElementOfAction(actionDiagram);
 		new ElementInAction(actionDiagram);
@@ -9899,6 +9900,7 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 		super.makeSVG(node);
 		this.svg.querySelectorAll('text').forEach(tsp => tsp.classList.add('definitionInstance'));
 	}
+	/*
 	help()
 	{
 		super.help()
@@ -9916,6 +9918,38 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 			rep.appendChild(D.getIcon('place', 'place', e => R.diagram.placeElement(this.sequence[i], xy), {title:'Place sequence element'}));
 			div.parentNode.parentNode.appendChild(H3.td('.element', rep));
 		});
+	}
+	*/
+	getSequenceElements()
+	{
+		const elements = new Set();
+		this.sequence.map(elt =>
+		{
+			if (elt instanceof Morphism)
+			{
+				elements.add(elt.domain);
+				elements.add(elt.codomain);
+			}
+			elements.add(elt);
+		});
+		return elements;
+	}
+	help()
+	{
+		super.help()
+		D.toolbar.body.appendChild(H3.h3('Definition Instance'));
+		D.toolbar.body.appendChild(H3.p(`Basename: ${this.basename}`));
+		D.toolbar.body.appendChild(H3.p(`Target category: ${this.targetCat.properName}`));
+		const defElements = [...this.definition.getSequenceElements()];
+		const elements = [...this.getSequenceElements()];
+		const xy = D.toolbar.mouseCoords;	// use original location
+		const rows = [...elements].map((elt, i) =>
+		{
+			const rep = elt.getHtmlRep();
+			rep.appendChild(D.getIcon('place', 'place', e => R.diagram.placeElement(elt, xy), {title:'Place sequence element'}));
+			return H3.tr(H3.td('.element', defElements[i].getHtmlRep()), H3.td('.element', rep));
+		});
+		rows.map(row => D.toolbar.table.appendChild(row));
 	}
 }
 
@@ -9936,8 +9970,8 @@ class Theorem extends IndexText
 		target.incrRefcnt();
 		Object.defineProperties(this,
 		{
-			source:		{value: source,			writable: false},
-			target:		{value: target,			writable: false},
+			source:		{value: source,			writable: false},		// definition
+			target:		{value: target,			writable: false},		// definition
 			sequence:	{value: sequence,		writable: false},
 			cells:		{value: nuArgs.cells,	writable: true},
 		});
@@ -12775,6 +12809,110 @@ class DefinitionAction extends Action
 		if (ary.reduce((r, elt) => r && elt instanceof IndexText, true))
 			return false;
 		return true;
+	}
+}
+
+class TheoremAction extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Form theorem',
+			basename:		'theorem',
+		};
+		super(diagram, args);
+		D && D.replayCommands.set(this.basename, this);
+		Object.defineProperties(this,
+		{
+			sequenceMap:	{value:	[],	writable:	false},
+		});
+	}
+	html(e, diagram, ary)
+	{
+		super.html();
+		const action = e => this.makeTheorm(e, diagram, diagram.selected);
+		const source = ary[0];		// def instance
+		const target = ary[1];		// def
+		this.sequenceMap.length = 0;
+		const setSequence = (e, i) =>
+		{
+			this.sequenceMap[i] = diagram.getElement(D.toolbar.element.querySelect(`#select-${i}`).value);
+		};
+		const procElt = (elt, i) =>
+		{
+			const rep = elt.getHtmlRep();
+			const select = H3.select(`##select-${i}.w100`, {onchange: e => setSequence(e, i)});
+			rep.appendChild(select);
+			source.sequence.map(item => item instanceof elt.constructor && select.appendChild(H3.option(elt.properName, {value:elt.name})));
+		};
+		const body = D.toolbar.body;
+		[	H3.h3('Create Theorem'),
+			H3.p(`Source instance: ${source.definition.defname}`),
+			H3.p(`Target instance: ${target.defname}`),
+			H3.label('Theorem basename:', {for:'new-definition'}),
+			H3.input('##new-theorem.ifocus',
+				{
+					placeholder:'Theorem',
+					title:'Theorem',
+					onkeyup:e => D.inputBasenameSearch(e, R.actionDiagram, e => e.stopPropagation(), null, R.user.name + '/'),
+					onkeydown:e => Cat.D.onEnter(e, action),
+				}),
+			...target.sequence.map(procElt),
+			D.getIcon('edit', 'edit', action, {title:'Create theorem'}),
+			H3.br(),
+			H3.small('.italic', `Full name has the form sys/Action/${R.user.name}/basename`),
+			H3.br(),
+			H3.div('.center', H3.small('.bold', 'Following are selected for the theorem')),
+		].map(elt => body.appendChild(elt));
+		const focus = body.querySelector('.ifocus');
+		focus && focus.focus();
+	}
+	action(e, diagram, element, quantifier)
+	{
+		if (!this.isValid(quantifier))
+			throw 'invalid quantifier';
+		const oldQuant = element.getQuantifier();
+		if (this.doit(e, diagram, element, quantifier))
+		{
+			D.emitElementEvent(diagram, 'update', element);
+			diagram.log({command:'quantifier', quantifier});
+			diagram.antilog({command:'quantifier', quantifier:oldQuant});
+			this.html(e, diagram, [element]);
+		}
+	}
+	doit(e, diagram, index, quantifier)
+	{
+		const blob = diagram.getBlob(index);
+		blob.getInstances(index.to).map(ins => ins.setQuantifier('none'));	// remove all quantifiers on the element
+		if (quantifier !== 'none')
+		{
+			// TODO
+			const lvl = blob.levels[index.getLevel()];
+			lvl.filter(elt => elt === index.to).map(elt => index.setQuantifier(quantifier));
+			blob.updateLevels();
+		}
+		return true;
+	}
+	replay(e, diagram, args)
+	{
+	}
+	makeTheorm(e, diagram, ary)
+	{
+		const blobs = this.getBlobs(diagram, ary);
+		const sequence = this.getSequence(blobs);
+		const defname = D.toolbar.body.querySelector('#new-definition').value;
+		const description = `Definition of ${defname}`;
+		const xy = D.toolbar.mouseCoords;	// use original location
+		const width = D.textWidth(description);
+		const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height/2, width, height:D.default.font.height};
+		const place = diagram.autoplaceSvg(bbox, null, 16);
+		const def = diagram.get('Definition', {description, defname, sequence, blobs, xy:{x:place.x, y:place.y}});
+		diagram.makeSelected(def);
+	}
+	hasForm(diagram, ary)
+	{
+		return diagram.isEditable() && ary.length === 2 && ary[0] instanceof DefinitionInstance && ary[1] instanceof Definition;
 	}
 }
 
