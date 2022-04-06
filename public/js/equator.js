@@ -29,8 +29,8 @@ onmessage = e =>
 			case 'LoadIdentity':
 				loadIdentity(args.diagram, args.item, args.signature);
 				break;
-			case 'LoadItem':
-				loadItem(args.diagram, args.item, args.leftLeg, args.rightLeg, args.equal);
+			case 'loadEquality':
+				loadEquality(args.diagram, args.item, args.leftLeg, args.rightLeg, args.equal);
 				val.item = args.item;
 				break;
 			case 'CheckEquivalence':
@@ -152,7 +152,7 @@ function loadEquivalences(diagram, lLeg, rLeg, equal)
 	}
 }
 
-function loadItem(diagram, item, leftLeg, rightLeg, equal)
+function loadEquality(diagram, item, leftLeg, rightLeg, equal)
 {
 	const leftSig = Sig(...leftLeg);
 	const rightSig = Sig(...rightLeg);
