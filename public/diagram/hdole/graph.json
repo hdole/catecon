@@ -59,9 +59,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": -80,
-          "y": 400
+          "y": 410
         },
-        "height": 200,
+        "height": 180,
         "weight": "bold"
       },
       {
@@ -400,6 +400,16 @@
         }
       },
       {
+        "description": "BUG:  Factor outline incorrect on hom object",
+        "basename": "t_3",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -60,
+          "y": 1910
+        },
+        "height": 24
+      },
+      {
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_2",
@@ -588,16 +598,6 @@
         "domain": "o_41",
         "codomain": "o_0",
         "to": "CPm{Id{A}dI,Id{B}dI}mPC"
-      },
-      {
-        "description": "BUG:  Factor outline incorrect on hom object",
-        "basename": "t_3",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -60,
-          "y": 1910
-        },
-        "height": 24
       }
     ],
     "cells": []
@@ -1005,11 +1005,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1648862631429,
+  "timestamp": 1649230710801,
   "version": 0,
   "viewport": {
-    "x": 347,
-    "y": -255,
-    "scale": 1.4200016533711615
+    "x": 357,
+    "y": -335,
+    "scale": 1.5799370522627632
   }
 }
