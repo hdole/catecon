@@ -122,9 +122,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": -210,
-          "y": -540
+          "y": -550
         },
-        "height": "374",
+        "height": 374,
         "weight": "bold"
       },
       {
@@ -135,7 +135,7 @@
           "x": -150,
           "y": -150
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "Map objects to their identity morphism",
@@ -145,7 +145,7 @@
           "x": -150,
           "y": 50
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_0",
@@ -389,7 +389,7 @@
           "x": -150,
           "y": -400
         },
-        "height": "48",
+        "height": 48,
         "weight": "bold"
       },
       {
@@ -572,16 +572,6 @@
           "x": 550,
           "y": 250
         }
-      },
-      {
-        "description": "Definition:  category",
-        "basename": "t_13",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 1060,
-          "y": 40
-        },
-        "height": 24
       },
       {
         "basename": "o_81",
@@ -813,7 +803,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 550,
+          "x": 400,
           "y": 5150
         }
       },
@@ -854,7 +844,7 @@
         }
       },
       {
-        "description": "Now require that the composite of the\nidentity 1:A&rarr;A and any f:A&rarr;B is f,\nand the composite of g:C&rarr;A and 1:A&rarr;A\nis g.",
+        "description": "Now require that the composite of the\nidentity 1:A→A with any f:A→B is f, and\nthe composite of any g:C→A with\n1:A→A is g.",
         "basename": "t_16",
         "prototype": "IndexText",
         "xy": {
@@ -877,7 +867,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP",
         "xy": {
-          "x": 550,
+          "x": 400,
           "y": 4850
         }
       },
@@ -972,7 +962,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -150,
-          "y": 4860
+          "y": 4750
         },
         "height": 24
       },
@@ -1495,6 +1485,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_116",
         "codomain": "o_114",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Fa{Pb{cod,dom}bP,C1_0}aF"
       },
       {
@@ -1502,6 +1498,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_116",
         "codomain": "o_113",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Fa{Pb{cod,dom}bP,C1_1}aF"
       },
       {
@@ -1551,6 +1553,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_44",
         "codomain": "o_105",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP,C1_0}aF,dom}mC}bP,Pb{cod,dom}bP_1}aF"
       },
       {
@@ -1613,6 +1621,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_42",
         "codomain": "o_41",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{cod,Id{C0}dI}bP,C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP,C0_1}aF,id}mC}uP"
       },
       {
@@ -1620,12 +1634,6 @@
         "prototype": "IndexMorphism",
         "domain": "o_40",
         "codomain": "o_41",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
         "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Id{C0}dI,dom}bP,C0_0}aF,id}mC,Fa{Pb{Id{C0}dI,dom}bP,C1_1}aF}uP"
       },
       {
@@ -2161,11 +2169,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1647412453516,
+  "timestamp": 1649155217471,
   "version": 0,
   "viewport": {
-    "x": 522,
+    "x": 535,
     "y": 1149,
-    "scale": 1.302091406065503
+    "scale": 1.3020864251445854
   }
 }

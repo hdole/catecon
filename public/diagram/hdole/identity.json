@@ -33,8 +33,8 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 840,
-          "y": 540
+          "x": 650,
+          "y": 550
         }
       },
       {
@@ -42,8 +42,8 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 660,
-          "y": 540
+          "x": 500,
+          "y": 550
         }
       },
       {
@@ -51,8 +51,8 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 840,
-          "y": 370
+          "x": 650,
+          "y": 400
         }
       },
       {
@@ -60,8 +60,8 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 1040,
-          "y": 370
+          "x": 950,
+          "y": 400
         }
       },
       {
@@ -73,6 +73,24 @@
           "y": 250
         },
         "height": 24
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 800,
+          "y": 550
+        }
+      },
+      {
+        "basename": "o_5",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 800,
+          "y": 400
+        }
       },
       {
         "basename": "m_1",
@@ -99,44 +117,6 @@
         "to": "id"
       },
       {
-        "basename": "m_5",
-        "prototype": "IndexMorphism",
-        "domain": "o_7",
-        "codomain": "o_4",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ],
-          [
-            "quantifier",
-            "forall"
-          ],
-          [
-            "level",
-            1
-          ]
-        ],
-        "to": "g"
-      },
-      {
-        "basename": "m_6",
-        "prototype": "IndexMorphism",
-        "domain": "o_7",
-        "codomain": "o_2",
-        "attributes": [
-          [
-            "quantifier",
-            "forall"
-          ],
-          [
-            "level",
-            1
-          ]
-        ],
-        "to": "g"
-      },
-      {
         "basename": "m_3",
         "prototype": "IndexMorphism",
         "domain": "o_4",
@@ -158,12 +138,63 @@
         "to": "f"
       },
       {
+        "basename": "m_6",
+        "prototype": "IndexMorphism",
+        "domain": "o_7",
+        "codomain": "o_1",
+        "attributes": [
+          [
+            "quantifier",
+            "forall"
+          ],
+          [
+            "level",
+            1
+          ]
+        ],
+        "to": "g"
+      },
+      {
+        "basename": "m_5",
+        "prototype": "IndexMorphism",
+        "domain": "o_7",
+        "codomain": "o_5",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ],
+          [
+            "quantifier",
+            "forall"
+          ],
+          [
+            "level",
+            1
+          ]
+        ],
+        "to": "g"
+      },
+      {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "o_5",
+        "codomain": "o_1",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "id"
+      },
+      {
         "description": "Definition of identity",
         "basename": "d_0",
         "prototype": "Definition",
         "xy": {
-          "x": 460,
-          "y": 460
+          "x": 490,
+          "y": 650
         },
         "height": 24,
         "defname": "identity",
@@ -171,7 +202,8 @@
           "id"
         ],
         "blobs": [
-          "hdole/identity/m_2"
+          "hdole/identity/o_2",
+          "hdole/identity/o_1"
         ]
       }
     ],
@@ -189,10 +221,10 @@
         "hidden": false
       },
       {
-        "name": "hdole/identity/{m_5,m_2},{m_6}",
+        "name": "hdole/identity/{m_5,m_0},{m_6}",
         "left": [
           "m_5",
-          "m_2"
+          "m_0"
         ],
         "right": [
           "m_6"
@@ -242,11 +274,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1648368233861,
+  "timestamp": 1649194099795,
   "version": 0,
   "viewport": {
     "x": -498,
-    "y": 33,
+    "y": -375,
     "scale": 2.1847092846509897
   }
 }
