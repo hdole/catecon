@@ -22,6 +22,7 @@
 // 			new			an cell was created									[Cell.constructor]
 // 			delete															[Cell.deregister]
 //			check															[D.mouseup, doit: CompositeAction, NameAction, FlipNameAction, PullbackAction, HomSetAction, DetachDomainAction, DeleteAction, setupReplay]
+//			commutivity														[worker.onmessage]
 // 		Diagram																-
 // 			addReference													[Diagram.addReference]
 //			category	set default category
@@ -631,6 +632,7 @@ class Runtime
 					else
 						type = 'notEqual';
 					cell.setCommutes(type);
+					D && D.emitCellEvent(diagram, 'commutivity', cell);
 					const objs = cell.getObjects();
 					if (!cell.svg)
 						diagram.addSVG(cell);
@@ -638,7 +640,7 @@ class Runtime
 					break;
 				case 'start':
 				case 'LoadDiagrams':
-				case 'LoadItem':
+				case 'loadEquality':
 				case 'LoadIdentity':
 				case 'RemoveEquivalences':
 				case 'Info':
@@ -1156,7 +1158,7 @@ class Runtime
 	{
 		item instanceof Identity && this.workers.equator.postMessage({command:'LoadIdentity', diagram:diagram.name, item:item.name, signature:item.signature});
 	}
-	loadItem(diagram, item, leftLeg, rightLeg, equal = true)
+	loadEquality(diagram, item, leftLeg, rightLeg, equal = true)
 	{
 		const leftSigs = [];
 		leftLeg.map(m => m instanceof Composite ? m.getSignatures().map(sig => leftSigs.push(sig)) : leftSigs.push(m.signature));
@@ -1168,7 +1170,7 @@ class Runtime
 	{
 		if (U.arrayEquals(leftLeg, rightLeg))
 			return;
-		this.workers.equator.postMessage({command:'LoadItem', diagram:diagram.name, item:item.name, leftLeg, rightLeg, equal});
+		this.workers.equator.postMessage({command:'loadEquality', diagram:diagram.name, item:item.name, leftLeg, rightLeg, equal});
 	}
 	removeEquivalences(diagram, ...items)
 	{
@@ -2262,7 +2264,7 @@ class Toolbar
 		btns.push(D.getIcon('morphism', 'morphism', e => setActive(e, 'morphism', ee =>Cat.D.elementTool.Morphism.html(ee)), {title:'Morphisms', help:'hdole/morphism'}));
 		diagram.domain.cells.size > 0 && btns.push(D.getIcon('cell', 'cell', e => setActive(e, 'cell', ee => Cat.D.elementTool.Cell.html(ee)), {title:'Cells'}));
 		btns.push(D.getIcon('text', 'text', e => setActive(e, 'text', ee => Cat.D.elementTool.Text.html(ee)), {title:'Text'}));
-		btns.push(D.getIcon('definition', 'definition', e => setActive(e, 'definition', ee => Cat.D.elementTool.Definition.html(ee)), {title:'Definitions'}));
+		R.diagram.getDefinitions().length > 0 && btns.push(D.getIcon('definition', 'definition', e => setActive(e, 'definition', ee => Cat.D.elementTool.Definition.html(ee)), {title:'Definitions'}));
 		btns.push(D.getIcon('graph', 'graph', _ => Cat.R.diagram.showGraphs(), {title:'Show graphs in diagram'}));
 		btns.push(D.getIcon('home', 'home', e => Cat.D.keyboardDown.Home(e), {title:'Home'}));
 		btns.push(D.getIcon('help', 'help', e => setActive(e, 'help', ee => R.Actions.help.html(e, diagram, [diagram]), {title:'Show help'})));
@@ -5299,8 +5301,8 @@ class Display
 				}
 				diagram.updateBackground();
 			}
-			else if (args.command === 'new' && 'loadItem' in element)
-				element.loadItem();
+			else if (args.command === 'new' && 'loadEquality' in element)
+				element.loadEquality();
 			switch(args.command)
 			{
 				case 'delete':
@@ -5667,7 +5669,7 @@ class Display
 				case 'equals':
 				case 'notEquals':
 					cell.update();
-					cell.loadItem();
+					cell.loadEquality();
 					break;
 				case 'hide':
 				case 'show':
@@ -5687,7 +5689,7 @@ class Display
 					break;
 				case 'new':
 					cell.update();
-					cell.loadItem();
+					cell.loadEquality();
 					break;
 				case 'unknown':
 					cell.update();
@@ -5695,6 +5697,8 @@ class Display
 				case 'update':
 					cell.update();
 					this.autosave(diagram);
+					break;
+				case 'commutivity':
 					break;
 				default:
 					throw 'Cell event listener unknown command ' + args.command;
@@ -9053,7 +9057,7 @@ class PullbackObject extends ProductObject
 		});
 		this.properName = PullbackObject.ProperName(this.morphisms);
 		this.setSignature();
-		this.loadItem();
+		this.loadEquality();
 		D && D.emitElementEvent(this.diagram, 'new', this);
 	}
 	help()
@@ -9080,14 +9084,14 @@ class PullbackObject extends ProductObject
 	{
 		return false;
 	}
-	loadItem()
+	loadEquality()
 	{
 		const base = this.dual ? [this.morphisms[0], this.diagram.cofctr(this, [0])] : [this.diagram.fctr(this, [0]), this.morphisms[0]];
 		for (let i=1; i<this.morphisms.length; ++i)		// for all other legs
 		{
 			const factor = this.dual ? this.diagram.cofctr(this, [i]) : this.diagram.fctr(this, [i]);
 			const leg = this.dual ? [this.morphisms[i], factor] : [factor, this.morphisms[i]];
-			R.loadItem(this.diagram, this, base, leg);
+			R.loadEquality(this.diagram, this, base, leg);
 		}
 	}
 	getDecoration()
@@ -9626,6 +9630,7 @@ class Definition extends IndexText
 		if (sequence.filter(elt => !(elt instanceof CatObject) && !(elt instanceof Morphism)).length > 0)
 			throw 'bad sequence';
 		const action = new UserAction(R.$CAT.getElement('actions'), {definition:this, basename:`${diagram.user}/${nuArgs.defname}`, sequence});
+		action.incrRefcnt();
 		Object.defineProperties(this,
 		{
 			action:		{value: action,			writable: false},
@@ -9647,7 +9652,10 @@ class Definition extends IndexText
 	decrRefcnt()
 	{
 		if (this.refcnt <= 1)
+		{
+			this.action.decrRefcnt();
 			this.blobs.map(b => b.forEachElement(elt => elt.decrRefcnt()));
+		}
 		super.decrRefcnt();
 	}
 	help()
@@ -9720,7 +9728,7 @@ class Definition extends IndexText
 		const elements = [...this.getSequenceElements()];
 		if (inputs.length !== elements.length)
 			return false;
-		const eltMap = new Map();
+		const elementMap = new Map();
 		elements.map((elt, i) =>
 		{
 			const input = inputs[i];
@@ -9728,19 +9736,30 @@ class Definition extends IndexText
 			if (elt instanceof CatObject)
 				nuElt = diagram.get('CatObject', {basename:input, category:targetCat});
 			else
-				nuElt = diagram.get('Morphism', {basename:input, category:targetCat, domain:eltMap.get(elt.domain), codomain:eltMap.get(elt.codomain)});
-			eltMap.set(elt, nuElt);
+				nuElt = diagram.get('Morphism', {basename:input, category:targetCat, domain:elementMap.get(elt.domain), codomain:elementMap.get(elt.codomain)});
+			elementMap.set(elt, nuElt);
 		});
-		const sequence = this.sequence.map(elt => eltMap.get(elt));
-		const defi = new DefinitionInstance(diagram, {targetCat, sequence, definition:this, xy, description:`Instantiation of ${this.defname}`});
+		const sequence = this.sequence.map(elt => elementMap.get(elt));
+		const defi = new DefinitionInstance(diagram, {targetCat, sequence, elementMap, definition:this, xy, description:`Instantiation of ${this.defname}`});
 		diagram.makeSelected(defi);
 	}
-	getQuantifiersToCells()
+	getQuantifiersToCells()		// TODO?
 	{
 		const uni2cells = new Map();
 		this.blobs.map(blob => blob.cells.forEach(cell =>
 		{
+			const procMorph = m =>
+			{
+				const to = m.to;
+				!uni2cells.has(to) && uni2cells.set(to, new Set());
+				const mCells = uni2cells.get(to);
+				const q = m.getQuantifier();
+				q && q === 'forall' && mCells.add(cell);
+			};
+			cell.left.map(procMorph);
+			cell.right.map(procMorph);
 		}));
+		return uni2cells;
 	}
 	static getIndexElement(blobs, element)
 	{
@@ -9861,22 +9880,73 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 		const targetCat = diagram.getCategory(args.targetCat);
 		const sequence = diagram.getElements(args.sequence);
 		sequence.map(elt => elt.incrRefcnt());
+		const definition = diagram.getElement(args.definition);
 		Object.defineProperties(this,
 		{
 			targetCat:		{value: targetCat,					writable: false},
-			definition:		{value: args.definition,			writable: true},
-			sequence:		{value: sequence,					writable: false},
+			definition:		{value: definition ? definition : args.definition,			writable: true},
+			elementMap:		{value: args.elementMap,			writable: true},
+			sequence:		{value: sequence,					writable: false},		// TODO sequence could be derived from elementMap
+			listener:		{value: null,						writable: true},		// event listener for more loadEquality
 		});
-		if (this.constructor.name === 'DefinitionInstance')
+		if (definition)
+			this._postload();
+		else
+			this.postload = this._postload;		// defer the postload
+		if (this.constructor.name === 'DefinitionInstance')		// sig should be stable
 		{
 			this.setSignature();
 			D && D.emitElementEvent(diagram, 'new', this);
 		}
 	}
-	postload()
+	_postload()
 	{
 		this.definition = this.diagram.getElement(this.definition);
 		this.definition.incrRefcnt();
+		if (Array.isArray(this.elementMap))		// convert to Map
+		{
+			const elementMap = new Map();
+			this.elementMap.map(data => elementMap.set(this.definition.diagram.getElement(data[0]), this.diagram.getElement(data[1])));
+			this.elementMap = elementMap;
+		}
+		this.loadEquality();
+		this.listener = e =>
+		{
+			const args = e.detail;
+			const element = args.element;
+			if (element instanceof Morphism && element.category === this.category && element.diagram === this.diagram && args.command === 'new')
+				this.loadEquality();
+		};
+		D && window.addEventListener('Morphism', this.listener);
+		delete this.postload;
+	}
+	loadEquality()
+	{
+		const quant2cells = this.definition.getQuantifiersToCells();
+		const eltMap = new Map();
+		this.definition.sequence.map((src, i) => eltMap.set(src, this.sequence[i]));
+		quant2cells.forEach((cells, q) =>
+		{
+			const domain = this.elementMap.get(q.domain);
+			const codomain = this.elementMap.get(q.codomain);
+			const candidates = [];
+			this.diagram.forEachMorphism(m =>
+			{
+				(m.domain === domain || m.codomain === codomain) && candidates.push(m);
+			});
+			cells.forEach(cell => candidates.map(m =>
+			{
+				const procMorph = morph =>
+				{
+					if (this.elementMap.has(morph))
+						return this.elementMap.get(morph);
+					return m;
+				};
+				const left = cell.left.map(elt => this.elementMap.get(elt.to) || m);
+				const right = cell.right.map(elt => this.elementMap.get(elt.to) || m);
+				R.loadEquality(this.diagram, this, left, right);
+			}));
+		});
 	}
 	decrRefcnt()
 	{
@@ -9884,6 +9954,7 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 		{
 			this.definition.decrRefcnt();
 			this.sequence.map(elt => elt.decrRefcnt());
+			D && window.removeEventListener('Morphism', this.listener);
 		}
 		super.decrRefcnt();
 	}
@@ -9893,6 +9964,9 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 		a.targetCat = this.targetCat.name;
 		a.definition = this.definition.name;
 		a.sequence = this.sequence.map(elt => elt.name);
+		const elementMap = [];
+		this.elementMap.forEach((v, k) => elementMap.push([k.name, v.name]));
+		a.elementMap = elementMap;
 		return a;
 	}
 	makeSVG(node)
@@ -9900,26 +9974,6 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 		super.makeSVG(node);
 		this.svg.querySelectorAll('text').forEach(tsp => tsp.classList.add('definitionInstance'));
 	}
-	/*
-	help()
-	{
-		super.help()
-		D.toolbar.body.appendChild(H3.h3('Definition Instance'));
-		D.toolbar.body.appendChild(H3.p(`Basename: ${this.basename}`));
-		D.toolbar.body.appendChild(H3.p(`Target category: ${this.targetCat.properName}`));
-		Definition.show(this.diagram, this.definition.sequence, this.definition.blobs);
-		const toolbars = [...D.toolbar.table.querySelectorAll('.toolbar-element')];
-		toolbars.map(tb => D.removeChildren(tb));
-		const seqDivs = this.sequence.map((elt, i) => D.toolbar.table.querySelector(`#${this.definition.sequence[i].elementId()}`));
-		seqDivs.map((div, i) =>
-		{
-			const rep = this.sequence[i].getHtmlRep();
-			const xy = D.toolbar.mouseCoords;	// use original location
-			rep.appendChild(D.getIcon('place', 'place', e => R.diagram.placeElement(this.sequence[i], xy), {title:'Place sequence element'}));
-			div.parentNode.parentNode.appendChild(H3.td('.element', rep));
-		});
-	}
-	*/
 	getSequenceElements()
 	{
 		const elements = new Set();
@@ -9958,7 +10012,7 @@ class Theorem extends IndexText
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		nuArgs.basename = U.getArg(nuArgs, 'basename', diagram.getAnon('d'));
+		nuArgs.basename = U.getArg(nuArgs, 'basename', diagram.getAnon('th'));
 		super(diagram, nuArgs);
 		const sequence = diagram.getElements(nuArgs.sequence);
 		if (sequence.filter(elt => !(elt instanceof CatObject) && !(elt instanceof Morphism)).length > 0)
@@ -9970,23 +10024,41 @@ class Theorem extends IndexText
 		target.incrRefcnt();
 		Object.defineProperties(this,
 		{
-			source:		{value: source,			writable: false},		// definition
+			source:		{value: source,			writable: false},		// definition instance
 			target:		{value: target,			writable: false},		// definition
 			sequence:	{value: sequence,		writable: false},
-			cells:		{value: nuArgs.cells,	writable: true},
+			blobs:		{value: args.blobs,		writable: true},
+			cells:		{value: [],				writable: false},
 		});
+		this._postload();
 		if (this.constructor.name === 'Theorem')
 		{
 			this.setSignature();
 			D && D.emitElementEvent(diagram, 'new', this);
 		}
 	}
-	postload()
+	_postload()
 	{
-		this.cells = this.cells.map(cell => cell instanceof Cell ? cell : this.category.getCell(cell));
+		this.blobs = this.blobs.map(b => b instanceof IndexBlob ? b : new IndexBlob(this.diagram.domain.elements.get(b)));
+		this.blobs.map(blob => blob.cells.forEach(cell => this.cells.push(cell)));
 		this.cells.map(cell => cell.forEachElement(elt => elt.incrRefcnt()));
-		this.morphism = new Morphism(R.actionDiagram, {domain:this.source.action, codomain:this.target.action, description:this.description});
+		this.morphism = new Morphism(R.actionDiagram, {basename:this.basename, domain:this.source.definition.action, codomain:this.target.action, description:this.description});
 		this.morphism.proof = this;
+		this.morphism.incrRefcnt();
+		if (D)
+		{
+			this.listener = e =>
+			{
+				const args = e.detail;
+				const diagram = args.diagram;
+				const cell = args.cell;
+				if (args.command === 'commutivity' && diagram === this.diagram)
+				{
+					this.cells.reduce((r, c) => r || cell.name === c.name, false) && this.update();
+				}
+			};
+			window.addEventListener('Cell', this.listener);
+		}
 	}
 	isValid()
 	{
@@ -9996,10 +10068,13 @@ class Theorem extends IndexText
 	{
 		if (this.refcnt <= 1)
 		{
-			source.decrRefcnt();
-			target.decrRefcnt();
-			sequence.map(elt => elt.decrRefcnt());
+			this.source.decrRefcnt();
+			this.target.decrRefcnt();
+			this.sequence.map(elt => elt.decrRefcnt());
 			this.cells.map(cell => cell.forEachElement(elt => elt.decrRefcnt()));
+			delete this.morphism.proof;
+			this.morphism.decrRefcnt();
+			window.removeEventListener('Cell', this.listener);
 		}
 		super.decrRefcnt();
 	}
@@ -10015,9 +10090,9 @@ class Theorem extends IndexText
 	{
 		const a = super.json();
 		a.source = this.source.name;
-		a.target = this.source.target;
+		a.target = this.target.name;
 		a.sequence = this.sequence.map(elt => elt.refName(this.diagram));
-		a.cells = this.cells.map(cell => cell.name);
+		a.blobs = this.blobs.map(b => b.seed.name);
 		return a;
 	}
 	mouseenter(e)
@@ -10030,11 +10105,17 @@ class Theorem extends IndexText
 		super.mouseout(e);
 		this.cells.map(cell => cell.forEachElement(elt => elt.emphasis(false)));
 	}
+	update(xy = null, majorGrid = false)
+	{
+		super.update(xy, majorGrid);
+		const valid = this.isValid();
+		this.svg && this.svg.querySelectorAll('text').forEach(tsp => tsp.classList[valid ? 'remove' : 'add']('badGlow'));
+	}
 	makeSVG(node)
 	{
 		super.makeSVG(node);
-		if (!isValid())
-			this.svg.querySelectorAll('text').forEach(tsp => tsp.classList.add('badGlow'));
+		this.svg.querySelectorAll('text').forEach(tsp => tsp.classList.add('theorem'));
+		this.update();
 	}
 }
 
@@ -12831,7 +12912,7 @@ class TheoremAction extends Action
 	html(e, diagram, ary)
 	{
 		super.html();
-		const action = e => this.makeTheorm(e, diagram, diagram.selected);
+		const action = e => this.action(e, diagram, diagram.selected);
 		const source = ary[0];		// def instance
 		const target = ary[1];		// def
 		this.sequenceMap.length = 0;
@@ -12844,7 +12925,8 @@ class TheoremAction extends Action
 			const rep = elt.getHtmlRep();
 			const select = H3.select(`##select-${i}.w100`, {onchange: e => setSequence(e, i)});
 			rep.appendChild(select);
-			source.sequence.map(item => item instanceof elt.constructor && select.appendChild(H3.option(elt.properName, {value:elt.name})));
+			source.sequence.map(item => item instanceof elt.constructor && select.appendChild(H3.option(item.properName, {value:item.name})));
+			return rep;
 		};
 		const body = D.toolbar.body;
 		[	H3.h3('Create Theorem'),
@@ -12868,47 +12950,27 @@ class TheoremAction extends Action
 		const focus = body.querySelector('.ifocus');
 		focus && focus.focus();
 	}
-	action(e, diagram, element, quantifier)
+	action(e, diagram, ary)
 	{
-		if (!this.isValid(quantifier))
-			throw 'invalid quantifier';
-		const oldQuant = element.getQuantifier();
-		if (this.doit(e, diagram, element, quantifier))
-		{
-			D.emitElementEvent(diagram, 'update', element);
-			diagram.log({command:'quantifier', quantifier});
-			diagram.antilog({command:'quantifier', quantifier:oldQuant});
-			this.html(e, diagram, [element]);
-		}
+		this.doit(e, diagram, ary);
 	}
-	doit(e, diagram, index, quantifier)
+	doit(e, diagram, ary)
 	{
-		const blob = diagram.getBlob(index);
-		blob.getInstances(index.to).map(ins => ins.setQuantifier('none'));	// remove all quantifiers on the element
-		if (quantifier !== 'none')
-		{
-			// TODO
-			const lvl = blob.levels[index.getLevel()];
-			lvl.filter(elt => elt === index.to).map(elt => index.setQuantifier(quantifier));
-			blob.updateLevels();
-		}
-		return true;
+		const source = ary[0];
+		const target = ary[1];
+		const basename = D.toolbar.body.querySelector('#new-theorem').value;
+		const sequence = target.sequence.map((elt, i) => diagram.getElement(D.toolbar.body.querySelector(`#select-${i}`).value));
+		const seeds = target.action.action(e, diagram, sequence);
+		const blobs = seeds.map(seed => diagram.getBlob(seed));
+		const description = `Theorem: ${source.definition.defname} is ${target.defname}`;
+		const bbox = diagram.svgRoot.getBBox();
+		const xy = new D2({x:bbox.x, y:bbox.y + bbox.height + D.default.arrow.length});
+		const theorem = new Theorem(diagram, {basename, source, target, sequence, blobs, description, xy});
+		diagram.addSelected(theorem);
+		diagram.viewElements(...diagram.selected);
 	}
 	replay(e, diagram, args)
 	{
-	}
-	makeTheorm(e, diagram, ary)
-	{
-		const blobs = this.getBlobs(diagram, ary);
-		const sequence = this.getSequence(blobs);
-		const defname = D.toolbar.body.querySelector('#new-definition').value;
-		const description = `Definition of ${defname}`;
-		const xy = D.toolbar.mouseCoords;	// use original location
-		const width = D.textWidth(description);
-		const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height/2, width, height:D.default.font.height};
-		const place = diagram.autoplaceSvg(bbox, null, 16);
-		const def = diagram.get('Definition', {description, defname, sequence, blobs, xy:{x:place.x, y:place.y}});
-		diagram.makeSelected(def);
 	}
 	hasForm(diagram, ary)
 	{
@@ -13082,7 +13144,7 @@ class UserAction extends Action
 	}
 	action(e, diagram, ary)
 	{
-		this.doit(e, diagram, ary);
+		return this.doit(e, diagram, ary);
 	}
 	_build(diagram, ref, eltMap)
 	{
@@ -13165,7 +13227,7 @@ class UserAction extends Action
 			const eltMap = new Map();
 			def.sequence.map((elt, i) =>
 			{
-				const to = ary[i].to;
+				const to = 'to' in ary[i] ? ary[i].to : ary[i];
 				eltMap.set(elt, to);
 				if (to instanceof Morphism)
 				{
@@ -13178,6 +13240,7 @@ class UserAction extends Action
 			const bbox = diagram.svgRoot.getBBox();
 			let baseXY = new D2({x:bbox.x, y:bbox.y + bbox.height + D.default.arrow.length});
 			const src2trgt = new Map();
+			const seeds = [];
 			const procObjects = cell =>
 			{
 				const objects = new Set();		// find the source objects in the cell
@@ -13205,6 +13268,7 @@ class UserAction extends Action
 					src2trgt.set(obj, diagram.placeObject(target, xy, false));
 				});
 				baseXY = baseXY.add({x:0, y:bottom + D.default.arrow.length});
+				seeds.push(src2trgt.get(cell.left[0].domain));
 			};
 			const morphisms = [];
 			const procLeg = leg =>
@@ -13225,15 +13289,17 @@ class UserAction extends Action
 			});
 			diagram.makeSelected(...morphisms);
 			diagram.viewElements(...morphisms);
+			return seeds;
 		}
+		return null;
 	}
 	hasForm(diagram, ary, eltMap = new Map())
 	{
 		let allObjects = false;
 		let allMorphisms = false;
 		let isBinaryOp = false;
-		if (this.definition.sequence.length === ary.length && ary.filter(elt => elt instanceof IndexObject || elt instanceof IndexMorphism).length === ary.length)
-			return this.definition.sequence.reduce((r, ref, i) => r && R.sameForm(ref, ary[i].to, eltMap), true);	// do all elements have the same form?
+		if (this.definition.sequence.length === ary.length && ary.filter(elt => elt instanceof CatObject || elt instanceof Morphism).length === ary.length)
+			return this.definition.sequence.reduce((r, ref, i) => r && R.sameForm(ref, 'to' in ary[i] ? ary[i].to : ary[i], eltMap), true);	// do all elements have the same form?
 		return false;
 	}
 	json()
@@ -13355,6 +13421,7 @@ class Category extends CatObject
 				}
 			});
 			const definitions = [];
+			const theorems = [];
 			const definitionInstances = [];
 			data.filter((args, ndx) =>
 			{
@@ -13385,10 +13452,13 @@ class Category extends CatObject
 					case 'DefinitionInstance':
 						definitionInstances.push(args);
 						break;
+					case 'Theorem':
+						theorems.push(args);
 				}
 			});
 			definitions.map(procElt);
 			definitionInstances.map(procElt);
+			theorems.map(procElt);
 			if (errMsg !== '')
 				R.recordError(errMsg);
 		}
@@ -13714,11 +13784,11 @@ class Morphism extends Element
 	{
 		return false;	// fitb
 	}
-	loadItem()	// don't call in Morphism constructor since signature may change
+	loadEquality()	// don't call in Morphism constructor since signature may change
 	{
 		const diagram = this.diagram;
 		const sig = this.signature;
-		R.loadItem(diagram, this, [this], [this]);
+		R.loadEquality(diagram, this, [this], [this]);
 		const domTermSig = FactorMorphism.Signature(diagram, this.domain);
 		const codTermSig = FactorMorphism.Signature(diagram, this.codomain);
 		R.loadSigs(diagram, this, [domTermSig], [sig, codTermSig]);
@@ -13728,7 +13798,7 @@ class Morphism extends Element
 			{
 				const left = [U.dataSig([0, i]), this.signature];
 				const right =[ U.dataSig([0, d]) ];
-				R.loadItem(diagram, this, left, right);
+				R.loadEquality(diagram, this, left, right);
 			});
 	}
 	textWidth()
@@ -13857,7 +13927,7 @@ class Identity extends Morphism
 			delete a.codomain;
 		return a;
 	}
-	loadItem()
+	loadEquality()
 	{
 		R.loadIdentity(this.diagram, this);
 		// identities of the components
@@ -14091,11 +14161,11 @@ class NamedMorphism extends Morphism	// name of a morphism
 		super.help();
 		D.toolbar.table.appendChild(H3.tr(H3.td('Named morphism of:'), H3.td(this.source.properName)));
 	}
-	loadItem()	// don't call in Morphism constructor since signature may change
+	loadEquality()	// don't call in Morphism constructor since signature may change
 	{
-		super.loadItem();
-		R.loadItem(this.diagram, this, [this], [this.source]);
-		!this.source.isEquivalent(this.base) && R.loadItem(this.diagram, this, [this], [this.base]);
+		super.loadEquality();
+		R.loadEquality(this.diagram, this, [this], [this.source]);
+		!this.source.isEquivalent(this.base) && R.loadEquality(this.diagram, this, [this], [this.base]);
 	}
 	getGraph(data = {position:0})
 	{
@@ -15238,7 +15308,7 @@ class Cell
 		this.setProperName();
 		this.left.map(m => m.incrRefcnt());
 		this.right.map(m => m.incrRefcnt());
-		this.loadItem();
+		this.loadEquality();
 		D && D.emitCellEvent(this.diagram, act, this);
 	}
 	getIntrinsicLevel()
@@ -15517,10 +15587,10 @@ class Cell
 		this.svg.classList[state ? 'add' : 'remove']('selected');
 		this.diagram.svgBase[state ? 'prepend' : 'appendChild'](this.svg);
 	}
-	loadItem()
+	loadEquality()
 	{
 		if (this.assertion && (this.assertion === 'equals' || this.assertion === 'notEqual'))
-			R.loadItem(this.diagram, this, this.left.map(m => m.to), this.right.map(m => m.to), this.assertion === 'equals');
+			R.loadEquality(this.diagram, this, this.left.map(m => m.to), this.right.map(m => m.to), this.assertion === 'equals');
 	}
 	removeItem()
 	{
@@ -16140,7 +16210,7 @@ class Composite extends MultiMorphism
 		if (this.constructor.name === 'Composite')
 		{
 			this.setSignature();
-			this.loadItem();
+			this.loadEquality();
 			D && D.emitElementEvent(diagram, 'new', this);
 		}
 	}
@@ -16190,10 +16260,10 @@ class Composite extends MultiMorphism
 		graph.graphs[1].copyGraph({src:seqGraph.graphs[cnt], map:[[[0], [0]], [[cnt], [1]]]});
 		return graph;
 	}
-	loadItem()
+	loadEquality()
 	{
-		super.loadItem();
-		R.loadItem(this.diagram, this, [this], this.morphisms);
+		super.loadEquality();
+		R.loadEquality(this.diagram, this, [this], this.morphisms);
 	}
 	getSignatures(sigs = [])
 	{
@@ -16276,17 +16346,17 @@ class ProductMorphism extends MultiMorphism
 		graph.tagGraph(this.dual ? 'Coproduct' : ' Product');
 		return graph;
 	}
-	loadItem()
+	loadEquality()
 	{
-		super.loadItem();
+		super.loadEquality();
 		this.morphisms.map((m, i) =>
 		{
 			const pDom = FactorMorphism.Signature(this.diagram, this.domain, [i], this.dual);
 			const pCod = FactorMorphism.Signature(this.diagram, this.codomain, [i], this.dual);
 			if (this.dual)
-				R.loadItem(this.diagram, this, [this, pCod], [pDom, m]);
+				R.loadEquality(this.diagram, this, [this, pCod], [pDom, m]);
 			else
-				R.loadItem(this.diagram, this, [pCod, this], [m, pDom]);
+				R.loadEquality(this.diagram, this, [pCod, this], [m, pDom]);
 		});
 	}
 	updateProperName()
@@ -16370,9 +16440,9 @@ class ProductAssembly extends MultiMorphism
 		});
 		return graph;
 	}
-	loadItem()
+	loadEquality()
 	{
-		super.loadItem();
+		super.loadEquality();
 		this.morphisms.map((m, i) =>
 		{
 			const args = {factors:[i], dual:this.dual};
@@ -16381,7 +16451,7 @@ class ProductAssembly extends MultiMorphism
 			else
 				args.domain = this.domain;
 			const factorMorphism = this.diagram.get('FactorMorphism', args);
-			R.loadItem(this.diagram, this, [m], this.dual ? [this, factorMorphism] : [factorMorphism, this]);
+			R.loadEquality(this.diagram, this, [m], this.dual ? [this, factorMorphism] : [factorMorphism, this]);
 		});
 	}
 	static Basename(diagram, args)
@@ -16471,9 +16541,9 @@ class PullbackAssembly extends MultiMorphism
 		});
 		return graph;
 	}
-	loadItem()
+	loadEquality()
 	{
-		super.loadItem();
+		super.loadEquality();
 		const dual = this.dual;
 		const diagram = this.diagram;
 		this.morphisms.map((m, i) =>
@@ -16489,7 +16559,7 @@ class PullbackAssembly extends MultiMorphism
 			else
 				args.domain = this.codomain;
 			const codomainFactor = diagram.get('FactorMorphism', args);
-			R.loadItem(diagram, this, [m], dual ? [domainFactor, this] : [this, codomainFactor]);
+			R.loadEquality(diagram, this, [m], dual ? [domainFactor, this] : [this, codomainFactor]);
 		});
 	}
 	static Basename(diagram, args)
@@ -16618,9 +16688,9 @@ class FactorMorphism extends Morphism
 		R.debug(1) && graph.check();
 		return graph;
 	}
-	loadItem()
+	loadEquality()
 	{
-		super.loadItem();
+		super.loadEquality();
 		if (this.factors.length > 1)
 			this.factors.map((f, i) =>
 			{
@@ -16640,7 +16710,7 @@ class FactorMorphism extends Morphism
 				const base = FactorMorphism.Signature(this.diagram, this.dual ? this.codomain : this.domain, [this.factors[i]], this.dual);
 				R.loadSigs(this.diagram, this, [base], [fm, this.signature])
 				if (!this.dual && this.domain.isTerminal() && this.codomain.isTerminal())
-					R.loadItem(this.diagram, this, [base], [fm, this]);
+					R.loadEquality(this.diagram, this, [base], [fm, this]);
 			});
 	}
 	isFold()
@@ -16792,9 +16862,9 @@ class LambdaMorphism extends Morphism
 		a.homFactors = this.homFactors;
 		return a;
 	}
-	loadItem(diagram)
+	loadEquality(diagram)
 	{
-		super.loadItem(diagram);
+		super.loadEquality(diagram);
 		// TODO
 	}
 	canChangeProperName()
@@ -18636,8 +18706,8 @@ class Diagram extends Functor
 				else
 					elt = new Cat[prototype](this, args);
 			}
-			if (!(elt instanceof IndexMorphism) && 'loadItem' in elt && !('postload' in elt))
-				elt.loadItem();
+			if (!(elt instanceof IndexMorphism) && 'loadEquality' in elt && !('postload' in elt))
+				elt.loadEquality();
 			return elt;
 		}
 		catch(x)
@@ -20241,6 +20311,7 @@ const Cat =
 	PullbackAssembly,
 	Runtime,
 	TensorObject,
+	Theorem,
 };
 
 if (D)
