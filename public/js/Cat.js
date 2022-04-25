@@ -1038,6 +1038,8 @@ class Runtime
 	{
 		try
 		{
+			if (typeof name === 'string' && !R.catalog.has(name))
+				throw `Diagram not in catalog: ${name}`;
 			if (D)
 			{
 				D.session.mode = 'diagram';
@@ -1606,7 +1608,6 @@ class Runtime
 	}
 	debug(level)
 	{
-if (R.default.debug === false)R.default.debug = 0;
 		return level <= R.default.debug;
 	}
 }
@@ -2437,7 +2438,7 @@ class ElementTool
 			const elementBtn = D.getIcon(tType, tType, e => this.showSection('search'), {title:this.type, id:`${this.type}-search-icon`});
 			toolbar2.push(elementBtn);
 			R.diagram.isEditable() && toolbar2.push(D.getIcon('new', 'edit', _ => this.showSection('new'), {title:'New', id:`${this.type}-new-icon`}));
-			this.toolbar2 = H3.tr(H3.td(toolbar2, `##${this.type}-toolbar2`, {colspan:2}));
+			this.toolbar2 = H3.tr(H3.td(toolbar2, '##help-toolbar2', {colspan:2}));
 			toolbar.table.appendChild(this.toolbar2);
 		}
 	}
@@ -2934,7 +2935,7 @@ class DiagramTool extends ElementTool
 	{
 		super.html(e);
 		const diagram = R.diagram;
-		const toolbar2 = D.toolbar.element.querySelector('.help-toolbar2');
+		const toolbar2 = D.toolbar.element.querySelector('#help-toolbar2');
 		if (R.user.canUpload())
 		{
 			toolbar2.appendChild(D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload-json'), {title:'Upload', id:`${this.type}-upload-json-icon`}));
@@ -3780,19 +3781,6 @@ class Session
 			this.mode = 'catalog';
 		}
 	}
-	/*
-	makeAllSvgs()		// debug tool
-	{
-		[...this.diagrams.keys()].map(name =>
-		{
-			const diagram = R.$CAT.getElement(name);
-			if (diagram)
-				diagram.makeSVG();
-			else
-				R.debug(1) && console.log('diagram not open', name);
-		});
-	}
-	*/
 }
 
 class Display
@@ -5276,6 +5264,45 @@ class Display
 		R.diagram && this.diagramSVG.appendChild(R.diagram.svgRoot);
 		this.setSessionViewport(D.session.viewport);
 	}
+	doParamsSelect(e, diagram)
+	{
+		const select = diagram.domain.getElements(this.params.get('select').split(','));
+		const action = this.params.get('action');
+		if (select.length > 0 || action)
+		{
+			const doit = _ =>
+			{
+				if (diagram.ready === 0 && R.isReady())
+				{
+					select && diagram.makeSelected(...select);
+					const action = this.params.get('action');
+					if (action && action in R.Actions)
+					{
+						const act = R.Actions[action];
+						if (act.hasForm(diagram, diagram.selected))
+						{
+							if (!act.actionOnly)
+							{
+								act.html(e, diagram, diagram.selected);
+								const btn = this.params.get('btn');
+								if (btn)
+								{
+									const elt = this.toolbar.element.querySelector(`span[data-name="button-${btn}"].icon rect.btn`);
+									if (elt && elt.onclick)
+										elt.onclick(new MouseEvent("click", {view: window, bubbles: false, cancelable: true}));
+								}
+							}
+							else
+								act.action(e, diagram, diagram.selected);
+						}
+					}
+				}
+				else
+					setTimeout(doit, 10);	// try again
+			};
+			doit();
+		}
+	}
 	addEventListeners()
 	{
 		window.addEventListener('resize', e =>
@@ -5631,6 +5658,7 @@ class Display
 				document.getElementById('diagramView').classList.add('hidden');
 			}
 		});
+		window.addEventListener('Login', e => R.diagram && D.doParamsSelect(e, R.diagram));
 		window.addEventListener('Application', e =>
 		{
 			const args = e.detail;
@@ -5651,45 +5679,7 @@ class Display
 										this.statusbar.show(null, `cannot load diagram ${name}`);
 										this.emitViewEvent('catalog');
 									}
-									if (this.params.has('select'))
-									{
-										const select = diagram.domain.getElements(this.params.get('select').split(','));
-										const action = this.params.get('action');
-										if (select.length > 0 || action)
-										{
-											const doit = _ =>
-											{
-												if (diagram.ready === 0 && R.isReady())
-												{
-													select && diagram.makeSelected(...select);
-													const action = this.params.get('action');
-													if (action && action in R.Actions)
-													{
-														const act = R.Actions[action];
-														if (act.hasForm(diagram, diagram.selected))
-														{
-															if (!act.actionOnly)
-															{
-																act.html(e, diagram, diagram.selected);
-																const btn = this.params.get('btn');
-																if (btn)
-																{
-																	const elt = this.toolbar.element.querySelector(`span[data-name="button-${btn}"].icon rect.btn`);
-																	if (elt && elt.onclick)
-																		elt.onclick(new MouseEvent("click", {view: window, bubbles: false, cancelable: true}));
-																}
-															}
-															else
-																act.action(e, diagram, diagram.selected);
-														}
-													}
-												}
-												else
-													setTimeout(doit, 10);	// try again
-											};
-											doit();
-										}
-									}
+									this.params.has('select') && this.doParamsSelect(e, diagram);
 								});
 							}
 							if (!D.default.fullscreen)
@@ -5985,15 +5975,9 @@ class Display
 		elts.forEach(pnt => xy.increment(pnt));
 		return xy.scale(1.0/elts.size);
 	}
-	baryHull(ary)
+	baryHull(ary)		// unused
 	{
 		return this.barycenter(D2.hull([...this.getObjects(ary)]));
-	}
-	TestAndFireAction(e, name, ary)
-	{
-		const diagram = R.diagram;
-		const a = diagram.codomain.getElement(name);
-		a && a.hasForm(diagram, ary) && a.action(e, diagram);
 	}
 	center(diagram)
 	{
@@ -6019,21 +6003,6 @@ class Display
 	{
 		const blob = new Blob([string], {type:`application/${type}`});
 		this.download(this.url.createObjectURL(blob), filename);
-	}
-	showInput(name, id, factor)
-	{
-		const o = R.diagram.getElement(name);
-		const sel = document.getElementById(id);
-		const ndx = Number.parseInt(sel.value);
-		const f = Array.isArray(factor) ? [...factor, ndx] : [factor, ndx];
-		const divId = `dv_${o.objects[ndx].name} ${f.toString()}`;
-		const elt = document.getElementById(divId);
-		if (elt)
-		{
-			for (let i=0; i<elt.parentNode.children.length; ++i)
-				elt.parentNode.children[i].classList.add('nodisplay');
-			elt.classList.remove('nodisplay');
-		}
 	}
 	paste(e)
 	{
@@ -6842,12 +6811,6 @@ class Display
 		else
 			this.hideBorderAlerts();
 	}
-	setTopBorderHeight(y)
-	{
-		const borderTop = this.topSVG.querySelector('#borderTop');
-		if (borderTop)
-			borderTop.setAttribute('y', y);
-	}
 	setDarkmode(mode)
 	{
 		mode ? document.body.setAttribute('data-theme', 'dark') : document.body.removeAttribute('data-theme');
@@ -6947,9 +6910,7 @@ class Panels
 		{
 			if (panel === refPnl)
 				continue;
-			if (!refPnl)
-				panel.close();
-			else if (refPnl.elt.style.width === '100%' || panel.right === refPnl.right)	// close on same side
+			if (!refPnl || refPnl.elt.style.width === '100%' || panel.right === refPnl.right)	// close on same side
 				panel.close();
 		}
 	}
@@ -6986,12 +6947,7 @@ class Section
 	toggle()
 	{
 		this.elt.classList.toggle('active');
-		if (this.section.style.display === 'block')
-			this.section.style.display = 'none';
-		else
-		{
-			this.section.style.display = 'block';
-		}
+		this.section.style.display = this.section.style.display === 'block' ? 'none' : 'block';
 	}
 	open()
 	{
@@ -18829,60 +18785,92 @@ class Diagram extends Functor
 			R.recordError(this.name + ': ' + x);
 		}
 	}
+	opcheck(elts)
+	{
+		if (elts.filter(elt => elt === undefined || !(elt.diagram.name === this.name || this.allReferences.has(elt.diagram.name)) || U.isIndexItem(elt)).length > 0)
+			throw 'elements not in context';
+	}
 	id(domain)
 	{
+		this.opcheck([domain]);
 		return this.get('Identity', {domain});
+	}
+	stripIds(...morphisms)
+	{
+		const nonIds = morphisms.filter(m => !Morphism.isIdentity(m));
+		return nonIds.length === 0 ? [morphisms[0]] : nonIds;		// return at least one morphism
 	}
 	comp(...morphisms)
 	{
+		this.opcheck(morphisms);
 		return morphisms.length > 1 ? this.get('Composite', {morphisms}) : morphisms[0];
+	}
+	stripComp(...morphisms)
+	{
+		this.opcheck(morphisms);
+		return this.comp(...this.stripIds(...morphisms));
 	}
 	prod(...elements)
 	{
+		if (elements.length === 0)
+			return this.getTerminal();
+		this.opcheck(elements);
 		return elements.length > 1 ? (elements[0] instanceof CatObject ? this.get('ProductObject', {objects:elements}) : this.get('ProductMorphism', {morphisms:elements})) :
 			elements[0];
 	}
 	coprod(...elements)
 	{
+		if (elements.length === 0)
+			return this.getTerminal(true);
+		this.opcheck(elements);
 		return elements.length > 1 ?
 			(elements[0] instanceof CatObject ? this.get('ProductObject', {objects:elements, dual:true}) : this.get('ProductMorphism', {morphisms:elements, dual:true})) :
 			elements[0];
 	}
 	fctr(domain, factors)
 	{
+		this.opcheck([domain]);
 		return factors.length > 0 ? this.get('FactorMorphism', {domain, factors, dual:false}) : this.get('Identity', {domain});
 	}
 	cofctr(obj, factors)
 	{
+		this.opcheck([obj]);
 		const args = {codomain:obj, factors, dual:true};
 		return this.get('FactorMorphism', args);
 	}
 	assy(...morphisms)
 	{
+		this.opcheck(morphisms);
 		return morphisms.length > 1 ? this.get('ProductAssembly', {morphisms, dual:false}) : morphisms[0];
 	}
 	coassy(...morphisms)
 	{
+		this.opcheck(morphisms);
 		return morphisms.length > 1 ? this.get('ProductAssembly', {morphisms, dual:true}) : morphisms[0];
 	}
 	pbAssy(...morphisms)
 	{
+		this.opcheck(morphisms);
 		return morphisms.length > 1 ? this.get('PullbackAssembly', {morphisms, dual:false}) : morphisms[0];
 	}
 	poAssy(...morphisms)
 	{
+		this.opcheck(morphisms);
 		return morphisms.length > 1 ? this.get('PullbackAssembly', {morphisms, dual:true}) : morphisms[0];
 	}
 	hom(...elements)
 	{
+		this.opcheck(morphisms);
 		return elements[0] instanceof CatObject ? this.get('HomObject', {objects:elements}) : this.get('HomMorphism', {morphisms:elements});
 	}
 	pull(...morphisms)
 	{
+		this.opcheck(morphisms);
 		return morphisms.length > 1 ? this.get('PullbackObject', {morphisms, dual:false}) : morphisms[0];
 	}
 	push(...morphisms)
 	{
+		this.opcheck(morphisms);
 		return morphisms.length > 1 ? this.get('PullbackObject', {morphisms, dual:true}) : morphisms[0];
 	}
 	eval(dom, codomain)
@@ -19709,7 +19697,9 @@ class Assembler
 		this.propagated = new Set();
 		this.inputs = new Set();
 		this.outputs = new Set();
+		this.injections = new Set();
 		this.composites = new Map();	// origins+inputs to array of morphisms to compose
+		this.obj2morph = new Map();
 		this.processed = new Set();
 		this.issues = [];
 		this.finished = false;
@@ -19873,6 +19863,8 @@ class Assembler
 				this.morphisms.add(m);
 				if (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism'))
 					m.to.dual ? this.coreferences.add(m) : this.references.add(m);
+				else if (m.to instanceof FactorMorphism && m.to.dual && m.to.factors.length === 1)
+					this.injections.add(m);
 				m.makeGraph();
 				if (m.isEndo())		// in the index cat, not the target cat
 				{
@@ -19988,9 +19980,15 @@ class Assembler
 	}
 	getReferences(obj)
 	{
-		const references = [];
-		obj.domains.forEach(m => this.references.has(m) && references.push(m));
-		return references;
+		return [...obj.domains].filter(m => this.references.has(m));
+	}
+	getReferencesTo(obj)
+	{
+		return [...obj.codomains].filter(m => this.references.has(m));
+	}
+	getCoreferences(obj)
+	{
+		return [...obj.codomains].filter(m => this.coreferences.has(m));
 	}
 	inputScan()
 	{
@@ -20092,7 +20090,7 @@ class Assembler
 		const cod = m.codomain;
 		if (this.origins.has(cod))
 			return cod;
-		const morphs = [...cod.domains].filter(m => !this.references.has(m));
+		const morphs = [...cod.domains].filter(m => !this.references.has(m) && !this.injections.has(m));
 		if (morphs.length > 0)
 		{
 			const next = morphs[0];
@@ -20109,7 +20107,8 @@ class Assembler
 		this.composites.set(obj, comps);
 		obj.domains.forEach(m =>
 		{
-			if (!this.references.has(m) && !this.coreferences.has(m))
+			// don't follow references, coreferences, or injections
+			if (!this.references.has(m) && !this.coreferences.has(m) && !this.injections.has(m))
 			{
 				const cmp = [m];
 				comps.push(cmp);
@@ -20124,280 +20123,347 @@ class Assembler
 		while(scanning.length > 0)
 			this.startComposites(scanning);
 	}
-	getComposites(domain)		// if reffix not null, it's a diagonal map on the domain
+	getComposites(domain, codomains)
 	{
-		if (this.composites.has(domain))
+		return this.composites.has(domain) ? this.composites.get(domain).map((comp, i) =>
 		{
-			return this.composites.get(domain).map(comp => this.diagram.comp(...comp.map(m => m.to)));
-		}
-		else
-			return [];
+			codomains[i] = comp[comp.length -1].codomain;
+			return this.diagram.comp(...comp.map(m => m.to));
+		}) : [];
 	}
-	getCoreferences(scanning, coreferences, from, subReferences)
+	formCoreferences(domObjects, coreferences, factors, codObjects)
 	{
 		const diagram = this.diagram;
 		const terminal = diagram.getTerminal();
-		const domain = from.to;
 		const lastInCoproduct = this.inCoproduct;
 		this.inCoproduct = true;
 		const subs = [];
 		coreferences.map((insert, i) =>
 		{
-			const subrefs = new Set();
-			subReferences[i] = subrefs;
+			const factori = [];
+			factors[i] = factori;
 			const fctr = insert.to.factors[0];	// what factor are we hitting in the coproduct?
 			// get the morphisms attached to each element
 			const starters = [...insert.domain.codomains];
 			const comps = this.composites.get(insert.domain);
 			comps.map(cmp => starters.push(cmp[0]));
-			subs[fctr] = diagram.prod(...starters.map(m => this.formMorphism(scanning, m.domain, subrefs)));
+			const objects = [];
+			const iCodObjects = [];
+			codObjects[i] = iCodObjects;
+			subs[fctr] = diagram.prod(...starters.map(m => this.formMorphism(m.domain, objects, iCodObjects)));
+			objects.map(ref =>
+			{
+				const ndx = domObjects.indexof(ref.codomain);
+				if (ndx > -1)
+					factorsi.push(ndx);
+				else
+				{
+					domObjects.push(ref.codomain);
+					factorsi.push(domObjects.length -1);
+				}
+			});
+			// add more referenced objects into our domain
+			domObjects.map(o => !domObjects.includes(o) && !o.to.isTerminal() && domObjects.push(o));
 		});
 		return subs;
-		/*
-		const costeps = diagram.coprod(...subs);
-		// fold the outputs
-		const codObjects = 'objects' in costeps.codomain ? costeps.codomain.objects : [costeps.codomain];
-		let foldFactors = codObjects.map(o => codObjects.indexOf(o));
-		if (foldFactors.length > 0)
-		{
-			// all factors equal?
-			let foldCod = null;
-			if (foldFactors.every((v, i) => v === foldFactors[0]))
-			{
-				foldFactors = foldFactors.map(_ => []);
-				foldCod = codObjects[0];
-			}
-			else
-			{
-				const foldCods = [];
-				foldFactors.map(f => f + 1 > foldCods.length && foldCods.push(codObjects[f]));
-				foldFactors = foldFactors.map(f => [f]);
-				foldCod = diagram.coprod(...foldCods);
-			}
-			const foldStep = diagram.cofctr(foldCod, foldFactors);
-			return diagram.comp(costeps, foldStep);
-		}
-		this.inCoproduct = lastInCoproduct;
-		return costeps;
-		*/
 	}
-	formMorphism(scanning, domain, references = new Set())		// recursive
+	isCovered(domain)
 	{
-		if (this.processed.has(domain))
-			return null;
-		this.processed.add(domain);
-		let morphism = null;
-		// if the domain is an origin then build its preamble
-		let preamble = null;
-		if (this.origins.has(domain) || this.outputs.has(domain))
+		const refs = this.getCoreferences(domain);
+		const factors = refs.map(ref => Morphism.isIdentity(ref.to) ? [0] : ref.to.factors).filter(fctr => !(fctr.length === 1 && fctr[0] === -1));
+		// TODO bad cover
+		return this.diagram.isCovered(domain.to, factors, []);
+	}
+	formReferenceMorphism(domain, ref, refObjects, domObjects, factors)
+	{
+		const domRefs = this.getReferences(ref.domain);
+		const refFactors = domRefs.map(ref => Morphism.isIdentity(ref.to) ? [0] : ref.to.factors).filter(fctr => !(fctr.length === 1 && fctr[0] === -1));
+		if (this.diagram.isCovered(ref.domain.to, refFactors, []) && domRefs.filter(ref => !this.processed.has(ref.codomain)).length === 0)		// must be covered and processed all referenced index objects
 		{
-			// references attached to the domain; these are used to build up the domain's value
-			const refs = [...domain.domains].filter(m => this.references.has(m));
-			// all references satisfied?
-			if (refs.length > 0)
+			const refDomObjects = [];
+			const codObjects = [];
+			const morphism = this.formMorphism(ref.domain, refDomObjects, codObjects);
+			if (morphism)
 			{
-				refs.map(ref => references.add(ref.codomain));
-				// at most one id is allowed as a ref
-				const idCnt = refs.filter(r => Morphism.isIdentity(r.to)).length;
-				if (idCnt > 1)
+				// add newly referenced objects
+				const nuRefs = refDomObjects.filter(ro => !ro.to.isTerminal() && domObjects.includes(ro));
+				domObjects.push(...nuRefs);
+				domRefs.map((dref, k) =>
 				{
-					this.issues.push({message:`Too many identities as references (${idCnt})`, element:domain});
-					return null;
-				}
-				// TODO id's
-				const factors = [];
-				refs.map(ref => factors.concat(Morphism.getProductFactors(ref.to).filter(f => f !== -1)));		// remove terminal factors
-				if (factors.length > 0)
-					preamble = !FactorMorphism.isIdentity(factors, 'objects' in domain.to ? domain.to.objects.length : 1) ? this.diagram.fctr(domain.to, factors) : null;
-				else
-					preamble = this.diagram.id(domain.to);
-			}
-		}
-		const codomains = [...domain.codomains];
-		const referencesTo = codomains.filter(m => this.references.has(m));
-		const coreferences = codomains.filter(m => this.coreferences.has(m));
-		//
-		// advance scanning
-		//
-		if (scanning.filter(scan => scan.domain === domain).length === 0)		// our domain is not to be scanned again, then add references to it to the scan list
-			referencesTo.map(m => scanning.push({domain:m.domain}));
-		// if there are references to the domain, then we need to add a copy
-		const reffix = null;
-		if (referencesTo.length > 0)
-		{
-			reffix = this.diagram.fctr(domain, [0, 0]);
-		}
-		//
-		// we get outbound morphisms from the domain from the composites shown in the directed graph,
-		// or from the domain being a coproduct assembly of elements
-		//
-		// first the outbound composites from the domain
-		//
-		let assembly = this.getComposites(domain);
-				if (!this.origins.has(codomain))
-		if (coreferences.length)
-		{
-			const subReferences = [];
-			const subs = this.getCoreferences(scanning, coreferences, domain, subReferences);
-		}
-		// add preamble morphism if required
-		if (preamble && !Morphism.isIdentity(preamble))
-			assembly = assembly.map(m => this.diagram.comp(preamble, m));
-		// if we got more than one morphism formed, make a product assembly
-		morphism = assembly.length > 0 ? this.diagram.assy(...assembly) : preamble;
-		morphism === null && this.outputs.has(domain) && this.inCoproduct && this.deleteOutput(domain);
-		return morphism ? morphism : this.diagram.id(domain.to);
-	}
-	/*
-	assembleCoreferences(scanning, coreferences, from)
-	{
-		const diagram = this.diagram;
-		const terminal = diagram.getTerminal();
-		const domain = from.to;
-		const lastInCoproduct = this.inCoproduct;
-		this.inCoproduct = true;
-		const subs = [];
-		coreferences.map((insert, i) =>
-		{
-			const fctr = insert.to.factors[0];	// what factor are we hitting in the coproduct?
-			// get the morphisms attached to each element
-			const starters = [...insert.domain.codomains];
-			const comps = this.composites.get(insert.domain);
-			comps.map(cmp => starters.push(cmp[0]));
-			subs[fctr] = diagram.prod(...starters.map(m => this.formMorphism(scanning, m.domain)));
-		});
-		const costeps = diagram.coprod(...subs);
-		// fold the outputs
-		const codObjects = 'objects' in costeps.codomain ? costeps.codomain.objects : [costeps.codomain];
-		let foldFactors = codObjects.map(o => codObjects.indexOf(o));
-		if (foldFactors.length > 0)
-		{
-			// all factors equal?
-			let foldCod = null;
-			if (foldFactors.every((v, i) => v === foldFactors[0]))
-			{
-				foldFactors = foldFactors.map(_ => []);
-				foldCod = codObjects[0];
-			}
-			else
-			{
-				const foldCods = [];
-				foldFactors.map(f => f + 1 > foldCods.length && foldCods.push(codObjects[f]));
-				foldFactors = foldFactors.map(f => [f]);
-				foldCod = diagram.coprod(...foldCods);
-			}
-			const foldStep = diagram.cofctr(foldCod, foldFactors);
-			return diagram.comp(costeps, foldStep);
-		}
-		this.inCoproduct = lastInCoproduct;
-		return costeps;
-	}
-	formMorphism(scanning, domain, refFactors)		// TODO refFactors not used
-	{
-		if (this.processed.has(domain))
-			return null;
-		this.processed.add(domain);
-		let morphism = null;
-		// if the domain is an origin then build its preamble
-		let preamble = null;
-		if (this.origins.has(domain) || this.outputs.has(domain))
-		{
-			// references attached to the domain; these are used to build up the domain's value
-			const refs = [...domain.domains].filter(m => this.references.has(m));
-			// all references satisfied?
-			if (refs.length > 0)
-			{
-				// at most one id is allowed as a ref
-				const idCnt = refs.filter(r => Morphism.isIdentity(r.to)).length;
-				if (idCnt > 1)
-				{
-					this.issues.push({message:`Too many identities as references (${idCnt})`, element:domain});
-					return null;
-				}
-				// TODO id's
-				const factors = [];
-				refs.map(ref => factors.concat(Morphism.getProductFactors(ref.to).filter(f => f !== -1)));
-				if (factors.length > 0)
-					preamble = !FactorMorphism.isIdentity(factors, 'objects' in domain.to ? domain.to.objects.length : 1) ? this.diagram.fctr(domain.to, factors) : null;
-				else
-					preamble = this.diagram.id(domain.to);
-			}
-		}
-		const codomains = [...domain.codomains];
-		const referencesTo = codomains.filter(m => this.references.has(m));
-		const coreferences = codomains.filter(m => this.coreferences.has(m));
-		//
-		// advance scanning
-		//
-		if (scanning.filter(scan => scan.domain === domain).length === 0)		// our domain is not to be scanned again, then add references to it to the scan list
-			referencesTo.map(m => scanning.push({domain:m.domain}));
-		// if there are references to the domain, then we need to add a copy
-		const reffix = null;
-		if (referencesTo.length > 0)
-		{
-			reffix = this.diagram.fctr(domain, [0, 0]);
-//			refFactors.push(domain);
-		}
-		//
-		// we get outbound morphisms from the domain from the composites shown in the directed graph,
-		// or from the domain being a coproduct assembly of elements
-		//
-		// first the outbound composites from the domain
-		//
-		let assembly = this.getCompositeMorphisms(scanning, domain);
-		const corefFactors = [];
-		coreferences.length > 0 && assembly.push(this.assembleCoreferences(scanning, coreferences, domain, corefFactors));
-		// add preamble morphism if required
-		if (preamble && !Morphism.isIdentity(preamble))
-			assembly = assembly.map(m => this.diagram.comp(preamble, m));
-		// if we got more than one morphism formed, make a product assembly
-		morphism = assembly.length > 0 ? this.diagram.assy(...assembly) : preamble;
-		morphism === null && this.outputs.has(domain) && this.inCoproduct && this.deleteOutput(domain);
-		return morphism ? morphism : this.diagram.id(domain.to);
-	}
-	getCompositeMorphisms(scanning, domain, reffix)		// if reffix not null, it's a diagonal map on the domain
-	{
-		if (this.composites.has(domain))
-		{
-			const composites = this.composites.get(domain);
-			return composites.length === 0 ? [] : this.composites.get(domain).map(comp =>
-			{
-				const last = comp.length -1;
-				const morphisms = comp.map(m =>m.to);
-				// codomain index object
-				const codomain = comp[last].codomain;
-				const to = comp[last].codomain.to;
-				if (!this.origins.has(codomain))
-				{
-					if (to instanceof ProductObject && to.dual)	// TODO for some reason this doesn't work
+					refObjects[k] = dref.codomain;
+					const domndx = domObjects.indexOf(dref.codomain);
+					if (domndx > -1)
 					{
-						//
-						const injections = [...codomain.codomains].filter(m => this.coreferences.has(m));
-						injections.map((inj, i) =>
+						factors[dref.to.factors[0]] = domndx;
+	debugger;
+					}
+	//				else if (dref === ref)
+	//				{
+	//					factors[dref.to.factors[0]] = domndx;
+	//				}
+					else
+					{
+						domObjects.push(dref.codomain);
+						factors[dref.to.factors[0]] = domObjects.length -1;
+					}
+				});
+				return morphism;
+			}
+		}
+		return null;
+	}
+	formMorphism(domain, domObjects, codObjects)		// recursive; can return null
+	{
+console.log('formMorphism', domain.svg, domain.basename);
+//if (domain.basename === 'o_24')debugger;
+		if (this.processed.has(domain))
+			return null;
+		this.processed.add(domain);
+		const diagram = this.diagram;
+		//
+		// REFERENCES TO
+		//
+		// continue along references that point to the domain
+		// these all become part of the final assembly
+		//
+		const referencesTo = this.getReferencesTo(domain);
+		let refToMorphisms = [];
+		if (referencesTo.length > 0)
+		{
+			refToMorphisms = referencesTo.map((ref, i) =>
+			{
+				const factors = [];
+				const refDomObjects = [];
+				const refObjects = [];
+				const morphism = this.formReferenceMorphism(domain, ref, refObjects, refDomObjects, factors);
+				if (morphism)
+				{
+					refDomObjects.map((o, j) =>
+					{
+						if (o !== domain)
 						{
-// TODO why not save returns from formMorphism
-							this.formMorphism(scanning, inj.domain);
-							const references = [...inj.domain.codomains].filter(m => this.references.has(m));
-							references.map((ref, j) => this.formMorphism(scanning, ref.domain));
+							const ndx = domObjects.indexOf(o);
+							if (ndx === -1)
+								domObjects.push(o);
+						}
+					});
+					return {morphism, refObjects, refDomObjects, factors};
+				}
+				return null;
+			}).filter(item => item);		// remove references that did not generate a morphism
+		}
+		//
+		// COMPOSITES
+		//
+		//
+		// from the given domain we can have composites followed by formMorphisms, or the start of a coproduct cover
+		// we have to go through both phases first before we know our domain that includes all the references obtained from both
+		//
+		// now get the composites followed by their codomains' formMorphisms
+		//
+		const compCods = [];
+		const firstComposites = this.getComposites(domain, compCods);		// compCods are in parallel to first composites
+		//
+		// Each of the composites has the same codomain, but continuing on from their codomains means adding more references to the final composite domains.
+		//
+		const assembly = [];
+		compCods.map((cod, i) =>
+		{
+//if (domain.basename === 'o_29')debugger;
+			const assemblyI = [];
+			assembly[i] = assemblyI;
+			const codDomObjects = [];
+			const codCodObjects = [];
+			const secondMorph = this.formMorphism(cod, codDomObjects, codCodObjects);
+			if (secondMorph)
+			{
+				const factors = [];
+				codDomObjects.map((o, j) =>
+				{
+					const ndx = domObjects.indexOf(o);
+					if (ndx === -1)
+					{
+						domObjects.push(o);
+						factors[j] = domObjects.length;		// +1 for the domain object
+					}
+					else
+						factors[j] = ndx + 1;		// +1 for the domain object
+				});
+				codObjects.push(...codCodObjects);
+				assemblyI.push([secondMorph, factors]);
+			}
+			//
+			// are there references to the composite's codomain?  after all that's a reason why the composite stopped
+			//
+			const codrefs = this.getReferencesTo(cod);
+			if (codrefs.length === 0)
+			{
+				codObjects.push(cod);
+			}
+			else if (codrefs.length > 0)
+			{
+				codrefs.map((codref, j) =>
+				{
+					const refDomObjects = [];
+					const refCodObjects = [];
+					const m = this.formMorphism(codref.domain, refDomObjects, refCodObjects);
+					if (m)
+					{
+						codObjects.push(...refCodObjects);		// save where we ended
+						const refs = this.getReferences(codref.domain);
+						const factors = [];
+						refs.map(ref =>
+						{
+							if (ref.codomain.to.isTerminal())
+								return;
+							if (ref.codomain === codref.codomain || ref.codomain === domain)
+							{
+								factors[ref.to.factors[0]] = 0;
+							}
+							else
+							{
+								const ndx = domObjects.indexOf(ref.codomain);
+								if (ndx === -1)
+								{
+									domObjects.push(ref.codomain);
+									factors[ref.to.factors[0]] = domObjects.length;		// +1 for the domain object
+								}
+								else
+									factors[ref.to.factors[0]] = ndx + 1;		// +1 for the domain object
+							}
 						});
+						assembly.push([m, factors]);
 					}
 					else
 					{
-						const continuance = this.formMorphism(scanning, codomain, to);
-						continuance && !Morphism.isIdentity(continuance) && morphisms.push(continuance);
+						//
+						// save where we ended
+						//
+						codObjects.push(codref.domain);
 					}
-				}
-				else
-					scanning.unshift({domain:codomain});
-				// get the composite so far
-				let composite = this.diagram.comp(...morphisms);
-				return composite;
-			}).filter(m => m);
+				});
+			}
+		});
+		//
+		// COVER
+		//
+		// there can only be one cover per domain
+		//
+		let cover = [];
+		const cofactors = [];
+		const coreferences = this.getCoreferences(domain);
+		if (coreferences.length > 0)
+		{
+			const coverCodObjects = [];
+			cover = this.formCoreferences(domObjects, coreferences, cofactors, coverCodObjects);
+//			const base = subsReferences.map(subs => subs.length);
+//			base.map((b, i) => {base[i] = b + (i > 0 ? base[i -1].length : 0);});
+//			subReferences.map((subs, i) => subs.map((sub, j) => coverFactors.push(base[i] + j)));
+//			const setup = this.diagram.fctr(domain);
 		}
-		else
-			return [];
+		//
+		// DOMAIN
+		//
+		// now we know all the objects in our domain
+		//
+		const domainNdxObjects = [domain, ...domObjects];
+		const remix = [...Array(domainNdxObjects.length).keys()];
+		if (refToMorphisms.length === 1)
+		{
+			
+		}
+		else if (refToMorphisms.length > 1)
+		{
+//			debugger;
+		}
+		const nuDomain = diagram.prod(...domainNdxObjects.map(o => o.to));
+		//
+		// PREAMBLES
+		//
+		// 		references to
+		//
+		// if an origin or an output we may need to assemble the value
+		//
+		const finalAssembly = [];		// the returned morphism is an assembly of the morphisms herein
+		refToMorphisms.map(data =>
+		{
+//			const fctr = diagram.fctr(nuDomain, data[1]);
+//			const m = data[0];
+//			const refDomObjects = data[1];
+//			const refFactors = data[2];
+			const factors = [];
+			data.refObjects.map((o, i) =>
+			{
+				factors[i] = domainNdxObjects.indexOf(o);
+			});
+			const offset = factors.length;
+			data.refDomObjects.map((o, i) =>
+			{
+				factors[offset + i] = domainNdxObjects.indexOf(o);
+			});
+			const fctr = diagram.fctr(nuDomain, factors);
+			finalAssembly.push(diagram.stripComp(fctr, data.morphism));
+		});
+		//
+		//		composites
+		//
+		firstComposites.map((comp, i) =>
+		{
+			const assemblyI = assembly[i];
+			const premanifold = domObjects.length > 0 ? diagram.prod(comp, ...domObjects.map(o => diagram.id(o.to))) : comp;
+			if (assemblyI.length > 0)
+			{
+				finalAssembly.push(diagram.comp(premanifold, diagram.assy(...assemblyI.map(pair => diagram.stripComp(diagram.fctr(nuDomain, pair[1]), pair[0])))));
+			}
+			else
+				finalAssembly.push(premanifold);
+		/*
+			const compFactorsI = compFactors[i];
+			compFactorsI.map((fctrs, j) =>
+			{
+				const compFactorsIJ = compFactorsI[j];
+			});
+			const fctr = diagram.fctr(nuDomain, compFactors[i]);
+			finalAssembly.push(diagram.stripComp(fctr, comp));
+			*/
+		});
+		//
+		//		cover
+		//
+		// the last assembly entry to create is for the cover
+		//
+		if (cover.length > 0)
+		{
+			// For distribution, gather the 'extra' terms in domObjects as a single product
+			const refObject = this.diagram.prod(...domObjects.map(o => o.to));
+			// predist: nuDomain ---> domain x refObject
+			const predist = this.diagram.assy(this.diagram.fctr(nuDomain, [0]), this.diagram.fctr(nuDomain, domObjects.map(i => i + 1)));
+			const dist = this.diagram.dist(diagram.prod(domain.to, refObject), true);
+			const components = dist.codomain.objects.map((o, i) =>
+			{
+				const prep = this.diagram.fctr(o, [1]);
+				const proj = this.diagram.fctr(refObject, cofactors[i]);
+				return this.diagram.stripComp(prep, proj, cover[i]);
+			});
+			finalAssembly.push(this.diagram.stripComp(predist, dist, this.diagram.coprod(...components)));
+		}
+
+		//
+		// ASSEMBLY
+		//
+		// form the assembly of all the pieces for our given domain index object
+		//
+		if (finalAssembly.length > 0)
+		{
+			const morphism = diagram.assy(...finalAssembly);
+			if (codObjects.length === 1)
+				this.obj2morph.set(codObjects[0], morphism);
+			else
+				debugger;
+			return morphism;
+		}
+		return null;
 	}
-	*/
 	getBlobMorphism()
 	{
 		let ndx = 0;
@@ -20405,7 +20471,10 @@ class Assembler
 		const inputs = [...this.inputs];
 		inputs.map(input => scanning.push({domain:input}));
 		const scanInputs = scanning.slice();
-		const inputMorphs = scanInputs.map(i => this.formMorphism(scanning, i.domain));		// no references on inputs
+		const codObjects = [];
+		const inputMorphs = scanInputs.map(i => this.formMorphism(i.domain, [], codObjects));
+		debugger;
+		/*
 		scanning = scanning.slice(scanInputs.length);
 		const input = this.diagram.prod(...inputMorphs);
 		// TODO factor morphism from domain stripped of 1's
@@ -20423,6 +20492,7 @@ class Assembler
 			morphism && !(morphism instanceof Identity) && components.push(morphism);
 		}
 		return this.diagram.comp(...components);
+		*/
 	}
 	// try to form a morphism from a blob
 	assemble(e, base)
@@ -20503,7 +20573,6 @@ const D = isGUI ? new Display() : null;
 const Cat =
 {
 	Amazon,
-	D2,
 	R,
 	D,
 	Display,
