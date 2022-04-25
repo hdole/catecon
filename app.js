@@ -128,6 +128,7 @@ function makeDbconSync(mysqlArgs)	// allows synchronous calls
 
 function mysqlKeepAlive()
 {
+	console.log('Starting mysql connection:', Date(Date.now()).toLocaleString());
 	makeDbconSync(mysqlArgs);
 	dbcon.connect(error =>
 	{
