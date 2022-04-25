@@ -1447,7 +1447,7 @@
         "prototype": "IndexObject",
         "to": "Po{F128,F128}oP",
         "xy": {
-          "x": 1000.0000000000001,
+          "x": 1000,
           "y": 6400
         }
       },
@@ -4116,7 +4116,7 @@
     {
       "basename": "rand128",
       "prototype": "Morphism",
-      "properName": "rand",
+      "properName": "rand₁₂₈",
       "domain": "#1",
       "codomain": "F128"
     },
@@ -4195,7 +4195,7 @@
       "description": "The absolute value of a 128-bit number",
       "basename": "abs128",
       "prototype": "Morphism",
-      "properName": "abs",
+      "properName": "abs₁₂₈",
       "code": {
         "cpp": "%1 = ::abs(%0);"
       },
@@ -4217,7 +4217,7 @@
       "description": "The addition of two 128-bit numbers",
       "basename": "add128",
       "prototype": "Morphism",
-      "properName": "add",
+      "properName": "add₁₂₈",
       "code": {
         "cpp": "%2 = %0 + %1;"
       },
@@ -4239,7 +4239,7 @@
       "description": "The subtraction of two 128-bit floating point numbers",
       "basename": "sub128",
       "prototype": "Morphism",
-      "properName": "sub",
+      "properName": "sub₁₂₈",
       "code": {
         "cpp": "%2 = %0 - %1;"
       },
@@ -4261,7 +4261,7 @@
       "description": "The multiplication of two 128-bit floating point numbers",
       "basename": "mult128",
       "prototype": "Morphism",
-      "properName": "mult",
+      "properName": "mult₁₂₈",
       "code": {
         "cpp": "%2 = %0 * %1;"
       },
@@ -4271,7 +4271,7 @@
     {
       "basename": "div128",
       "prototype": "Morphism",
-      "properName": "div",
+      "properName": "div₁₂₈",
       "code": {
         "cpp": "if (%1 != 0.0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n}\nelse\n\t%2.c = 1;"
       },
@@ -4291,7 +4291,7 @@
     {
       "basename": "lt128",
       "prototype": "Morphism",
-      "properName": "lt",
+      "properName": "lt₁₂₈",
       "code": {
         "cpp": "%2 = %0 < %1;"
       },
@@ -4311,7 +4311,7 @@
     {
       "basename": "lte128",
       "prototype": "Morphism",
-      "properName": "lte",
+      "properName": "lte₁₂₈",
       "code": {
         "cpp": "%2 = %0 <= %1;"
       },
@@ -4331,7 +4331,7 @@
     {
       "basename": "eq128",
       "prototype": "Morphism",
-      "properName": "eq",
+      "properName": "eq₁₂₈",
       "code": {
         "cpp": "%2 = %0 == %1;"
       },
@@ -4341,7 +4341,7 @@
     {
       "basename": "ceil128",
       "prototype": "Morphism",
-      "properName": "ceil",
+      "properName": "ceil₁₂₈",
       "code": {
         "cpp": "%1 = ::ceil(%0);"
       },
@@ -4371,7 +4371,7 @@
     {
       "basename": "rnd128",
       "prototype": "Morphism",
-      "properName": "round",
+      "properName": "round₁₂₈",
       "code": {
         "cpp": "%1 = ::round(%0);"
       },
@@ -4391,7 +4391,7 @@
     {
       "basename": "florr128",
       "prototype": "Morphism",
-      "properName": "floor",
+      "properName": "floor₁₂₈",
       "code": {
         "cpp": "%1 = ::floor(%0);"
       },
@@ -4411,7 +4411,7 @@
     {
       "basename": "trnuc128",
       "prototype": "Morphism",
-      "properName": "trunc",
+      "properName": "trunc₁₂₈",
       "code": {
         "cpp": "%1 = ::trunc(%0);"
       },
@@ -4431,7 +4431,7 @@
     {
       "basename": "log128",
       "prototype": "Morphism",
-      "properName": "log",
+      "properName": "log₁₂₈",
       "code": {
         "cpp": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;"
       },
@@ -4451,7 +4451,7 @@
     {
       "basename": "pow128",
       "prototype": "Morphism",
-      "properName": "pow",
+      "properName": "pow₁₂₈",
       "code": {
         "cpp": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n"
       },
@@ -4472,7 +4472,7 @@
       "description": "The maximum value of the two 128-bit floating point numbers",
       "basename": "max128",
       "prototype": "Morphism",
-      "properName": "max",
+      "properName": "max₁₂₈",
       "code": {
         "cpp": "%2 = std::max_element(%0, %1);"
       },
@@ -4503,7 +4503,7 @@
     {
       "basename": "min128",
       "prototype": "Morphism",
-      "properName": "min",
+      "properName": "min₁₂₈",
       "code": {
         "cpp": "%2 = std::min_element(%0, %1);"
       },
@@ -4770,11 +4770,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1649152962008,
+  "timestamp": 1650264345330,
   "version": 0,
   "viewport": {
     "x": 974,
-    "y": 222,
+    "y": -5014,
     "scale": 0.9373765749150433
   }
 }

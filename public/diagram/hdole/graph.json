@@ -404,8 +404,8 @@
         "basename": "t_3",
         "prototype": "IndexText",
         "xy": {
-          "x": -60,
-          "y": 1910
+          "x": 340,
+          "y": 1960
         },
         "height": 24
       },
@@ -1005,11 +1005,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1649230710801,
+  "timestamp": 1649324660984,
   "version": 0,
   "viewport": {
     "x": 357,
-    "y": -335,
+    "y": -2063,
     "scale": 1.5799370522627632
   }
 }

@@ -917,7 +917,7 @@
         }
       },
       {
-        "description": "Now form the pullback of the composable\ntriples in the form (A&rarr;B&rarr;C)&rarr;D.",
+        "description": "Form the pullback of the composable\ntriples in the form (A→B→C)→D.",
         "basename": "t_14",
         "prototype": "IndexText",
         "xy": {
@@ -927,7 +927,7 @@
         "height": 24
       },
       {
-        "description": "Next form the lift from the composable triple\n(A→B→C)→D to the composable pair B→C→D.",
+        "description": "Form the lift from the composable triple\n(A→B→C)→D to the composable pair B→C→D.",
         "basename": "t_18",
         "prototype": "IndexText",
         "xy": {
@@ -937,7 +937,7 @@
         "height": 24
       },
       {
-        "description": "Next form the lift from the composable triple\n(A→B→C)→D to the composable triple A→(B→C→D).",
+        "description": "Form the lift from the composable triple\n(A→B→C)→D to the composable triple A→(B→C→D).",
         "basename": "t_15",
         "prototype": "IndexText",
         "xy": {
@@ -957,7 +957,7 @@
         "height": 24
       },
       {
-        "description": "Now form the lift from the composable triple\nA→(B→C→D) to the composable pair A→B→D.",
+        "description": "Form the lift from the composable triple\nA→(B→C→D) to the composable pair A→B→D.",
         "basename": "t_21",
         "prototype": "IndexText",
         "xy": {
@@ -2169,11 +2169,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1649155217471,
+  "timestamp": 1649324370125,
   "version": 0,
   "viewport": {
     "x": 535,
-    "y": 1149,
+    "y": -4827,
     "scale": 1.3020864251445854
   }
 }

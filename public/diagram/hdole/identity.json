@@ -22,10 +22,10 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 440,
+          "x": 470,
           "y": 180
         },
-        "height": 200,
+        "height": 172,
         "weight": "bold"
       },
       {
@@ -65,7 +65,7 @@
         }
       },
       {
-        "description": "A morphism id:A&rarr;A in the category D is said to be\nan identity given the following commutative diagram.",
+        "description": "A morphism id:A→A in the category D is said to be\nan identity given the following commutative diagrams.",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
@@ -274,11 +274,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1649230136213,
+  "timestamp": 1649758749551,
   "version": 0,
   "viewport": {
-    "x": -997,
-    "y": -4,
-    "scale": 2.79757956680982
+    "x": -277,
+    "y": 36,
+    "scale": 1.936439585549016
   }
 }

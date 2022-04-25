@@ -25,11 +25,11 @@
           "x": -200,
           "y": -580
         },
-        "height": 76,
+        "height": 92,
         "weight": "bold"
       },
       {
-        "description": "The morphism f:A→B in the category D is a monomorphism\niff for any two g:C&rarr;A and h:C&rarr;A with fg = fh then g = h.",
+        "description": "The morphism f:A→B in the category D is a monomorphism\niff for any two g:C→A and h:C→A with fg = fh then g = h.  In\nother words, f is a monomorphism if it can always be\ncancelled on the left.  Known as a 'monic' in CWM [p19].",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
@@ -44,7 +44,7 @@
         "to": "A",
         "xy": {
           "x": 100,
-          "y": -350
+          "y": -300
         }
       },
       {
@@ -53,7 +53,7 @@
         "to": "B",
         "xy": {
           "x": 300,
-          "y": -350
+          "y": -300
         }
       },
       {
@@ -62,28 +62,8 @@
         "to": "C",
         "xy": {
           "x": -150,
-          "y": -350
+          "y": -300
         }
-      },
-      {
-        "description": "Known as a 'monic' in [CWMp19].",
-        "basename": "t_2",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -200,
-          "y": 150
-        },
-        "height": 24
-      },
-      {
-        "description": "In other words, f is a monomorphism if it can always\nbe cancelled on the left:  fg = fh implies g = h.",
-        "basename": "t_3",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -200,
-          "y": -50
-        },
-        "height": 24
       },
       {
         "description": "Compare the dual notion of <diagram name=\"hdole/epimorphism\">epimorphism</diagram>",
@@ -91,7 +71,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": 100
+          "y": 50
         },
         "height": 24
       },
@@ -101,7 +81,7 @@
         "to": "D",
         "xy": {
           "x": 200,
-          "y": -240
+          "y": -200
         }
       },
       {
@@ -110,7 +90,7 @@
         "to": "em/Cat",
         "xy": {
           "x": 200,
-          "y": -120
+          "y": -50
         }
       },
       {
@@ -198,7 +178,7 @@
         "prototype": "Definition",
         "xy": {
           "x": -200,
-          "y": 50
+          "y": -10
         },
         "height": 24,
         "defname": "monomorphism",
@@ -288,11 +268,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1649152973222,
+  "timestamp": 1649822541347,
   "version": 0,
   "viewport": {
-    "x": 904,
-    "y": 2159,
-    "scale": 3.211063412628157
+    "x": 765,
+    "y": 1368,
+    "scale": 0.36611549159743534
   }
 }

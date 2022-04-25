@@ -25,10 +25,10 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": -300,
-          "y": -150
+          "x": -710,
+          "y": -120
         },
-        "height": 288,
+        "height": 308,
         "weight": "bold"
       },
       {
@@ -99,7 +99,7 @@
         "prototype": "IndexObject",
         "to": "hdole/floats/F128",
         "xy": {
-          "x": 500,
+          "x": 300,
           "y": 600
         }
       },
@@ -171,8 +171,8 @@
         "prototype": "IndexObject",
         "to": "hdole/floats/F128",
         "xy": {
-          "x": 100,
-          "y": 0
+          "x": 10,
+          "y": 40
         }
       },
       {
@@ -180,8 +180,8 @@
         "prototype": "IndexObject",
         "to": "hdole/floats/F128",
         "xy": {
-          "x": 400,
-          "y": 0
+          "x": 310,
+          "y": 40
         }
       },
       {
@@ -638,19 +638,6 @@
         "to": "Id{hdole/floats/F128}dI"
       },
       {
-        "basename": "m_26",
-        "prototype": "IndexMorphism",
-        "domain": "o_27",
-        "codomain": "o_19",
-        "attributes": [
-          [
-            "referenceMorphism",
-            true
-          ]
-        ],
-        "to": "Fa{hdole/floats/Po{F128,F128}oP,hdole/floats/F128_0}aF"
-      },
-      {
         "basename": "m_19",
         "prototype": "IndexMorphism",
         "domain": "o_20",
@@ -770,7 +757,7 @@
           ],
           [
             "bezier",
-            5.9
+            7.9
           ]
         ],
         "to": "decr"
@@ -1083,6 +1070,19 @@
           ]
         ],
         "to": "Fa{Po{hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_0}aF"
+      },
+      {
+        "basename": "m_26",
+        "prototype": "IndexMorphism",
+        "domain": "o_27",
+        "codomain": "o_29",
+        "attributes": [
+          [
+            "referenceMorphism",
+            true
+          ]
+        ],
+        "to": "Fa{hdole/floats/Po{F128,F128}oP,hdole/floats/F128_0}aF"
       }
     ],
     "cells": []
@@ -1168,13 +1168,6 @@
       "objects": [
         "hdole/floats/F128",
         "hdole/floats/F128"
-      ]
-    },
-    {
-      "prototype": "ProductObject",
-      "objects": [
-        "hdole/floats/F128",
-        "hdole/floats/#1"
       ]
     },
     {
@@ -1506,6 +1499,13 @@
       "codomain": "hdole/floats/F128"
     },
     {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/floats/F128",
+        "hdole/floats/#1"
+      ]
+    },
+    {
       "prototype": "ProductMorphism",
       "domain": "Po{hdole/floats/F128,hdole/floats/#1}oP",
       "codomain": "Po{hdole/floats/F128,hdole/floats/F128}oP",
@@ -1753,11 +1753,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1648445665949,
+  "timestamp": 1650695538508,
   "version": 0,
   "viewport": {
-    "x": 645,
-    "y": 245,
-    "scale": 0.5094304243970628
+    "x": -315,
+    "y": 1138,
+    "scale": 0.5035060694385483
   }
 }
