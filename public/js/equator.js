@@ -237,6 +237,8 @@ function checkLeg(left, leftSig, right, rightSig, ndx, cnt, scanned)
 					nuLeg.push(...left.slice(ndx + cnt, left.length));
 				if (arrayEquals(left, nuLeg))
 					continue;
+				if (nuLeg.length > maxLegLength)
+					continue;
 				nuSig = Sig(...nuLeg);
 				setEquals(left, nuLeg);
 				if (nuSig === rightSig)
