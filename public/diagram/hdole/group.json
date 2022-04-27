@@ -555,6 +555,28 @@
         "domain": "o_24",
         "codomain": "o_26",
         "to": "Id{G}dI"
+      },
+      {
+        "basename": "o_29",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 200,
+          "y": 300
+        }
+      },
+      {
+        "description": "",
+        "basename": "e_0",
+        "prototype": "IndexElement",
+        "domain": "o_32",
+        "codomain": "o_29",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
       }
     ],
     "cells": [
@@ -862,11 +884,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1648373006813,
+  "timestamp": 1650967280277,
   "version": 0,
   "viewport": {
     "x": 889,
-    "y": 194,
+    "y": -166,
     "scale": 2.177249532054417
   }
 }
