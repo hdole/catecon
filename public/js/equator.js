@@ -272,8 +272,6 @@ function checkLeg(left, leftSig, right, rightSig, ndx, cnt, scanned)
 				equal = rightSig === nuSig ? 1 : (equals.has(rightSig) && equals.get(rightSig).has(nuSig) ? 1 : 0);
 				if (equal === 0)
 					equal = scanLeg(nuLeg, nuSig, right, rightSig, scanned);
-//				if (equal === 0)
-//					equal = checkTrimmedLegs(nuLeg, right);
 				if (equal > 0)
 					break;
 			}
@@ -306,17 +304,24 @@ function getItem(leftLeg, rightLeg)
 function trimLegs(inLeft, inRight)
 {
 	let min = Math.min(inLeft.length, inRight.length);
-	let left = inLeft.slice();
-	let right = inRight.slice();
+	const left = [];
+	const right = [];
 	for (let i=0; i<min; ++i)
 	{
-		if (left[i] === right[i])
+		if (inLeft[i] !== inRight[i])
 		{
-			left.shift();
-			right.shift();
-		}
-		else
+			left.push(...inLeft.slice(i));
+			right.push(...inRight.slice(i));
 			break;
+		}
+	}
+	const max = Math.max(inLeft.length, inRight.length);
+	for (let i=min; i<max; ++i)
+	{
+		if (inLeft.length > inRight.length)
+			left.push(inLeft[i]);
+		else
+			right.push(inRight[i]);
 	}
 	min = Math.min(left.length, right.length);
 	for (let i=0; i<min; ++i)
