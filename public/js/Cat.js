@@ -2114,7 +2114,7 @@ class Toolbar
 		else
 			this.error.innerHTML = 'Error ' + U.getError(x);
 	}
-	showError(msg)
+	showError(x)
 	{
 		this.clearError();
 		this.appendError(x);
@@ -3015,10 +3015,15 @@ class DiagramTool extends ElementTool
 		this.bpd.properNameElt.onkeydown = e => Cat.D.onEnter(e, action);
 		this.bpd.descriptionElt.onkeydown = e => Cat.D.onEnter(e, action);
 		this.codomainElt = H3.select('##new-codomain.w100');
+		const cats = new Set([R.Cat]);
 		for (const [name, e] of R.$CAT.elements)
-			if (e instanceof Category && !(e instanceof IndexCategory) && R.canUploadUser(e.user))
-				this.codomainElt.appendChild(H3.option(e.properName, {value:e.name}));
-		this.codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
+//			if (e instanceof Category && !(e instanceof IndexCategory) && R.canUploadUser(e.user))
+			if (e instanceof Category && !(e instanceof IndexCategory))
+//				this.codomainElt.appendChild(H3.option(e.properName, {value:e.name}));
+				cats.add(e);
+
+//		this.codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
+		cats.forEach(cat => this.codomainElt.appendChild(H3.option(cat.properName, {value:cat.name})));
 		const tbl = newSection.querySelector('table');
 		tbl.appendChild(H3.tr(H3.td(this.codomainElt)));
 		D.toolbar.table.appendChild(newSection);
@@ -4150,6 +4155,18 @@ class Display
 						this.ControlKeyC(e);
 						this.ControlKeyV(e);
 					},
+					ControlKeyB(e)
+					{
+						if (R.diagram.selected.length === 1 && R.diagram.selected[0] instanceof IndexText)
+						{
+							const text = R.diagram.getSelected();
+							if (text.isEditable())
+							{
+								const weight = text.weight === 'bold' ? 'normal' : 'bold';
+								text.updateWeight(weight)
+							}
+						}
+					},
 					ControlKeyC(e)
 					{
 						D.pasteBuffer = R.diagram.selected.slice();
@@ -5266,41 +5283,44 @@ class Display
 	}
 	doParamsSelect(e, diagram)
 	{
-		const select = diagram.domain.getElements(this.params.get('select').split(','));
-		const action = this.params.get('action');
-		if (select.length > 0 || action)
+		if (this.params.has('select'))
 		{
-			const doit = _ =>
+			const select = diagram.domain.getElements(this.params.get('select').split(','));
+			const action = this.params.get('action');
+			if (select.length > 0 || action)
 			{
-				if (diagram.ready === 0 && R.isReady())
+				const doit = _ =>
 				{
-					select && diagram.makeSelected(...select);
-					const action = this.params.get('action');
-					if (action && action in R.Actions)
+					if (diagram.ready === 0 && R.isReady())
 					{
-						const act = R.Actions[action];
-						if (act.hasForm(diagram, diagram.selected))
+						select && diagram.makeSelected(...select);
+						const action = this.params.get('action');
+						if (action && action in R.Actions)
 						{
-							if (!act.actionOnly)
+							const act = R.Actions[action];
+							if (act.hasForm(diagram, diagram.selected))
 							{
-								act.html(e, diagram, diagram.selected);
-								const btn = this.params.get('btn');
-								if (btn)
+								if (!act.actionOnly)
 								{
-									const elt = this.toolbar.element.querySelector(`span[data-name="button-${btn}"].icon rect.btn`);
-									if (elt && elt.onclick)
-										elt.onclick(new MouseEvent("click", {view: window, bubbles: false, cancelable: true}));
+									act.html(e, diagram, diagram.selected);
+									const btn = this.params.get('btn');
+									if (btn)
+									{
+										const elt = this.toolbar.element.querySelector(`span[data-name="button-${btn}"].icon rect.btn`);
+										if (elt && elt.onclick)
+											elt.onclick(new MouseEvent("click", {view: window, bubbles: false, cancelable: true}));
+									}
 								}
+								else
+									act.action(e, diagram, diagram.selected);
 							}
-							else
-								act.action(e, diagram, diagram.selected);
 						}
 					}
-				}
-				else
-					setTimeout(doit, 10);	// try again
-			};
-			doit();
+					else
+						setTimeout(doit, 10);	// try again
+				};
+				doit();
+			}
 		}
 	}
 	addEventListeners()
@@ -5480,7 +5500,6 @@ class Display
 			switch(args.command)
 			{
 				case 'load':
-					diagram.purge();
 					diagram.checkCells();
 					break;
 				case 'default':		// make it the viewable diagram
@@ -6182,7 +6201,7 @@ class Display
 		const indexObjects = objects.map((o, i) =>
 		{
 			const ndxObj = diagram.placeObject(o, xy, false);
-			if (i < objects.length/2)
+			if (i < objects.length/2 -1)
 				xy.x += i < composite.length -1 ? this.getArrowLength(composite[i]) : stdGrid;
 			else
 				xy.y += stdGrid;
@@ -11691,6 +11710,7 @@ class HelpAction extends Action
 						basename:		'help',
 						priority:		99};
 		super(diagram, args);
+		this.toolbar2 = null;
 	}
 	action(e, diagram, ary) {}
 	hasForm(diagram, ary)	// one element
@@ -11708,7 +11728,9 @@ class HelpAction extends Action
 			tools.push(D.getIcon('elementIn', 'elementIn', e => Cat.R.Actions.elementIn.action(e, Cat.R.diagram, R.diagram.selected), {title:'Show element in object'}));
 		if (diagram.codomain.name === 'zf/Set')
 			R.languages.forEach(lang => lang.hasForm(diagram, ary) && tools.push(D.getIcon(lang.basename, lang.basename, e => Cat.R.Actions[lang.basename].html(e, Cat.R.diagram, Cat.R.diagram.selected), {title:lang.description})));
-		D.toolbar.element.querySelector('.toolbar-buttons').appendChild(H3.tr(H3.td(H3.table(H3.tr(H3.td(H3.span(tools), '.buttonBarLeft'), H3.td(H3.span(), '.buttonBarRight')), '##help-toolbar2.w100'), {colspan:2})));
+		this.toolbar2 && this.toolbar2.remove();
+		this.toolbar2 = H3.tr(H3.td(H3.table(H3.tr(H3.td(H3.span(tools), '.buttonBarLeft'), H3.td(H3.span(), '.buttonBarRight')), '##help-toolbar2.w100'), {colspan:2}));
+		D.toolbar.element.querySelector('.toolbar-buttons').appendChild(this.toolbar2);
 		from.help();
 	}
 }
@@ -13378,7 +13400,7 @@ class Category extends CatObject
 		}
 		if (!U.isValidBasename(basename))
 			throw 'bad basename';
-		return new Morphism(this.diagram, {basename, domain, codomain});
+		return new Morphism(diagram, {basename, domain, codomain, category:domain.category});
 	}
 	help()
 	{
@@ -13877,6 +13899,11 @@ class Morphism extends Element
 	}
 	static isIdentity(morph)
 	{
+		if (morph instanceof ProductAssembly)
+		{
+			const objects = morph.dual ? morph.domain.objects : morph.codomain.objects;
+			return objects.length === morph.morphisms.length && morph.morphisms.filter((m, i) => m instanceof FactorMorphism && m.factors.length ===1 && i === m.factors[0]).length === objects.length;
+		}
 		if (morph instanceof MultiMorphism)
 			return morph.morphisms.reduce((r, m) => r && Morphism.isIdentity(m), true);
 		if (morph instanceof FactorMorphism)
@@ -13886,7 +13913,6 @@ class Morphism extends Element
 			else
 				return FactorMorphism.isIdentity(morph.factors, 'objects' in morph.domain.basic() ? morph.domain.basic().objects.length : 1);
 		}
-		// TODO factor morphism whose factors form an identity
 		return morph instanceof Identity;
 	}
 	static getProductFactors(morphism)
@@ -16241,7 +16267,7 @@ class Composite extends MultiMorphism
 	getCompositeGraph()
 	{
 		const graphs = this.morphisms.map(m => m.getGraph());
-		R.debug(1) && graphs.map((g, i) => g.check());
+		/* R.debug(1) && */ graphs.map((g, i) => g.check());
 		const objects = this.morphisms.map(m => m.domain);
 		objects.push(this.morphisms[this.morphisms.length -1].codomain);
 		const sequence = this.diagram.get('ProductObject', {objects, silent:true});
@@ -16257,7 +16283,7 @@ class Composite extends MultiMorphism
 			graph.graphs[i+1].cod = m;
 		});
 		graph.element = this;
-		R.debug(1) && graph.check();
+		/* R.debug(1) && */ graph.check();
 		return graph;
 	}
 	getGraph(data = {position:0})
@@ -16728,6 +16754,10 @@ class FactorMorphism extends Morphism
 	isBare()
 	{
 		return false;
+	}
+	isFold()
+	{
+		return this.dual && this.factors.length > 0 && this.factors.reduce((r, f) => f.length === 0, true);
 	}
 	static Basename(diagram, args)
 	{
@@ -17530,7 +17560,8 @@ class Diagram extends Functor
 		let cnt = 0;
 		do
 		{
-			cnt = [...this.elements.values()].filter(e => e.canSave() && e.refcnt <= 0).map(e => e.decrRefcnt()).length;
+			const elements = new Set(this.elements.values());		// avoid double scan
+			cnt = [...elements].filter(e => e.canSave() && e.refcnt <= 0).map(e => e.decrRefcnt()).length;
 		}
 		while(cnt > 0);
 		this.domain.elements.forEach(elt => elt instanceof IndexText && elt.description === '' && elt.decrRefcnt());
@@ -17638,6 +17669,8 @@ class Diagram extends Functor
 	{
 		D.toolbar.deactivateButtons();
 		D.toolbar.clearError();
+		const toolbar2 = D.toolbar.element.querySelector('#help-toolbar2');
+		toolbar2 && toolbar2.remove();
 		const action = R.actionDiagram.getElement(name);
 		if (action && action.hasForm(R.diagram, ary))
 		{
@@ -18837,11 +18870,15 @@ class Diagram extends Functor
 	assy(...morphisms)
 	{
 		this.opcheck(morphisms);
+		if (morphisms.filter(m => m.domain === morphisms[0].domain).length !== morphisms.length)
+			throw 'not all domains equal';
 		return morphisms.length > 1 ? this.get('ProductAssembly', {morphisms, dual:false}) : morphisms[0];
 	}
 	coassy(...morphisms)
 	{
 		this.opcheck(morphisms);
+		if (morphisms.filter(m => m.codomain === morphisms[0].codomain).length !== morphisms.length)
+			throw 'not all codomains equal';
 		return morphisms.length > 1 ? this.get('ProductAssembly', {morphisms, dual:true}) : morphisms[0];
 	}
 	pbAssy(...morphisms)
@@ -19237,12 +19274,12 @@ class Diagram extends Functor
 		const div = document.querySelector('#foreign-text');
 		const onfocusout = e =>
 		{
-			const input = e.target.innerText;
+			const input = e.target.innerText.trim();
 			try
 			{
 				div.removeEventListener('focusout', onfocusout);	// avoid calling this function again
 				let elt = this.getElement(input);
-				if (!elt)
+				if (!elt && input !== '')
 				{
 					if (type === 'object')
 						elt = R.category.newObject(this, input);
@@ -19281,7 +19318,8 @@ class Diagram extends Functor
 		};
 		const onkeydown = e =>
 		{
-			const input = e.target.innerText;
+			const input = e.target.innerText.trim();
+console.log('input', input, U.isValidBasename(input), input.length);
 			if (U.isValidBasename(input))
 			{
 				const elt = R.diagram.getElement(input);
@@ -20290,6 +20328,9 @@ console.log('formMorphism', domain.svg, domain.basename);
 				codObjects.push(...codCodObjects);
 				assemblyI.push([secondMorph, factors]);
 			}
+			else
+				codObjects.push(cod);
+/*
 			//
 			// are there references to the composite's codomain?  after all that's a reason why the composite stopped
 			//
@@ -20334,6 +20375,7 @@ console.log('formMorphism', domain.svg, domain.basename);
 					}
 				});
 			}
+*/
 		});
 		//
 		// COVER
@@ -20389,13 +20431,20 @@ console.log('formMorphism', domain.svg, domain.basename);
 		refToMorphisms.map(data =>
 		{
 			const factors = [];
+			const morphisms = [];
 			data.refObjects.map((o, i) =>
 			{
 				const ndx = domainNdxObjects.indexOf(o);
 				factors[data.factors[i]] = ndx;
+				morphisms[i] = this.obj2morph.has(o) ? this.obj2morph.get(o) : diagram.id(o.to);
 			});
+			const prod = diagram.prod(...morphisms);
 			const fctr = diagram.fctr(nuDomain, factors);
-			finalAssembly.push(diagram.stripComp(fctr, data.morphism));
+			const setupFactors = morphisms.map((m, i) => m.domain.isTerminal() ? -1 : i);
+			const setupObjects = morphisms.map(m => m.domain).filter(o => !o.isTerminal());
+			const setupDomain = diagram.prod(...setupObjects);
+			const setup = diagram.fctr(setupDomain, setupFactors);
+			finalAssembly.push(diagram.stripComp(setup, prod, fctr, data.morphism));
 		});
 		//
 		//		composites
@@ -20406,7 +20455,7 @@ console.log('formMorphism', domain.svg, domain.basename);
 			const pre = [comp];
 			domObjects.map(o => pre.push(diagram.id(o.to)));
 			isDomainReferenced && pre.push(diagram.id(domain.to));
-			const premanifold = diagram.assy(...pre);
+			const premanifold = diagram.prod(...pre);
 			if (assemblyI.length > 0)
 			{
 				const assys = assemblyI.map(pair =>
@@ -20433,9 +20482,9 @@ console.log('formMorphism', domain.svg, domain.basename);
 			// predist: nuDomain ---> domain x refObject
 			const predist = this.diagram.assy(this.diagram.fctr(nuDomain, [0]), this.diagram.fctr(nuDomain, domObjects.map((o, i) => i + 1)));
 			const dist = this.diagram.dist(diagram.prod(domain.to, refObject), true);
-
 			const foldObjects = [];
 			const foldFactors = [];
+			const allCoverCodsEq = cover.reduce((r, m) => r && m.codomain === cover[0].codomain, true);
 			const components = dist.codomain.objects.map((o, i) =>
 			{
 				const prep = diagram.fctr(o, [1]);
@@ -20447,14 +20496,13 @@ console.log('formMorphism', domain.svg, domain.basename);
 					foldObjects.push(cvri.codomain);
 					ndx = foldObjects.length -1;
 				}
-				foldFactors[i] = ndx;
+				foldFactors[i] = allCoverCodsEq ? [] : ndx;
 				return diagram.stripComp(prep, proj, cvri);
 			});
 			const coprod = diagram.coprod(...components);
 			const folder = diagram.cofctr(diagram.coprod(...foldObjects), foldFactors);
 			finalAssembly.push(this.diagram.stripComp(predist, dist, coprod, folder));
 		}
-
 		//
 		// ASSEMBLY
 		//
@@ -20477,8 +20525,9 @@ console.log('formMorphism', domain.svg, domain.basename);
 		inputs.map(input => scanning.push({domain:input}));
 		const scanInputs = scanning.slice();
 		const codObjects = [];
-		const inputMorphs = scanInputs.map(i => this.formMorphism(i.domain, [], codObjects));
-		return inputMorphs.length > 0 ? inputMorphs[0] : null;
+		const inputMorphs = scanInputs.map(i => this.formMorphism(i.domain, [], codObjects)).filter(m => m);
+//		return inputMorphs.length > 0 ? inputMorphs[0] : null;
+		return inputMorphs.pop();
 	}
 	// try to form a morphism from a blob
 	assemble(e, base)
@@ -20558,12 +20607,10 @@ const D = isGUI ? new Display() : null;
 
 const Cat =
 {
+	Action,
 	Amazon,
-	R,
 	D,
 	Display,
-	U,
-	Action,
 	Category,
 	CatObject,
 	Cell,
@@ -20597,9 +20644,11 @@ const Cat =
 	ProductAssembly,
 	PullbackObject,
 	PullbackAssembly,
+	R,
 	Runtime,
 	TensorObject,
 	Theorem,
+	U,
 };
 
 if (D)
