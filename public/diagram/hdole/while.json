@@ -88,7 +88,7 @@
           "x": -60,
           "y": 90
         },
-        "height": "250",
+        "height": 250,
         "weight": "bold"
       },
       {
@@ -117,7 +117,7 @@
           "x": -50,
           "y": 200
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "The assembly of the above diagram shows a composite of three stages.\nThe first stage runs the test and maintains access to the original state..\nThe second stage selects a function depending on the first stage.\nThe choices are maintaining state or doing the update followed by while.\nThe last stage evaluates the given function of the second stage to get the final result.\n",
@@ -127,7 +127,7 @@
           "x": -50,
           "y": 1000
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "The portion of the diagram on the left\nside represents what happens if the\ntest returns false.  Namely, the identity\n1:S&rarr;S represents that the state does not\nupdate.  The right side is run if the\ntest returns true, whereupon the\nupdate function is invoked, followed\nby 'while'.",
@@ -137,7 +137,7 @@
           "x": -50,
           "y": 510
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "Next we set the recursor to while to be the morphism just assembled.\nLastly, we give a named version of &#39;while&#39; as &#39;While&#39; as that marks it as externally available.",
@@ -147,7 +147,7 @@
           "x": -50,
           "y": 1550
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_1",
@@ -165,6 +165,60 @@
         "xy": {
           "x": 650,
           "y": 700
+        }
+      },
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "S",
+        "xy": {
+          "x": 0,
+          "y": 1800
+        }
+      },
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "Po{S,S}oP",
+        "xy": {
+          "x": 100,
+          "y": 1800
+        }
+      },
+      {
+        "basename": "o_5",
+        "prototype": "IndexObject",
+        "to": "Po{CPo{#1,#1}oPC,S}oP",
+        "xy": {
+          "x": 300,
+          "y": 1800
+        }
+      },
+      {
+        "basename": "o_6",
+        "prototype": "IndexObject",
+        "to": "CPo{Po{#1,S}oP,Po{#1,S}oP}oPC",
+        "xy": {
+          "x": 300,
+          "y": 1950
+        }
+      },
+      {
+        "basename": "o_9",
+        "prototype": "IndexObject",
+        "to": "CPo{S,S}oPC",
+        "xy": {
+          "x": 300,
+          "y": 2100
+        }
+      },
+      {
+        "basename": "o_16",
+        "prototype": "IndexObject",
+        "to": "S",
+        "xy": {
+          "x": 300,
+          "y": 2250
         }
       },
       {
@@ -315,6 +369,114 @@
         "domain": "o_14",
         "codomain": "o_15",
         "to": "while"
+      },
+      {
+        "basename": "m_5",
+        "prototype": "IndexMorphism",
+        "domain": "o_0",
+        "codomain": "o_2",
+        "to": "Fa{S,S_0,S_0}aF"
+      },
+      {
+        "basename": "m_6",
+        "prototype": "IndexMorphism",
+        "domain": "o_2",
+        "codomain": "o_5",
+        "to": "Pm{test,Id{S}dI}mP"
+      },
+      {
+        "basename": "m_12",
+        "prototype": "IndexMorphism",
+        "domain": "o_5",
+        "codomain": "o_6",
+        "to": "Di{Po{CPo{#1,#1}oPC,S}oP}-LiD"
+      },
+      {
+        "basename": "m_13",
+        "prototype": "IndexMorphism",
+        "domain": "o_6",
+        "codomain": "o_9",
+        "to": "CPm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{S,S_0}aF,Cm{update,while}mC}mC}mC}mPC"
+      },
+      {
+        "basename": "m_15",
+        "prototype": "IndexMorphism",
+        "domain": "o_9",
+        "codomain": "o_16",
+        "to": "CFa{S,S_,S_}aFC"
+      },
+      {
+        "basename": "m_16",
+        "prototype": "IndexMorphism",
+        "domain": "o_0",
+        "codomain": "o_16",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Cm{Cm{Fa{S,S_0,S_0}aF,Pm{test,Id{S}dI}mP}mC,Cm{Di{Po{CPo{#1,#1}oPC,S}oP}-LiD,CPm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{S,S_0}aF,Cm{update,while}mC}mC}mC}mPC,CFa{S,S_,S_}aFC}mC}mC"
+      },
+      {
+        "description": "Definition of while",
+        "basename": "d_0",
+        "prototype": "Definition",
+        "xy": {
+          "x": 1030,
+          "y": 430
+        },
+        "height": 68,
+        "weight": "bold",
+        "defname": "while",
+        "sequence": [
+          "update",
+          "test"
+        ],
+        "blobs": [
+          "hdole/while/m_11"
+        ]
+      },
+      {
+        "basename": "o_17",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 1350,
+          "y": 950
+        }
+      },
+      {
+        "basename": "o_18",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 1500,
+          "y": 950
+        }
+      },
+      {
+        "basename": "m_17",
+        "prototype": "IndexMorphism",
+        "domain": "o_17",
+        "codomain": "o_18",
+        "to": "u"
+      },
+      {
+        "basename": "o_19",
+        "prototype": "IndexObject",
+        "to": "CPo{#1,#1}oPC",
+        "xy": {
+          "x": 1370,
+          "y": 1110
+        }
+      },
+      {
+        "basename": "m_18",
+        "prototype": "IndexMorphism",
+        "domain": "o_17",
+        "codomain": "o_19",
+        "to": "t"
       }
     ],
     "cells": []
@@ -338,6 +500,43 @@
       "objects": [
         "#1",
         "#1"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "#1",
+        "S"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "CPo{#1,#1}oPC",
+        "S"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{#1,S}oP",
+        "Po{#1,S}oP"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "S",
+        "S"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "S",
+        "S"
       ]
     },
     {
@@ -386,15 +585,149 @@
       "basename": "while",
       "prototype": "Morphism",
       "domain": "S",
-      "codomain": "S"
+      "codomain": "S",
+      "recursor": "hdole/while/Cm{Cm{Fa{S,S_0,S_0}aF,Pm{test,Id{S}dI}mP}mC,Cm{Di{Po{CPo{#1,#1}oPC,S}oP}-LiD,CPm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{S,S_0}aF,Cm{update,while}mC}mC}mC}mPC,CFa{S,S_,S_}aFC}mC}mC"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "S",
+      "codomain": "S",
+      "factors": [
+        0
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "S",
+      "codomain": "S",
+      "morphisms": [
+        "update",
+        "while"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "S",
+      "codomain": "S",
+      "morphisms": [
+        "Fa{S,S_0}aF",
+        "Cm{update,while}mC"
+      ]
+    },
+    {
+      "basename": "Di{Po{CPo{#1,#1}oPC,S}oP}-LiD",
+      "prototype": "Distribute",
+      "properName": "dist",
+      "domain": "Po{CPo{#1,#1}oPC,S}oP",
+      "codomain": "CPo{Po{#1,S}oP,Po{#1,S}oP}oPC",
+      "side": true
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "Po{#1,S}oP",
+      "codomain": "S",
+      "factors": [
+        1
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "Po{#1,S}oP",
+      "codomain": "S",
+      "morphisms": [
+        "Fa{Po{#1,S}oP,S_1}aF",
+        "Cm{Fa{S,S_0}aF,Cm{update,while}mC}mC"
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "dual": true,
+      "domain": "CPo{Po{#1,S}oP,Po{#1,S}oP}oPC",
+      "codomain": "CPo{S,S}oPC",
+      "morphisms": [
+        "Fa{Po{#1,S}oP,S_1}aF",
+        "Cm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{S,S_0}aF,Cm{update,while}mC}mC}mC"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "dual": true,
+      "domain": "CPo{S,S}oPC",
+      "codomain": "S",
+      "factors": [
+        [],
+        []
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "Po{CPo{#1,#1}oPC,S}oP",
+      "codomain": "S",
+      "morphisms": [
+        "Di{Po{CPo{#1,#1}oPC,S}oP}-LiD",
+        "CPm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{S,S_0}aF,Cm{update,while}mC}mC}mC}mPC",
+        "CFa{S,S_,S_}aFC"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "S",
+      "codomain": "Po{S,S}oP",
+      "factors": [
+        0,
+        0
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "Po{S,S}oP",
+      "codomain": "Po{CPo{#1,#1}oPC,S}oP",
+      "morphisms": [
+        "test",
+        "Id{S}dI"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "S",
+      "codomain": "Po{CPo{#1,#1}oPC,S}oP",
+      "morphisms": [
+        "Fa{S,S_0,S_0}aF",
+        "Pm{test,Id{S}dI}mP"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "S",
+      "codomain": "S",
+      "morphisms": [
+        "Cm{Fa{S,S_0,S_0}aF,Pm{test,Id{S}dI}mP}mC",
+        "Cm{Di{Po{CPo{#1,#1}oPC,S}oP}-LiD,CPm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{Po{#1,S}oP,S_1}aF,Cm{Fa{S,S_0}aF,Cm{update,while}mC}mC}mC}mPC,CFa{S,S_,S_}aFC}mC"
+      ]
+    },
+    {
+      "basename": "T",
+      "prototype": "CatObject"
+    },
+    {
+      "basename": "u",
+      "prototype": "Morphism",
+      "domain": "T",
+      "codomain": "T"
+    },
+    {
+      "basename": "t",
+      "prototype": "Morphism",
+      "domain": "T",
+      "codomain": "CPo{#1,#1}oPC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1647722898147,
+  "timestamp": 1651362237958,
   "version": 0,
   "viewport": {
-    "x": 342,
-    "y": 123,
-    "scale": 1.555179706303616
+    "x": 1051,
+    "y": 128,
+    "scale": 0.5497599612402466
   }
 }

@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -160,
-          "y": 90
+          "y": 80
         },
         "height": 200,
         "weight": "bold"
@@ -368,6 +368,15 @@
         }
       },
       {
+        "basename": "o_29",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 200,
+          "y": 300
+        }
+      },
+      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_2",
@@ -555,15 +564,6 @@
         "domain": "o_24",
         "codomain": "o_26",
         "to": "Id{G}dI"
-      },
-      {
-        "basename": "o_29",
-        "prototype": "IndexObject",
-        "to": "em/Cat",
-        "xy": {
-          "x": 200,
-          "y": 300
-        }
       },
       {
         "description": "",
@@ -884,11 +884,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1650967280277,
+  "timestamp": 1651375907929,
   "version": 0,
   "viewport": {
     "x": 889,
-    "y": -166,
+    "y": 338,
     "scale": 2.177249532054417
   }
 }
