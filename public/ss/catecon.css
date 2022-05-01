@@ -633,7 +633,7 @@ p
 {
 	fill:			none;
 	stroke:			var(--color-morphism);
-	stroke-width:	20px;
+	stroke-width:	25px;
 }
 
 .arrow3 {fill:none; stroke:#333; stroke-width:20px;}
