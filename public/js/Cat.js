@@ -731,7 +731,7 @@ class Runtime
 		// function to register a diagram's actions
 		const setup = diagram => D && diagram.elements.forEach(action => {this.Actions[action.basename] = action;});
 		const actionDiagram = new Diagram(this.$CAT, {basename:'actions', codomain:'Actions', description:'actions for a diagram', user:'ctx'});
-		R.setDiagramInfo(actionDiagram, false, false);
+		R.setDiagramInfo(actionDiagram, true, false);
 		this.actionDiagram = actionDiagram;
 		actionDiagram.sync = false;
 		let action = new IdentityAction(actionDiagram);
@@ -2922,7 +2922,6 @@ class DiagramTool extends ElementTool
 	{
 		super.setSearchBar();
 		const searchFilter = document.getElementById(this.searchFilterId);
-		searchFilter.appendChild(D.getIcon('action', 'action', e => this.toggleActionFilter(e), {title:'Show action diagrams', id:'filter-action'}));
 		R.diagram && searchFilter.appendChild(D.getIcon('reference', 'reference', e => this.toggleReferenceFilter(e), {title:'Restrict to this diagram\'s references', id:'filter-reference'}));
 		searchFilter.appendChild(D.getIcon('session', 'session', e => this.toggleSessionFilter(e), {title:'Show diagrams in user session', id:'filter-session'}));
 		searchFilter.appendChild(D.getIcon('login', 'login', e => this.toggleUserFilter(e), {title:'Restrict to user', id:'filter-user'}));
@@ -3017,12 +3016,8 @@ class DiagramTool extends ElementTool
 		this.codomainElt = H3.select('##new-codomain.w100');
 		const cats = new Set([R.Cat]);
 		for (const [name, e] of R.$CAT.elements)
-//			if (e instanceof Category && !(e instanceof IndexCategory) && R.canUploadUser(e.user))
 			if (e instanceof Category && !(e instanceof IndexCategory))
-//				this.codomainElt.appendChild(H3.option(e.properName, {value:e.name}));
 				cats.add(e);
-
-//		this.codomainElt.appendChild(H3.option(R.Cat.properName, {value:R.Cat.name}));
 		cats.forEach(cat => this.codomainElt.appendChild(H3.option(cat.properName, {value:cat.name})));
 		const tbl = newSection.querySelector('table');
 		tbl.appendChild(H3.tr(H3.td(this.codomainElt)));
@@ -4049,6 +4044,7 @@ class Display
 						{
 							const text = R.diagram.getSelected();
 							text.isEditable() && text.updateHeight(text.height + 4);
+							text.showSelected(true);
 						}
 					},
 					ControlBracketLeft(e)
@@ -4057,6 +4053,7 @@ class Display
 						{
 							const text = R.diagram.getSelected();
 							text.isEditable() && text.height > 8 && text.updateHeight(text.height - 4);
+							text.showSelected(true);
 						}
 					},
 					ControlLeft(e) { D.ctrlKey = true; },
@@ -4164,6 +4161,7 @@ class Display
 							{
 								const weight = text.weight === 'bold' ? 'normal' : 'bold';
 								text.updateWeight(weight)
+								text.showSelected(true);
 							}
 						}
 					},
@@ -8742,6 +8740,10 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	isIterable() { return 'size' in this && this.size < Number.MAX_VALUE; }
 	isTerminal() { return this.size === 1; }
 	isInitial() { return this.size === 0; }
+	isBare()
+	{
+		return false;
+	}
 	static Basename(diagram, args)
 	{
 		const basename = 'basename' in args ? args.basename : '';
@@ -11017,7 +11019,7 @@ class MorphismAssemblyAction extends Action
 	{
 		super.html();
 		const elts = [H3.h4('Assemble Morphism'),
-						D.getIcon('assyColor', 'assyColor', e => this.toggle(e, diagram, ary), {title:'Show or dismiss assembly colors'}),
+						D.getIcon('assyColor', 'assyColor', e => this.toggle(e, diagram, ary), {title:'Dismiss assembly colors'}),
 						D.getIcon('edit', 'edit', e => this.action(e, diagram, ary), {title:'Assemble and place the morphism'})];
 		elts.map(elt => D.toolbar.body.appendChild(elt));
 	}
@@ -11062,8 +11064,7 @@ class MorphismAssemblyAction extends Action
 	{
 		if (this.assembler)
 		{
-			diagram.svgBase.querySelectorAll('.ball').forEach(elt => elt.remove());
-			this.assembler = null;
+			this.assembler.clearGraphics();
 		}
 		else
 		{
@@ -13885,6 +13886,10 @@ class Morphism extends Element
 	getArrowRep()
 	{
 		return `${this.properName} : ${this.domain.properName}&rarr;${this.codomain.properName}`;
+	}
+	isBare()
+	{
+		return 'recursor' in this ? false : super.isBare();
 	}
 	static HasRecursiveForm(ary)	// TODO move
 	{
@@ -19824,7 +19829,7 @@ class Assembler
 	}
 	addInput(obj)
 	{
-		!this.inputs.has(obj) && Assembler.addBall('Input', 'input', 'assyInput', obj);
+		!this.inputs.has(obj) && R.debug(3) && Assembler.addBall('Input', 'input', 'assyInput', obj);
 		this.inputs.add(obj);
 		this.deleteOrigin(obj);
 	}
@@ -19840,7 +19845,7 @@ class Assembler
 	addOutput(obj)
 	{
 		this.outputs.add(obj);
-		Assembler.addBall('Output', 'output', 'assyOutput', obj);
+		R.debug(3) && Assembler.addBall('Output', 'output', 'assyOutput', obj);
 	}
 	deleteOutput(obj)
 	{
@@ -19867,7 +19872,7 @@ class Assembler
 	}
 	addOrigin(obj)
 	{
-		!this.origins.has(obj) && Assembler.addBall('Origin', 'origin', 'assyOrigin', obj);
+		!this.origins.has(obj) && R.debug(3) && Assembler.addBall('Origin', 'origin', 'assyOrigin', obj);
 		this.origins.add(obj);
 	}
 	deleteOrigin(obj)
@@ -20239,6 +20244,14 @@ class Assembler
 				});
 				return morphism;
 			}
+			else
+			{
+				domRefs.filter(dref => !dref.codomain.to.isTerminal()).map(dref =>
+				{
+					refObjects.push(dref.codomain);
+				});
+				return this.diagram.id(ref.domain.to);
+			}
 		}
 		return null;
 	}
@@ -20330,52 +20343,6 @@ console.log('formMorphism', domain.svg, domain.basename);
 			}
 			else
 				codObjects.push(cod);
-/*
-			//
-			// are there references to the composite's codomain?  after all that's a reason why the composite stopped
-			//
-			const codrefs = this.getReferencesTo(cod);
-			if (codrefs.length === 0)
-			{
-				codObjects.push(cod);
-			}
-			else if (codrefs.length > 0)
-			{
-				codrefs.map((codref, j) =>
-				{
-					const refDomObjects = [];
-					const refCodObjects = [];
-					const m = this.formMorphism(codref.domain, refDomObjects, refCodObjects);
-					if (m)
-					{
-						codObjects.push(...refCodObjects);		// save where we ended
-						const refs = this.getReferences(codref.domain);
-						const factors = [];
-						refs.map(ref =>
-						{
-							if (ref.codomain.to.isTerminal())
-								return;
-							if (ref.codomain === codref.codomain || ref.codomain === domain)
-							{
-								factors[ref.to.factors[0]] = 0;
-							}
-							else
-							{
-								const ndx = domObjects.indexOf(ref.codomain);
-								if (ndx === -1)
-								{
-									domObjects.push(ref.codomain);
-									factors[ref.to.factors[0]] = domObjects.length;		// +1 for the domain object
-								}
-								else
-									factors[ref.to.factors[0]] = ndx + 1;		// +1 for the domain object
-							}
-						});
-						assembly.push([m, factors]);
-					}
-				});
-			}
-*/
 		});
 		//
 		// COVER
@@ -20391,24 +20358,26 @@ console.log('formMorphism', domain.svg, domain.basename);
 			coreferences.map(cor =>
 			{
 				if (corefactors.filter(cofctr => U.arrayEquals(cofctr, cor.to.factors)).length > 0)		// TODO move to preprocessing
-					throw 'duplicate factors not allowed';
+					throw 'Duplicate factors not allowed';
 				corefactors.push(cor.to.factors);
 			});
 			if (corefactors.length !== coreferences.length)
 				throw 'bad cover';
 			const coverCodObjects = [];
 			cover = this.formCoreferences(domObjects, coreferences, cofactors, coverCodObjects);
-			const coverCodomainCorefs = coverCodObjects.map(o => [...o.domains].filter(m => m.to instanceof FactorMorphism && m.to.dual && m.to.factors.length === 1)).map(ary => ary[0]);
+			if (cover.filter(m => m === null).length > 0)
+				throw 'Missinge part of cover';
+			const coverCodomainCorefs = coverCodObjects.map(o => [...o.domains].filter(m => m.to instanceof FactorMorphism && m.to.dual && m.to.factors.length === 1)).filter(ary => ary.length > 0).map(ary => ary[0]);
 			if (coverCodomainCorefs.length > 0)
 			{
 				const codomain = coverCodomainCorefs[0].codomain;
 				if (coverCodomainCorefs.filter(ref => ref.codomain !== codomain).length > 0)
-					throw 'not a good cover';
+					throw 'Not a good cover';
 				const factors = [];
 				coverCodomainCorefs.map(ins =>
 				{
 					if (factors.filter(cofctr => U.arrayEquals(cofctr, ins.to.factors)).length > 0)		// TODO move to preprocessing
-						throw 'duplicate insertion factors';
+						throw 'Duplicate insertion factors';
 				});
 				codObjects.push(codomain);		// coproduct terminus object
 			}
@@ -20419,6 +20388,16 @@ console.log('formMorphism', domain.svg, domain.basename);
 		// now we know all the objects in our domain
 		//
 		const domainNdxObjects = [domain, ...domObjects];
+
+		const preFactors = [domainNdxObjects.length === 1 ? [] : (domain.to.isTerminal() ? -1 : 0)];
+		const simpDomainObjects = domainNdxObjects.map((o, i) =>
+		{
+			i > 0 && preFactors.push(o.to.isTerminal() ? -1 : preFactors.length);
+			return o.to;
+		}).filter(o => !o.isTerminal());
+		const simpDomain = simpDomainObjects.length > 0 ? diagram.prod(...simpDomainObjects) : diagram.getTerminal();
+		const central = diagram.fctr(simpDomain, preFactors);
+
 		const nuDomain = diagram.prod(...domainNdxObjects.map(o => o.to));
 		//
 		// PREAMBLES
@@ -20435,7 +20414,7 @@ console.log('formMorphism', domain.svg, domain.basename);
 			data.refObjects.map((o, i) =>
 			{
 				const ndx = domainNdxObjects.indexOf(o);
-				factors[data.factors[i]] = ndx;
+				factors[data.factors.length === 0 ? 0 : data.factors[i]] = ndx;
 				morphisms[i] = this.obj2morph.has(o) ? this.obj2morph.get(o) : diagram.id(o.to);
 			});
 			const prod = diagram.prod(...morphisms);
@@ -20444,7 +20423,7 @@ console.log('formMorphism', domain.svg, domain.basename);
 			const setupObjects = morphisms.map(m => m.domain).filter(o => !o.isTerminal());
 			const setupDomain = diagram.prod(...setupObjects);
 			const setup = diagram.fctr(setupDomain, setupFactors);
-			finalAssembly.push(diagram.stripComp(setup, prod, fctr, data.morphism));
+			finalAssembly.push(diagram.stripComp(fctr, setup, prod, data.morphism));
 		});
 		//
 		//		composites
@@ -20453,9 +20432,18 @@ console.log('formMorphism', domain.svg, domain.basename);
 		{
 			const assemblyI = assembly[i];
 			const pre = [comp];
-			domObjects.map(o => pre.push(diagram.id(o.to)));
-			isDomainReferenced && pre.push(diagram.id(domain.to));
-			const premanifold = diagram.prod(...pre);
+			const factors = [domObjects.length === 0 ? [] : 0];
+			domObjects.map((o, j) =>
+			{
+				pre.push(diagram.id(o.to));
+				factors.push(factors.length);
+			});
+			if (isDomainReferenced)
+			{
+				pre.push(diagram.id(domain.to));
+				factors.push(0);
+			}
+			const premanifold = diagram.stripComp(diagram.fctr(nuDomain, factors), diagram.prod(...pre));
 			if (assemblyI.length > 0)
 			{
 				const assys = assemblyI.map(pair =>
@@ -20513,7 +20501,7 @@ console.log('formMorphism', domain.svg, domain.basename);
 			const morphism = diagram.assy(...finalAssembly);
 			if (codObjects.length === 1)
 				this.obj2morph.set(codObjects[0], morphism);
-			return morphism;
+			return diagram.stripComp(central, morphism);
 		}
 		return null;
 	}
@@ -20526,79 +20514,88 @@ console.log('formMorphism', domain.svg, domain.basename);
 		const scanInputs = scanning.slice();
 		const codObjects = [];
 		const inputMorphs = scanInputs.map(i => this.formMorphism(i.domain, [], codObjects)).filter(m => m);
-//		return inputMorphs.length > 0 ? inputMorphs[0] : null;
 		return inputMorphs.pop();
 	}
 	// try to form a morphism from a blob
 	assemble(e, base)
 	{
-		//
-		// establish connected graph and issues therein
-		//
-		this.getBlob(base);
-		//
-		// find origins
-		//
-		this.findOrigins();
-		//
-		// merge tags from morphism graphs to object graphs
-		//
-		this.mergeObjectTags();
-		//
-		// look for inputs
-		//
-		this.inputScan();
-		//
-		// do info propagation for outputs
-		//
-		this.infoProp();
-		//
-		// look for outputs; they have info and no non-info factor morphisms
-		//
-		this.outputScan();
-		//
-		// scan origins for assembly checks
-		//
-		if (!this.originScan())
-			return;		// errors found
-		//
-		// setup the composites
-		//
-		this.setupComposites();
-		//
-		// check for overloaded reference objects
-		//
-		this.overloadedScan();
-		//
-		// get the blob's morphism
-		//
-		const morphism = this.getBlobMorphism();
-		//
-		// place on screen the assemblage of the final composite
-		//
-		if (morphism)
+		try
 		{
-			if (morphism instanceof Composite)
+			//
+			// establish connected graph and issues therein
+			//
+			this.getBlob(base);
+			//
+			// find origins
+			//
+			this.findOrigins();
+			//
+			// merge tags from morphism graphs to object graphs
+			//
+			this.mergeObjectTags();
+			//
+			// look for inputs
+			//
+			this.inputScan();
+			//
+			// do info propagation for outputs
+			//
+			this.infoProp();
+			//
+			// look for outputs; they have info and no non-info factor morphisms
+			//
+			this.outputScan();
+			//
+			// scan origins for assembly checks
+			//
+			if (!this.originScan())
+				return;		// errors found
+			//
+			// setup the composites
+			//
+			this.setupComposites();
+			//
+			// check for overloaded reference objects
+			//
+			this.overloadedScan();
+			//
+			// get the blob's morphism
+			//
+			const morphism = this.getBlobMorphism();
+			//
+			// place on screen the assemblage of the final composite
+			//
+			if (morphism)
 			{
-				const compObjs = D.placeComposite(e, this.diagram, morphism);
-				R.Actions.zoom.action(e, this.diagram, compObjs);
+				if (morphism instanceof Composite)
+				{
+					const compObjs = D.placeComposite(e, this.diagram, morphism);
+					R.Actions.zoom.action(e, this.diagram, compObjs);
+				}
+				else
+				{
+					const from = this.diagram.placeMorphism(morphism, base.getXY(), null, true);
+					const elts = [...this.objects];
+					elts.push(from);
+					R.Actions.zoom.action(e, this.diagram, elts);
+				}
+				D.emitCellEvent(this.diagram, 'check');
 			}
 			else
 			{
-				const from = this.diagram.placeMorphism(morphism, base.getXY(), null, true);
-				const elts = [...this.objects];
-				elts.push(from);
-				R.Actions.zoom.action(e, this.diagram, elts);
+				D.statusbar.show(e, 'No morphism assembled');
+				this.issues.push({message:'No morphism assembled', element:{}});
 			}
-			D.emitCellEvent(this.diagram, 'check');
+			this.finished = true;
+			return morphism;
 		}
-		else
+		catch(x)
 		{
-			D.statusbar.show(e, 'No morphism assembled');
-			this.issues.push({message:'No morphism assembled', element:{}});
+			this.issues.push({message:x, element:{}});
+			D.statusbar.show(e, 'An error occurred');
+			this.finished = true;
+			return null;
 		}
-		this.finished = true;
-		return morphism;
 	}
 }
 
