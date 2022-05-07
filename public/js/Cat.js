@@ -2290,6 +2290,119 @@ class Toolbar
 	}
 }
 
+class SearchTool
+{
+	constructor(type)
+	{
+		Object.defineProperties(this,
+		{
+			type:				{value: type,						writable: false},
+			hasDiagramOnlyButton:		{value: true,				writable: true},
+			searchArgs:			{value: {
+											diagramOnly: false,
+											userOnly: false,
+											sessionOnly: false,
+											actionOnly: false,
+											referenceOnly: false,
+											sorter:U.NameSorter,
+										},	writable: false},
+			buttonSize:			{value: D ? D.default.button.small : 0,		writable: true},
+			searchFilterId:		{value: `${type}-search-filter`,	writable: true},
+			searchSorterId:		{value: `${type}-search-sorter`,	writable: true},
+		});
+		D && D.replayCommands.set(`tool${type}`, this);
+	}
+	getSearchBar()
+	{
+		const onkeyup = e => this.search();
+		return H3.div(H3.h3('Search'), H3.table(	`##${this.type}-search-tools`,
+							H3.tr(	H3.td('Filter by', '.tinyPrint.center.italic'),
+									H3.td(),
+									H3.td('Sort by', '.tinyPrint.center.italic')),
+							H3.tr(	H3.td(`##${this.type}-search-filter`),
+									H3.td(H3.input(`##${this.type}-search-value.in100.ifocus`, {title:'Search', type:'search', placeholder:'Contains...', onkeyup, onsearch:onkeyup})),
+									H3.td(`##${this.type}-search-sorter`))));
+	}
+	setSearchBar()
+	{
+		const searchFilter = document.getElementById(this.searchFilterId);
+		D.removeChildren(searchFilter);
+		this.hasDiagramOnlyButton && searchFilter.appendChild(D.getIcon('diagram', 'diagram', e => this.toggleDiagramFilter(e), {title:'Search in diagram'}));
+		const searchSorter = document.getElementById(this.searchSorterId);
+		D.removeChildren(searchSorter);
+		searchSorter.appendChild(D.getIcon('text', 'text', e => this.setTextSorter(e), {title:'Sort by name', id:`${this.constructor.name}-text-icon`}));
+		searchSorter.appendChild(D.getIcon('reference', 'reference', e => this.setRefcntSorter(e), {title:'Sort by reference count'}));
+	}
+	html(e)
+	{
+		this.reset();
+		const matchTable = H3.table({id:`${this.type}-matching-table`}, '.matching-table');
+		const div = H3.div(matchTable);
+		div.style.maxHeight = `${0.75 * D.height()}px`;
+		D.toolbar.table.appendChild(H3.tr(`##${this.type}-search.w100`, H3.td(this.getSearchBar(), div, `##${this.type}-search-results.tool-search-results`)));
+		this.setSearchBar();
+		this.search();
+	}
+	toggleDiagramFilter(e)
+	{
+		this.searchArgs.diagramOnly = !this.searchArgs.diagramOnly;
+		if (this.searchArgs.diagramOnly)
+			D.setActiveIcon(e.target, false);
+		else
+			D.setUnactiveIcon(e.target);
+		this.search();
+	}
+	setTextSorter(e)
+	{
+		this.searchArgs.sorter = U.NameSorter;
+		D.setActiveIcon(e.target);
+		this.search();
+	}
+	setRefcntSorter(e)
+	{
+		this.searchArgs.sorter = U.RefcntSorter;
+		D.setActiveIcon(e.target);
+		this.search();
+	}
+	reset()				// fitb
+	{}
+	getMatchingElements()	// fitb
+	{}
+	getRows(tbl, elements)	// or replace
+	{
+		elements.map(elt =>
+		{
+			const row = elt.getHtmlRow();
+			elt.addButtons(row);
+			tbl.appendChild(row);
+		});
+	}
+	replay(e, diagram, args)
+	{
+		this.doit(e, diagram, args, false);
+	}
+	clearSearch()
+	{
+		D.toolbar.clearError();
+		const tbl = document.getElementById(`${this.type}-matching-table`);
+		tbl && D.removeChildren(tbl);
+	}
+	search()
+	{
+		this.clearSearch();
+		const tbl = document.getElementById(`${this.type}-matching-table`);
+		this.getRows(tbl, this.filter(this.getMatchingElements()));
+	}
+	filter(elements)
+	{
+		const args = this.searchArgs;
+		return elements.filter(info =>	((args.userOnly && info.user === R.user.name) || !args.userOnly) &&
+										((args.referenceOnly && R.diagram.references.has(info.name)) || !args.referenceOnly) &&
+										((args.sessionOnly && D.session.diagrams.has(info.name)) || !args.sessionOnly) &&
+										((args.diagramOnly && info.diagram === R.diagram) || !this.searchArgs.diagramOnly));
+	}
+}
+
 class ElementTool
 {
 	constructor(type, toolbar, headline, sections)
@@ -3044,8 +3157,6 @@ class DiagramTool extends ElementTool
 				D.toolbar.showError(diagram);		// did not work
 			else
 			{
-				R.saveDiagram(diagram, e => R.debug(1) && console.log('diagramTool.copy', diagram.name));
-				diagram.savePng();
 				this.bpd.reset();
 				D.emitCATEvent('new', diagram);
 				Runtime.SelectDiagram(diagram.name);
@@ -5535,6 +5646,7 @@ class Display
 					break;
 				case 'new':
 					this.autosave(diagram);
+					R.setDiagramInfo(diagram, true);
 					break;
 			}
 		});
@@ -9780,6 +9892,7 @@ class Definition extends IndexText
 		});
 		const sequence = this.sequence.map(elt => elementMap.get(elt));
 		const defi = new DefinitionInstance(diagram, {targetCat, sequence, elementMap, definition:this, xy, description:`Instantiation of ${this.defname}`});
+		defi.postload();
 		diagram.makeSelected(defi);
 	}
 	getQuantifiersToCells()		// TODO?
@@ -11142,14 +11255,7 @@ class MorphismAssemblyAction extends Action
 	}
 	toggle(e, diagram, ary)
 	{
-		if (this.assembler)
-		{
-			this.assembler.clearGraphics();
-		}
-		else
-		{
-			// TODO
-		}
+		this.assembler && this.assembler.clearGraphics();
 	}
 }
 
@@ -11203,6 +11309,10 @@ class HomObjectAction extends Action
 			basename:		dual ? 'homLeft' : 'homRight',
 		};
 		super(diagram, args);
+		Object.defineProperties(this,
+		{
+			searchTool:		{value:	new SearchTool(this.basename),	writable:	false},
+		});
 		D && D.replayCommands.set(this.basename, this);
 	}
 	action(e, diagram, ary)
@@ -11219,30 +11329,37 @@ class HomObjectAction extends Action
 		if (ary.length === 1)
 		{
 			const from = ary[0];
-			let rows = [];
 			const to = from.to;
-			const doit = m =>
-			{
-				const obj = this.dual ? m.codomain : m.domain;
-				if (m instanceof Morphism && to.isEquivalent(obj))
-				{
-					const rep = m.getHtmlRep();
-					rep.classList.add('element');
-					const row = H3.tr(H3.td(rep, {colspan:2}));
-					row.onclick = e => Cat.R.Actions[this.basename].action(e, diagram, [from.name, m.name]);		// replace std action
-					rows.push(row);
-				}
-			};
-			diagram.forEachMorphism(doit);
 			const diagrams = [...diagram.allReferences.keys()].map(dgrm => R.$CAT.getElement(dgrm));
-			diagrams.map(d => d.forEachMorphism(doit));
 			D.toolbar.clear();
-			D.toolbar.table.appendChild(H3.tr(H3.td(H3.small(`Place morphisms ${this.dual ? 'to' : 'from'} ${to.properName}`, '.italic'))));
-			const table = H3.table('.matching-table');
-			const div = H3.div(table);
-			div.style.maxHeight = `${0.75 * D.height()}px`;
-			D.toolbar.table.appendChild(H3.tr(H3.td(div, '.tool-search-results')));
-			rows.map(row => table.appendChild(row));
+			this.searchTool.getMatchingElements = _ =>
+			{
+				const filter = document.getElementById(`${this.searchTool.type}-search-value`).value;
+				const morphisms = R.diagram.getMorphisms().filter(m => m.name.includes(filter)
+					&& (this.dual ? m.codomain === to : m.domain === to)
+					&& ((this.searchTool.searchArgs.diagramOnly && m.diagram === R.diagram) || !this.searchTool.searchArgs.diagramOnly));
+				const sigs = new Map();
+				morphisms.map(m =>
+				{
+					if (!sigs.has(m.signature))
+						sigs.set(m.signature, m);
+				});
+				const remaining = [...sigs.values()];
+				remaining.sort(this.searchTool.searchArgs.sorter);
+				return remaining;
+			};
+			this.searchTool.getRows = (tbl, elements) =>
+			{
+				elements.map(elt =>
+				{
+					const row = elt.getHtmlRow();
+					row.onclick = e => Cat.R.Actions[this.basename].action(e, diagram, [from.name, elt.name]);
+					row.querySelector('div').classList.add('clickable');
+					tbl.appendChild(row);
+				});
+			}
+			D.toolbar.table.appendChild(H3.tr(H3.td(H3.h3(`Place morphisms ${this.dual ? 'to' : 'from'} ${to.properName}`))));
+			this.searchTool.html();
 		}
 	}
 	doit(e, diagram, domain, morphism, save = true)
@@ -12566,7 +12683,7 @@ class DefinitionAction extends Action
 	{
 		const args =
 		{
-			description:	'Form quantifier',
+			description:	'Form definition',
 			basename:		'definition',
 		};
 		super(diagram, args);
@@ -13711,6 +13828,7 @@ if (this.basename === "Cm{factorial,Id{hdole/nat/N64}dI}mC")debugger;
 			this.recursor = r;
 			this.postload = _ => this.setRecursor(r);
 		}
+		this.recursor === null && delete this.recursor;
 		oldRecursor && oldRecursor.decrRefcnt();
 	}
 	clear()
