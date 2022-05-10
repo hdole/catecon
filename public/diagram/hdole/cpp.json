@@ -979,7 +979,7 @@
         "prototype": "IndexObject",
         "to": "CPo{voidPtr,Errno}oPC",
         "xy": {
-          "x": 700,
+          "x": 760,
           "y": 9100
         }
       },
@@ -1305,9 +1305,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": -700,
-          "y": 30
+          "y": 50
         },
-        "height": "800",
+        "height": 800,
         "weight": "bold"
       },
       {
@@ -1903,7 +1903,7 @@
           "x": -600,
           "y": 4700
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_42",
@@ -1967,7 +1967,7 @@
           "x": 1270,
           "y": 4290
         },
-        "height": "12"
+        "height": 12
       },
       {
         "basename": "o_164",
@@ -2004,7 +2004,7 @@
           "x": -600,
           "y": 6500
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_167",
@@ -2068,7 +2068,7 @@
           "x": -600,
           "y": 300
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_172",
@@ -3744,11 +3744,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644713906512,
+  "timestamp": 1651958773433,
   "version": 0,
   "viewport": {
-    "x": 725,
-    "y": 474,
-    "scale": 0.7700330138565122
+    "x": 782,
+    "y": 508,
+    "scale": 0.7422915911568613
   }
 }

@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1010,
-          "y": 310
+          "y": 330
         },
         "height": 250,
         "weight": "bold"
@@ -245,7 +245,7 @@
         "height": 48
       },
       {
-        "description": "Show the string graphs of the morphisms.",
+        "description": "Show the string graphs of all or selected morphisms.",
         "basename": "t_21",
         "prototype": "IndexText",
         "xy": {
@@ -287,7 +287,7 @@
         "height": 24
       },
       {
-        "description": "Form the hom action on two objects or two morphisms.",
+        "description": "Form the hom action on two selected objects or two morphisms.",
         "basename": "t_25",
         "prototype": "IndexText",
         "xy": {
@@ -1040,7 +1040,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 5400
+          "y": 5500
         },
         "height": 36,
         "weight": "bold",
@@ -1052,7 +1052,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 5400
+          "y": 5500
         },
         "height": 24
       },
@@ -1062,7 +1062,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 5600
+          "y": 5650
         },
         "height": 36,
         "weight": "bold",
@@ -1074,7 +1074,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 5600
+          "y": 5650
         },
         "height": 24
       },
@@ -1136,7 +1136,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 5700
+          "y": 5750
         },
         "height": 36,
         "weight": "bold",
@@ -1148,7 +1148,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1150,
-          "y": 5800
+          "y": 5850
         },
         "height": 36,
         "weight": "bold",
@@ -1160,7 +1160,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 5600
+          "y": 5650
         },
         "height": 24
       },
@@ -1170,7 +1170,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 5800
+          "y": 5850
         },
         "height": 24
       },
@@ -1441,7 +1441,7 @@
         "textAnchor": "end"
       },
       {
-        "description": "Toggle bold text",
+        "description": "Toggle selected bold text",
         "basename": "t_132",
         "prototype": "IndexText",
         "xy": {
@@ -1493,17 +1493,39 @@
           "y": 4200
         },
         "height": 24
+      },
+      {
+        "description": "Shift Numpad",
+        "basename": "t_137",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 1150,
+          "y": 5400
+        },
+        "height": 36,
+        "weight": "bold",
+        "textAnchor": "end"
+      },
+      {
+        "description": "Move selected elements in indicated direction.",
+        "basename": "t_138",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 1300,
+          "y": 5400
+        },
+        "height": 24
       }
     ],
     "cells": []
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1651375726424,
+  "timestamp": 1651660167425,
   "version": 0,
   "viewport": {
-    "x": -979,
-    "y": -46,
-    "scale": 1.3048382301859751
+    "x": -925,
+    "y": -82,
+    "scale": 1.283066266849036
   }
 }

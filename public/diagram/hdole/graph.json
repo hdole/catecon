@@ -59,7 +59,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -80,
-          "y": 410
+          "y": 420
         },
         "height": 180,
         "weight": "bold"
@@ -381,7 +381,7 @@
         }
       },
       {
-        "description": "And now you see the origin of the graph <icon>graph</icon> button.\n\nBy setting B, C, D to the underlying field for a category\nof vector spaces one gets a different morphism from\nthe triple dual of A to itself than just the identity.",
+        "description": "And now see the origin of the graph <icon>graph</icon> button.\n\nBy setting B, C, D to the underlying field for a category\nof vector spaces one gets a different morphism from\nthe triple dual of A to itself than just the identity.",
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
@@ -1005,11 +1005,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1649324660984,
+  "timestamp": 1651662674736,
   "version": 0,
   "viewport": {
-    "x": 357,
-    "y": -2063,
-    "scale": 1.5799370522627632
+    "x": 336,
+    "y": -4501,
+    "scale": 1.5971321755221037
   }
 }

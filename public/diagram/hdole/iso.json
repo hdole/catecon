@@ -95,6 +95,60 @@
         }
       },
       {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "Foo",
+        "xy": {
+          "x": 840,
+          "y": 1280
+        }
+      },
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "Foo",
+        "xy": {
+          "x": 990,
+          "y": 1280
+        }
+      },
+      {
+        "basename": "o_6",
+        "prototype": "IndexObject",
+        "to": "Foo",
+        "xy": {
+          "x": 990,
+          "y": 1430
+        }
+      },
+      {
+        "basename": "o_9",
+        "prototype": "IndexObject",
+        "to": "Foo",
+        "xy": {
+          "x": 840,
+          "y": 1580
+        }
+      },
+      {
+        "basename": "o_10",
+        "prototype": "IndexObject",
+        "to": "Foo",
+        "xy": {
+          "x": 840,
+          "y": 1730
+        }
+      },
+      {
+        "basename": "o_11",
+        "prototype": "IndexObject",
+        "to": "Foo",
+        "xy": {
+          "x": 990,
+          "y": 1730
+        }
+      },
+      {
         "basename": "m_2",
         "prototype": "IndexMorphism",
         "domain": "o_4",
@@ -149,77 +203,6 @@
         "to": "finv"
       },
       {
-        "description": "Definition of isomorphism",
-        "basename": "d_0",
-        "prototype": "Definition",
-        "xy": {
-          "x": 650,
-          "y": 1050
-        },
-        "height": 24,
-        "defname": "isomorphism",
-        "sequence": [
-          "finv",
-          "f"
-        ],
-        "blobs": [
-          "hdole/iso/o_7",
-          "hdole/iso/o_3"
-        ]
-      },
-      {
-        "description": "Instantiation of identity",
-        "basename": "t_2",
-        "prototype": "DefinitionInstance",
-        "xy": {
-          "x": 650,
-          "y": 1120
-        },
-        "height": 24,
-        "targetCat": "hdole/iso/D",
-        "definition": "hdole/identity/d_0",
-        "sequence": [
-          "hdole/iso/id"
-        ],
-        "elementMap": [
-          [
-            "hdole/identity/A",
-            "hdole/iso/Foo"
-          ],
-          [
-            "hdole/identity/id",
-            "hdole/iso/id"
-          ]
-        ]
-      },
-      {
-        "basename": "o_1",
-        "prototype": "IndexObject",
-        "to": "Foo",
-        "xy": {
-          "x": 840,
-          "y": 1280
-        }
-      },
-      {
-        "basename": "o_2",
-        "prototype": "IndexObject",
-        "to": "Foo",
-        "xy": {
-          "x": 990,
-          "y": 1280
-        }
-      },
-      {
-        "basename": "o_6",
-        "prototype": "IndexObject",
-        "to": "Foo",
-        "xy": {
-          "x": 990,
-          "y": 1430
-        }
-      },
-      {
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_1",
@@ -245,33 +228,6 @@
           ]
         ],
         "to": "Id{Foo}dI"
-      },
-      {
-        "basename": "o_9",
-        "prototype": "IndexObject",
-        "to": "Foo",
-        "xy": {
-          "x": 840,
-          "y": 1580
-        }
-      },
-      {
-        "basename": "o_10",
-        "prototype": "IndexObject",
-        "to": "Foo",
-        "xy": {
-          "x": 840,
-          "y": 1730
-        }
-      },
-      {
-        "basename": "o_11",
-        "prototype": "IndexObject",
-        "to": "Foo",
-        "xy": {
-          "x": 990,
-          "y": 1730
-        }
       },
       {
         "basename": "m_9",
@@ -307,24 +263,33 @@
         "to": "Id{Foo}dI"
       },
       {
-        "description": "Theorem: identity is isomorphism",
-        "basename": "idIsIso",
-        "prototype": "Theorem",
+        "description": "Definition of isomorphism",
+        "basename": "d_0",
+        "prototype": "Definition",
         "xy": {
-          "x": 620,
-          "y": 1900
+          "x": 650,
+          "y": 1050
         },
         "height": 24,
-        "source": "hdole/iso/t_2",
-        "target": "hdole/iso/d_0",
+        "defname": "isomorphism",
         "sequence": [
-          "id",
-          "id"
+          "finv",
+          "f"
         ],
         "blobs": [
-          "hdole/iso/m_1",
-          "hdole/iso/m_9"
+          "hdole/iso/o_7",
+          "hdole/iso/o_3"
         ]
+      },
+      {
+        "description": "BUG:  not commutative",
+        "basename": "t_3",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 640,
+          "y": 1430
+        },
+        "height": 24
       }
     ],
     "cells": [
@@ -414,11 +379,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1649230119686,
+  "timestamp": 1651659186453,
   "version": 0,
   "viewport": {
     "x": -1814,
-    "y": -1686,
+    "y": -3590,
     "scale": 3.3527365180243454
   }
 }

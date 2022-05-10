@@ -42,7 +42,7 @@
         "height": 24
       },
       {
-        "description": "asdfThe floating point zero",
+        "description": "The floating point zero",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
@@ -634,8 +634,8 @@
         "basename": "t_27",
         "prototype": "IndexText",
         "xy": {
-          "x": -760,
-          "y": 110
+          "x": -750,
+          "y": 90
         },
         "height": 300,
         "weight": "bold"
@@ -659,7 +659,7 @@
         }
       },
       {
-        "description": "asdfThe floating point one",
+        "description": "The floating point one",
         "basename": "t_28",
         "prototype": "IndexText",
         "xy": {
@@ -1924,8 +1924,8 @@
         "basename": "t_90",
         "prototype": "IndexText",
         "xy": {
-          "x": 720,
-          "y": 2380
+          "x": 600,
+          "y": 2360
         },
         "height": 24
       },
@@ -2060,7 +2060,7 @@
         "prototype": "IndexObject",
         "to": "F64",
         "xy": {
-          "x": 550,
+          "x": 600,
           "y": 7200
         }
       },
@@ -2069,7 +2069,7 @@
         "prototype": "IndexObject",
         "to": "Po{F64,#1}oP",
         "xy": {
-          "x": 700,
+          "x": 750,
           "y": 7200
         }
       },
@@ -2078,7 +2078,7 @@
         "prototype": "IndexObject",
         "to": "Po{F64,F64}oP",
         "xy": {
-          "x": 700,
+          "x": 750,
           "y": 7350
         }
       },
@@ -2087,7 +2087,7 @@
         "prototype": "IndexObject",
         "to": "F64",
         "xy": {
-          "x": 700,
+          "x": 750,
           "y": 7500
         }
       },
@@ -2177,8 +2177,8 @@
         "basename": "t_7",
         "prototype": "IndexText",
         "xy": {
-          "x": -240,
-          "y": 7580
+          "x": -250,
+          "y": 7560
         },
         "height": 24
       },
@@ -3033,6 +3033,10 @@
           [
             "referenceMorphism",
             true
+          ],
+          [
+            "flipName",
+            true
           ]
         ],
         "to": "Fa{Po{F128,F128}oP,F128_1}aF"
@@ -3116,6 +3120,10 @@
         "attributes": [
           [
             "referenceMorphism",
+            true
+          ],
+          [
+            "flipName",
             true
           ]
         ],
@@ -3207,6 +3215,10 @@
         "attributes": [
           [
             "referenceMorphism",
+            true
+          ],
+          [
+            "flipName",
             true
           ]
         ],
@@ -4481,11 +4493,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1651375982694,
+  "timestamp": 1651989510226,
   "version": 0,
   "viewport": {
     "x": 980,
-    "y": 201,
-    "scale": 0.9324879417195037
+    "y": 261,
+    "scale": 0.93309914075432
   }
 }

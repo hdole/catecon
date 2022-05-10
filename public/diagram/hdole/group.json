@@ -479,6 +479,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_19",
         "codomain": "o_22",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Pa{Fa{Po{G,G,G}oP,G_0,G_1}aF,Fa{Po{G,G,G}oP,G_2}aF}aP"
       },
       {
@@ -514,6 +520,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_9",
         "codomain": "o_17",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "mult"
       },
       {
@@ -521,6 +533,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_20",
         "codomain": "o_23",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Fa{G,G_,G_-1}aF"
       },
       {
@@ -542,6 +560,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_24",
         "codomain": "o_25",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Fa{G,G_-1,G_}aF"
       },
       {
@@ -884,11 +908,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1651375907929,
+  "timestamp": 1652084638631,
   "version": 0,
   "viewport": {
-    "x": 889,
-    "y": 338,
-    "scale": 2.177249532054417
+    "x": 1172,
+    "y": 110,
+    "scale": 0.5972503123533672
   }
 }
