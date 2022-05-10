@@ -4425,6 +4425,10 @@ class Display
 					},
 					ControlKeyV(e)	{	D.paste(e);	},
 		//			ControlKeyW(e)	 BROWSER RESERVED
+					KeyX(e)
+					{
+						Cat.R.diagram && D.advanceInputMode();
+					},
 					KeyY(e)
 					{
 						if (R.Actions.morphismAssembly.hasForm(R.diagram, R.diagram.selected))
@@ -4525,10 +4529,7 @@ class Display
 									diagram.makeSelected(items[ndx]);
 									diagram.panToElements(items[ndx]);
 								}
-								e.preventDefault();
 							}
-							else if (diagram.selected.length === 0)
-								D.advanceInputMode();
 						}
 						e.preventDefault();
 					},
@@ -4832,12 +4833,12 @@ class Display
 			case 'delete':
 				args.diagram.selected = args.diagram.selected.filter((r, elt) => elt.name !== args.element.name);
 				if (args.element instanceof IndexObject)
-					this.glowBadObjects(args.diagram);
+					args.diagram.glowBadObjects();
 				break;
 			case 'new':
 			case 'move':
 				if (args.element instanceof IndexObject)
-					this.glowBadObjects(args.diagram);
+					args.diagram.glowBadObjects();
 				break;
 		}
 	}
@@ -5608,6 +5609,7 @@ class Display
 							{
 								diagram.updateBackground();
 								diagram.svgRoot.querySelector('.diagramBackground').classList.add('defaultGlow');
+								diagram.glowBadObjects();
 							}
 							else
 								setTimeout(doit, 10);	// try again
@@ -5621,7 +5623,6 @@ class Display
 							diagram.setPlacement(placement, false, 'default');		// do not emit view event
 						}
 						this.diagramSVG.classList.add('trans');
-						this.glowBadObjects(diagram);
 						R.setCategory(diagram.codomain);
 					}
 					else
@@ -6219,22 +6220,6 @@ class Display
 	{
 		const a = this.default.arrow;
 		return new D2(a.length * a.dir.x, a.length * a.dir.y);
-	}
-	glowBadObjects(diagram)
-	{
-		const objects = [];
-		diagram.domain.forEachObject((o, k) =>
-		{
-			if (o.svg)
-			{
-				o.svg.classList.remove('badGlow');
-				const bx = D2.add(o.svg.getBBox(), o.getXY());
-				objects.push(bx);
-				for (let i=0; i<objects.length -1; ++i)
-					if (D2.overlap(objects[i], bx))
-						o.svg.classList.add('badGlow');
-			}
-		});
 	}
 	getArc(cx, cy, r, startAngle, endAngle)
 	{
@@ -7588,7 +7573,6 @@ class HelpPanel extends Panel
 			H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn())), '.buttonBarRight.stdBackground'),
 			H3.h3('Catecon'),
 			H3.h4('The Categorical Console'),
-			H3.p('.center', H3.a('Documentation', {href:'/doc/Catecon.pdf', target:'_blank'})),
 			H3.button('Category Theory', '##catHelpPnlBtn.sidenavAccordion', {title:'References', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'catHelpPnl')}),
 			H3.div(	H3.small('All of mathematics is divided into one part: Category Theory', ''),
 					H3.h4('References'),
@@ -7599,7 +7583,6 @@ class HelpPanel extends Panel
 			H3.button('Terms and Conditions', '##TermsPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'TermsPnl')}),
 			H3.div(	H3.p('No hate.'), '##TermsPnl.section'),
 			H3.button('License', '##licensePnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'licensePnl')}),
-			H3.div('How to license category theory?'),
 			H3.button('Credits', '##creditaPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'creditsPnl')}),
 			H3.div(	H3.a('Saunders Mac Lane', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=834"}),
 					H3.a('Harry Dole', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=222286"}), '##creditsPnl.section'),
@@ -7729,11 +7712,7 @@ class SettingsPanel extends Panel
 		const settings = [	H3.tr(	H3.td(gridChkbox),
 									H3.td('Snap objects to a grid.', '.left')),
 							H3.tr(	H3.td(H3.input({type:"checkbox", onchange:e => D.setDarkmode(e.target.checked), id:'check-darkmode'})),
-									H3.td('Dark mode', '.left')),
-							H3.tr(	H3.td(debugChkbox),
-									H3.td('Debug', '.left')),
-							H3.tr(	H3.td(showEventsChkbox),
-									H3.td('Show events on console', '.left'))];
+									H3.td('Dark mode', '.left'))];
 		const elts =
 		[
 			H3.table(H3.tr(H3.td(this.closeBtnCell())), '.buttonBarRight.stdBackground'),
@@ -7764,7 +7743,6 @@ class SettingsPanel extends Panel
 	update()
 	{
 		document.getElementById('check-darkmode').checked = D.default.darkmode;
-		document.getElementById('check-debug').checked = D.default.debug;
 		const tbl = this.elt.querySelector('#settings-table');
 		tbl.appendChild(H3.tr(H3.td(H3.button('Reset Defaults', '.textButton', {onclick:_ =>
 		{
@@ -7777,7 +7755,6 @@ class SettingsPanel extends Panel
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Rewrite diagrams', '.textButton', {onclick:_ => Cat.R.rewriteDiagrams()}), {colspan:2})));
 			tbl.appendChild(H3.tr(	H3.td(H3.button('Update bug report', '.textButton', {onclick:_ => Cat.R.updateBugReport()}), {colspan:2})));
 		}
-		tbl.appendChild(H3.tr(H3.td(D.pretty(D.default, H3.div()))));
 	}
 }
 
@@ -9651,9 +9628,7 @@ class IndexText extends Element
 		this.foreign.parentNode && this.foreign.remove();		// do not do this earlier or the textbox gets corrupted
 		D.closeActiveTextEdit();
 		this.svgText.classList.remove('hidden');
-		this.hidden.remove();
 		delete this.foreign;
-		delete this.hidden;
 	};
 	textEditor(cls = '')
 	{
@@ -9661,26 +9636,23 @@ class IndexText extends Element
 		D.closeActiveTextEdit();
 		const bbox = this.svgText.getBBox();
 		this.svgText.classList.add('hidden');
-		const hidden = H3.div(this.description, '.text-editor', {style:`font-size:${this.height}px; font-weight:${this.weight}, visibility:'visible', display:'none', whiteSpace:'pre-wrap', wordWrap:'break-word'`});
-		this.hidden = hidden;
-		document.body.appendChild(hidden);
 		const div = H3.div('##foreign-text.text-editor', this.description,
 		{
 			style:`${this.ssStyle(cls)}; line-height:${this.lineDeltaY()}; white-space:pre-wrap; word-wrap:break-word; width:fit-content;`,
 			contentEditable:true,
 		});
 		cls !== '' && div.classList.add(cls);
-		this.foreign = H3.foreignObject(div, {width:4 + bbox.width + 'px', height:4 + bbox.height + 'px', y:`-${this.height}px`});
+		const mod = 8;
+		this.foreign = H3.foreignObject(div, {width:mod + bbox.width + 'px', height:mod + bbox.height + 'px', y:`-${this.height}px`});
 		const onkeydown = e =>
 		{
-			hidden.innerHTML = div.innerHTML;
-			hidden.style.visibility = 'hidden';
-			hidden.style.display = 'block';
-			hidden.style.width = 'fit-content';
-			this.foreign.style.width = (D.default.icon + hidden.offsetWidth) + 'px';
-			this.foreign.style.height = hidden.offsetHeight + 'px';
+			this.foreign.style.width = (D.default.icon + div.offsetWidth) + 'px';
+			this.foreign.style.height = div.offsetHeight + 'px';
 			if (e.key === 'Escape')
+			{
 				D.closeActiveTextEdit();
+				this.description !== '' && this.diagram.makeSelected(this);
+			}
 			e.stopPropagation();
 		};
 		this.svgText.parentNode.appendChild(this.foreign);
@@ -9791,13 +9763,6 @@ class Definition extends IndexText
 	}
 	postload()
 	{
-		if (this.diagram.ready !== 0)
-		{
-//			if (this.diagram.ready === -1 && !this.diagram.svgRoot)
-//				return;
-			setTimeout(_ => this.postload());
-			return;
-		}
 		this.blobs = this.blobs.map(b => b instanceof IndexBlob ? b : new IndexBlob(this.diagram.domain.elements.get(b)));
 		this.blobs.map(b => b.forEachElement(elt => elt.incrRefcnt()));
 		this.generators = this.getGenMorphisms();
@@ -10120,13 +10085,6 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 	}
 	_postload()
 	{
-		if (this.diagram.ready !== 0)
-		{
-			if (this.diagram.ready === -1 && !this.diagram.svgRoot)
-				return;
-			setTimeout(_ => this._postload());
-			return;
-		}
 		this.definition = this.diagram.getElement(this.definition);
 		this.definition.incrRefcnt();
 		if (Array.isArray(this.elementMap))		// convert to Map
@@ -10967,13 +10925,13 @@ class ProductAction extends Action
 		{
 			const morphisms = elements.map(m => m.to);
 			const to = diagram.get('ProductMorphism', {morphisms, dual:this.dual});
-			return diagram.placeMorphism(to, elt.domain.getXY());
+			return diagram.placeMorphism(to, D.mouse.diagramPosition(diagram));
 		}
 		else if (elt instanceof IndexObject)
 		{
 			const objects = elements.map(o => o.to);
 			const to = diagram.get('ProductObject', {objects, dual:this.dual});
-			const xy = diagram.findEmptySpot(elt.getXY());
+			const xy = diagram.findEmptySpot(D.mouse.diagramPosition(diagram));
 			return diagram.placeObject(to, xy);
 		}
 	}
@@ -13288,27 +13246,45 @@ class Category extends CatObject
 	}
 	newObject(diagram, basename)
 	{
+		if (basename === '1')
+			return diagram.getTerminal();
+		if (basename === '2')
+		{
+			const one = diagram.getTerminal();
+			return diagram.coprod(one, one);
+		}
 		if (!U.isValidBasename(basename))
 			throw 'bad basename';
 		const o = diagram.getElement(basename);
 		return o ? o : new CatObject(diagram, {basename});
 	}
-	newMorphism(diagram, str)
+	newMorphism(e, diagram, basename, dom = null, cod = null)
 	{
-		const tokens = str.split(' ');
-		const domain = this.newObject(diagram, tokens[0]);
-		const basename = tokens[1];
-		const codomain = this.newObject(diagram, tokens[2]);
-		const m = diagram.getElement(basename);
-		if (m)
+		if (dom && cod)
 		{
-			if (m.domain === domain && m.codomain === codomain)
-				return m;
-			throw 'morphism already exists new different domain or codomain';
+			const domain = this.newObject(diagram, dom);
+			const codomain = this.newObject(diagram, cod);
+			if (domain && codomain)
+			{
+				const m = diagram.getElement(basename);
+				if (m)
+				{
+					if (m.domain === domain && m.codomain === codomain)
+						return m;
+					D.statusbar.show(e, 'morphism already exists with different domain or codomain');
+				}
+				if (!U.isValidBasename(basename))
+					D.statusbar.show(e, 'Bad basename');
+				return new Morphism(diagram, {basename, domain, codomain, category:domain.category});
+			}
 		}
-		if (!U.isValidBasename(basename))
-			throw 'bad basename';
-		return new Morphism(diagram, {basename, domain, codomain, category:domain.category});
+		else
+		{
+			const m = diagram.getElement(basename);
+			if (m instanceof Morphism)
+				return m;
+		}
+		return null;
 	}
 	help()
 	{
@@ -17500,8 +17476,8 @@ class Diagram extends Functor
 	}
 	postProcess()
 	{
-		this.domain.elements.forEach(elt => 'postload' in elt && elt.postload());	// TODO not used currently by mysql.js
 		this.getAll().forEach(elt => 'postload' in elt && elt.postload());
+		this.domain.elements.forEach(elt => 'postload' in elt && elt.postload());
 	}
 	decrRefcnt()
 	{
@@ -17575,7 +17551,6 @@ class Diagram extends Functor
 				}
 				return false;
 			}).map(e => e.decrRefcnt()).length;
-
 		}
 		while(cnt > 0);
 		this.domain.elements.forEach(elt => elt instanceof IndexText && elt.description === '' && elt.decrRefcnt());
@@ -17949,7 +17924,7 @@ class Diagram extends Functor
 	}
 	findEmptySpot(xy)
 	{
-		let gxy = D.grid(xy, true);
+		let gxy = xy;
 		gxy.width = 20;
 		gxy.height = 20;
 		while(this.hasOverlap(gxy))
@@ -19288,37 +19263,184 @@ class Diagram extends Functor
 	}
 	newElement(e, type, fn = null)
 	{
+		const shiftKey = e.shiftKey;
 		const xy = this.userToDiagramCoords({x:e.clientX, y:e.clientY});
+		xy.y = xy.y + D.default.font.height / 2;
 		const oldSync = this.sync;
 		this.sync = false;
 		const text = new IndexText(this, {xy, description:''});
 		text.textEditor(type === 'text' ? '' : 'object');
 		const div = document.querySelector('#foreign-text');
+		const badColor = e => div.style.backgroundColor = '#cc0';
+		const neutralColor = e => div.style.backgroundColor = 'var(--color-bg)';
+		const checkToken = (aType, tok) =>
+		{
+			if (U.isValidBasename(tok))
+			{
+				const elt = this.getElement(tok);
+				if (elt && !(elt instanceof (aType === 'object' ? CatObject : Morphism)))
+					return false;
+				if (elt === undefined && aType === 'morphism')
+					return false;
+				return true;
+			}
+			return false;
+		};
+		const validateInput = input =>
+		{
+			const tokens = input.trim().split(' ').filter(tok => tok !== '');
+			if (shiftKey && type === 'morphism')
+			{
+				if (tokens.length === 1)
+					return checkToken('object', tokens[0]);
+				if (tokens.length === 2)
+					return checkToken('object', tokens[0]) && checkToken('base', tokens[1]);
+				if (tokens.length === 3)
+					return checkToken('object', tokens[0]) && checkToken('base', tokens[1]) && checkToken('object', tokens[2]);
+				return false;
+			}
+			else
+			{
+				let operator = '';
+				let opNdx = -1;
+				let elements = Array(tokens.length).fill(null);
+				for (let i=0; i<tokens.length; ++i)
+				{
+					const tok = tokens[i];
+					if (tok === '1' || tok === '2')
+						elements[i] = tok;
+					else if (tok === '*' || tok === '+')
+					{
+						if (opNdx === i - 1 || i === 0 || i === tokens.length - 1)
+							return false;		// two operators in a row not allowed or beginning or end
+						if (operator !== '' && operator !== tok)
+							return false;		// two operators in a row must be same
+						operator = tok;
+						opNdx = i;
+					}
+					else		// must be object
+					{
+						if (checkToken(type, tok))
+							elements[i] = tok;
+						else
+							return false;
+						if (i > 0 && elements[i - 1])
+							operator = '';
+					}
+				}
+			}
+			return true;
+		}
+		const chkObject = input =>
+		{
+			if (validateInput(input))
+			{
+				neutralColor()
+				return true;
+			}
+			else
+			{
+				badColor();
+				return false;
+			}
+		};
+		const chkMorphism = input =>
+		{
+			if (validateInput(input))
+			{
+				neutralColor()
+				return true;
+			}
+			else
+			{
+				badColor();
+				return false;
+			}
+		}
+		const onkeydown = e =>
+		{
+			if (e.key === 'Enter')
+			{
+				D.closeActiveTextEdit();
+				e.stopPropagation();
+				return;
+			}
+			const input = e.target.innerText.trim();
+			if (type === 'object')
+				chkObject(input);
+			else if (type === 'morphism')
+				chkMorphism(input);
+		};
 		const onfocusout = e =>
 		{
+if (fn)debugger;	// TODO
 			const input = e.target.innerText.trim();
+			const tokens = input.split(' ').filter(t => t !== '');
+			const last = tokens.length - 1;
+			const created = [];
 			try
 			{
 				div.removeEventListener('focusout', onfocusout);	// avoid calling this function again
-				let elt = this.getElement(input);
-				if (!elt && input !== '')
+				let xy = text.getXY();
+				xy.y = xy.y - D.default.font.height/2;
+				const stdNormal = new D2(D.default.stdArrow).normal();
+				if (input !== '')
 				{
-					if (type === 'object')
-						elt = R.category.newObject(this, input);
-					else if (type === 'morphism')
-						elt = R.category.newMorphism(this, input);
-				}
-				if (elt)
-				{
-					let from = null;
-					const xy = text.getXY();
-					xy.x += D.textWidth(elt.properName)/2;
-					xy.y -= D.default.font.height/2;
-					if (elt instanceof CatObject && type === 'object')
-						from = this.placeObject(elt, xy);
-					else if (elt instanceof Morphism && type === 'morphism')
-						from = this.placeMorphism(elt, xy);
-					fn && fn(from);
+					if (validateInput(input))
+					{
+						let operator = '';
+						let elements = [];
+						const placeObjects = _ =>
+						{
+							created.push(this.placeObject(this[operator === '*' ? 'prod' : 'coprod'](...elements), xy));
+							xy = D2.add(xy, D.default.stdArrow);
+							elements.length = 0;
+							operator = '';
+						};
+						const placeMorphisms = _ =>
+						{
+							created.push(this.placeMorphism(this[operator === '*' ? 'prod' : 'coprod'](...elements), xy));
+							xy = D2.add(xy, stdNormal);
+							elements.length = 0;
+							operator = '';
+						};
+						if (shiftKey)
+						{
+								// TODO
+							const m = this.codomain.newMorphism(e, this, tokens[1], tokens[0], tokens[2]);
+							m && this.placeMorphism(m, xy);
+						}
+						else
+						{
+							let ndx = -1;
+							tokens.map((tok, i) =>
+							{
+								if ((tok === '*' || tok === '+') && operator === '')
+								{
+									operator = tok;
+									ndx = -1;
+								}
+								else
+								{
+									const elt = type === 'object' ? R.category.newObject(this, tok) : R.diagram.getElement(tok);
+									if (ndx > -1 && elements.length > 0)		// admit prior elements with operator
+									{
+										type === 'object' ? placeObjects() : placeMorphisms();;
+										i !== last && elements.push(elt);
+										operator = '';
+									}
+									else
+										i !== last && elements.push(elt);
+									if (i === last)
+									{
+										elements.push(elt);
+										type === 'object' ? placeObjects() : placeMorphisms();;
+									}
+									ndx = i;
+								}
+							});
+						}
+					}
 				}
 			}
 			catch(x)
@@ -19337,25 +19459,7 @@ class Diagram extends Functor
 			}
 			D.closeActiveTextEdit();
 			text.decrRefcnt();
-		};
-		const onkeydown = e =>
-		{
-			const input = e.target.innerText.trim();
-			if (U.isValidBasename(input))
-			{
-				const elt = R.diagram.getElement(input);
-				if (type === 'object')
-					div.style.backgroundColor = elt && elt instanceof CatObject ? 'lightgreen' : 'var(--color-bg)';
-				else if (type === 'morphism')
-					div.style.backgroundColor = elt && elt instanceof Morphism ? 'lightgreen' : 'crimson';
-				else
-					div.style.backgroundColor = 'var(--color-bg)';
-			}
-			else if (input !== '')
-				div.style.backgroundColor = 'crimson';
-		};
-		const onkeyup = e =>
-		{
+			this.makeSelected(...created);
 		};
 		div.addEventListener('focusout', onfocusout);
 		div.addEventListener('keydown', onkeydown);
@@ -19701,6 +19805,22 @@ class Diagram extends Functor
 		this.elements.forEach(o => o instanceof Category && cats.add(o));
 		cats.add(this.codomain);
 		return cats;
+	}
+	glowBadObjects()
+	{
+		const objects = [];
+		this.domain.forEachObject((o, k) =>
+		{
+			if (o.svg)
+			{
+				o.svg.classList.remove('badGlow');
+				const bx = D2.add(o.svg.getBBox(), o.getXY());
+				objects.push(bx);
+				for (let i=0; i<objects.length -1; ++i)
+					if (D2.overlap(objects[i], bx))
+						o.svg.classList.add('badGlow');
+			}
+		});
 	}
 	static Codename(args)
 	{
