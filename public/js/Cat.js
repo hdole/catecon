@@ -13791,7 +13791,7 @@ if (this.basename === "Cm{factorial,Id{hdole/nat/N64}dI}mC")debugger;
 			oldRecursor = this.recursor;
 			this.recursor = null;
 		}
-		const rcrs = typeof r === 'string' ? this.diagram.codomain.getElement(r) : r;
+		const rcrs = typeof r === 'string' ? this.diagram.getElement(r) : r;
 		if (rcrs)
 		{
 			if (!rcrs.uses(this))
@@ -19406,7 +19406,6 @@ if (fn)debugger;	// TODO
 						};
 						if (shiftKey)
 						{
-								// TODO
 							const m = this.codomain.newMorphism(e, this, tokens[1], tokens[0], tokens[2]);
 							m && this.placeMorphism(m, xy);
 						}
@@ -19572,6 +19571,7 @@ if (fn)debugger;	// TODO
 				break;
 		}
 	}
+// TODO fix recursor copying
 	copy(basename, properName, description)
 	{
 		const user = R.user.name;
@@ -20772,6 +20772,7 @@ const Cat =
 	LambdaMorphism,
 	LanguageAction,
 	Morphism,
+	MultiObject,
 	MultiMorphism,
 	NamedObject,
 	NamedMorphism,
