@@ -1,4 +1,4 @@
-// (C) 2018-2021 Harry Dole, All Rights Reserved
+// (C) 2018-2022 Harry Dole, All Rights Reserved
 // Catecon:  The Categorical Console
 //
 require('dotenv').config();
@@ -32,8 +32,6 @@ app.use(helmet());
 const cognito = require('amazon-cognito-identity-js');		// aws user support
 const url = require('url');
 const fs = require('fs');
-const repl = require('repl');
-const encoding = require('encoding');
 const util = require( 'util' );
 const mysql = require( 'mysql' );
 const {VM} = require('vm2');
