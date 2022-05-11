@@ -1074,7 +1074,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 5650
+          "y": 5640
         },
         "height": 24
       },
@@ -1155,12 +1155,12 @@
         "textAnchor": "end"
       },
       {
-        "description": "\n\nIf one element is selected, then select the next element of the same type.\nIf nothing selected, then change the input mode on an editable diagram.",
+        "description": "\nChange the input mode on an editable diagram.",
         "basename": "t_106",
         "prototype": "IndexText",
         "xy": {
           "x": 1300,
-          "y": 5650
+          "y": 5700
         },
         "height": 24
       },
@@ -1521,11 +1521,11 @@
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1651660167425,
+  "timestamp": 1652179519671,
   "version": 0,
   "viewport": {
     "x": -925,
-    "y": -82,
-    "scale": 1.283066266849036
+    "y": -107,
+    "scale": 1.2829865197628199
   }
 }
