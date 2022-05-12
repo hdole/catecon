@@ -561,7 +561,7 @@ class Runtime
 			cloud:				{value:null,		writable:true},		// the authentication cloud we're using
 			cloudURL:			{value:null,		writable:true},		// the server we upload to
 			inprocess:			{value:new Set(),	writable:false},
-			reading:			{value:[],			writable:true},
+			reading:			{value:new Set(),	writable:true},
 			URL:				{value:isGUI ? document.location.origin : '',		writable:false},		// the server we upload to
 			default:
 			{
@@ -868,18 +868,22 @@ class Runtime
 	async readDiagram(name, fn = null)
 	{
 		if (R.$CAT.getElement(name))
+		{
+			fn && fn(name);
 			return;
+		}
 		if (D)
 		{
 			const refs = [...R.getReferences(name)];
 			const preload = refs.reverse().filter(ref => ref !== name && !this.$CAT.getElement(ref));
 			preload.reverse().filter(ref => this.loadDiagram(ref));
-			if (refs.filter(ref => this.reading.includes(ref)).length > 0)
+			if (refs.filter(ref => ref !== name && this.reading.has(ref)).length > 0)
 			{
 				setTimeout(_ => this.readDiagram(name, fn), 10);
+				this.reading.add(name);
 				return;
 			}
-			this.reading.push(name);
+			this.reading.add(name);
 
 			const setup = _ => new Promise((resolve, reject) =>
 			{
@@ -891,6 +895,7 @@ class Runtime
 				const reqDiagram = dgrmStore.get(name);
 				reqDiagram.onsuccess = e =>
 				{
+console.log('readDiagram', name);
 					diagram = R.$CAT.getElement(name);
 					if (diagram)		// maybe it got loaded asynchronously
 					{
@@ -901,7 +906,8 @@ class Runtime
 					this.sync = false;
 					if (e.target.result)
 					{
-						this.reading = this.reading.filter(i => i != name);
+//						this.reading = this.reading.filter(i => i != name);
+						this.reading.delete(name);
 						const args = e.target.result;
 						const localLog = U.readTempfile(`${name}.log`);
 						if (localLog)
@@ -1006,6 +1012,11 @@ class Runtime
 	}
 	static async DownloadDiagram(name, fn = null, e = null)
 	{
+		if (R.$CAT.getElement(name))
+		{
+			fn && fn();
+			return;
+		}
 		const cloudDiagrams = [...R.getReferences(name)].reverse().filter(d => R.catalog.has(d) && !R.catalog.get(d).isLocal);
 		if (cloudDiagrams.length > 0)
 		{
@@ -1142,9 +1153,12 @@ class Runtime
 	async loadDiagram(name, fn)
 	{
 		if (R.$CAT.getElement(name))
+		{
+			fn && fn();
 			return;		// already loaded
+		}
 		const refs = [...this.getReferences(name)].reverse();
-		if (refs.filter(ref => this.reading.includes(ref)).length > 0)
+		if (refs.filter(ref => this.reading.has(ref)).length > 0)
 		{
 			setTimeout(_ => this.loadDiagram(name, fn), 10);
 			return;
@@ -1161,7 +1175,7 @@ class Runtime
 		{
 			const doit = _ =>
 			{
-				if (this.reading.includes(name) || refs.filter(ref => this.reading.includes(ref)).length > 0)
+				if (this.reading.has(name) || refs.filter(ref => this.reading.has(ref)).length > 0)
 				{
 					setTimeout(doit, 10);
 					return;
@@ -1173,7 +1187,8 @@ class Runtime
 			}
 			doit();
 		}
-		fn && fn(diagram);
+		else
+			fn && fn(diagram);
 	}
 	setDiagramInfo(diagram, makeLocal = false, writeCatalog = true)
 	{
