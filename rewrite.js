@@ -1,4 +1,4 @@
-// (C) 2021 Harry Dole, All Rights Reserved
+// (C) 2022 Harry Dole, All Rights Reserved
 // Catecon:  The Categorical Console
 //
 require('dotenv').config();
@@ -19,9 +19,12 @@ Cat.R.cloudURL = null;		// do not connect to cloud server
 Cat.R.URL = process.env.CAT_URL;
 Cat.R.local = process.env.CAT_LOCAL === 'true';
 
-function saveDiagramJson(name, diagramString)
+function saveDiagram(diagram)
 {
-	const dgrmFile = path.join(process.env.HTTP_DIR, 'diagram', name + '.json');
+	console.log('saving diagram', diagram.name);
+	diagram.timestamp = diagram.timestamp + 1;
+	const diagramString = JSON.stringify(diagram.json(), null, 2);
+	const dgrmFile = path.join(process.env.HTTP_DIR, 'diagram', diagram.name + '.json');
 	fs.mkdirSync(path.dirname(dgrmFile), {recursive:true});
 	const dgrmFD = fs.openSync(dgrmFile, 'w');
 	fs.writeSync(dgrmFD, diagramString, 0, diagramString.length +1);
@@ -57,7 +60,6 @@ try
 			fsDiagrams.map(f =>
 			{
 				const data = fs.readFileSync(f);
-				console.log('load local diagram:', f);
 				if (!data)
 				{
 					console.error('ERROR: cannot read diageram file', f, error);
@@ -132,11 +134,12 @@ try
 					}
 				});
 			}
-			console.log(candidates);
 			const eltArgs = elt.json();
 			eltArgs.basename = nuBasename;
+			delete eltArgs.name;
 			const nuElt = diagram.get(eltArgs.prototype, eltArgs);
-			console.log('nuElt', nuElt.name);
+			nuElt.incrRefcnt();
+			console.log('replacing element:', nuElt.name);
 			//
 			// find all the elements that use the specified element
 			//
@@ -222,6 +225,7 @@ try
 						json.source = build(dgrm, json.source);
 					nu = nu ? nu : new Cat[json.prototype](dgrm, json);
 					built.set(name, nu);
+					nu.incrRefcnt();
 					return nu;
 				}
 				return thisElt;
@@ -249,11 +253,12 @@ try
 			//
 			indices.forEach((ary, e) => ary.map(ndx =>
 			{
-				if (ndx instanceof IndexObject)
+				if (ndx instanceof Cat.IndexObject)
 					ndx.setObject(built.get(e.name));
-				else if (ndx instanceof IndexMorphism)
+				else if (ndx instanceof Cat.IndexMorphism)
 					ndx.setMorphism(built.get(e.name));
 			}));
+			modDiagrams.forEach(dgrm => saveDiagram(dgrm));
 		}
 		catch(x)
 		{
