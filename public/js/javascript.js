@@ -1,4 +1,4 @@
-// (C) 2018-2021 Harry Dole
+// (C) 2018-2022 Harry Dole
 // Catecon:  The Categorical Console
 //
 var Cat = Cat || require('./Cat.js');
@@ -11,6 +11,8 @@ var Cat = Cat || require('./Cat.js');
 	const R = Cat.R;
 	const U = Cat.U;
 
+	const htmlDgrm = 'hdole/HTML';
+
 	class JavascriptAction extends Cat.LanguageAction
 	{
 		constructor(diagram)
@@ -19,7 +21,7 @@ var Cat = Cat || require('./Cat.js');
 			super(diagram, args);
 			R.languages.set(this.basename, this);
 			Cat.R.$CAT.getElement('Set').actions.set(args.basename, this);
-			Cat.Runtime.DownloadDiagram('hdole/HTML', _ => this.loadHTML(R.$CAT.getElement('hdole/HTML')));
+			D && Cat.Runtime.DownloadDiagram(htmlDgrm, _ => this.loadHTML(R.$CAT.getElement(htmlDgrm)));
 		}
 		html(e, diagram, ary)
 		{
