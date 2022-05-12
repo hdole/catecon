@@ -560,6 +560,8 @@ class Runtime
 			categories:			{value:new Map(),	writable:false},	// available categories
 			cloud:				{value:null,		writable:true},		// the authentication cloud we're using
 			cloudURL:			{value:null,		writable:true},		// the server we upload to
+			inprocess:			{value:new Set(),	writable:false},
+			reading:			{value:[],			writable:true},
 			URL:				{value:isGUI ? document.location.origin : '',		writable:false},		// the server we upload to
 			default:
 			{
@@ -828,6 +830,7 @@ class Runtime
 			const info = this.catalog.get(diagram.name);		// get info here in case diagram disapears
 			tx.oncomplete = e =>
 			{
+				R.inprocess.delete(name);
 				info.localTimestamp = diagram.timestamp;
 				info.isLocal = true;
 				fn && fn(e);
@@ -864,11 +867,20 @@ class Runtime
 	}
 	async readDiagram(name, fn = null)
 	{
+		if (R.$CAT.getElement(name))
+			return;
 		if (D)
 		{
-			const preload = [...R.getReferences(name)].reverse().filter(ref => ref !== name && !this.$CAT.getElement(ref));
-			if (preload.length > 0)
-				await Promise.all(preload.reverse().filter(ref => this.loadDiagram(ref)));
+			const refs = [...R.getReferences(name)];
+			const preload = refs.reverse().filter(ref => ref !== name && !this.$CAT.getElement(ref));
+			preload.reverse().filter(ref => this.loadDiagram(ref));
+			if (refs.filter(ref => this.reading.includes(ref)).length > 0)
+			{
+				setTimeout(_ => this.readDiagram(name, fn), 10);
+				return;
+			}
+			this.reading.push(name);
+
 			const setup = _ => new Promise((resolve, reject) =>
 			{
 				let diagram = null;
@@ -889,6 +901,7 @@ class Runtime
 					this.sync = false;
 					if (e.target.result)
 					{
+						this.reading = this.reading.filter(i => i != name);
 						const args = e.target.result;
 						const localLog = U.readTempfile(`${name}.log`);
 						if (localLog)
@@ -917,7 +930,7 @@ class Runtime
 					}
 				};
 			});
-			await setup();
+			setup();
 			fn && fn(name);
 		}
 		else
@@ -996,8 +1009,14 @@ class Runtime
 		const cloudDiagrams = [...R.getReferences(name)].reverse().filter(d => R.catalog.has(d) && !R.catalog.get(d).isLocal);
 		if (cloudDiagrams.length > 0)
 		{
+			if (cloudDiagrams.filter(d => R.inprocess.has(d)).length > 0)
+			{
+				setTimeout(_ => Runtime.DownloadDiagram(name, fn, e), 1);
+				return;
+			}
 			const downloads = cloudDiagrams.map(d => R.getDiagramURL(d + '.json'));
 			let diagrams = [];
+			cloudDiagrams.map(d => R.inprocess.add(d));
 			const downloader = async _ =>
 			{
 				const promises = downloads.map((url, i) => fetch(url).then(res =>
@@ -1117,27 +1136,44 @@ class Runtime
 		const all = refs.filter(dgrm => this.$CAT.getElement(dgrm));
 		if (all.length === refs.length)
 			return this.$CAT.getElement(name);
+		else
+			throw 'references not loaded';
 	}
 	async loadDiagram(name, fn)
 	{
+		if (R.$CAT.getElement(name))
+			return;		// already loaded
 		const refs = [...this.getReferences(name)].reverse();
+		if (refs.filter(ref => this.reading.includes(ref)).length > 0)
+		{
+			setTimeout(_ => this.loadDiagram(name, fn), 10);
+			return;
+		}
 		for (let i=0; i<refs.length; ++i)
 		{
 			const ref = refs[i];
-			await this.loadOne(ref);
+			const refDiagram = this.$CAT.getElement(ref);
+			if (!refDiagram)
+				this.readDiagram(name, _ => R.debug(1) && console.log('loadOne', name));
 		}
 		const diagram = this.$CAT.getElement(name);
-		if (!diagram)
-			throw 'no diagram';
+		if (fn && !diagram)
+		{
+			const doit = _ =>
+			{
+				if (this.reading.includes(name) || refs.filter(ref => this.reading.includes(ref)).length > 0)
+				{
+					setTimeout(doit, 10);
+					return;
+				}
+				const diagram = this.$CAT.getElement(name);
+				if (!diagram)
+					debugger;
+				fn();
+			}
+			doit();
+		}
 		fn && fn(diagram);
-		return diagram;
-	}
-	async loadOne(name)
-	{
-		const diagram = this.$CAT.getElement(name);
-		if (diagram)
-			return diagram;
-		return await this.readDiagram(name, _ => R.debug(1) && console.log('loadOne', name));
 	}
 	setDiagramInfo(diagram, makeLocal = false, writeCatalog = true)
 	{
@@ -7883,7 +7919,6 @@ class Element
 	incrRefcnt()
 	{
 		++this.refcnt;
-if (this.name === "hdole/factorial/Cm{factorial,Id{hdole/nat/N64}dI}mC")debugger;
 	}
 	decrRefcnt()
 	{
@@ -9905,7 +9940,7 @@ class Definition extends IndexText
 			else if ('recursor' in m)
 			{
 				this.checkUsage(m) && genMorphisms.add(m);
-				ingestMorphism(m.recursor);
+				typeof m.recursor !== 'string' && ingestMorphism(m.recursor);
 			}
 		}
 		this.blobs.forEach(blob => blob.morphisms.forEach(m => ingestMorphism(m.to)));
@@ -13590,7 +13625,6 @@ class Morphism extends Element
 			this[Symbol.iterator] = _ => this.data.values();
 			this.postload = _ =>
 			{
-if (this.basename === "Cm{factorial,Id{hdole/nat/N64}dI}mC")debugger;
 				this.data.forEach((d, i) => this.data.set(i, U.InitializeData(this.diagram, this.codomain, d)));
 			};
 		}
@@ -13641,7 +13675,7 @@ if (this.basename === "Cm{factorial,Id{hdole/nat/N64}dI}mC")debugger;
 			this.domain.decrRefcnt();
 			this.codomain.decrRefcnt();
 			this.category && this.category.deleteElement(this);
-			if ('recursor' in this)
+			if ('recursor' in this && typeof this.recursor !== 'string')
 			{
 				const rec = this.recursor;
 				delete this.recursor;		// prevent inf recursion
@@ -13707,7 +13741,7 @@ if (this.basename === "Cm{factorial,Id{hdole/nat/N64}dI}mC")debugger;
 		else if ('recursor' in this)
 		{
 			limitors.add(this);		// stop inf loop
-			return this.recursor.uses(elt, false, limitors);
+			return typeof this.recursor === 'string' ? false : this.recursor.uses(elt, false, limitors);		// being a string is an error
 		}
 		return false;
 	}
@@ -14721,7 +14755,7 @@ class IndexMorphism extends Morphism
 		const table = D.toolbar.table;
 		table.appendChild(H3.tr(H3.td('Domain:'), H3.td(domainElt)));
 		table.appendChild(H3.tr(H3.td('Codomain:'), H3.td(codomainElt)));
-		if ('recursor' in to)
+		if ('recursor' in to && typeof to.recursor !== 'string' && to.recursor !== undefined)
 		{
 			const deleteRecursor = e =>
 			{
@@ -17282,7 +17316,7 @@ class Distribute extends Morphism
 	static Basename(diagram, args)
 	{
 		const domain = diagram.getElement(args.domain, args.category);
-		return `Di{${domain.refName(diagram)}}-${args.side ? 'L' : 'R'}iD`;
+		return `Di{${domain.refName(diagram)}-${args.side ? 'L' : 'R'}}iD`;
 	}
 	static Codename(diagram, args)
 	{
@@ -17550,7 +17584,7 @@ class Diagram extends Functor
 				{
 					if (e.refcnt <= 0)
 						return true;
-					else if (e instanceof Morphism && 'recursor' in e && e.recursor.usecount(e) === e.refcnt)
+					else if (e instanceof Morphism && 'recursor' in e && typeof e.recursor !== 'string' && e.recursor !== undefined && e.recursor.usecount(e) === e.refcnt)
 						return true;
 				}
 				return false;
@@ -19575,7 +19609,7 @@ if (fn)debugger;	// TODO
 				break;
 		}
 	}
-// TODO fix recursor copying
+	// TODO fix recursor copying
 	copy(basename, properName, description)
 	{
 		const user = R.user.name;
@@ -20421,7 +20455,6 @@ class Assembler
 	}
 	formMorphism(domain, domObjects, codObjects)		// recursive; can return null
 	{
-console.log('formMorphism', domain.svg, domain.basename);
 		if (this.processed.has(domain))
 			return null;
 		this.processed.add(domain);
