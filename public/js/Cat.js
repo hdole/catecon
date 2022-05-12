@@ -10407,7 +10407,7 @@ class IndexObject extends CatObject
 			return;
 		if (this.to && this.to !== to)
 			this.to.decrRefcnt();
-		to.incrRefcnt();
+		to && to.incrRefcnt();
 		this.to = to;
 	}
 	width()
@@ -13555,14 +13555,14 @@ class Morphism extends Element
 		if (args.domain instanceof CatObject)
 			domain = args.domain;
 		if (!domain)
-			domain = this.diagram.getElement(args.domain, args.category);
+			domain = diagram.getElement(args.domain, args.category);
 		if (!domain)
 			throw `no domain ${args.domain} for morphism ${args.basename}`;
 		let codomain = null;
 		if (args.codomain instanceof CatObject)
 			codomain = args.codomain;
 		if (!codomain)
-			codomain = this.diagram.getElement(args.codomain, args.category);
+			codomain = diagram.getElement(args.codomain, args.category);
 		if (!codomain)
 			throw `no codomain ${args.codomain} for morphism ${args.basename}`;
 		Object.defineProperties(this,
@@ -13687,7 +13687,7 @@ if (this.basename === "Cm{factorial,Id{hdole/nat/N64}dI}mC")debugger;
 	uses(elt, start = true, limitors = new Set())		// True if the given morphism is used in the construction of this morphism somehow or identical to it
 	{
 		if (limitors.has(this))
-			return true;
+			return false;
 		if (elt instanceof CatObject)
 			return this.domain.uses(elt, false, limitors) || this.codomain.uses(elt, false, limitors);
 		if (this.isEquivalent(elt))
@@ -14834,7 +14834,7 @@ class IndexMorphism extends Morphism
 				return;
 			this.to.decrRefcnt();
 		}
-		to.incrRefcnt();
+		to && to.incrRefcnt();
 		this.to = to;
 		return true;
 	}
@@ -16204,6 +16204,8 @@ class Composite extends MultiMorphism
 	constructor(diagram, args)
 	{
 		const morphisms = diagram.getElements(args.morphisms);
+		if (morphisms.length !== args.morphisms.length)
+			throw 'missing morphisms';
 		const nuArgs = U.clone(args);
 		nuArgs.basename = Composite.Basename(diagram, {morphisms});
 		nuArgs.domain = Composite.Domain(morphisms);
@@ -17443,6 +17445,8 @@ class Diagram extends Functor
 			version:					{value:U.getArg(args, 'version', 0),			writable:true},
 			viewport:					{value:{x:0, y:0, scale:1.0},					writable:true},
 		});
+		// TODO fix this
+		const term = this.getTerminal();
 		if ('references' in args)
 			args.references.map(r => this.addReference(r, null, false));
 		if ('elements' in nuArgs)
@@ -18422,7 +18426,7 @@ class Diagram extends Functor
 			elt = this.domain.getElement(name);		// does the requested element live in the domain category?
 		if (elt)
 			return elt;
-		else if (typeof name === 'string')
+		if (typeof name === 'string')
 		{
 			if (this.elements.has(name))
 				return this.elements.get(name);
@@ -19821,6 +19825,27 @@ if (fn)debugger;	// TODO
 						o.svg.classList.add('badGlow');
 			}
 		});
+	}
+	getUsingElements(elt)
+	{
+		const useElts = [];
+		this.getAll().forEach(e =>
+		{
+			let rslt = false;
+			if (e instanceof MultiObject)
+				rslt = e.objects.filter(o => o === elt).length > 0;
+			else if (e instanceof MultiMorphism)
+				rslt = e.morphisms.filter(m => m === elt).length > 0;
+			else if (e instanceof NamedObject || e instanceof NamedMorphism)
+				rslt = e.source === elt;
+			else if (e instanceof LambdaMorphism)
+				rslt = e.preCurry === elt;
+			else if (e.constructor.name === 'Morphism' && 'recursor' in e)
+				rslt = e.recursor === elt;
+			rslt && useElts.push(e);
+		});
+		this.domain.elements.forEach(e => 'to' in e && e.to === elt && useElts.push(e));
+		return useElts;
 	}
 	static Codename(args)
 	{
