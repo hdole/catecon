@@ -181,7 +181,7 @@
           "x": -1700,
           "y": -1680
         },
-        "height": "31"
+        "height": 31
       },
       {
         "basename": "o_3",
@@ -225,9 +225,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": -1720,
-          "y": -1830
+          "y": -1810
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -346,7 +346,7 @@
           "x": -800,
           "y": 1200
         },
-        "height": "12"
+        "height": 12
       },
       {
         "basename": "o_2",
@@ -869,7 +869,7 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1,
       "min": 0,
       "max": 1
@@ -1060,11 +1060,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644713478819,
+  "timestamp": 1652437469119,
   "version": 0,
   "viewport": {
-    "x": 2152,
-    "y": 915,
-    "scale": 1.2584167540801645
+    "x": 3036,
+    "y": 3269,
+    "scale": 1.613054758270685
   }
 }

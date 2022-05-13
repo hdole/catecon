@@ -22,10 +22,10 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": -440,
+          "x": -480,
           "y": 60
         },
-        "height": "286",
+        "height": 286,
         "weight": "bold"
       },
       {
@@ -36,7 +36,7 @@
           "x": -460,
           "y": 160
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_2",
@@ -55,7 +55,7 @@
           "x": -460,
           "y": 500
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_3",
@@ -92,7 +92,7 @@
           "x": -460,
           "y": 700
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "In Catecon, create the product of two selected objects\nor morphisms by using the product action <icon>product</icon> or clicking\nthe p key.",
@@ -102,7 +102,7 @@
           "x": -460,
           "y": 330
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "To create the product of two selected morphisms,\nuse the product action <icon>product</icon> or the p key.",
@@ -112,7 +112,7 @@
           "x": -460,
           "y": 870
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_12",
@@ -419,11 +419,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1645077223030,
+  "timestamp": 1652437544850,
   "version": 0,
   "viewport": {
-    "x": 1117,
-    "y": -292,
-    "scale": 1.8557940601814968
+    "x": 1005,
+    "y": 330,
+    "scale": 1.6147219583014416
   }
 }

@@ -25,7 +25,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 650,
-          "y": 590
+          "y": 600
         },
         "height": 95,
         "weight": "bold"
@@ -147,6 +147,16 @@
           "x": 990,
           "y": 1730
         }
+      },
+      {
+        "description": "BUG:  not commutative",
+        "basename": "t_3",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 640,
+          "y": 1430
+        },
+        "height": 24
       },
       {
         "basename": "m_2",
@@ -280,16 +290,6 @@
           "hdole/iso/o_7",
           "hdole/iso/o_3"
         ]
-      },
-      {
-        "description": "BUG:  not commutative",
-        "basename": "t_3",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 640,
-          "y": 1430
-        },
-        "height": 24
       }
     ],
     "cells": [
@@ -379,11 +379,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1651659186453,
+  "timestamp": 1652437434218,
   "version": 0,
   "viewport": {
-    "x": -1814,
-    "y": -3590,
-    "scale": 3.3527365180243454
+    "x": -1959,
+    "y": -1711,
+    "scale": 3.4707942123852593
   }
 }

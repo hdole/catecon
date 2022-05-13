@@ -521,9 +521,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": -1340,
-          "y": -340
+          "y": -330
         },
-        "height": "600",
+        "height": 600,
         "weight": "bold"
       },
       {
@@ -598,7 +598,7 @@
           "x": 360,
           "y": -80
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_23",
@@ -2325,7 +2325,7 @@
           "x": -1200,
           "y": 1600
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_96",
@@ -2787,7 +2787,7 @@
           "x": -1200,
           "y": 1000
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "The first integer",
@@ -2797,7 +2797,7 @@
           "x": -1200,
           "y": 1200
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_321",
@@ -3003,1014 +3003,6 @@
           "x": 1000,
           "y": 4000
         }
-      },
-      {
-        "basename": "m_0",
-        "prototype": "IndexMorphism",
-        "domain": "o_2",
-        "codomain": "o_3",
-        "to": "zero64"
-      },
-      {
-        "basename": "m_1",
-        "prototype": "IndexMorphism",
-        "domain": "o_4",
-        "codomain": "o_5",
-        "to": "one64"
-      },
-      {
-        "basename": "m_3",
-        "prototype": "IndexMorphism",
-        "domain": "o_9",
-        "codomain": "o_10",
-        "to": "addr64"
-      },
-      {
-        "basename": "m_7",
-        "prototype": "IndexMorphism",
-        "domain": "o_17",
-        "codomain": "o_18",
-        "to": "lt64"
-      },
-      {
-        "basename": "m_8",
-        "prototype": "IndexMorphism",
-        "domain": "o_19",
-        "codomain": "o_20",
-        "to": "lte64"
-      },
-      {
-        "basename": "m_11",
-        "prototype": "IndexMorphism",
-        "domain": "o_27",
-        "codomain": "o_28",
-        "to": "zero16"
-      },
-      {
-        "basename": "m_14",
-        "prototype": "IndexMorphism",
-        "domain": "o_33",
-        "codomain": "o_34",
-        "to": "addr16"
-      },
-      {
-        "basename": "m_16",
-        "prototype": "IndexMorphism",
-        "domain": "o_37",
-        "codomain": "o_38",
-        "to": "mult16"
-      },
-      {
-        "basename": "m_17",
-        "prototype": "IndexMorphism",
-        "domain": "o_39",
-        "codomain": "o_40",
-        "to": "and16"
-      },
-      {
-        "basename": "m_18",
-        "prototype": "IndexMorphism",
-        "domain": "o_41",
-        "codomain": "o_42",
-        "to": "or16"
-      },
-      {
-        "basename": "m_19",
-        "prototype": "IndexMorphism",
-        "domain": "o_43",
-        "codomain": "o_44",
-        "to": "xor16"
-      },
-      {
-        "basename": "m_21",
-        "prototype": "IndexMorphism",
-        "domain": "o_47",
-        "codomain": "o_48",
-        "to": "mod16"
-      },
-      {
-        "basename": "m_23",
-        "prototype": "IndexMorphism",
-        "domain": "o_51",
-        "codomain": "o_52",
-        "to": "lt16"
-      },
-      {
-        "basename": "m_24",
-        "prototype": "IndexMorphism",
-        "domain": "o_53",
-        "codomain": "o_54",
-        "to": "lte16"
-      },
-      {
-        "basename": "m_5",
-        "prototype": "IndexMorphism",
-        "domain": "o_14",
-        "codomain": "o_55",
-        "to": "succ64"
-      },
-      {
-        "basename": "m_6",
-        "prototype": "IndexMorphism",
-        "domain": "o_15",
-        "codomain": "o_13",
-        "to": "decr"
-      },
-      {
-        "basename": "m_22",
-        "prototype": "IndexMorphism",
-        "domain": "o_8",
-        "codomain": "o_16",
-        "to": "Z16_equals"
-      },
-      {
-        "basename": "m_25",
-        "prototype": "IndexMorphism",
-        "domain": "o_23",
-        "codomain": "o_50",
-        "to": "zero32"
-      },
-      {
-        "basename": "m_27",
-        "prototype": "IndexMorphism",
-        "domain": "o_58",
-        "codomain": "o_25",
-        "to": "Z82Z16"
-      },
-      {
-        "basename": "m_32",
-        "prototype": "IndexMorphism",
-        "domain": "o_66",
-        "codomain": "o_70",
-        "to": "succ32"
-      },
-      {
-        "basename": "m_33",
-        "prototype": "IndexMorphism",
-        "domain": "o_73",
-        "codomain": "o_71",
-        "to": "decr32"
-      },
-      {
-        "basename": "m_38",
-        "prototype": "IndexMorphism",
-        "domain": "o_67",
-        "codomain": "o_59",
-        "to": "succ16"
-      },
-      {
-        "basename": "m_39",
-        "prototype": "IndexMorphism",
-        "domain": "o_74",
-        "codomain": "o_1",
-        "to": "zero8"
-      },
-      {
-        "basename": "m_43",
-        "prototype": "IndexMorphism",
-        "domain": "o_81",
-        "codomain": "o_79",
-        "to": "decr8"
-      },
-      {
-        "basename": "m_44",
-        "prototype": "IndexMorphism",
-        "domain": "o_78",
-        "codomain": "o_77",
-        "to": "succ8"
-      },
-      {
-        "basename": "m_45",
-        "prototype": "IndexMorphism",
-        "domain": "o_82",
-        "codomain": "o_80",
-        "to": "decr16"
-      },
-      {
-        "basename": "m_46",
-        "prototype": "IndexMorphism",
-        "domain": "o_86",
-        "codomain": "o_85",
-        "to": "addr32"
-      },
-      {
-        "basename": "m_42",
-        "prototype": "IndexMorphism",
-        "domain": "o_84",
-        "codomain": "o_83",
-        "to": "addr8"
-      },
-      {
-        "basename": "m_47",
-        "prototype": "IndexMorphism",
-        "domain": "o_90",
-        "codomain": "o_89",
-        "to": "subr32"
-      },
-      {
-        "basename": "m_51",
-        "prototype": "IndexMorphism",
-        "domain": "o_11",
-        "codomain": "o_103",
-        "to": "mult64"
-      },
-      {
-        "basename": "m_52",
-        "prototype": "IndexMorphism",
-        "domain": "o_87",
-        "codomain": "o_95",
-        "to": "mult32"
-      },
-      {
-        "basename": "m_53",
-        "prototype": "IndexMorphism",
-        "domain": "o_91",
-        "codomain": "o_92",
-        "to": "subr64"
-      },
-      {
-        "basename": "m_57",
-        "prototype": "IndexMorphism",
-        "domain": "o_105",
-        "codomain": "o_106",
-        "to": "subr8"
-      },
-      {
-        "basename": "m_59",
-        "prototype": "IndexMorphism",
-        "domain": "o_108",
-        "codomain": "o_109",
-        "to": "mult8"
-      },
-      {
-        "basename": "m_61",
-        "prototype": "IndexMorphism",
-        "domain": "o_110",
-        "codomain": "o_111",
-        "to": "and8"
-      },
-      {
-        "basename": "m_62",
-        "prototype": "IndexMorphism",
-        "domain": "o_112",
-        "codomain": "o_113",
-        "to": "or8"
-      },
-      {
-        "basename": "m_71",
-        "prototype": "IndexMorphism",
-        "domain": "o_63",
-        "codomain": "o_101",
-        "to": "zero128"
-      },
-      {
-        "basename": "m_72",
-        "prototype": "IndexMorphism",
-        "domain": "o_64",
-        "codomain": "o_102",
-        "to": "one128"
-      },
-      {
-        "basename": "m_74",
-        "prototype": "IndexMorphism",
-        "domain": "o_125",
-        "codomain": "o_124",
-        "to": "succ128"
-      },
-      {
-        "basename": "m_75",
-        "prototype": "IndexMorphism",
-        "domain": "o_126",
-        "codomain": "o_127",
-        "to": "decr128"
-      },
-      {
-        "basename": "m_76",
-        "prototype": "IndexMorphism",
-        "domain": "o_129",
-        "codomain": "o_128",
-        "to": "addr128"
-      },
-      {
-        "basename": "m_96",
-        "prototype": "IndexMorphism",
-        "domain": "o_139",
-        "codomain": "o_140",
-        "to": "and32"
-      },
-      {
-        "basename": "m_97",
-        "prototype": "IndexMorphism",
-        "domain": "o_161",
-        "codomain": "o_162",
-        "to": "and64"
-      },
-      {
-        "basename": "m_98",
-        "prototype": "IndexMorphism",
-        "domain": "o_171",
-        "codomain": "o_179",
-        "to": "and128"
-      },
-      {
-        "basename": "m_102",
-        "prototype": "IndexMorphism",
-        "domain": "o_114",
-        "codomain": "o_115",
-        "to": "xor8"
-      },
-      {
-        "basename": "m_104",
-        "prototype": "IndexMorphism",
-        "domain": "o_186",
-        "codomain": "o_192",
-        "to": "mod8"
-      },
-      {
-        "basename": "m_105",
-        "prototype": "IndexMorphism",
-        "domain": "o_188",
-        "codomain": "o_158",
-        "to": "equ8"
-      },
-      {
-        "basename": "m_106",
-        "prototype": "IndexMorphism",
-        "domain": "o_150",
-        "codomain": "o_152",
-        "to": "equ32"
-      },
-      {
-        "basename": "m_107",
-        "prototype": "IndexMorphism",
-        "domain": "o_189",
-        "codomain": "o_159",
-        "to": "lt8"
-      },
-      {
-        "basename": "m_109",
-        "prototype": "IndexMorphism",
-        "domain": "o_149",
-        "codomain": "o_153",
-        "to": "lt32"
-      },
-      {
-        "basename": "m_110",
-        "prototype": "IndexMorphism",
-        "domain": "o_141",
-        "codomain": "o_142",
-        "to": "or32"
-      },
-      {
-        "basename": "m_111",
-        "prototype": "IndexMorphism",
-        "domain": "o_163",
-        "codomain": "o_164",
-        "to": "or64"
-      },
-      {
-        "basename": "m_112",
-        "prototype": "IndexMorphism",
-        "domain": "o_172",
-        "codomain": "o_180",
-        "to": "or128"
-      },
-      {
-        "basename": "m_113",
-        "prototype": "IndexMorphism",
-        "domain": "o_151",
-        "codomain": "o_154",
-        "to": "lte32"
-      },
-      {
-        "basename": "m_114",
-        "prototype": "IndexMorphism",
-        "domain": "o_148",
-        "codomain": "o_147",
-        "to": "mod32"
-      },
-      {
-        "basename": "m_116",
-        "prototype": "IndexMorphism",
-        "domain": "o_143",
-        "codomain": "o_144",
-        "to": "xor32"
-      },
-      {
-        "basename": "m_117",
-        "prototype": "IndexMorphism",
-        "domain": "o_178",
-        "codomain": "o_157",
-        "to": "lte128"
-      },
-      {
-        "basename": "m_118",
-        "prototype": "IndexMorphism",
-        "domain": "o_165",
-        "codomain": "o_166",
-        "to": "xor64"
-      },
-      {
-        "basename": "m_120",
-        "prototype": "IndexMorphism",
-        "domain": "o_170",
-        "codomain": "o_169",
-        "to": "mod64"
-      },
-      {
-        "basename": "m_121",
-        "prototype": "IndexMorphism",
-        "domain": "o_173",
-        "codomain": "o_181",
-        "to": "xor128"
-      },
-      {
-        "basename": "m_123",
-        "prototype": "IndexMorphism",
-        "domain": "o_175",
-        "codomain": "o_183",
-        "to": "mod128"
-      },
-      {
-        "basename": "m_124",
-        "prototype": "IndexMorphism",
-        "domain": "o_176",
-        "codomain": "o_155",
-        "to": "equ128"
-      },
-      {
-        "basename": "m_125",
-        "prototype": "IndexMorphism",
-        "domain": "o_177",
-        "codomain": "o_156",
-        "to": "lt128"
-      },
-      {
-        "basename": "m_126",
-        "prototype": "IndexMorphism",
-        "domain": "o_193",
-        "codomain": "o_195",
-        "to": "gt8"
-      },
-      {
-        "basename": "m_127",
-        "prototype": "IndexMorphism",
-        "domain": "o_194",
-        "codomain": "o_196",
-        "to": "gte8"
-      },
-      {
-        "basename": "m_129",
-        "prototype": "IndexMorphism",
-        "domain": "o_199",
-        "codomain": "o_200",
-        "to": "rsh8"
-      },
-      {
-        "basename": "m_130",
-        "prototype": "IndexMorphism",
-        "domain": "o_201",
-        "codomain": "o_202",
-        "to": "not8"
-      },
-      {
-        "basename": "m_131",
-        "prototype": "IndexMorphism",
-        "domain": "o_136",
-        "codomain": "o_131",
-        "to": "subr128"
-      },
-      {
-        "basename": "m_15",
-        "prototype": "IndexMorphism",
-        "domain": "o_35",
-        "codomain": "o_36",
-        "to": "subr16"
-      },
-      {
-        "basename": "m_49",
-        "prototype": "IndexMorphism",
-        "domain": "o_203",
-        "codomain": "o_93",
-        "to": "add8"
-      },
-      {
-        "basename": "m_58",
-        "prototype": "IndexMorphism",
-        "domain": "o_204",
-        "codomain": "o_107",
-        "to": "sub8"
-      },
-      {
-        "basename": "m_92",
-        "prototype": "IndexMorphism",
-        "domain": "o_205",
-        "codomain": "o_94",
-        "to": "sub16"
-      },
-      {
-        "basename": "m_56",
-        "prototype": "IndexMorphism",
-        "domain": "o_206",
-        "codomain": "o_104",
-        "to": "sub32"
-      },
-      {
-        "basename": "m_54",
-        "prototype": "IndexMorphism",
-        "domain": "o_207",
-        "codomain": "o_98",
-        "to": "sub64"
-      },
-      {
-        "basename": "m_79",
-        "prototype": "IndexMorphism",
-        "domain": "o_208",
-        "codomain": "o_132",
-        "to": "sub128"
-      },
-      {
-        "basename": "m_80",
-        "prototype": "IndexMorphism",
-        "domain": "o_209",
-        "codomain": "o_130",
-        "to": "add128"
-      },
-      {
-        "basename": "m_55",
-        "prototype": "IndexMorphism",
-        "domain": "o_210",
-        "codomain": "o_97",
-        "to": "add64"
-      },
-      {
-        "basename": "m_77",
-        "prototype": "IndexMorphism",
-        "domain": "o_211",
-        "codomain": "o_138",
-        "to": "add32"
-      },
-      {
-        "basename": "m_48",
-        "prototype": "IndexMorphism",
-        "domain": "o_212",
-        "codomain": "o_88",
-        "to": "add16"
-      },
-      {
-        "basename": "m_81",
-        "prototype": "IndexMorphism",
-        "domain": "o_12",
-        "codomain": "o_134",
-        "to": "mult128c"
-      },
-      {
-        "basename": "m_4",
-        "prototype": "IndexMorphism",
-        "domain": "o_99",
-        "codomain": "o_135",
-        "to": "not16"
-      },
-      {
-        "basename": "m_50",
-        "prototype": "IndexMorphism",
-        "domain": "o_213",
-        "codomain": "o_214",
-        "to": "not32"
-      },
-      {
-        "basename": "m_60",
-        "prototype": "IndexMorphism",
-        "domain": "o_215",
-        "codomain": "o_216",
-        "to": "not64"
-      },
-      {
-        "basename": "m_82",
-        "prototype": "IndexMorphism",
-        "domain": "o_217",
-        "codomain": "o_218",
-        "to": "not128"
-      },
-      {
-        "basename": "m_95",
-        "prototype": "IndexMorphism",
-        "domain": "o_225",
-        "codomain": "o_226",
-        "to": "max8"
-      },
-      {
-        "basename": "m_132",
-        "prototype": "IndexMorphism",
-        "domain": "o_227",
-        "codomain": "o_228",
-        "to": "min8"
-      },
-      {
-        "basename": "m_200",
-        "prototype": "IndexMorphism",
-        "domain": "o_270",
-        "codomain": "o_271",
-        "to": "max16"
-      },
-      {
-        "basename": "m_201",
-        "prototype": "IndexMorphism",
-        "domain": "o_272",
-        "codomain": "o_273",
-        "to": "min16"
-      },
-      {
-        "basename": "m_202",
-        "prototype": "IndexMorphism",
-        "domain": "o_280",
-        "codomain": "o_281",
-        "to": "max32"
-      },
-      {
-        "basename": "m_203",
-        "prototype": "IndexMorphism",
-        "domain": "o_282",
-        "codomain": "o_283",
-        "to": "min32"
-      },
-      {
-        "basename": "m_204",
-        "prototype": "IndexMorphism",
-        "domain": "o_290",
-        "codomain": "o_291",
-        "to": "max64"
-      },
-      {
-        "basename": "m_205",
-        "prototype": "IndexMorphism",
-        "domain": "o_292",
-        "codomain": "o_293",
-        "to": "min64"
-      },
-      {
-        "basename": "m_206",
-        "prototype": "IndexMorphism",
-        "domain": "o_300",
-        "codomain": "o_301",
-        "to": "max128"
-      },
-      {
-        "basename": "m_207",
-        "prototype": "IndexMorphism",
-        "domain": "o_302",
-        "codomain": "o_303",
-        "to": "min128"
-      },
-      {
-        "basename": "m_133",
-        "prototype": "IndexMorphism",
-        "domain": "o_229",
-        "codomain": "o_230",
-        "to": "gt16"
-      },
-      {
-        "basename": "m_134",
-        "prototype": "IndexMorphism",
-        "domain": "o_231",
-        "codomain": "o_232",
-        "to": "gt32"
-      },
-      {
-        "basename": "m_135",
-        "prototype": "IndexMorphism",
-        "domain": "o_233",
-        "codomain": "o_234",
-        "to": "gt64"
-      },
-      {
-        "basename": "m_136",
-        "prototype": "IndexMorphism",
-        "domain": "o_235",
-        "codomain": "o_236",
-        "to": "gt128"
-      },
-      {
-        "basename": "m_137",
-        "prototype": "IndexMorphism",
-        "domain": "o_237",
-        "codomain": "o_238",
-        "to": "gte16"
-      },
-      {
-        "basename": "m_108",
-        "prototype": "IndexMorphism",
-        "domain": "o_190",
-        "codomain": "o_160",
-        "to": "lte8"
-      },
-      {
-        "basename": "m_140",
-        "prototype": "IndexMorphism",
-        "domain": "o_239",
-        "codomain": "o_240",
-        "to": "gte32"
-      },
-      {
-        "basename": "m_141",
-        "prototype": "IndexMorphism",
-        "domain": "o_241",
-        "codomain": "o_242",
-        "to": "gte64"
-      },
-      {
-        "basename": "m_142",
-        "prototype": "IndexMorphism",
-        "domain": "o_243",
-        "codomain": "o_244",
-        "to": "gte128"
-      },
-      {
-        "basename": "m_145",
-        "prototype": "IndexMorphism",
-        "domain": "o_253",
-        "codomain": "o_96",
-        "to": "rsh16"
-      },
-      {
-        "basename": "m_146",
-        "prototype": "IndexMorphism",
-        "domain": "o_255",
-        "codomain": "o_254",
-        "to": "rsh32"
-      },
-      {
-        "basename": "m_147",
-        "prototype": "IndexMorphism",
-        "domain": "o_257",
-        "codomain": "o_256",
-        "to": "rsh64"
-      },
-      {
-        "basename": "m_148",
-        "prototype": "IndexMorphism",
-        "domain": "o_259",
-        "codomain": "o_258",
-        "to": "rsh128"
-      },
-      {
-        "basename": "m_150",
-        "prototype": "IndexMorphism",
-        "domain": "o_262",
-        "codomain": "o_263",
-        "to": "minus_one16"
-      },
-      {
-        "basename": "m_151",
-        "prototype": "IndexMorphism",
-        "domain": "o_264",
-        "codomain": "o_265",
-        "to": "minus_one32"
-      },
-      {
-        "basename": "m_152",
-        "prototype": "IndexMorphism",
-        "domain": "o_266",
-        "codomain": "o_267",
-        "to": "minus_one8"
-      },
-      {
-        "basename": "m_154",
-        "prototype": "IndexMorphism",
-        "domain": "o_274",
-        "codomain": "o_275",
-        "to": "inf64"
-      },
-      {
-        "basename": "m_155",
-        "prototype": "IndexMorphism",
-        "domain": "o_276",
-        "codomain": "o_277",
-        "to": "inf16"
-      },
-      {
-        "basename": "m_156",
-        "prototype": "IndexMorphism",
-        "domain": "o_278",
-        "codomain": "o_279",
-        "to": "inf32"
-      },
-      {
-        "basename": "m_157",
-        "prototype": "IndexMorphism",
-        "domain": "o_284",
-        "codomain": "o_285",
-        "to": "inf8"
-      },
-      {
-        "basename": "m_158",
-        "prototype": "IndexMorphism",
-        "domain": "o_286",
-        "codomain": "o_287",
-        "to": "inf128"
-      },
-      {
-        "basename": "m_20",
-        "prototype": "IndexMorphism",
-        "domain": "o_187",
-        "codomain": "o_191",
-        "to": "div8"
-      },
-      {
-        "basename": "m_103",
-        "prototype": "IndexMorphism",
-        "domain": "o_45",
-        "codomain": "o_46",
-        "to": "div16"
-      },
-      {
-        "basename": "m_115",
-        "prototype": "IndexMorphism",
-        "domain": "o_146",
-        "codomain": "o_145",
-        "to": "div32"
-      },
-      {
-        "basename": "m_119",
-        "prototype": "IndexMorphism",
-        "domain": "o_167",
-        "codomain": "o_168",
-        "to": "div64"
-      },
-      {
-        "basename": "m_122",
-        "prototype": "IndexMorphism",
-        "domain": "o_174",
-        "codomain": "o_182",
-        "to": "div128"
-      },
-      {
-        "basename": "m_12",
-        "prototype": "IndexMorphism",
-        "domain": "o_75",
-        "codomain": "o_24",
-        "to": "one8"
-      },
-      {
-        "basename": "m_26",
-        "prototype": "IndexMorphism",
-        "domain": "o_29",
-        "codomain": "o_30",
-        "to": "one16"
-      },
-      {
-        "basename": "m_40",
-        "prototype": "IndexMorphism",
-        "domain": "o_56",
-        "codomain": "o_57",
-        "to": "one32"
-      },
-      {
-        "basename": "m_149",
-        "prototype": "IndexMorphism",
-        "domain": "o_260",
-        "codomain": "o_261",
-        "to": "minus_one64"
-      },
-      {
-        "basename": "m_153",
-        "prototype": "IndexMorphism",
-        "domain": "o_268",
-        "codomain": "o_269",
-        "to": "minus_one128"
-      },
-      {
-        "basename": "m_159",
-        "prototype": "IndexMorphism",
-        "domain": "o_288",
-        "codomain": "o_289",
-        "to": "minus_inf8"
-      },
-      {
-        "basename": "m_160",
-        "prototype": "IndexMorphism",
-        "domain": "o_294",
-        "codomain": "o_295",
-        "to": "minus_inf16"
-      },
-      {
-        "basename": "m_161",
-        "prototype": "IndexMorphism",
-        "domain": "o_296",
-        "codomain": "o_297",
-        "to": "minus_inf32"
-      },
-      {
-        "basename": "m_162",
-        "prototype": "IndexMorphism",
-        "domain": "o_298",
-        "codomain": "o_299",
-        "to": "minus_inf64"
-      },
-      {
-        "basename": "m_163",
-        "prototype": "IndexMorphism",
-        "domain": "o_304",
-        "codomain": "o_305",
-        "to": "minus_infin128"
-      },
-      {
-        "basename": "m_128",
-        "prototype": "IndexMorphism",
-        "domain": "o_197",
-        "codomain": "o_198",
-        "to": "lshf8"
-      },
-      {
-        "basename": "m_138",
-        "prototype": "IndexMorphism",
-        "domain": "o_245",
-        "codomain": "o_246",
-        "to": "lsh16"
-      },
-      {
-        "basename": "m_139",
-        "prototype": "IndexMorphism",
-        "domain": "o_247",
-        "codomain": "o_248",
-        "to": "lsh32"
-      },
-      {
-        "basename": "m_143",
-        "prototype": "IndexMorphism",
-        "domain": "o_249",
-        "codomain": "o_250",
-        "to": "lsh64"
-      },
-      {
-        "basename": "m_144",
-        "prototype": "IndexMorphism",
-        "domain": "o_251",
-        "codomain": "o_252",
-        "to": "lsh128"
-      },
-      {
-        "basename": "m_169",
-        "prototype": "IndexMorphism",
-        "domain": "o_321",
-        "codomain": "o_322",
-        "to": "abs8"
-      },
-      {
-        "basename": "m_170",
-        "prototype": "IndexMorphism",
-        "domain": "o_323",
-        "codomain": "o_324",
-        "to": "abs16"
-      },
-      {
-        "basename": "m_171",
-        "prototype": "IndexMorphism",
-        "domain": "o_325",
-        "codomain": "o_326",
-        "to": "abs32"
-      },
-      {
-        "basename": "m_172",
-        "prototype": "IndexMorphism",
-        "domain": "o_327",
-        "codomain": "o_328",
-        "to": "abs64"
-      },
-      {
-        "basename": "m_173",
-        "prototype": "IndexMorphism",
-        "domain": "o_329",
-        "codomain": "o_330",
-        "to": "abs128"
-      },
-      {
-        "basename": "m_99",
-        "prototype": "IndexMorphism",
-        "domain": "o_6",
-        "codomain": "o_184",
-        "to": "N62toZ128"
-      },
-      {
-        "basename": "m_31",
-        "prototype": "IndexMorphism",
-        "domain": "o_7",
-        "codomain": "o_0",
-        "to": "Z322Z64"
-      },
-      {
-        "basename": "m_30",
-        "prototype": "IndexMorphism",
-        "domain": "o_26",
-        "codomain": "o_62",
-        "to": "Z162Z32"
-      },
-      {
-        "basename": "m_2",
-        "prototype": "IndexMorphism",
-        "domain": "o_21",
-        "codomain": "o_22",
-        "to": "equ64"
       },
       {
         "description": "typedef int8_t %0;\n",
@@ -5787,11 +4779,1027 @@
         "height": 6,
         "ext": "cpp",
         "element": "Z162Z32"
+      },
+      {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "zero64"
+      },
+      {
+        "basename": "m_1",
+        "prototype": "IndexMorphism",
+        "domain": "o_4",
+        "codomain": "o_5",
+        "to": "one64"
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "o_9",
+        "codomain": "o_10",
+        "to": "addr64"
+      },
+      {
+        "basename": "m_7",
+        "prototype": "IndexMorphism",
+        "domain": "o_17",
+        "codomain": "o_18",
+        "to": "lt64"
+      },
+      {
+        "basename": "m_8",
+        "prototype": "IndexMorphism",
+        "domain": "o_19",
+        "codomain": "o_20",
+        "to": "lte64"
+      },
+      {
+        "basename": "m_11",
+        "prototype": "IndexMorphism",
+        "domain": "o_27",
+        "codomain": "o_28",
+        "to": "zero16"
+      },
+      {
+        "basename": "m_14",
+        "prototype": "IndexMorphism",
+        "domain": "o_33",
+        "codomain": "o_34",
+        "to": "addr16"
+      },
+      {
+        "basename": "m_16",
+        "prototype": "IndexMorphism",
+        "domain": "o_37",
+        "codomain": "o_38",
+        "to": "mult16"
+      },
+      {
+        "basename": "m_17",
+        "prototype": "IndexMorphism",
+        "domain": "o_39",
+        "codomain": "o_40",
+        "to": "and16"
+      },
+      {
+        "basename": "m_18",
+        "prototype": "IndexMorphism",
+        "domain": "o_41",
+        "codomain": "o_42",
+        "to": "or16"
+      },
+      {
+        "basename": "m_19",
+        "prototype": "IndexMorphism",
+        "domain": "o_43",
+        "codomain": "o_44",
+        "to": "xor16"
+      },
+      {
+        "basename": "m_21",
+        "prototype": "IndexMorphism",
+        "domain": "o_47",
+        "codomain": "o_48",
+        "to": "mod16"
+      },
+      {
+        "basename": "m_23",
+        "prototype": "IndexMorphism",
+        "domain": "o_51",
+        "codomain": "o_52",
+        "to": "lt16"
+      },
+      {
+        "basename": "m_24",
+        "prototype": "IndexMorphism",
+        "domain": "o_53",
+        "codomain": "o_54",
+        "to": "lte16"
+      },
+      {
+        "basename": "m_5",
+        "prototype": "IndexMorphism",
+        "domain": "o_14",
+        "codomain": "o_55",
+        "to": "succ64"
+      },
+      {
+        "basename": "m_6",
+        "prototype": "IndexMorphism",
+        "domain": "o_15",
+        "codomain": "o_13",
+        "to": "decr"
+      },
+      {
+        "basename": "m_22",
+        "prototype": "IndexMorphism",
+        "domain": "o_8",
+        "codomain": "o_16",
+        "to": "Z16_equals"
+      },
+      {
+        "basename": "m_25",
+        "prototype": "IndexMorphism",
+        "domain": "o_23",
+        "codomain": "o_50",
+        "to": "zero32"
+      },
+      {
+        "basename": "m_27",
+        "prototype": "IndexMorphism",
+        "domain": "o_58",
+        "codomain": "o_25",
+        "to": "Z82Z16"
+      },
+      {
+        "basename": "m_32",
+        "prototype": "IndexMorphism",
+        "domain": "o_66",
+        "codomain": "o_70",
+        "to": "succ32"
+      },
+      {
+        "basename": "m_33",
+        "prototype": "IndexMorphism",
+        "domain": "o_73",
+        "codomain": "o_71",
+        "to": "decr32"
+      },
+      {
+        "basename": "m_38",
+        "prototype": "IndexMorphism",
+        "domain": "o_67",
+        "codomain": "o_59",
+        "to": "succ16"
+      },
+      {
+        "basename": "m_39",
+        "prototype": "IndexMorphism",
+        "domain": "o_74",
+        "codomain": "o_1",
+        "to": "zero8"
+      },
+      {
+        "basename": "m_43",
+        "prototype": "IndexMorphism",
+        "domain": "o_81",
+        "codomain": "o_79",
+        "to": "decr8"
+      },
+      {
+        "basename": "m_44",
+        "prototype": "IndexMorphism",
+        "domain": "o_78",
+        "codomain": "o_77",
+        "to": "succ8"
+      },
+      {
+        "basename": "m_45",
+        "prototype": "IndexMorphism",
+        "domain": "o_82",
+        "codomain": "o_80",
+        "to": "decr16"
+      },
+      {
+        "basename": "m_46",
+        "prototype": "IndexMorphism",
+        "domain": "o_86",
+        "codomain": "o_85",
+        "to": "addr32"
+      },
+      {
+        "basename": "m_42",
+        "prototype": "IndexMorphism",
+        "domain": "o_84",
+        "codomain": "o_83",
+        "to": "addr8"
+      },
+      {
+        "basename": "m_47",
+        "prototype": "IndexMorphism",
+        "domain": "o_90",
+        "codomain": "o_89",
+        "to": "subr32"
+      },
+      {
+        "basename": "m_51",
+        "prototype": "IndexMorphism",
+        "domain": "o_11",
+        "codomain": "o_103",
+        "to": "mult64"
+      },
+      {
+        "basename": "m_52",
+        "prototype": "IndexMorphism",
+        "domain": "o_87",
+        "codomain": "o_95",
+        "to": "mult32"
+      },
+      {
+        "basename": "m_53",
+        "prototype": "IndexMorphism",
+        "domain": "o_91",
+        "codomain": "o_92",
+        "to": "subr64"
+      },
+      {
+        "basename": "m_57",
+        "prototype": "IndexMorphism",
+        "domain": "o_105",
+        "codomain": "o_106",
+        "to": "subr8"
+      },
+      {
+        "basename": "m_59",
+        "prototype": "IndexMorphism",
+        "domain": "o_108",
+        "codomain": "o_109",
+        "to": "mult8"
+      },
+      {
+        "basename": "m_61",
+        "prototype": "IndexMorphism",
+        "domain": "o_110",
+        "codomain": "o_111",
+        "to": "and8"
+      },
+      {
+        "basename": "m_62",
+        "prototype": "IndexMorphism",
+        "domain": "o_112",
+        "codomain": "o_113",
+        "to": "or8"
+      },
+      {
+        "basename": "m_71",
+        "prototype": "IndexMorphism",
+        "domain": "o_63",
+        "codomain": "o_101",
+        "to": "zero128"
+      },
+      {
+        "basename": "m_72",
+        "prototype": "IndexMorphism",
+        "domain": "o_64",
+        "codomain": "o_102",
+        "to": "one128"
+      },
+      {
+        "basename": "m_74",
+        "prototype": "IndexMorphism",
+        "domain": "o_125",
+        "codomain": "o_124",
+        "to": "succ128"
+      },
+      {
+        "basename": "m_75",
+        "prototype": "IndexMorphism",
+        "domain": "o_126",
+        "codomain": "o_127",
+        "to": "decr128"
+      },
+      {
+        "basename": "m_76",
+        "prototype": "IndexMorphism",
+        "domain": "o_129",
+        "codomain": "o_128",
+        "to": "addr128"
+      },
+      {
+        "basename": "m_96",
+        "prototype": "IndexMorphism",
+        "domain": "o_139",
+        "codomain": "o_140",
+        "to": "and32"
+      },
+      {
+        "basename": "m_97",
+        "prototype": "IndexMorphism",
+        "domain": "o_161",
+        "codomain": "o_162",
+        "to": "and64"
+      },
+      {
+        "basename": "m_98",
+        "prototype": "IndexMorphism",
+        "domain": "o_171",
+        "codomain": "o_179",
+        "to": "and128"
+      },
+      {
+        "basename": "m_102",
+        "prototype": "IndexMorphism",
+        "domain": "o_114",
+        "codomain": "o_115",
+        "to": "xor8"
+      },
+      {
+        "basename": "m_104",
+        "prototype": "IndexMorphism",
+        "domain": "o_186",
+        "codomain": "o_192",
+        "to": "mod8"
+      },
+      {
+        "basename": "m_105",
+        "prototype": "IndexMorphism",
+        "domain": "o_188",
+        "codomain": "o_158",
+        "to": "equ8"
+      },
+      {
+        "basename": "m_106",
+        "prototype": "IndexMorphism",
+        "domain": "o_150",
+        "codomain": "o_152",
+        "to": "equ32"
+      },
+      {
+        "basename": "m_107",
+        "prototype": "IndexMorphism",
+        "domain": "o_189",
+        "codomain": "o_159",
+        "to": "lt8"
+      },
+      {
+        "basename": "m_109",
+        "prototype": "IndexMorphism",
+        "domain": "o_149",
+        "codomain": "o_153",
+        "to": "lt32"
+      },
+      {
+        "basename": "m_110",
+        "prototype": "IndexMorphism",
+        "domain": "o_141",
+        "codomain": "o_142",
+        "to": "or32"
+      },
+      {
+        "basename": "m_111",
+        "prototype": "IndexMorphism",
+        "domain": "o_163",
+        "codomain": "o_164",
+        "to": "or64"
+      },
+      {
+        "basename": "m_112",
+        "prototype": "IndexMorphism",
+        "domain": "o_172",
+        "codomain": "o_180",
+        "to": "or128"
+      },
+      {
+        "basename": "m_113",
+        "prototype": "IndexMorphism",
+        "domain": "o_151",
+        "codomain": "o_154",
+        "to": "lte32"
+      },
+      {
+        "basename": "m_114",
+        "prototype": "IndexMorphism",
+        "domain": "o_148",
+        "codomain": "o_147",
+        "to": "mod32"
+      },
+      {
+        "basename": "m_116",
+        "prototype": "IndexMorphism",
+        "domain": "o_143",
+        "codomain": "o_144",
+        "to": "xor32"
+      },
+      {
+        "basename": "m_117",
+        "prototype": "IndexMorphism",
+        "domain": "o_178",
+        "codomain": "o_157",
+        "to": "lte128"
+      },
+      {
+        "basename": "m_118",
+        "prototype": "IndexMorphism",
+        "domain": "o_165",
+        "codomain": "o_166",
+        "to": "xor64"
+      },
+      {
+        "basename": "m_120",
+        "prototype": "IndexMorphism",
+        "domain": "o_170",
+        "codomain": "o_169",
+        "to": "mod64"
+      },
+      {
+        "basename": "m_121",
+        "prototype": "IndexMorphism",
+        "domain": "o_173",
+        "codomain": "o_181",
+        "to": "xor128"
+      },
+      {
+        "basename": "m_123",
+        "prototype": "IndexMorphism",
+        "domain": "o_175",
+        "codomain": "o_183",
+        "to": "mod128"
+      },
+      {
+        "basename": "m_124",
+        "prototype": "IndexMorphism",
+        "domain": "o_176",
+        "codomain": "o_155",
+        "to": "equ128"
+      },
+      {
+        "basename": "m_125",
+        "prototype": "IndexMorphism",
+        "domain": "o_177",
+        "codomain": "o_156",
+        "to": "lt128"
+      },
+      {
+        "basename": "m_126",
+        "prototype": "IndexMorphism",
+        "domain": "o_193",
+        "codomain": "o_195",
+        "to": "gt8"
+      },
+      {
+        "basename": "m_127",
+        "prototype": "IndexMorphism",
+        "domain": "o_194",
+        "codomain": "o_196",
+        "to": "gte8"
+      },
+      {
+        "basename": "m_129",
+        "prototype": "IndexMorphism",
+        "domain": "o_199",
+        "codomain": "o_200",
+        "to": "rsh8"
+      },
+      {
+        "basename": "m_130",
+        "prototype": "IndexMorphism",
+        "domain": "o_201",
+        "codomain": "o_202",
+        "to": "not8"
+      },
+      {
+        "basename": "m_131",
+        "prototype": "IndexMorphism",
+        "domain": "o_136",
+        "codomain": "o_131",
+        "to": "subr128"
+      },
+      {
+        "basename": "m_15",
+        "prototype": "IndexMorphism",
+        "domain": "o_35",
+        "codomain": "o_36",
+        "to": "subr16"
+      },
+      {
+        "basename": "m_49",
+        "prototype": "IndexMorphism",
+        "domain": "o_203",
+        "codomain": "o_93",
+        "to": "add8"
+      },
+      {
+        "basename": "m_58",
+        "prototype": "IndexMorphism",
+        "domain": "o_204",
+        "codomain": "o_107",
+        "to": "sub8"
+      },
+      {
+        "basename": "m_92",
+        "prototype": "IndexMorphism",
+        "domain": "o_205",
+        "codomain": "o_94",
+        "to": "sub16"
+      },
+      {
+        "basename": "m_56",
+        "prototype": "IndexMorphism",
+        "domain": "o_206",
+        "codomain": "o_104",
+        "to": "sub32"
+      },
+      {
+        "basename": "m_54",
+        "prototype": "IndexMorphism",
+        "domain": "o_207",
+        "codomain": "o_98",
+        "to": "sub64"
+      },
+      {
+        "basename": "m_79",
+        "prototype": "IndexMorphism",
+        "domain": "o_208",
+        "codomain": "o_132",
+        "to": "sub128"
+      },
+      {
+        "basename": "m_80",
+        "prototype": "IndexMorphism",
+        "domain": "o_209",
+        "codomain": "o_130",
+        "to": "add128"
+      },
+      {
+        "basename": "m_55",
+        "prototype": "IndexMorphism",
+        "domain": "o_210",
+        "codomain": "o_97",
+        "to": "add64"
+      },
+      {
+        "basename": "m_77",
+        "prototype": "IndexMorphism",
+        "domain": "o_211",
+        "codomain": "o_138",
+        "to": "add32"
+      },
+      {
+        "basename": "m_48",
+        "prototype": "IndexMorphism",
+        "domain": "o_212",
+        "codomain": "o_88",
+        "to": "add16"
+      },
+      {
+        "basename": "m_81",
+        "prototype": "IndexMorphism",
+        "domain": "o_12",
+        "codomain": "o_134",
+        "to": "mult128c"
+      },
+      {
+        "basename": "m_4",
+        "prototype": "IndexMorphism",
+        "domain": "o_99",
+        "codomain": "o_135",
+        "to": "not16"
+      },
+      {
+        "basename": "m_50",
+        "prototype": "IndexMorphism",
+        "domain": "o_213",
+        "codomain": "o_214",
+        "to": "not32"
+      },
+      {
+        "basename": "m_60",
+        "prototype": "IndexMorphism",
+        "domain": "o_215",
+        "codomain": "o_216",
+        "to": "not64"
+      },
+      {
+        "basename": "m_82",
+        "prototype": "IndexMorphism",
+        "domain": "o_217",
+        "codomain": "o_218",
+        "to": "not128"
+      },
+      {
+        "basename": "m_95",
+        "prototype": "IndexMorphism",
+        "domain": "o_225",
+        "codomain": "o_226",
+        "to": "max8"
+      },
+      {
+        "basename": "m_132",
+        "prototype": "IndexMorphism",
+        "domain": "o_227",
+        "codomain": "o_228",
+        "to": "min8"
+      },
+      {
+        "basename": "m_200",
+        "prototype": "IndexMorphism",
+        "domain": "o_270",
+        "codomain": "o_271",
+        "to": "max16"
+      },
+      {
+        "basename": "m_201",
+        "prototype": "IndexMorphism",
+        "domain": "o_272",
+        "codomain": "o_273",
+        "to": "min16"
+      },
+      {
+        "basename": "m_202",
+        "prototype": "IndexMorphism",
+        "domain": "o_280",
+        "codomain": "o_281",
+        "to": "max32"
+      },
+      {
+        "basename": "m_203",
+        "prototype": "IndexMorphism",
+        "domain": "o_282",
+        "codomain": "o_283",
+        "to": "min32"
+      },
+      {
+        "basename": "m_204",
+        "prototype": "IndexMorphism",
+        "domain": "o_290",
+        "codomain": "o_291",
+        "to": "max64"
+      },
+      {
+        "basename": "m_205",
+        "prototype": "IndexMorphism",
+        "domain": "o_292",
+        "codomain": "o_293",
+        "to": "min64"
+      },
+      {
+        "basename": "m_206",
+        "prototype": "IndexMorphism",
+        "domain": "o_300",
+        "codomain": "o_301",
+        "to": "max128"
+      },
+      {
+        "basename": "m_207",
+        "prototype": "IndexMorphism",
+        "domain": "o_302",
+        "codomain": "o_303",
+        "to": "min128"
+      },
+      {
+        "basename": "m_133",
+        "prototype": "IndexMorphism",
+        "domain": "o_229",
+        "codomain": "o_230",
+        "to": "gt16"
+      },
+      {
+        "basename": "m_134",
+        "prototype": "IndexMorphism",
+        "domain": "o_231",
+        "codomain": "o_232",
+        "to": "gt32"
+      },
+      {
+        "basename": "m_135",
+        "prototype": "IndexMorphism",
+        "domain": "o_233",
+        "codomain": "o_234",
+        "to": "gt64"
+      },
+      {
+        "basename": "m_136",
+        "prototype": "IndexMorphism",
+        "domain": "o_235",
+        "codomain": "o_236",
+        "to": "gt128"
+      },
+      {
+        "basename": "m_137",
+        "prototype": "IndexMorphism",
+        "domain": "o_237",
+        "codomain": "o_238",
+        "to": "gte16"
+      },
+      {
+        "basename": "m_108",
+        "prototype": "IndexMorphism",
+        "domain": "o_190",
+        "codomain": "o_160",
+        "to": "lte8"
+      },
+      {
+        "basename": "m_140",
+        "prototype": "IndexMorphism",
+        "domain": "o_239",
+        "codomain": "o_240",
+        "to": "gte32"
+      },
+      {
+        "basename": "m_141",
+        "prototype": "IndexMorphism",
+        "domain": "o_241",
+        "codomain": "o_242",
+        "to": "gte64"
+      },
+      {
+        "basename": "m_142",
+        "prototype": "IndexMorphism",
+        "domain": "o_243",
+        "codomain": "o_244",
+        "to": "gte128"
+      },
+      {
+        "basename": "m_145",
+        "prototype": "IndexMorphism",
+        "domain": "o_253",
+        "codomain": "o_96",
+        "to": "rsh16"
+      },
+      {
+        "basename": "m_146",
+        "prototype": "IndexMorphism",
+        "domain": "o_255",
+        "codomain": "o_254",
+        "to": "rsh32"
+      },
+      {
+        "basename": "m_147",
+        "prototype": "IndexMorphism",
+        "domain": "o_257",
+        "codomain": "o_256",
+        "to": "rsh64"
+      },
+      {
+        "basename": "m_148",
+        "prototype": "IndexMorphism",
+        "domain": "o_259",
+        "codomain": "o_258",
+        "to": "rsh128"
+      },
+      {
+        "basename": "m_150",
+        "prototype": "IndexMorphism",
+        "domain": "o_262",
+        "codomain": "o_263",
+        "to": "minus_one16"
+      },
+      {
+        "basename": "m_151",
+        "prototype": "IndexMorphism",
+        "domain": "o_264",
+        "codomain": "o_265",
+        "to": "minus_one32"
+      },
+      {
+        "basename": "m_152",
+        "prototype": "IndexMorphism",
+        "domain": "o_266",
+        "codomain": "o_267",
+        "to": "minus_one8"
+      },
+      {
+        "basename": "m_154",
+        "prototype": "IndexMorphism",
+        "domain": "o_274",
+        "codomain": "o_275",
+        "to": "inf64"
+      },
+      {
+        "basename": "m_155",
+        "prototype": "IndexMorphism",
+        "domain": "o_276",
+        "codomain": "o_277",
+        "to": "inf16"
+      },
+      {
+        "basename": "m_156",
+        "prototype": "IndexMorphism",
+        "domain": "o_278",
+        "codomain": "o_279",
+        "to": "inf32"
+      },
+      {
+        "basename": "m_157",
+        "prototype": "IndexMorphism",
+        "domain": "o_284",
+        "codomain": "o_285",
+        "to": "inf8"
+      },
+      {
+        "basename": "m_158",
+        "prototype": "IndexMorphism",
+        "domain": "o_286",
+        "codomain": "o_287",
+        "to": "inf128"
+      },
+      {
+        "basename": "m_20",
+        "prototype": "IndexMorphism",
+        "domain": "o_187",
+        "codomain": "o_191",
+        "to": "div8"
+      },
+      {
+        "basename": "m_103",
+        "prototype": "IndexMorphism",
+        "domain": "o_45",
+        "codomain": "o_46",
+        "to": "div16"
+      },
+      {
+        "basename": "m_115",
+        "prototype": "IndexMorphism",
+        "domain": "o_146",
+        "codomain": "o_145",
+        "to": "div32"
+      },
+      {
+        "basename": "m_119",
+        "prototype": "IndexMorphism",
+        "domain": "o_167",
+        "codomain": "o_168",
+        "to": "div64"
+      },
+      {
+        "basename": "m_122",
+        "prototype": "IndexMorphism",
+        "domain": "o_174",
+        "codomain": "o_182",
+        "to": "div128"
+      },
+      {
+        "basename": "m_12",
+        "prototype": "IndexMorphism",
+        "domain": "o_75",
+        "codomain": "o_24",
+        "to": "one8"
+      },
+      {
+        "basename": "m_26",
+        "prototype": "IndexMorphism",
+        "domain": "o_29",
+        "codomain": "o_30",
+        "to": "one16"
+      },
+      {
+        "basename": "m_40",
+        "prototype": "IndexMorphism",
+        "domain": "o_56",
+        "codomain": "o_57",
+        "to": "one32"
+      },
+      {
+        "basename": "m_149",
+        "prototype": "IndexMorphism",
+        "domain": "o_260",
+        "codomain": "o_261",
+        "to": "minus_one64"
+      },
+      {
+        "basename": "m_153",
+        "prototype": "IndexMorphism",
+        "domain": "o_268",
+        "codomain": "o_269",
+        "to": "minus_one128"
+      },
+      {
+        "basename": "m_159",
+        "prototype": "IndexMorphism",
+        "domain": "o_288",
+        "codomain": "o_289",
+        "to": "minus_inf8"
+      },
+      {
+        "basename": "m_160",
+        "prototype": "IndexMorphism",
+        "domain": "o_294",
+        "codomain": "o_295",
+        "to": "minus_inf16"
+      },
+      {
+        "basename": "m_161",
+        "prototype": "IndexMorphism",
+        "domain": "o_296",
+        "codomain": "o_297",
+        "to": "minus_inf32"
+      },
+      {
+        "basename": "m_162",
+        "prototype": "IndexMorphism",
+        "domain": "o_298",
+        "codomain": "o_299",
+        "to": "minus_inf64"
+      },
+      {
+        "basename": "m_163",
+        "prototype": "IndexMorphism",
+        "domain": "o_304",
+        "codomain": "o_305",
+        "to": "minus_infin128"
+      },
+      {
+        "basename": "m_128",
+        "prototype": "IndexMorphism",
+        "domain": "o_197",
+        "codomain": "o_198",
+        "to": "lshf8"
+      },
+      {
+        "basename": "m_138",
+        "prototype": "IndexMorphism",
+        "domain": "o_245",
+        "codomain": "o_246",
+        "to": "lsh16"
+      },
+      {
+        "basename": "m_139",
+        "prototype": "IndexMorphism",
+        "domain": "o_247",
+        "codomain": "o_248",
+        "to": "lsh32"
+      },
+      {
+        "basename": "m_143",
+        "prototype": "IndexMorphism",
+        "domain": "o_249",
+        "codomain": "o_250",
+        "to": "lsh64"
+      },
+      {
+        "basename": "m_144",
+        "prototype": "IndexMorphism",
+        "domain": "o_251",
+        "codomain": "o_252",
+        "to": "lsh128"
+      },
+      {
+        "basename": "m_169",
+        "prototype": "IndexMorphism",
+        "domain": "o_321",
+        "codomain": "o_322",
+        "to": "abs8"
+      },
+      {
+        "basename": "m_170",
+        "prototype": "IndexMorphism",
+        "domain": "o_323",
+        "codomain": "o_324",
+        "to": "abs16"
+      },
+      {
+        "basename": "m_171",
+        "prototype": "IndexMorphism",
+        "domain": "o_325",
+        "codomain": "o_326",
+        "to": "abs32"
+      },
+      {
+        "basename": "m_172",
+        "prototype": "IndexMorphism",
+        "domain": "o_327",
+        "codomain": "o_328",
+        "to": "abs64"
+      },
+      {
+        "basename": "m_173",
+        "prototype": "IndexMorphism",
+        "domain": "o_329",
+        "codomain": "o_330",
+        "to": "abs128"
+      },
+      {
+        "basename": "m_99",
+        "prototype": "IndexMorphism",
+        "domain": "o_6",
+        "codomain": "o_184",
+        "to": "N62toZ128"
+      },
+      {
+        "basename": "m_31",
+        "prototype": "IndexMorphism",
+        "domain": "o_7",
+        "codomain": "o_0",
+        "to": "Z322Z64"
+      },
+      {
+        "basename": "m_30",
+        "prototype": "IndexMorphism",
+        "domain": "o_26",
+        "codomain": "o_62",
+        "to": "Z162Z32"
+      },
+      {
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "o_21",
+        "codomain": "o_22",
+        "to": "equ64"
       }
     ],
     "cells": []
   },
   "elements": [
+    {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
     {
       "description": "An 8-bit integer",
       "basename": "Z8",
@@ -5819,14 +5827,6 @@
       "code": {
         "cpp": "typedef int16_t %0;\n"
       }
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -7466,11 +7466,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1645949269586,
+  "timestamp": 1652437451818,
   "version": 0,
   "viewport": {
-    "x": 635,
-    "y": -4189,
-    "scale": 4.0488883811722856
+    "x": 1225,
+    "y": 647,
+    "scale": 0.7184798524762981
   }
 }

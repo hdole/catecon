@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -160,
-          "y": 80
+          "y": 90
         },
         "height": 200,
         "weight": "bold"
@@ -677,6 +677,14 @@
   },
   "elements": [
     {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
       "basename": "G",
       "prototype": "CatObject"
     },
@@ -686,14 +694,6 @@
         "G",
         "G"
       ]
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -908,11 +908,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652084638631,
+  "timestamp": 1652437334734,
   "version": 0,
   "viewport": {
-    "x": 1172,
-    "y": 110,
-    "scale": 0.5972503123533672
+    "x": 899,
+    "y": 228,
+    "scale": 2.116180831073854
   }
 }
