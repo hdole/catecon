@@ -13,6 +13,8 @@ const util = require( 'util' );
 const D2 = require('./' + path.join(process.env.HTTP_DIR, 'js', 'D2.js'));
 const Cat = require('./' + path.join(process.env.HTTP_DIR, 'js', 'Cat.js'));
 
+let gotError = false;
+
 Cat.R.default.debug = false;
 Cat.R.cloudURL = null;		// do not connect to cloud server
 
@@ -24,7 +26,7 @@ function saveDiagram(diagram)
 	console.log('saving diagram', diagram.name);
 	diagram.timestamp = diagram.timestamp + 1;
 	const diagramString = JSON.stringify(diagram.json(), null, 2);
-	const dgrmFile = path.join(process.env.HTTP_DIR, 'diagram', diagram.name + '.json');
+	const dgrmFile = path.join(process.env.HTTP_DIR, 'diagram', diagram.name + '.jsonX');
 	fs.mkdirSync(path.dirname(dgrmFile), {recursive:true});
 	const dgrmFD = fs.openSync(dgrmFile, 'w');
 	fs.writeSync(dgrmFD, diagramString, 0, diagramString.length +1);
@@ -149,6 +151,7 @@ try
 				const d = diagrams.get(scan);
 				d.getAll().forEach(scan => scan.uses(elt) && elements.add(scan));
 			});
+debugger;
 			const modDiagrams = new Set();
 			elements.forEach(e => modDiagrams.add(e.diagram));
 			console.log('Diagrams to be modified:');
@@ -158,18 +161,30 @@ try
 
 			const name2elt = new Map();
 			diagrams.forEach(dgrm => dgrm.getAll().forEach(e => name2elt.set(e.name, e)));
-
-			const indices = new Map();
+			//
+			// increase reference count of elements under those to be re-built so they do not disapear
+			//
+			elements.forEach(e =>
+			{
+				if (e instanceof Cat.MultiObject)
+					e.objects.map(o => !elements.has(o) && o.incrRefcnt());
+				else if (e instanceof Cat.MultiMorphism)
+					e.morphisms.map(m => !elements.has(m) && m.incrRefcnt());
+			});
+			//
+			// remove pre-built elements from index objects
+			//
 			diagrams.forEach(dgrm =>
 			{
 				dgrm.domain.elements.forEach(ndx =>
 				{
 					if ('to' in ndx && elements.has(ndx.to))
 					{
-						if (!indices.has(ndx.to))
-							indices.set(ndx.to, []);
-						const ndxs = indices.get(ndx.to);
-						ndxs.push(ndx);
+//						if (!indices.has(ndx.to))
+//							indices.set(ndx.to, []);
+//						const ndxs = indices.get(ndx.to);
+//						ndxs.push(ndx);
+						ndx.oldTo = ndx.to;
 						if (ndx instanceof Cat.IndexObject)
 							ndx.setObject(null)
 						else if (ndx instanceof Cat.IndexMorphism)
@@ -178,7 +193,7 @@ try
 				});
 				dgrm.purge();
 			});
-
+const assy = diagrams.get('hdole/assembly');
 			//
 			// look for bad reference counts
 			//
@@ -186,8 +201,11 @@ try
 			{
 				const users = e.diagram.getUsingElements(e);
 				console.log(e.name, users.map(i => i.name));
+				gotError = true;
 			});
 			console.log('bad refcnts', [...elements].filter(e => e.refcnt !== 0).length);
+			if (gotError)
+				return;
 			//
 			// for element using the specified one create a new one using the replacement
 			//
@@ -195,10 +213,14 @@ try
 			//
 			const built = new Map();
 			built.set(elt.name, nuElt);
+			const recursors = [];
 			const build = (ctx, name) =>
 			{
-				let thisElt = name2elt.get(name);
-				thisElt = thisElt ? thisElt : name2elt.get(ctx.name + '/' + name);		// try global name
+				if (built.has(name))
+					return built.get(name);
+				const globalName = ctx.name + '/' + name;		// try global name if given local
+				if (built.has(globalName))
+					return built.get(globalName);
 				if (jsons.has(name))
 				{
 					const json = jsons.get(name);
@@ -207,17 +229,18 @@ try
 						return built.get(name);
 					let nu = null;
 					if ('morphisms' in json)
+{
+if (name === "hdole/assembly/Cm{Cm{Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_0}aF,Pm{hdole/floats/eq0_64,Id{hdole/floats/F64}dI}mP}mC,Cm{Di{Po{CPo{#1,#1}oPC,hdole/floats/F64}oP-L}iD,CPm{Cm{Fa{Po{#1,hdole/floats/F64}oP,hdole/floats/F64_1}aF,Cm{Fa{hdole/floats/F64,hdole/floats/F64_-1,hdole/floats/F64_1}aF,Cm{Fa{Po{#1,hdole/floats/F64}oP,hdole/floats/F64_1}aF,Cm{Cm{Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_0}aF,Pm{Cm{hdole/floats/decr64,fact}mC,Id{hdole/floats/F64}dI}mP}mC,Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_1,hdole/floats/F64_0}aF,hdole/floats/mult64}mC}mC}mC}mC}mC,Cm{Fa{Po{#1,hdole/floats/F64}oP,hdole/floats/F64_1}aF,Fa{hdole/floats/F64,hdole/floats/F64_-1}aF,hdole/floats/one64}mC}mPC,CFa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_}aFC}mC}mC")debugger;
 						json.morphisms = json.morphisms.map(m => build(dgrm, m));
+}
 					else if ('objects' in json)
 						json.objects = json.objects.map(o => build(dgrm, o));
 					else if (json.prototype === 'Morphism' && 'recursor' in json)
 					{
 						const rec = json.recursor;
-						delete json.recursor;
 						nu = new Cat[json.prototype](dgrm, json);
 						built.set(name, nu);
-						const recursor = build(dgrm, rec);
-						nu.setRecursor(recursor);
+						recursors.push(nu);
 					}
 					else if (json.prototype === 'LambdaMorphism')
 						json.preCurry = build(dgrm, preCurry);
@@ -228,6 +251,8 @@ try
 					nu.incrRefcnt();
 					return nu;
 				}
+				let thisElt = name2elt.get(name);
+				thisElt = thisElt ? thisElt : name2elt.get(globalName);		// try global name
 				return thisElt;
 			};
 			jsons.forEach((json, name) =>
@@ -235,29 +260,47 @@ try
 				const dgrm = diagrams.get(json.diagram);
 				build(dgrm, json.name);
 			});
+			//
+			// now set the recursive functions since they should all be defined (in lieu of postload)
+			//
+			recursors.map(e => e.setRecursor(built.get(e.recursor)));
+			built.forEach((blt, nm) => name2elt.get(nm).signature === blt.signature && console.log(`WARNING: built a duplicate: ${blt.name}`));
 			console.log('Elements to be modified:');
 			elements.forEach(e => console.log(e.name, '::', built.get(e.name).name));
+			//
+			// update index elements
+			//
 			diagrams.forEach(dgrm =>
 			{
 				dgrm.domain.elements.forEach(ndx =>
 				{
-					if ('to' in ndx && built.has(ndx.to))
+					if ('oldTo' in ndx && built.has(ndx.oldTo.name))
 					{
-						ndx.to = built.get(ndx.to);
-						ndx.to.decrRefcnt();
+						const e = built.get(ndx.oldTo.name);
+						if (ndx instanceof Cat.IndexObject)
+							ndx.setObject(e);
+						else if (ndx instanceof Cat.IndexMorphism)
+							ndx.setMorphism(e);
 					}
 				});
 			});
-			//
-			// update index elements
-			//
-			indices.forEach((ary, e) => ary.map(ndx =>
+			diagrams.forEach(dgrm =>
 			{
-				if (ndx instanceof Cat.IndexObject)
-					ndx.setObject(built.get(e.name));
-				else if (ndx instanceof Cat.IndexMorphism)
-					ndx.setMorphism(built.get(e.name));
-			}));
+				if (dgrm.check().length > 0)
+					gotError = true;
+			});
+			if (gotError)
+				return;
+			name2elt.forEach((e, nm) =>
+			{
+				if (e.refcnt === 0 && modDiagrams.has(e.diagram) && !e.uses(elt) && !built.has(nm))
+				{
+					gotError = true;
+					console.log('bad removal', e.name);
+				}
+			});
+			if (gotError)
+				return;
 			modDiagrams.forEach(dgrm => saveDiagram(dgrm));
 		}
 		catch(x)
@@ -270,3 +313,5 @@ catch(error)
 {
 	console.error(error);
 }
+
+process.exit(gotError ? 1 : 0);
