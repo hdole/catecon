@@ -913,6 +913,8 @@ console.log('readDiagram', name);
 						if (localLog)
 							args.log = JSON.parse(localLog);
 						const userDiagram = this.getUserDiagram(args.user);
+if (args.prototype === 'ActionDiagram')
+	args.prototype = 'Diagram';
 						diagram = new Cat[args.prototype](userDiagram, args);
 						diagram.check();
 						R.debug(1) && console.log('readDiagram loaded diagram', args.name);
@@ -3893,7 +3895,10 @@ class Session
 	{
 		const diagrams = [...this.diagrams.keys()].filter(dgrm => !(dgrm.user === 'ctx' || dgrm.user === 'sys'));
 		const loader = d => Runtime.DownloadDiagram(d, _ => diagrams.length > 0 ? loader(diagrams.shift()) : fn());
-		loader(diagrams.shift());
+		if (diagrams.length > 0)
+			loader(diagrams.shift());
+		else
+			fn();
 	}
 	getCurrentViewport()
 	{
@@ -13662,6 +13667,8 @@ class Morphism extends Element
 	{
 		if ('data' in this)
 			this.signature = U.dataSig(this.data);
+		else if ('recursor' in this)
+			this.signature = U.dataSig(this.name, this.recursor.name);
 		else
 			super.setSignature();
 	}
@@ -13852,9 +13859,12 @@ class Morphism extends Element
 		{
 			this.recursor = r;
 			this.postload = _ => this.setRecursor(r);
+			return;
 		}
 		this.recursor === null && delete this.recursor;
 		oldRecursor && oldRecursor.decrRefcnt();
+		this.setSignature();
+		// TODO reload equator
 	}
 	clear()
 	{
@@ -14155,6 +14165,8 @@ class NamedMorphism extends Morphism	// name of a morphism
 	{
 		const nuArgs = U.clone(args);
 		const source = diagram.getElement(nuArgs.source);
+		if (source === undefined)
+			throw 'no source for ' + args.basename;
 		nuArgs.category = diagram.codomain;
 		nuArgs.domain = source.domain;
 		nuArgs.codomain = source.codomain;
@@ -18509,7 +18521,13 @@ class Diagram extends Functor
 	}
 	getElements(ary)
 	{
-		const elements = ary.map(e => this.getElement(e)).filter(e => e);
+		const elements = ary.map(e =>
+		{
+			const elt = this.getElement(e);
+			if (!elt)
+				throw 'cannot find ' + e;
+			return elt;
+		});
 		ary.filter(e => e instanceof Cell).map(cell => elements.push(...cell.getObjects()));
 		if (elements.filter(e => e === undefined || e === null).length > 0)
 			throw 'cannot fetch element';
@@ -19461,6 +19479,7 @@ if (fn)debugger;	// TODO
 						{
 							const m = this.codomain.newMorphism(e, this, tokens[1], tokens[0], tokens[2]);
 							m && this.placeMorphism(m, xy);
+							created.push(m);
 						}
 						else
 						{
@@ -19756,9 +19775,23 @@ if (fn)debugger;	// TODO
 			}
 		};
 		this.domain.elements.forEach(chkBasename);
-		this.elements.forEach(chkBasename);
-		this.elements.forEach(elt => !refs.has(elt.diagram.name) && errors.push(`Element not in scope: ${U.HtmlEntitySafe(elt.name)}`));
-		errors.length > 0 && console.error(`${errors.length} errors found\n` + errors.join('\n'));
+		const all = this.getAll();
+		all.forEach(chkBasename);
+		all.forEach(elt => !refs.has(elt.diagram.name) && errors.push(`Element not in scope: ${U.HtmlEntitySafe(elt.name)}`));
+		all.forEach(elt =>
+		{
+			if (elt instanceof MultiMorphism)
+				elt.morphisms.map(sm => this.getElement(sm.name) === undefined && errors.push(`Sub-morphism not found in diagram: ${U.HtmlEntitySafe(elt.name)} :: ${U.HtmlEntitySafe(sm.name)}`));
+			else if (elt instanceof MultiObject)
+				elt.objects.map(sm => this.getElement(sm.name) === undefined && errors.push(`Sub-object not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(sm.name)}`));
+			else if (elt instanceof LambdaMorphism)
+				this.getElement(elt.preCurry.name) === undefined && errors.push(`Pre-curry morphism not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(sm.name)}`);
+			else if ('recursor' in elt)
+				this.getElement(elt.recursor.name) === undefined && errors.push(`Recursor morphism not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(sm.name)}`);
+			else if (elt instanceof NamedObject && elt instanceof NamedMorphism)
+				this.getElement(elt.source.name) === undefined && errors.push(`Source element not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(sm.name)}`);
+		});
+		errors.length > 0 && console.error(`ERRORS in ${this.name}: ${errors.length} errors found\n` + errors.join('\n'));
 		return errors;
 	}
 	close()
