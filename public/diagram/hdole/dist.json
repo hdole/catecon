@@ -27,7 +27,7 @@
           "x": -380,
           "y": -820
         },
-        "height": "240",
+        "height": 240,
         "weight": "bold"
       },
       {
@@ -110,7 +110,7 @@
           "x": -300,
           "y": -600
         },
-        "height": "48"
+        "height": 48
       },
       {
         "description": "Right distributions",
@@ -120,35 +120,35 @@
           "x": 300,
           "y": -600
         },
-        "height": "48"
+        "height": 48
       },
       {
-        "basename": "m_57",
+        "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_76",
         "codomain": "o_80",
-        "to": "Di{Po{C,CPo{A,B}oPC}oP}-RiD"
+        "to": "Di{Po{C,CPo{A,B}oPC}oP-R}iD"
       },
       {
-        "basename": "m_58",
+        "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_75",
         "codomain": "o_81",
-        "to": "Di{Po{CPo{A,B}oPC,C}oP}-LiD"
+        "to": "Di{Po{CPo{A,B}oPC,C}oP-L}iD"
       },
       {
-        "basename": "m_59",
-        "prototype": "IndexMorphism",
-        "domain": "o_83",
-        "codomain": "o_84",
-        "to": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-LiD"
-      },
-      {
-        "basename": "m_60",
+        "basename": "m_2",
         "prototype": "IndexMorphism",
         "domain": "o_85",
         "codomain": "o_86",
-        "to": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-RiD"
+        "to": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP-R}iD"
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "o_83",
+        "codomain": "o_84",
+        "to": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP-L}iD"
       }
     ],
     "cells": []
@@ -289,14 +289,14 @@
       ]
     },
     {
-      "basename": "Di{Po{C,CPo{A,B}oPC}oP}-RiD",
+      "basename": "Di{Po{C,CPo{A,B}oPC}oP-R}iD",
       "prototype": "Distribute",
       "properName": "dist",
       "domain": "Po{C,CPo{A,B}oPC}oP",
       "codomain": "CPo{Po{C,A}oP,Po{C,B}oP}oPC"
     },
     {
-      "basename": "Di{Po{CPo{A,B}oPC,C}oP}-LiD",
+      "basename": "Di{Po{CPo{A,B}oPC,C}oP-L}iD",
       "prototype": "Distribute",
       "properName": "dist",
       "domain": "Po{CPo{A,B}oPC,C}oP",
@@ -304,27 +304,27 @@
       "side": true
     },
     {
-      "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-LiD",
+      "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP-R}iD",
+      "prototype": "Distribute",
+      "properName": "dist",
+      "domain": "Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
+      "codomain": "CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC"
+    },
+    {
+      "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP-L}iD",
       "prototype": "Distribute",
       "properName": "dist",
       "domain": "Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
       "codomain": "CPo{Po{A,CPo{C,D}oPC}oP,Po{B,CPo{C,D}oPC}oP}oPC",
       "side": true
-    },
-    {
-      "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP}-RiD",
-      "prototype": "Distribute",
-      "properName": "dist",
-      "domain": "Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
-      "codomain": "CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1644486248880,
+  "timestamp": 1652423653392,
   "version": 0,
   "viewport": {
     "x": 1108,
-    "y": 1086,
+    "y": 542,
     "scale": 0.9956126056108506
   }
 }

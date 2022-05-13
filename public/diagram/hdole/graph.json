@@ -579,13 +579,6 @@
         "to": "Id{CPo{A,B}oPC}dI"
       },
       {
-        "basename": "m_25",
-        "prototype": "IndexMorphism",
-        "domain": "o_46",
-        "codomain": "o_47",
-        "to": "Di{Po{CPo{A,B}oPC,Po{A,B}oP}oP}-LiD"
-      },
-      {
         "basename": "m_17",
         "prototype": "IndexMorphism",
         "domain": "o_23",
@@ -598,15 +591,18 @@
         "domain": "o_41",
         "codomain": "o_0",
         "to": "CPm{Id{A}dI,Id{B}dI}mPC"
+      },
+      {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "o_46",
+        "codomain": "o_47",
+        "to": "Di{Po{CPo{A,B}oPC,Po{A,B}oP}oP-L}iD"
       }
     ],
     "cells": []
   },
   "elements": [
-    {
-      "basename": "A",
-      "prototype": "CatObject"
-    },
     {
       "basename": "#1",
       "prototype": "FiniteObject",
@@ -614,6 +610,10 @@
       "size": 1,
       "min": 0,
       "max": 1
+    },
+    {
+      "basename": "A",
+      "prototype": "CatObject"
     },
     {
       "basename": "B",
@@ -996,7 +996,7 @@
       "domain": "CPo{A,B}oPC"
     },
     {
-      "basename": "Di{Po{CPo{A,B}oPC,Po{A,B}oP}oP}-LiD",
+      "basename": "Di{Po{CPo{A,B}oPC,Po{A,B}oP}oP-L}iD",
       "prototype": "Distribute",
       "properName": "dist",
       "domain": "Po{CPo{A,B}oPC,Po{A,B}oP}oP",
@@ -1005,11 +1005,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1651662674736,
+  "timestamp": 1652423704292,
   "version": 0,
   "viewport": {
-    "x": 336,
-    "y": -4501,
-    "scale": 1.5971321755221037
+    "x": 1058,
+    "y": -38,
+    "scale": 0.37622318297317014
   }
 }
