@@ -340,10 +340,10 @@
         "basename": "t_16",
         "prototype": "IndexText",
         "xy": {
-          "x": -510,
-          "y": 60
+          "x": -500,
+          "y": 110
         },
-        "height": "300",
+        "height": 356,
         "weight": "bold"
       },
       {
@@ -660,7 +660,7 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1,
       "min": 0,
       "max": 1
@@ -952,11 +952,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1645390992783,
+  "timestamp": 1652503258922,
   "version": 0,
   "viewport": {
-    "x": 1418,
-    "y": -374,
-    "scale": 0.6235199234414899
+    "x": 1161,
+    "y": 396,
+    "scale": 1.7621232053801932
   }
 }
