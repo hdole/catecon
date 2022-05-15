@@ -2193,6 +2193,15 @@
         "height": 24
       },
       {
+        "basename": "o_211",
+        "prototype": "IndexObject",
+        "to": "Po{F128,#1}oP",
+        "xy": {
+          "x": 870,
+          "y": 7130
+        }
+      },
+      {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_1",
@@ -2742,7 +2751,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F128,F128}oP,F128_0}aF"
+        "to": "hdole/floats/Fa{Po{F128,F128}oP:F128_0}aF"
       },
       {
         "basename": "m_78",
@@ -2759,7 +2768,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F128,F128}oP,F128_1}aF"
+        "to": "hdole/floats/Fa{Po{F128,F128}oP:F128_1}aF"
       },
       {
         "basename": "m_79",
@@ -2786,7 +2795,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F64,F64}oP,F64_0}aF"
+        "to": "hdole/floats/Fa{Po{F64,F64}oP:F64_0}aF"
       },
       {
         "basename": "m_87",
@@ -2803,7 +2812,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F64,F64}oP,F64_1}aF"
+        "to": "hdole/floats/Fa{Po{F64,F64}oP:F64_1}aF"
       },
       {
         "basename": "m_88",
@@ -2830,7 +2839,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F32,F32}oP,F32_0}aF"
+        "to": "hdole/floats/Fa{Po{F32,F32}oP:F32_0}aF"
       },
       {
         "basename": "m_96",
@@ -2847,7 +2856,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F32,F32}oP,F32_1}aF"
+        "to": "hdole/floats/Fa{Po{F32,F32}oP:F32_1}aF"
       },
       {
         "basename": "m_97",
@@ -2868,7 +2877,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_162",
         "codomain": "o_163",
-        "to": "Fa{F32,F32_,F32_-1}aF"
+        "to": "hdole/floats/Fa{F32:F32_,#1_-1}aF"
       },
       {
         "basename": "m_82",
@@ -2895,14 +2904,14 @@
             true
           ]
         ],
-        "to": "Cm{Fa{F32,F32_,F32_-1}aF,Pm{Id{F32}dI,zero32}mP,eq32}mC"
+        "to": "hdole/floats/Cm{Fa{F32:F32_,#1_-1}aF,Pm{Id{F32}dI,zero32}mP,eq32}mC"
       },
       {
         "basename": "m_85",
         "prototype": "IndexMorphism",
         "domain": "o_171",
         "codomain": "o_172",
-        "to": "Fa{F64,F64_,F64_-1}aF"
+        "to": "hdole/floats/Fa{F64:F64_,#1_-1}aF"
       },
       {
         "basename": "m_90",
@@ -2929,14 +2938,14 @@
             true
           ]
         ],
-        "to": "Cm{Fa{F64,F64_,F64_-1}aF,Pm{Id{F64}dI,zero64}mP,eq64}mC"
+        "to": "hdole/floats/Cm{Fa{F64:F64_,#1_-1}aF,Pm{Id{F64}dI,zero64}mP,eq64}mC"
       },
       {
         "basename": "m_93",
         "prototype": "IndexMorphism",
         "domain": "o_180",
         "codomain": "o_181",
-        "to": "Fa{F128,F128_,F128_-1}aF"
+        "to": "hdole/floats/Fa{F128:F128_,#1_-1}aF"
       },
       {
         "basename": "m_94",
@@ -2963,7 +2972,7 @@
             true
           ]
         ],
-        "to": "Cm{Fa{F128,F128_,F128_-1}aF,Pm{Id{F128}dI,zero128}mP,eq128}mC"
+        "to": "hdole/floats/Cm{Fa{F128:F128_,#1_-1}aF,Pm{Id{F128}dI,zero128}mP,eq128}mC"
       },
       {
         "basename": "m_101",
@@ -3022,7 +3031,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F128,F128}oP,F128_0}aF"
+        "to": "hdole/floats/Fa{Po{F128,F128}oP:F128_0}aF"
       },
       {
         "basename": "m_106",
@@ -3039,7 +3048,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F128,F128}oP,F128_1}aF"
+        "to": "hdole/floats/Fa{Po{F128,F128}oP:F128_1}aF"
       },
       {
         "basename": "m_107",
@@ -3053,7 +3062,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_189",
         "codomain": "o_190",
-        "to": "Fa{F128,F128_0,F128_-1}aF"
+        "to": "hdole/floats/Fa{F128:F128_0,#1_-1}aF"
       },
       {
         "basename": "m_109",
@@ -3080,7 +3089,7 @@
             true
           ]
         ],
-        "to": "Cm{Fa{F128,F128_0,F128_-1}aF,Pm{Id{F128}dI,one128}mP,sub128}mC"
+        "to": "hdole/floats/Cm{Fa{F128:F128_0,#1_-1}aF,Pm{Id{F128}dI,one128}mP,sub128}mC"
       },
       {
         "basename": "m_112",
@@ -3110,7 +3119,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F64,F64}oP,F64_0}aF"
+        "to": "hdole/floats/Fa{Po{F64,F64}oP:F64_0}aF"
       },
       {
         "basename": "m_114",
@@ -3127,7 +3136,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F64,F64}oP,F64_1}aF"
+        "to": "hdole/floats/Fa{Po{F64,F64}oP:F64_1}aF"
       },
       {
         "basename": "m_115",
@@ -3148,7 +3157,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_198",
         "codomain": "o_199",
-        "to": "Fa{F64,F64_0,F64_-1}aF"
+        "to": "hdole/floats/Fa{F64:F64_0,#1_-1}aF"
       },
       {
         "basename": "m_118",
@@ -3175,7 +3184,7 @@
             true
           ]
         ],
-        "to": "Cm{Fa{F64,F64_0,F64_-1}aF,Pm{Id{F64}dI,one64}mP,sub64}mC"
+        "to": "hdole/floats/Cm{Fa{F64:F64_0,#1_-1}aF,Pm{Id{F64}dI,one64}mP,sub64}mC"
       },
       {
         "basename": "m_121",
@@ -3205,7 +3214,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F32,F32}oP,F32_0}aF"
+        "to": "hdole/floats/Fa{Po{F32,F32}oP:F32_0}aF"
       },
       {
         "basename": "m_123",
@@ -3222,7 +3231,7 @@
             true
           ]
         ],
-        "to": "Fa{Po{F32,F32}oP,F32_1}aF"
+        "to": "hdole/floats/Fa{Po{F32,F32}oP:F32_1}aF"
       },
       {
         "basename": "m_124",
@@ -3250,7 +3259,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_208",
         "codomain": "o_209",
-        "to": "Fa{Po{F32,F32}oP,F32_1,F32_0}aF"
+        "to": "hdole/floats/Fa{Po{F32,F32}oP:F32_1,F32_0}aF"
       },
       {
         "basename": "m_128",
@@ -3270,23 +3279,14 @@
             true
           ]
         ],
-        "to": "Cm{Pm{one32,Id{F32}dI}mP,Cm{Fa{Po{F32,F32}oP,F32_1,F32_0}aF,sub32}mC}mC"
-      },
-      {
-        "basename": "o_211",
-        "prototype": "IndexObject",
-        "to": "Po{F128,#1}oP",
-        "xy": {
-          "x": 870,
-          "y": 7130
-        }
+        "to": "hdole/floats/Cm{Pm{one32,Id{F32}dI}mP,Cm{Fa{Po{F32,F32}oP:F32_1,F32_0}aF,sub32}mC}mC"
       },
       {
         "basename": "m_130",
         "prototype": "IndexMorphism",
         "domain": "o_189",
         "codomain": "o_211",
-        "to": "Fa{F128,F128_,F128_-1}aF"
+        "to": "hdole/floats/Fa{F128:F128_,#1_-1}aF"
       }
     ],
     "cells": []
@@ -4305,7 +4305,7 @@
       "domain": "F32",
       "codomain": "CPo{#1,#1}oPC",
       "morphisms": [
-        "Fa{F32,F32_,F32_-1}aF",
+        "Fa{F32:F32_,#1_-1}aF",
         "Pm{Id{F32}dI,zero32}mP",
         "eq32"
       ]
@@ -4337,7 +4337,7 @@
       "domain": "F64",
       "codomain": "CPo{#1,#1}oPC",
       "morphisms": [
-        "Fa{F64,F64_,F64_-1}aF",
+        "Fa{F64:F64_,#1_-1}aF",
         "Pm{Id{F64}dI,zero64}mP",
         "eq64"
       ]
@@ -4369,7 +4369,7 @@
       "domain": "F128",
       "codomain": "CPo{#1,#1}oPC",
       "morphisms": [
-        "Fa{F128,F128_,F128_-1}aF",
+        "Fa{F128:F128_,#1_-1}aF",
         "Pm{Id{F128}dI,zero128}mP",
         "eq128"
       ]
@@ -4380,7 +4380,7 @@
       "properName": "=0&#x2083;&#x2082;",
       "domain": "F32",
       "codomain": "CPo{#1,#1}oPC",
-      "source": "hdole/floats/Cm{Fa{F32,F32_,F32_-1}aF,Pm{Id{F32}dI,zero32}mP,eq32}mC"
+      "source": "hdole/floats/Cm{Fa{F32:F32_,#1_-1}aF,Pm{Id{F32}dI,zero32}mP,eq32}mC"
     },
     {
       "basename": "eq0_64",
@@ -4388,7 +4388,7 @@
       "properName": "=0₆₄",
       "domain": "F64",
       "codomain": "CPo{#1,#1}oPC",
-      "source": "hdole/floats/Cm{Fa{F64,F64_,F64_-1}aF,Pm{Id{F64}dI,zero64}mP,eq64}mC"
+      "source": "hdole/floats/Cm{Fa{F64:F64_,#1_-1}aF,Pm{Id{F64}dI,zero64}mP,eq64}mC"
     },
     {
       "basename": "eq0_128",
@@ -4396,7 +4396,7 @@
       "properName": "=0&#x2081;&#x2082;&#x2088;",
       "domain": "F128",
       "codomain": "CPo{#1,#1}oPC",
-      "source": "hdole/floats/Cm{Fa{F128,F128_,F128_-1}aF,Pm{Id{F128}dI,zero128}mP,eq128}mC"
+      "source": "hdole/floats/Cm{Fa{F128:F128_,#1_-1}aF,Pm{Id{F128}dI,zero128}mP,eq128}mC"
     },
     {
       "prototype": "ProductMorphism",
@@ -4421,7 +4421,7 @@
       "domain": "F128",
       "codomain": "F128",
       "morphisms": [
-        "Fa{F128,F128_0,F128_-1}aF",
+        "Fa{F128:F128_0,#1_-1}aF",
         "Pm{Id{F128}dI,one128}mP",
         "sub128"
       ]
@@ -4433,7 +4433,7 @@
       "properName": "decr₁₂₈",
       "domain": "F128",
       "codomain": "F128",
-      "source": "hdole/floats/Cm{Fa{F128,F128_0,F128_-1}aF,Pm{Id{F128}dI,one128}mP,sub128}mC"
+      "source": "hdole/floats/Cm{Fa{F128:F128_0,#1_-1}aF,Pm{Id{F128}dI,one128}mP,sub128}mC"
     },
     {
       "prototype": "ProductMorphism",
@@ -4458,7 +4458,7 @@
       "domain": "F64",
       "codomain": "F64",
       "morphisms": [
-        "Fa{F64,F64_0,F64_-1}aF",
+        "Fa{F64:F64_0,#1_-1}aF",
         "Pm{Id{F64}dI,one64}mP",
         "sub64"
       ]
@@ -4469,7 +4469,7 @@
       "properName": "decr&#x2086;&#x2084;",
       "domain": "F64",
       "codomain": "F64",
-      "source": "hdole/floats/Cm{Fa{F64,F64_0,F64_-1}aF,Pm{Id{F64}dI,one64}mP,sub64}mC"
+      "source": "hdole/floats/Cm{Fa{F64:F64_0,#1_-1}aF,Pm{Id{F64}dI,one64}mP,sub64}mC"
     },
     {
       "prototype": "FactorMorphism",
@@ -4485,7 +4485,7 @@
       "domain": "Po{F32,F32}oP",
       "codomain": "F32",
       "morphisms": [
-        "Fa{Po{F32,F32}oP,F32_1,F32_0}aF",
+        "Fa{Po{F32,F32}oP:F32_1,F32_0}aF",
         "sub32"
       ]
     },
@@ -4504,12 +4504,12 @@
       "codomain": "F32",
       "morphisms": [
         "Pm{one32,Id{F32}dI}mP",
-        "Cm{Fa{Po{F32,F32}oP,F32_1,F32_0}aF,sub32}mC"
+        "Cm{Fa{Po{F32,F32}oP:F32_1,F32_0}aF,sub32}mC"
       ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1652505279256,
+  "timestamp": 1652505279257,
   "version": 0,
   "viewport": {
     "x": 979,

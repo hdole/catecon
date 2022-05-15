@@ -551,6 +551,7 @@ class Runtime
 	{
 		Object.defineProperties(this,
 		{
+			basemode:			{value:false,		writable:true},
 			Actions:			{value:{},			writable:false},	// loaded actions
 			Cat:				{value:null,		writable:true},
 			CAT:				{value:null,		writable:true},		// working nat trans
@@ -895,7 +896,6 @@ class Runtime
 				const reqDiagram = dgrmStore.get(name);
 				reqDiagram.onsuccess = e =>
 				{
-console.log('readDiagram', name);
 					diagram = R.$CAT.getElement(name);
 					if (diagram)		// maybe it got loaded asynchronously
 					{
@@ -906,15 +906,12 @@ console.log('readDiagram', name);
 					this.sync = false;
 					if (e.target.result)
 					{
-//						this.reading = this.reading.filter(i => i != name);
 						this.reading.delete(name);
 						const args = e.target.result;
 						const localLog = U.readTempfile(`${name}.log`);
 						if (localLog)
 							args.log = JSON.parse(localLog);
 						const userDiagram = this.getUserDiagram(args.user);
-if (args.prototype === 'ActionDiagram')
-	args.prototype = 'Diagram';
 						diagram = new Cat[args.prototype](userDiagram, args);
 						diagram.check();
 						R.debug(1) && console.log('readDiagram loaded diagram', args.name);
@@ -7886,7 +7883,7 @@ class Element
 	{}
 	updateBasename()
 	{
-		this.name = Element.Codename(diagram, {basename:this.basename});
+		this.name = Element.Codename(this.diagram, {basename:this.basename});
 		this.setSignature();
 		this.diagram.reconstituteElements();
 	}
@@ -8121,6 +8118,15 @@ class Element
 		return !(('attributes' in this) && this.attributes.has('quantifier'));
 	}
 	isTerminal() { return false; }		// fitb
+	isInitial() { return false; }		// fitb
+	setName(basename = '')
+	{
+		if (basename !== '')
+		{
+			this.basename = basename;
+			this.name = Element.Codename(this.diagram, {basename});
+		}
+	}					// fitb
 	static Basename(diagram, args)	{ return args.basename; }
 	static Codename(diagram, args)	{ return `${diagram ? diagram.name : 'sys'}/${args.basename}`; }
 	static Process(diagram, args)	{ return 'prototype' in args ? new Cat[args.prototype](diagram, args) : null; }
@@ -8876,6 +8882,7 @@ class FiniteObject extends CatObject	// finite, explicit size or not
 	{
 		return false;
 	}
+	setName() {}		// do nothing
 	static Basename(diagram, args)
 	{
 		const basename = 'basename' in args ? args.basename : '';
@@ -9041,6 +9048,10 @@ class MultiObject extends CatObject
 	{
 		return false;
 	}
+	setName()
+	{
+		this.objects.map(o => o.setName());
+	}
 	static ProperName(sep, objects, reverse = false)
 	{
 		const obs = reverse ? objects.slice().reverse() : objects;
@@ -9168,6 +9179,12 @@ class ProductObject extends MultiObject
 		this.basename = ProductObject.Basename(this.diagram, this);
 		super.updateBasename();
 	}
+	setName()
+	{
+		super.setName();
+		this.basename = ProductObject.Basename(this.diagram, this);
+		this.name = ProductObject.Codename(this.diagram, this);
+	}
 	static Basename(diagram, args)
 	{
 		const dual = 'dual' in args ? args.dual : false;
@@ -9274,6 +9291,21 @@ class PullbackObject extends ProductObject
 	{
 		return '&#8991;';
 	}
+	setName()
+	{
+		this.objects.map(o => o.setName());
+		this.morphisms.map(m => m.setName());
+		this.basename = PullbackObject.Basename(this.diagram, this);
+		this.name = PullbackObject.Codename(this.diagram, this);
+	}
+	uses(elt, start = true, limitors = new Set())		// True if the given element is used in the construction of this object somehow or identical to it
+	{
+		if (limitors.has(this))
+			return true;
+		if (super.uses(elt, start, limitors))
+			return true;
+		return this.morphisms.reduce((r, m) => r || m.uses(elt, start, limitors), false);
+	}
 	static Basename(diagram, args)
 	{
 		const dual = 'dual' in args ? args.dual : false;
@@ -9364,6 +9396,12 @@ class HomObject extends MultiObject
 	{
 		this.basename = HomObject.Basename(this.diagram, this);
 		super.updateBasename();
+	}
+	setName()
+	{
+		super.setName();
+		this.basename = HomObject.Basename(this.diagram, this);
+		this.name = HomObject.Codename(this.diagram, this);
 	}
 	static Basename(diagram, args)
 	{
@@ -13668,7 +13706,7 @@ class Morphism extends Element
 		if ('data' in this)
 			this.signature = U.dataSig(this.data);
 		else if ('recursor' in this)
-			this.signature = U.dataSig(this.name, this.recursor.name);
+			this.signature = U.dataSig(this.name, typeof this.recursor === 'string' ? this.recursor : this.recursor.name);
 		else
 			super.setSignature();
 	}
@@ -13744,10 +13782,9 @@ class Morphism extends Element
 	{
 		if (limitors.has(this))
 			return false;
-		if (elt instanceof CatObject)
-			return this.domain.uses(elt, false, limitors) || this.codomain.uses(elt, false, limitors);
 		if (this.isEquivalent(elt))
 			return true;
+		return this.domain.uses(elt, false, limitors) || this.codomain.uses(elt, false, limitors);
 		if ('data' in this)
 		{
 			const values = [...this.data.values()];
@@ -13883,6 +13920,12 @@ class Morphism extends Element
 	isBare()
 	{
 		return 'recursor' in this ? false : super.isBare();
+	}
+	setName(basename = '')
+	{
+		this.domain.setName();
+		this.codomain.setName();
+		super.setName(basename);
 	}
 	static HasRecursiveForm(ary)	// TODO move
 	{
@@ -14233,7 +14276,7 @@ class NamedMorphism extends Morphism	// name of a morphism
 			return true;
 		if (this.isEquivalent(mor))
 			return true;
-		return this.base.uses(mor, start);
+		return this.source.uses(mor, start);
 	}
 	usecount(mor, start = true, limitors = new Set())		// True if the given morphism is used in the construction of this morphism somehow or identical to it
 	{
@@ -14246,6 +14289,11 @@ class NamedMorphism extends Morphism	// name of a morphism
 	isBare()
 	{
 		return true;
+	}
+	setName()
+	{
+		super.setName();
+		this.source.setName();
 	}
 }
 
@@ -14708,7 +14756,7 @@ class IndexMorphism extends Morphism
 		nuArgs.category = diagram.domain;
 		const to = diagram.getElement(nuArgs.to);
 		if (!to)
-			throw 'no morphism to attach to index: ' + nuArgs.to;
+			throw `no morphism to attach to index: ${diagram.name}/${args.basename} to ${nuArgs.to}`;
 		const domain = diagram.domain.getElement(nuArgs.domain);
 		const codomain = diagram.domain.getElement(nuArgs.codomain);
 		if (!domain.to.isEquivalent(to.domain))
@@ -16258,6 +16306,11 @@ class MultiMorphism extends Morphism
 	{
 		return false;
 	}
+	setName()
+	{
+		super.setName();
+		this.morphisms.map(m => m.setName());
+	}
 }
 
 class Composite extends MultiMorphism
@@ -16342,6 +16395,12 @@ class Composite extends MultiMorphism
 	{
 		this.morphisms.map(m => m instanceof Composite ? m.getSignatures(sigs) : sigs.push(m.signature));
 		return sigs;
+	}
+	setName()
+	{
+		super.setName();
+		this.basename = Composite.Basename(this.diagram, this);
+		this.name = Composite.Codename(this.diagram, this);
 	}
 	static Basename(diagram, args)
 	{
@@ -16442,6 +16501,12 @@ class ProductMorphism extends MultiMorphism
 		this.basename = ProductMorphism.Basename(this.diagram, this);
 		super.updateBasename();
 	}
+	setName()
+	{
+		super.setName();
+		this.basename = ProductMorphism.Basename(this.diagram, this);
+		this.name = ProductMorphism.Codename(this.diagram, this);
+	}
 	static Basename(diagram, args)
 	{
 		const dual = 'dual' in args ? args.dual : false;
@@ -16526,6 +16591,12 @@ class ProductAssembly extends MultiMorphism
 			const factorMorphism = this.diagram.get('FactorMorphism', args);
 			R.loadEquality(this.diagram, this, [m], this.dual ? [this, factorMorphism] : [factorMorphism, this]);
 		});
+	}
+	setName()
+	{
+		super.setName();
+		this.basename = ProductAssembly.Basename(this.diagram, this);
+		this.name = ProductAssembly.Codename(this.diagram, this);
 	}
 	static Basename(diagram, args)
 	{
@@ -16634,6 +16705,12 @@ class PullbackAssembly extends MultiMorphism
 			const codomainFactor = diagram.get('FactorMorphism', args);
 			R.loadEquality(diagram, this, [m], dual ? [domainFactor, this] : [this, codomainFactor]);
 		});
+	}
+	setName()
+	{
+		super.setName();
+		this.basename = PullbackAssembly.Basename(this.diagram, this);
+		this.name = PullbackAssembly.Codename(this.diagram, this);
 	}
 	static Basename(diagram, args)
 	{
@@ -16796,6 +16873,18 @@ class FactorMorphism extends Morphism
 	{
 		return this.dual && this.factors.length > 0 && this.factors.reduce((r, f) => f.length === 0, true);
 	}
+	uses(elt, start, limitors = new Set())		// True if the given object is used in the construction of this object somehow or identical to it
+	{
+		if (super.uses(elt, start, limitors))
+			return true;
+		return false;
+	}
+	setName(basename = '')
+	{
+		super.setName(basename);
+		this.basename = FactorMorphism.Basename(this.diagram, this);
+		this.name = FactorMorphism.Codename(this.diagram, this);
+	}
 	static Basename(diagram, args)
 	{
 		const factors = args.factors;
@@ -16804,18 +16893,40 @@ class FactorMorphism extends Morphism
 		const dual = 'dual' in args ? args.dual : false;
 		const c = args.dual ? 'C' : '';
 		const obj = diagram.getElement(dual ? args.codomain : args.domain, args.category);
-		let basename = `${c}Fa{${obj.refName(diagram)},`;
-		for (let i=0; i<factors.length; ++i)
+		let basename = '';
+		if (R.basemode)
 		{
-			const indices = factors[i];
-			const f = obj.getFactor(indices);
-			if (f.isTerminal())	// TODO dual object
-				basename += this.dual ? '#0' : '#1';
-			else
-				basename += f.refName(diagram);
-			basename += `_${indices.toString()}`;
-			if (i !== factors.length -1)
-				basename += ',';
+			basename = `${c}Fa{${obj.refName(diagram)},`;
+			for (let i=0; i<factors.length; ++i)
+			{
+				const indices = factors[i];
+				const f = obj.getFactor(indices);
+				if (f.isTerminal())	// TODO dual object
+					basename += this.dual ? '#0' : '#1';
+				else
+					basename += f.refName(diagram);
+				basename += `_${indices.toString()}`;
+				if (i !== factors.length -1)
+					basename += ',';
+			}
+		}
+		else
+		{
+			basename = `${c}Fa{${obj.refName(diagram)}:`;
+			for (let i=0; i<factors.length; ++i)
+			{
+				const indices = factors[i];
+				let f = obj.getFactor(indices);
+				if (indices === -1)
+					basename += '#1';
+				else if (indices === -2)
+					basename += '#0';
+				else
+					basename += f.refName(diagram);
+				basename += `_${indices.toString()}`;
+				if (i !== factors.length -1)
+					basename += ',';
+			}
 		}
 		basename += `}aF${c}`;
 		return basename;
@@ -17075,6 +17186,21 @@ class LambdaMorphism extends Morphism
 	{
 		return false;
 	}
+	uses(elt, start, limitors = new Set())		// True if the given element is used in the construction of this element somehow or identical to it
+	{
+		if (limitors.has(this))
+			return true;
+		if (this.isEquivalent(elt))
+			return true;
+		return this.preCurry.uses(elt);
+	}
+	setName()
+	{
+		this.preCurry.setName();
+		super.setName();
+		this.basename = LambdaMorphism.Basename(this.diagram, this);
+		this.name = LambdaMorphism.Codename(this.diagram, this);
+	}
 	static Basename(diagram, args)
 	{
 		const preCur = diagram.getElement(args.preCurry, 'category' in args ? args.category : null);
@@ -17195,6 +17321,12 @@ class HomMorphism extends MultiMorphism
 	isBare()
 	{
 		return false;
+	}
+	setName()
+	{
+		super.setName();
+		this.basename = HomMorphism.Basename(this.diagram, this);
+		this.name = HomMorphism.Codename(this.diagram, this);
 	}
 	static Basename(diagram, args)
 	{
@@ -17604,7 +17736,7 @@ class Diagram extends Functor
 		let cnt = 0;
 		do
 		{
-			const elements = new Set(this.elements.values());		// avoid double scan
+			const elements = this.getAll();
 			cnt = [...elements].filter(e =>
 			{
 				if (e.canSave())
@@ -19785,13 +19917,28 @@ if (fn)debugger;	// TODO
 			else if (elt instanceof MultiObject)
 				elt.objects.map(sm => this.getElement(sm.name) === undefined && errors.push(`Sub-object not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(sm.name)}`));
 			else if (elt instanceof LambdaMorphism)
-				this.getElement(elt.preCurry.name) === undefined && errors.push(`Pre-curry morphism not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(sm.name)}`);
+				this.getElement(elt.preCurry.name) === undefined && errors.push(`Pre-curry morphism not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(elt.preCurry.name)}`);
 			else if ('recursor' in elt)
-				this.getElement(elt.recursor.name) === undefined && errors.push(`Recursor morphism not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(sm.name)}`);
+				this.getElement(elt.recursor.name) === undefined && errors.push(`Recursor morphism not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(elt.recursor.name)}`);
 			else if (elt instanceof NamedObject && elt instanceof NamedMorphism)
-				this.getElement(elt.source.name) === undefined && errors.push(`Source element not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(sm.name)}`);
+				this.getElement(elt.source.name) === undefined && errors.push(`Source element not found in diagram: ${U.HtmlEntitySafe(elt.name)} ::: ${U.HtmlEntitySafe(elt.source.name)}`);
+			else if (elt instanceof FactorMorphism)
+			{
+				elt.factors.map(f =>
+				{
+					let obj = elt[elt.dual ? 'codomain' : 'domain'];
+					obj = obj instanceof NamedObject ? obj.source : obj;
+					if (obj.isBare())
+					{
+						if (f !== -1 && f !== -2 && Array.isArray(f) && f.length > 0)
+							errors.push(`Invalid factor for bare in ${U.HtmlEntitySafe(elt.name)} ::: ${f.toString()}`)
+					}
+					else if (obj.objects.length -1 < f)
+						errors.push(`Factor beyond range in ${U.HtmlEntitySafe(elt.name)} ::: ${f.toString()}`)
+				});
+			}
 		});
-		errors.length > 0 && console.error(`ERRORS in ${this.name}: ${errors.length} errors found\n` + errors.join('\n'));
+		errors.length > 0 && console.log(`ERRORS in ${this.name}: ${errors.length} errors found\n` + errors.join('\n'));
 		return errors;
 	}
 	close()
@@ -19908,8 +20055,9 @@ if (fn)debugger;	// TODO
 			}
 		});
 	}
-	getUsingElements(elt)
+	getUsingElements(e)
 	{
+		const elt = this.getElement(e);
 		const useElts = [];
 		this.getAll().forEach(e =>
 		{
@@ -19924,6 +20072,8 @@ if (fn)debugger;	// TODO
 				rslt = e.preCurry === elt;
 			else if (e.constructor.name === 'Morphism' && 'recursor' in e)
 				rslt = e.recursor === elt;
+			else if (e instanceof PullbackObject)
+				rslt = e.morphisms.filter(m => m === elt).length > 0;
 			rslt && useElts.push(e);
 		});
 		this.domain.elements.forEach(e => 'to' in e && e.to === elt && useElts.push(e));
@@ -20633,7 +20783,6 @@ class Assembler
 		// now we know all the objects in our domain
 		//
 		const domainNdxObjects = [domain, ...domObjects];
-
 		const preFactors = [domainNdxObjects.length === 1 ? [] : (domain.to.isTerminal() ? -1 : 0)];
 		const simpDomainObjects = domainNdxObjects.map((o, i) =>
 		{
@@ -20642,7 +20791,6 @@ class Assembler
 		}).filter(o => !o.isTerminal());
 		const simpDomain = simpDomainObjects.length > 0 ? diagram.prod(...simpDomainObjects) : diagram.getTerminal();
 		const central = diagram.fctr(simpDomain, preFactors);
-
 		const nuDomain = diagram.prod(...domainNdxObjects.map(o => o.to));
 		//
 		// PREAMBLES

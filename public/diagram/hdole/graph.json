@@ -414,14 +414,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_2",
         "codomain": "o_3",
-        "to": "Fa{A,A_-1,A_}aF"
+        "to": "hdole/graph/Fa{A:#1_-1,A_}aF"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
         "domain": "o_4",
         "codomain": "o_5",
-        "to": "Fa{A,A_,A_}aF"
+        "to": "hdole/graph/Fa{A:A_,A_}aF"
       },
       {
         "basename": "m_3",
@@ -434,7 +434,7 @@
             true
           ]
         ],
-        "to": "CFa{A,A_,A_-1}aFC"
+        "to": "hdole/graph/CFa{A:A_,#1_-1}aFC"
       },
       {
         "basename": "m_4",
@@ -447,7 +447,7 @@
             true
           ]
         ],
-        "to": "CFa{A,A_-1,A_}aFC"
+        "to": "hdole/graph/CFa{A:#1_-1,A_}aFC"
       },
       {
         "basename": "m_5",
@@ -460,14 +460,14 @@
             true
           ]
         ],
-        "to": "CFa{A,A_,A_}aFC"
+        "to": "hdole/graph/CFa{A:A_,A_}aFC"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
         "domain": "o_12",
         "codomain": "o_13",
-        "to": "Lm{Fa{A,A_,A_}aF:[]:[[0]]}mL"
+        "to": "hdole/graph/Lm{Fa{A:A_,A_}aF:[]:[[0]]}mL"
       },
       {
         "basename": "m_7",
@@ -480,7 +480,7 @@
             true
           ]
         ],
-        "to": "Lm{CFa{A,A_,A_}aFC:[]:[[0]]}mL"
+        "to": "hdole/graph/Lm{CFa{A:A_,A_}aFC:[]:[[0]]}mL"
       },
       {
         "basename": "m_8",
@@ -583,7 +583,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_23",
         "codomain": "o_24",
-        "to": "Fa{A,A_,A_-1}aF"
+        "to": "hdole/graph/Fa{A:A_,#1_-1}aF"
       },
       {
         "basename": "m_22",
@@ -864,11 +864,11 @@
       ]
     },
     {
-      "basename": "Lm{Fa{A,A_,A_}aF:[]:[[0]]}mL",
+      "basename": "Lm{Fa{A:A_,A_}aF:[]:[[0]]}mL",
       "prototype": "LambdaMorphism",
       "domain": "#1",
       "codomain": "Ho{A,Po{A,A}oP}oH",
-      "preCurry": "hdole/graph/Fa{A,A_,A_}aF",
+      "preCurry": "hdole/graph/Fa{A:A_,A_}aF",
       "domFactors": [],
       "homFactors": [
         [
@@ -877,11 +877,11 @@
       ]
     },
     {
-      "basename": "Lm{CFa{A,A_,A_}aFC:[]:[[0]]}mL",
+      "basename": "Lm{CFa{A:A_,A_}aFC:[]:[[0]]}mL",
       "prototype": "LambdaMorphism",
       "domain": "#1",
       "codomain": "Ho{CPo{A,A}oPC,A}oH",
-      "preCurry": "hdole/graph/CFa{A,A_,A_}aFC",
+      "preCurry": "hdole/graph/CFa{A:A_,A_}aFC",
       "domFactors": [],
       "homFactors": [
         [
@@ -1005,7 +1005,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652437310538,
+  "timestamp": 1652437310539,
   "version": 0,
   "viewport": {
     "x": 336,

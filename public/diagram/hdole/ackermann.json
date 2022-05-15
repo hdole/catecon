@@ -90,7 +90,7 @@
           "x": 230,
           "y": 60
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -98,7 +98,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_0",
         "codomain": "o_4",
-        "to": "Fa{hdole/nat/N64,hdole/nat/N64_,hdole/nat/N64_-1}aF"
+        "to": "hdole/ackermann/Fa{hdole/nat/N64:hdole/nat/N64_,#1_-1}aF"
       },
       {
         "basename": "m_4",
@@ -122,7 +122,7 @@
             true
           ]
         ],
-        "to": "CFa{CPo{#1,#1}oPC,#1_1}aFC"
+        "to": "hdole/ackermann/CFa{CPo{#1,#1}oPC:#1_1}aFC"
       },
       {
         "basename": "m_8",
@@ -135,7 +135,7 @@
             true
           ]
         ],
-        "to": "CFa{CPo{#1,#1}oPC,#1_0}aFC"
+        "to": "hdole/ackermann/CFa{CPo{#1,#1}oPC:#1_0}aFC"
       },
       {
         "basename": "m_9",
@@ -155,7 +155,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_6",
         "codomain": "o_13",
-        "to": "Fa{hdole/nat/N64,hdole/nat/N64_-1}aF"
+        "to": "hdole/ackermann/Fa{hdole/nat/N64:#1_-1}aF"
       },
       {
         "basename": "m_6",
@@ -171,7 +171,7 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1,
       "min": 0,
       "max": 1
@@ -255,7 +255,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644486226838,
+  "timestamp": 1644486226839,
   "version": 0,
   "viewport": {
     "x": 0,

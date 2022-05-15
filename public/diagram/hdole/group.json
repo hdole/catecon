@@ -402,7 +402,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_7",
         "codomain": "o_8",
-        "to": "Fa{G,G_,G_}aF"
+        "to": "hdole/group/Fa{G:G_,G_}aF"
       },
       {
         "basename": "m_6",
@@ -416,7 +416,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_7",
         "codomain": "o_11",
-        "to": "Fa{G,G_-1}aF"
+        "to": "hdole/group/Fa{G:#1_-1}aF"
       },
       {
         "basename": "m_4",
@@ -437,7 +437,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_10",
         "codomain": "o_14",
-        "to": "Fa{G,G_,G_}aF"
+        "to": "hdole/group/Fa{G:G_,G_}aF"
       },
       {
         "basename": "m_10",
@@ -451,7 +451,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_10",
         "codomain": "o_18",
-        "to": "Fa{G,G_-1}aF"
+        "to": "hdole/group/Fa{G:#1_-1}aF"
       },
       {
         "basename": "m_12",
@@ -472,7 +472,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_19",
         "codomain": "o_21",
-        "to": "Pa{Fa{Po{G,G,G}oP,G_0}aF,Fa{Po{G,G,G}oP,G_1,G_2}aF}aP"
+        "to": "hdole/group/Pa{Fa{Po{G,G,G}oP:G_0}aF,Fa{Po{G,G,G}oP:G_1,G_2}aF}aP"
       },
       {
         "basename": "m_18",
@@ -485,7 +485,7 @@
             true
           ]
         ],
-        "to": "Pa{Fa{Po{G,G,G}oP,G_0,G_1}aF,Fa{Po{G,G,G}oP,G_2}aF}aP"
+        "to": "hdole/group/Pa{Fa{Po{G,G,G}oP:G_0,G_1}aF,Fa{Po{G,G,G}oP:G_2}aF}aP"
       },
       {
         "basename": "m_19",
@@ -539,7 +539,7 @@
             true
           ]
         ],
-        "to": "Fa{G,G_,G_-1}aF"
+        "to": "hdole/group/Fa{G:G_,#1_-1}aF"
       },
       {
         "basename": "m_21",
@@ -566,7 +566,7 @@
             true
           ]
         ],
-        "to": "Fa{G,G_-1,G_}aF"
+        "to": "hdole/group/Fa{G:#1_-1,G_}aF"
       },
       {
         "basename": "m_24",
@@ -839,8 +839,8 @@
       "domain": "Po{G,G,G}oP",
       "codomain": "Po{G,Po{G,G}oP}oP",
       "morphisms": [
-        "Fa{Po{G,G,G}oP,G_0}aF",
-        "Fa{Po{G,G,G}oP,G_1,G_2}aF"
+        "Fa{Po{G,G,G}oP:G_0}aF",
+        "Fa{Po{G,G,G}oP:G_1,G_2}aF"
       ]
     },
     {
@@ -848,8 +848,8 @@
       "domain": "Po{G,G,G}oP",
       "codomain": "Po{Po{G,G}oP,G}oP",
       "morphisms": [
-        "Fa{Po{G,G,G}oP,G_0,G_1}aF",
-        "Fa{Po{G,G,G}oP,G_2}aF"
+        "Fa{Po{G,G,G}oP:G_0,G_1}aF",
+        "Fa{Po{G,G,G}oP:G_2}aF"
       ]
     },
     {
@@ -908,7 +908,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652437334734,
+  "timestamp": 1652437334735,
   "version": 0,
   "viewport": {
     "x": 899,

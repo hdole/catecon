@@ -26,7 +26,7 @@ function saveDiagram(diagram)
 	console.log('saving diagram', diagram.name);
 	diagram.timestamp = diagram.timestamp + 1;
 	const diagramString = JSON.stringify(diagram.json(), null, 2);
-	const dgrmFile = path.join(process.env.HTTP_DIR, 'diagram', diagram.name + '.jsonX');
+	const dgrmFile = path.join(process.env.HTTP_DIR, 'diagram', diagram.name + '.json');
 	fs.mkdirSync(path.dirname(dgrmFile), {recursive:true});
 	const dgrmFD = fs.openSync(dgrmFile, 'w');
 	fs.writeSync(dgrmFD, diagramString, 0, diagramString.length +1);
@@ -37,7 +37,7 @@ function findDiagramJsons(dir)
 {
 	if (!fs.existsSync(dir))
 	{
-		console.error('missing directory', dir);
+		console.log('missing directory', dir);
 		return;
 	}
 	const files = fs.readdirSync(dir);
@@ -51,11 +51,19 @@ function findDiagramJsons(dir)
 //
 try
 {
+	if (process.argv.length !== 3)
+	{
+		console.log(process.argv[0], 'Usage: filename');
+		process.exit(1);
+	}
+	const input = fs.readFileSync(process.argv[2], {encoding:'utf8', flag:'r'}).split('\n');
 	Cat.R.initialize(_ =>
 	{
 		try
 		{
-			// load diagrams from local storage
+			//
+			// find and read diagrams from local storage
+			//
 			const dir = path.join(process.env.CAT_DIR, process.env.HTTP_DIR, 'diagram');
 			const fsDiagrams = findDiagramJsons(dir);
 			const diagramJson = new Map();
@@ -64,7 +72,7 @@ try
 				const data = fs.readFileSync(f);
 				if (!data)
 				{
-					console.error('ERROR: cannot read diageram file', f, error);
+					console.log('ERROR: cannot read diageram file', f, error);
 					return;
 				}
 				const diagInfo = JSON.parse(data);
@@ -76,9 +84,8 @@ try
 				Cat.R.catalog.get(info.name).isLocal = true;
 				diagramJson.set(diagInfo.name, diagInfo);
 			});
-			const name = process.argv[2];
 			//
-			// load diagrams in reverse dependency order
+			// load diagrams in dependency order
 			//
 			const loaded = new Set();
 			const diagrams = new Map();
@@ -98,220 +105,114 @@ try
 				const d = new Cat[args.prototype](userDiagram, args);
 				d.postProcess();
 				diagrams.set(d.name, d);
+				d.purge();
 			};
 			[...diagramJson.keys()].map(loader);
-			const diagram = diagrams.get(name);
-			if (!diagram)
-				throw 'no diagram';
-			const basename = process.argv[3];
-			if (!Cat.U.isValidBasename(basename))
-				throw 'bad old basename';
-			const nuBasename = process.argv[4];
-			if (!Cat.U.isValidBasename(nuBasename))
-				throw 'bad new basename';
-			if (basename === nuBasename)
-				throw 'names cannot be the same';
-			const elt = diagram.getElement(basename);
-			if (!elt)
-				throw 'no element found for basename';
-			if (diagram.getElement(nuBasename))
-				throw 'new basename cannot be previously existing';
-			const candidates = new Set();
-			candidates.add(diagram.name);
-			const scanning = [name];
-			const scanned = new Set();
-			while(scanning.length > 0)
+			const modDiagrams = new Set();
+			const didit = new Set();
+			const processOne = (name, basename, nuBasename) =>
 			{
-				const scan = scanning.pop();
-				if (scanned.has(scan))
-					continue;
-				scanned.add(scan);
-				const diag = diagrams.get(scan);
-				diagrams.forEach((d, nm) =>
+				if (basename === nuBasename)
+					throw 'names cannot be the same';
+				const diagram = diagrams.get(name);
+				if (!diagram)
+					throw 'no diagram';
+				const isBare = !basename.includes('{');
+				if (isBare)
 				{
-					if (d.allReferences.has(scan))
+					if (!Cat.U.isValidBasename(basename))
+						throw 'bad old basename';
+					if (!Cat.U.isValidBasename(nuBasename))
+						throw 'bad new basename';
+				}
+				else
+					if (!nuBasename.includes('{'))
+						throw 'new basename is not complex';
+				const elt = diagram.getElement(basename);
+				if (!elt)
+				{
+					console.log('no element found for basename', basename);
+					return;
+				}
+				if (diagram.getElement(nuBasename))
+					throw 'new basename cannot be previously existing';
+				const uniq = name + basename + nuBasename;
+				if (didit.has(uniq))
+					return;
+				didit.add(uniq);
+				console.log('*** Processing', name, basename, nuBasename);
+				const candidateDiagrams = new Set();
+				candidateDiagrams.add(name);
+				const scanning = [name];
+				const scanned = new Set();
+				while(scanning.length > 0)
+				{
+					const scan = scanning.pop();
+					if (scanned.has(scan))
+						continue;
+					scanned.add(scan);
+					const diag = diagrams.get(scan);
+					diagrams.forEach((d, nm) =>
 					{
-						candidates.add(nm);
-						scanning.push(nm);
-					}
+						if (d.allReferences.has(scan))
+						{
+							candidateDiagrams.add(nm);
+							scanning.push(nm);
+						}
+					});
+				}
+				//
+				// find all the elements that use the specified element
+				//
+				const elements = new Set();
+				candidateDiagrams.forEach(scan =>
+				{
+					const d = diagrams.get(scan);
+					d.getAll().forEach(scan => scan.uses(elt) && elements.add(scan));
+				});
+				elt.setName(nuBasename);
+				elements.forEach(e =>
+				{
+					e.setName();
+					modDiagrams.add(e.diagram);
 				});
 			}
-			const eltArgs = elt.json();
-			eltArgs.basename = nuBasename;
-			delete eltArgs.name;
-			const nuElt = diagram.get(eltArgs.prototype, eltArgs);
-			nuElt.incrRefcnt();
-			console.log('replacing element:', nuElt.name);
-			//
-			// find all the elements that use the specified element
-			//
-			const elements = new Set();
-			candidates.forEach(scan =>
+			let name = null;
+			let basename = null;
+			let nuBasename = null;
+			Cat.R.basemode = false;
+			input.map(ln =>
 			{
-				const d = diagrams.get(scan);
-				d.getAll().forEach(scan => scan.uses(elt) && elements.add(scan));
-			});
-debugger;
-			const modDiagrams = new Set();
-			elements.forEach(e => modDiagrams.add(e.diagram));
-			console.log('Diagrams to be modified:');
-			modDiagrams.forEach(d => console.log(d.name));
-			const jsons = new Map();
-			elements.forEach(e => jsons.set(e.name, e.json()));
-
-			const name2elt = new Map();
-			diagrams.forEach(dgrm => dgrm.getAll().forEach(e => name2elt.set(e.name, e)));
-			//
-			// increase reference count of elements under those to be re-built so they do not disapear
-			//
-			elements.forEach(e =>
-			{
-				if (e instanceof Cat.MultiObject)
-					e.objects.map(o => !elements.has(o) && o.incrRefcnt());
-				else if (e instanceof Cat.MultiMorphism)
-					e.morphisms.map(m => !elements.has(m) && m.incrRefcnt());
-			});
-			//
-			// remove pre-built elements from index objects
-			//
-			diagrams.forEach(dgrm =>
-			{
-				dgrm.domain.elements.forEach(ndx =>
+				const line = ln.trim();
+				if (line === '')
+					return;
+				const tokens = line.split(' ').filter(t => t != '');		// split and remove extra spaces
+				if (tokens.length === 1)
 				{
-					if ('to' in ndx && elements.has(ndx.to))
-					{
-//						if (!indices.has(ndx.to))
-//							indices.set(ndx.to, []);
-//						const ndxs = indices.get(ndx.to);
-//						ndxs.push(ndx);
-						ndx.oldTo = ndx.to;
-						if (ndx instanceof Cat.IndexObject)
-							ndx.setObject(null)
-						else if (ndx instanceof Cat.IndexMorphism)
-							ndx.setMorphism(null);
-					}
-				});
-				dgrm.purge();
-			});
-const assy = diagrams.get('hdole/assembly');
-			//
-			// look for bad reference counts
-			//
-			[...elements].filter(e => e.refcnt !== 0).map(e =>
-			{
-				const users = e.diagram.getUsingElements(e);
-				console.log(e.name, users.map(i => i.name));
-				gotError = true;
-			});
-			console.log('bad refcnts', [...elements].filter(e => e.refcnt !== 0).length);
-			if (gotError)
-				return;
-			//
-			// for element using the specified one create a new one using the replacement
-			//
-			// TODO Definition, DefinitionInstance, Theorem
-			//
-			const built = new Map();
-			built.set(elt.name, nuElt);
-			const recursors = [];
-			const build = (ctx, name) =>
-			{
-				if (built.has(name))
-					return built.get(name);
-				const globalName = ctx.name + '/' + name;		// try global name if given local
-				if (built.has(globalName))
-					return built.get(globalName);
-				if (jsons.has(name))
-				{
-					const json = jsons.get(name);
-					const dgrm = diagrams.get(json.diagram);
-					if (built.has(name))
-						return built.get(name);
-					let nu = null;
-					if ('morphisms' in json)
-{
-if (name === "hdole/assembly/Cm{Cm{Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_0}aF,Pm{hdole/floats/eq0_64,Id{hdole/floats/F64}dI}mP}mC,Cm{Di{Po{CPo{#1,#1}oPC,hdole/floats/F64}oP-L}iD,CPm{Cm{Fa{Po{#1,hdole/floats/F64}oP,hdole/floats/F64_1}aF,Cm{Fa{hdole/floats/F64,hdole/floats/F64_-1,hdole/floats/F64_1}aF,Cm{Fa{Po{#1,hdole/floats/F64}oP,hdole/floats/F64_1}aF,Cm{Cm{Fa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_0}aF,Pm{Cm{hdole/floats/decr64,fact}mC,Id{hdole/floats/F64}dI}mP}mC,Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64_1,hdole/floats/F64_0}aF,hdole/floats/mult64}mC}mC}mC}mC}mC,Cm{Fa{Po{#1,hdole/floats/F64}oP,hdole/floats/F64_1}aF,Fa{hdole/floats/F64,hdole/floats/F64_-1}aF,hdole/floats/one64}mC}mPC,CFa{hdole/floats/F64,hdole/floats/F64_,hdole/floats/F64_}aFC}mC}mC")debugger;
-						json.morphisms = json.morphisms.map(m => build(dgrm, m));
-}
-					else if ('objects' in json)
-						json.objects = json.objects.map(o => build(dgrm, o));
-					else if (json.prototype === 'Morphism' && 'recursor' in json)
-					{
-						const rec = json.recursor;
-						nu = new Cat[json.prototype](dgrm, json);
-						built.set(name, nu);
-						recursors.push(nu);
-					}
-					else if (json.prototype === 'LambdaMorphism')
-						json.preCurry = build(dgrm, preCurry);
-					else if (json.prototype === 'NamedObject' || json.prototype === 'NamedMorphism')
-						json.source = build(dgrm, json.source);
-					nu = nu ? nu : new Cat[json.prototype](dgrm, json);
-					built.set(name, nu);
-					nu.incrRefcnt();
-					return nu;
+					name = tokens[0];
+					return;
 				}
-				let thisElt = name2elt.get(name);
-				thisElt = thisElt ? thisElt : name2elt.get(globalName);		// try global name
-				return thisElt;
-			};
-			jsons.forEach((json, name) =>
-			{
-				const dgrm = diagrams.get(json.diagram);
-				build(dgrm, json.name);
-			});
-			//
-			// now set the recursive functions since they should all be defined (in lieu of postload)
-			//
-			recursors.map(e => e.setRecursor(built.get(e.recursor)));
-			built.forEach((blt, nm) => name2elt.get(nm).signature === blt.signature && console.log(`WARNING: built a duplicate: ${blt.name}`));
-			console.log('Elements to be modified:');
-			elements.forEach(e => console.log(e.name, '::', built.get(e.name).name));
-			//
-			// update index elements
-			//
-			diagrams.forEach(dgrm =>
-			{
-				dgrm.domain.elements.forEach(ndx =>
+				else if (tokens.length === 2)
 				{
-					if ('oldTo' in ndx && built.has(ndx.oldTo.name))
-					{
-						const e = built.get(ndx.oldTo.name);
-						if (ndx instanceof Cat.IndexObject)
-							ndx.setObject(e);
-						else if (ndx instanceof Cat.IndexMorphism)
-							ndx.setMorphism(e);
-					}
-				});
-			});
-			diagrams.forEach(dgrm =>
-			{
-				if (dgrm.check().length > 0)
-					gotError = true;
-			});
-			if (gotError)
-				return;
-			name2elt.forEach((e, nm) =>
-			{
-				if (e.refcnt === 0 && modDiagrams.has(e.diagram) && !e.uses(elt) && !built.has(nm))
-				{
-					gotError = true;
-					console.log('bad removal', e.name);
+					basename = tokens[0];
+					nuBasename = tokens[1];
 				}
+				else
+					throw 'bad input line' + line;
+				processOne(name, basename, nuBasename);
 			});
-			if (gotError)
-				return;
+return;
 			modDiagrams.forEach(dgrm => saveDiagram(dgrm));
 		}
 		catch(x)
 		{
-			console.error(x);
+			console.log(x);
 		}
 	});
 }
 catch(error)
 {
-	console.error(error);
+	console.log(error);
 }
 
 process.exit(gotError ? 1 : 0);
