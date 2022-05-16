@@ -1,4 +1,4 @@
-// (C) 2018-2021 Harry Dole
+// (C) 2018-2022 Harry Dole
 // Catecon:  The Categorical Console
 //
 var Cat = Cat || require('./Cat.js');
@@ -19,15 +19,16 @@ var Cat = Cat || require('./Cat.js');
 			super(diagram, args);
 			Object.defineProperties(this,
 			{
-				currentDiagram:			{value:	null,	writable:	true},
-				context:				{value:	null,	writable:	true},
-				debug:					{value: false,	writable:	true},
+				currentDiagram:			{value:	null,		writable:	true},
+				context:				{value:	null,		writable:	true},
+				debug:					{value: false,		writable:	true},
 				references:				{value:	new Map(),	writable:	false},
-				tab:					{value:	1,		writable:	true},
+				tab:					{value:	1,			writable:	true},
 				dependencies:			{value: new Set(),	writable:	false},		// from element name t0 symbol
 				generated:				{value: new Set(),	writable:	false},		// elements already produced
 				objects:				{value: new Set(),	writable:	false},		// elements already produced
 				generatedVariables:		{value: new Set(),	writable:	false},		// variables generated during the code generation
+				varCount:				{value:	0,			writable:	true},
 			});
 			R.languages.set(this.basename, this);
 			R.$CAT.getElement('Set').actions.set(args.basename, this);
@@ -75,6 +76,8 @@ var Cat = Cat || require('./Cat.js');
 		}
 		getType(elt, first = true)
 		{
+			if (elt instanceof Cat.Morphism)
+				return `fun_${elt.signature}`;
 			let isLocal = false;
 			if (!this.currentDiagram)
 				this.currentDiagram = this.context;
@@ -266,7 +269,6 @@ ${members}
 						code += this.generateRuntime(object);
 						break;
 					case 'ProductObject':
-//						code += this.generateProductObject(object);
 						if (this.isBool(object))		// TODO sz > 2
 							code += this.generateProductObject(object);
 						break;
@@ -382,8 +384,6 @@ ${members}
 				const upG = upGraph.getFactor(factor);
 				const upFactor = U.pushFactor(factor, ndx);
 				const up = upGraph.getFactor(upFactor);
-//				if ('alloc' in up)
-//					g.alloc = up.alloc;
 				if ('dom' in up)
 					g.dom = up.dom;
 				if ('cod' in up)
@@ -395,27 +395,9 @@ ${members}
 					g.var = up.var;
 					const thisFactor = U.pushFactor(downFactor, ndx);
 					ndxMap.set(thisFactor.toString(), g.var);
-						/*
-					if (up.element instanceof Cat.ProductObject && up.element.dual && !this.isBool(up.element))		// distribute coproduct terms  TODO process >2
-					{
-						const isFold = 'dom' in up && up.dom instanceof Cat.FactorMorphism && up.dom.isFold();
-						up.element.objects.map((o, i) =>
-						{
-							const v = isFold ? g.var : `${g.var}.m_${i}`;
-							g.graphs[i].var = v;
-							const iFactor = U.pushFactor(factor, i);
-							ndxMap.set(iFactor.toString(), v);
-						});
-					}
-						*/
 				}
 				if (up.element instanceof Cat.ProductObject && up.element.dual)
 					g.graphs.map((subg, i) => subg.scanCheck(CppAction.CheckGraph, process, U.pushFactor(ndx, i)));
-//				g.graphs.map((subg, i) =>
-//				{
-//					if ('alloc' in up.graphs[i])
-//						subg.alloc = true;
-//				});
 			};
 			graph.graphs[0].scanCheck(CppAction.CheckGraph, process);
 			factor = codFactor;		// now scan the codomain
@@ -438,21 +420,13 @@ ${members}
 		{
 			if (upGraph)
 				this.copyVariables(graph, ndxMap, upGraph, domFactor, codFactor);
-//			let alloc = false;
-			const check = g =>
-			{
-//				if ('alloc' in g)
-//					alloc = g.alloc;
-				return CppAction.CheckGraph(g);
-			};
+			const check = g => CppAction.CheckGraph(g);
 			const process = (g, ndx) =>
 			{
 				if (g.element.isTerminal() || this.getCode(g.element) === '//' || 'var' in g)		// skip this element as it is a terminal or global variable '//'
 					return;
 				const indexes = g.links.filter(lnk => ndxMap.has(lnk.toString()));
 				const strNdx = ndx.toString();
-//				if (alloc)
-//					g.alloc = alloc;
 				if (indexes.length > 0)
 				{
 					const v = ndxMap.get(indexes[0].toString());
@@ -489,14 +463,9 @@ ${members}
 					if (!ndxMap.has(strNdx))
 					{
 						ndxMap.set(strNdx, `var_${this.varCount++}`);
-//						if (g.element instanceof Cat.ProductObject && g.element.dual)
-//							g.graphs.map(subg => subg.alloc = true);
 					}
-//					if (g.element instanceof Cat.ProductObject && g.element.dual)
-//						g.graphs.map(subg => subg.alloc = true);
 					g.var = ndxMap.get(strNdx);
 					if (g.element instanceof Cat.ProductObject && g.element.dual && !this.isBool(g.element))
-//						g.graphs.map((g, i) => process(g, U.pushFactor(ndx, i)));
 						g.graphs.map((subg, i) => subg.scanLinks(subg, check, process));
 				}
 			};
@@ -578,8 +547,6 @@ ${members}
 			{
 				if (g.element.isTerminal() || this.getCode(g.element) === '//')		// skip this element as it is a terminal or global variable '//'
 					return;
-//				if ('alloc' in g && g.alloc)
-//					return;
 				if (g.links.reduce((r, lnk) => r || lnk[0] === codNdx, false))		// return if linked to output
 					return;
 				if (ndx.length > 1)
@@ -752,26 +719,10 @@ ${members}
 					}
 					break;
 				case 'Identity':
-					break;
 				case 'FactorMorphism':
-				/*
-					if (morphism.dual)
-					{
-						this.setupVariables(morphism, graph, new Map(), upGraph, domFactor, codFactor);
-						if (morphism.isFold())
-							code += this.cline(`${graph.graphs[1].var} = ${graph.graphs[0].var};`);
-						else
-							debugger;
-					}
-					else
-					{
-					}
-					*/
-					break;
 				case 'LambdaMorphism':
 				case 'Distribute':
 				case 'DeDistribute':
-					// TODO
 					break;
 				case 'Evaluation':
 					const domGraph = upGraph.getFactor(domFactor);
@@ -779,7 +730,6 @@ ${members}
 					{
 						const domNdx = Cat.U.pushFactor(domFactor, 1);
 						delete domGraph.graphs[0].var;		// variable is consumed here
-//						domGraph.graphs[0].alloc = true;
 						code += this.instantiateMorphism(null, domGraph.eval, ndxMap, upGraph, domNdx, codFactor);
 					}
 					else
@@ -800,7 +750,6 @@ ${members}
 						const cnt = morphism.morphisms.length;
 						if (cnt === 2)	// if-then-else
 						{
-//							code += this.cline(`if (${graph.graphs[0].var}${this.isBool(graph.graphs[0].element) ? '' : '.c'})\n{`);
 							code += this.cline(`if (${graph.graphs[0].var})\n{`);
 							this.incTab();
 							code += isFold ? '' : this.cline(`${graph.graphs[1].var}.c = 1;`);
@@ -970,46 +919,6 @@ int main(int argc, char ** argv)
 `;
 
 			return this.cline(code);
-			/*
-			let code =
-`
-#include <iostream>
-#include <string>
-#include <stdlib.h>
-#include <map>
-#include <cstring>
-
-${this.generateHeader()}
-${this.generateObjects(morphism)}
-int main(int argc, char ** argv)
-{
-	try
-	{
-		if (argc == 2 && (strcmp("-h", argv[1]) || strcmp("--help", argv[1])))
-		{
-			std::cout << "Diagram: ${this.context.name}" << std::endl;
-			std::cout << "Morphism: ${morphism.name}" << std::endl;
-`;
-			if (morphism.description !== '')
-				code +=
-`			std::cout << "Description: ${morphism.description}" << std::endl;
-`;
-			code +=
-`			return 1;
-		}
-
-${morphismCode}
-		return 0;
-	}
-	catch(std::exception x)
-	{
-		std::cerr << "An error occurred" << std::endl;
-		return 1;
-	}
-}
-`;
-			return code;
-			*/
 		}
 
 		getFactorAccessor(factor)
