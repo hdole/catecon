@@ -169,6 +169,7 @@ try
 				{
 					const d = diagrams.get(scan);
 					d.getAll().forEach(scan => scan.uses(elt) && elements.add(scan));
+					d.domain.elements.forEach(ndx => 'to' in ndx && ndx.to.uses(elt) && elements.add(ndx));
 				});
 				elt.setName(nuBasename);
 				elements.forEach(e =>
@@ -201,7 +202,6 @@ try
 					throw 'bad input line' + line;
 				processOne(name, basename, nuBasename);
 			});
-return;
 			modDiagrams.forEach(dgrm => saveDiagram(dgrm));
 		}
 		catch(x)
