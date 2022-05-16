@@ -10793,7 +10793,9 @@ class CompositeAction extends Action
 	{
 		const morphisms = indexMorphisms .map(m => m.to);
 		const to = diagram.get('Composite', {morphisms});
-		return new IndexMorphism(diagram, {to, domain:Composite.Domain(indexMorphisms), codomain:Composite.Codomain(indexMorphisms)});
+		const from = new IndexMorphism(diagram, {to, domain:Composite.Domain(indexMorphisms), codomain:Composite.Codomain(indexMorphisms)});
+		from.mayFlipName();
+		return from;
 	}
 	replay(e, diagram, args)
 	{
@@ -11386,9 +11388,14 @@ class HomObjectAction extends Action
 			this.searchTool.getMatchingElements = _ =>
 			{
 				const filter = document.getElementById(`${this.searchTool.type}-search-value`).value;
-				const morphisms = R.diagram.getMorphisms().filter(m => m.name.includes(filter)
-					&& (this.dual ? m.codomain === to : m.domain === to)
-					&& ((this.searchTool.searchArgs.diagramOnly && m.diagram === R.diagram) || !this.searchTool.searchArgs.diagramOnly));
+				const morphisms = [];
+				const diagrams = this.searchTool.searchArgs.diagramOnly ? [diagram] : [diagram, ...R.diagram.allReferences.keys()];
+				diagrams.map(name =>
+				{
+					const dgrm = R.$CAT.getElement(name);
+					morphisms.push(...dgrm.getMorphisms().filter(m => m.name.includes(filter)
+																	&& (this.dual ? to.isEquivalent(m.codomain) : to.isEquivalent(m.domain))));
+				});
 				const sigs = new Map();
 				morphisms.map(m =>
 				{
@@ -11498,6 +11505,7 @@ class HomsetAction extends Action
 		const toArgs = {basename:args.basename, properName:args.properName, description:args.description, domain:this.swapped ? args.codomain.to : args.domain.to, codomain:this.swapped ? args.domain.to : args.codomain.to};
 		const to = new Morphism(diagram, toArgs);
 		const nuFrom = new IndexMorphism(diagram, {to, domain:this.swapped ? this.codomain : this.domain, codomain:this.swapped ? this.domain : this.codomain});
+		nuFrom.mayFlipName();
 		diagram.makeSelected(nuFrom);
 		D.emitCellEvent(diagram, 'check');
 		nuFrom.checkCells();
@@ -13784,7 +13792,8 @@ class Morphism extends Element
 			return false;
 		if (this.isEquivalent(elt))
 			return true;
-		return this.domain.uses(elt, false, limitors) || this.codomain.uses(elt, false, limitors);
+		if (this.domain.uses(elt, false, limitors) || this.codomain.uses(elt, false, limitors))
+			return true;
 		if ('data' in this)
 		{
 			const values = [...this.data.values()];
@@ -14290,9 +14299,9 @@ class NamedMorphism extends Morphism	// name of a morphism
 	{
 		return true;
 	}
-	setName()
+	setName(basename)
 	{
-		super.setName();
+		super.setName(basename);
 		this.source.setName();
 	}
 }
@@ -15083,6 +15092,15 @@ class IndexMorphism extends Morphism
 		if (!(m && m instanceof IndexMorphism))
 			return false;
 		return this.to.isEquivalent(m.to);
+	}
+	mayFlipName()
+	{
+		const nmBox = this.diagram.userToDiagramCoords(this.svg_name.getBoundingClientRect());
+		if (this.diagram.hasOverlap(nmBox, this.name))
+		{
+			this.attributes.set('flipName', !this.attributes.get('flipName'));
+			this.update();
+		}
 	}
 	static LinkId(data, lnk)
 	{
@@ -18172,6 +18190,7 @@ class Diagram extends Functor
 		xyC = new D2(codomain.getXY());
 		const from = new IndexMorphism(this, {to, domain, codomain});
 		from.update();
+		from.mayFlipName();
 		if (select)
 			this.makeSelected(from);
 		return from;
@@ -19474,8 +19493,8 @@ class Diagram extends Functor
 		const text = new IndexText(this, {xy, description:''});
 		text.textEditor(type === 'text' ? '' : 'object');
 		const div = document.querySelector('#foreign-text');
-		const badColor = e => div.style.backgroundColor = '#cc0';
-		const neutralColor = e => div.style.backgroundColor = 'var(--color-bg)';
+		const warnColor = e => div.style.backgroundColor = 'var(--color-warn)';
+		const goodColor = e => div.style.backgroundColor = 'var(--color-good)';
 		const checkToken = (aType, tok) =>
 		{
 			if (U.isValidBasename(tok))
@@ -19538,12 +19557,12 @@ class Diagram extends Functor
 		{
 			if (validateInput(input))
 			{
-				neutralColor()
+				goodColor()
 				return true;
 			}
 			else
 			{
-				badColor();
+				warnColor();
 				return false;
 			}
 		};
@@ -19551,12 +19570,12 @@ class Diagram extends Functor
 		{
 			if (validateInput(input))
 			{
-				neutralColor()
+				goodColor()
 				return true;
 			}
 			else
 			{
-				badColor();
+				warnColor();
 				return false;
 			}
 		}
@@ -19576,7 +19595,6 @@ class Diagram extends Functor
 		};
 		const onfocusout = e =>
 		{
-if (fn)debugger;	// TODO
 			const input = e.target.innerText.trim();
 			const tokens = input.split(' ').filter(t => t !== '');
 			const last = tokens.length - 1;
@@ -19610,8 +19628,8 @@ if (fn)debugger;	// TODO
 						if (shiftKey)
 						{
 							const m = this.codomain.newMorphism(e, this, tokens[1], tokens[0], tokens[2]);
-							m && this.placeMorphism(m, xy);
-							created.push(m);
+							if (m)
+								created.push(this.placeMorphism(m, xy));
 						}
 						else
 						{
@@ -19660,6 +19678,7 @@ if (fn)debugger;	// TODO
 				}
 				node = node.parentNode;
 			}
+			text.description = '';		// to get rid of it
 			D.closeActiveTextEdit();
 			text.decrRefcnt();
 			this.makeSelected(...created);
