@@ -2199,7 +2199,7 @@ class Toolbar
 		const selected = diagram.selected;
 		const toolBbox = new D2(this.element.getBoundingClientRect());
 		const oldBox = diagram.userToDiagramCoords(this.element.getBoundingClientRect());
-		const nuBox = diagram.diagramToUserCoords(diagram.autoplaceSvg(oldBox, '', oldBox.height, 4, this.mouseCoords));
+		const nuBox = diagram.diagramToUserCoords(diagram.autoplaceSvg(oldBox, '', oldBox.height/2, 4, this.mouseCoords));
 		const wid = D.width();
 		const hgt = D.height();
 		if (nuBox.x < 0)
@@ -4239,11 +4239,11 @@ class Display
 					},
 					Delete(e)
 					{
-						R.diagram && !D.textEditActive() && R.diagram.activate(e, 'delete');
+						R.diagram && !D.isTextEditActive() && R.diagram.activate(e, 'delete');
 					},
 					ShiftDelete(e)
 					{
-						if (R.diagram && !D.textEditActive())
+						if (R.diagram && !D.isTextEditActive())
 						{
 							R.diagram.activate(e, 'delete');
 							if (R.diagram.selected.length > 0)
@@ -4254,7 +4254,7 @@ class Display
 					Escape(e)
 					{
 						D.deleteSelectRectangle();
-						if (D.textEditActive())
+						if (D.isTextEditActive())
 							D.closeActiveTextEdit();
 						else if (D.session.mode === 'catalog' && R.diagram)
 							D.emitViewEvent('diagram', R.diagram);
@@ -4901,7 +4901,7 @@ class Display
 		const scale = diagram !== null ? this.session.getPlacement(diagram.name).scale : 1.0;
 		const width = scale > 1.0 ? Math.max(window.innerWidth, window.innerWidth / scale) : window.innerWidth / scale;
 		const height = scale > 1.0 ? Math.max(window.innerHeight, window.innerHeight / scale) : window.innerHeight / scale;
-		this.updateBorder();
+		this.updateBorderAlerts();
 		if (this.topSVG)
 		{
 			this.topSVG.setAttribute('width', width);
@@ -4960,7 +4960,7 @@ class Display
 			{
 				diagram.setViewport();
 				R.saveDiagram(diagram, e => R.debug(1) && console.log('autosave', diagram.name));
-				if (this.local && !this.textEditActive())
+				if (this.local && !this.isTextEditActive())
 					diagram.upload();
 			}
 		}, this.default.autosaveTimer);
@@ -5223,44 +5223,6 @@ class Display
 		else if (e.button === 1)
 			this.stopMousePan();
 	}
-	drop(e)	// from panel dragging
-	{
-		const diagram = R.diagram;
-		if (!diagram.isEditable())
-		{
-			this.statusbar.show(e, 'Diagram is not editable');
-			return;
-		}
-		try
-		{
-			e.preventDefault();
-			this.drag = false;
-			const xy = diagram.mouseDiagramPosition(e);
-			const name = e.dataTransfer.getData('text');
-			if (name.length === 0)
-				return;
-			let elt = diagram.getElement(name);
-			if (elt)
-			{
-				let from = null;
-				if (elt instanceof CatObject)
-				{
-					from = diagram.placeObject(elt, xy);
-					diagram.log({command:'copy', source:elt.name, xy});
-				}
-				else if (elt instanceof Morphism)
-				{
-					from = diagram.placeMorphism(elt, xy, null, true);
-					diagram.log({command:'copy', source:elt.name, xy:from.domain.getXY(), xyCod:from.codomain.getXY()});
-				}
-				from && diagram.antilog({command:'delete', elements:[from.name]});
-			}
-		}
-		catch(err)
-		{
-			R.recordError(err);
-		}
-	}
 	getIcon(name, buttonName, clickme, options = {})	// options = {title, scale, id, repeatCount, help}
 	{
 		const inches = 0.32 * ('scale' in options ? options.scale : this.default.button.small);
@@ -5410,7 +5372,6 @@ class Display
 	{
 		[...this.session.diagrams.keys()].map(d =>
 		{
-			console.log('session makesvg', d);
 			const diagram = R.$CAT.getElement(d);
 			if (diagram)
 			{
@@ -5422,8 +5383,6 @@ class Display
 					d.show();
 				});
 			}
-			else
-				console.log('enterMultiDiagramMode: cannot get diagram', d);
 		});
 		R.diagram && this.diagramSVG.appendChild(R.diagram.svgRoot);
 		this.setSessionViewport(D.session.viewport);
@@ -5713,7 +5672,6 @@ class Display
 		window.addEventListener('mousemove', e => this.mousemove(e));
 		this.topSVG.addEventListener('mousedown', e => this.mousedown(e));
 		this.topSVG.addEventListener('mouseup', e => this.mouseup(e));
-		this.topSVG.addEventListener('drop', e => this.drop(e), true);
 		this.topSVG.addEventListener('mousemove', e => this.statusbar.element.style.display === 'block' && D2.dist(this.statusbar.xy, {x:e.clientX, y:e.clientY}) > this.default.statusbar.hideDistance && this.statusbar.hide());
 		this.topSVG.ondragover = e => e.preventDefault();
 		this.topSVG.addEventListener('drop', e => e.preventDefault(), true);
@@ -5816,7 +5774,7 @@ class Display
 						this.setSessionViewport(this.session.getViewport(diagram.name));
 					this.session.save();
 					diagram.updateBackground();
-					this.updateBorder();
+					this.updateBorderAlerts();
 				}
 			}
 			else if (command === 'catalog')
@@ -6142,18 +6100,9 @@ class Display
 		elts.forEach(pnt => xy.increment(pnt));
 		return xy.scale(1.0/elts.size);
 	}
-	baryHull(ary)		// unused
-	{
-		return this.barycenter(D2.hull([...this.getObjects(ary)]));
-	}
 	center(diagram)
 	{
 		return this.grid(diagram.userToDiagramCoords({x:this.grid(this.width()/2), y:this.grid(this.height()/2)}));
-	}
-	dragElement(e, name)
-	{
-		this.toolbar.hide();
-		e.dataTransfer.setData('text/plain', name);
 	}
 	download(href, filename)
 	{
@@ -6247,7 +6196,6 @@ class Display
 		else
 			elts.map((e, i) => e.classList.remove(cls));
 	}
-	del(elt) {elt.parentElement.removeChild(elt);}
 	removeChildren(elt)
 	{
 		while(elt && elt.firstChild)
@@ -6609,7 +6557,7 @@ class Display
 	}
 	panHandler(e, dir, dist = null)		// dist in pixels
 	{
-		if (this.textEditActive())
+		if (this.isTextEditActive())
 			return;
 		let offset = null;
 		const viewport = this.session.getCurrentViewport();
@@ -6637,13 +6585,13 @@ class Display
 		this.setSessionViewport({x:viewport.x + offset.x, y:viewport.y + offset.y, scale:viewport.scale});
 		this.emitViewEvent(this.session.mode, R.diagram);
 	}
-	textEditActive()
+	isTextEditActive()
 	{
 		return this.editElement !== null;
 	}
 	closeActiveTextEdit()
 	{
-		if (this.textEditActive())
+		if (this.isTextEditActive())
 		{
 			this.editElement.contentEditable = false;
 			this.editElement = null;
@@ -6909,12 +6857,12 @@ class Display
 	{
 		e.ctrlKey ? Runtime.SelectDiagram(name) : clickme(e);
 	}
-	updateBorder()
+	updateBorderAlerts()
 	{
 		if (!R.diagram)
 			return;
 		if (R.diagram.ready !== 0)
-			setTimeout(_ => this.updateBorder(), 10);		// wait for it
+			setTimeout(_ => this.updateBorderAlerts(), 10);		// wait for it
 		else if (this.default.fullscreen)
 		{
 			const dgrmBbox = R.diagram.svgRoot.getBBox();
@@ -6966,7 +6914,7 @@ class Display
 	{
 		mode ? document.body.setAttribute('data-theme', 'dark') : document.body.removeAttribute('data-theme');
 		this.default.darkmode = mode;
-		this.updateBorder();
+		this.updateBorderAlerts();
 		D.saveDefaults();
 	}
 	generateGraphColors()
@@ -7627,21 +7575,22 @@ class HelpPanel extends Panel
 			H3.h3('Catecon'),
 			H3.h4('The Categorical Console'),
 			H3.button('Category Theory', '##catHelpPnlBtn.sidenavAccordion', {title:'References', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'catHelpPnl')}),
-			H3.div(	H3.small('All of mathematics is divided into one part: Category Theory', ''),
-					H3.h4('References'),
-					H3.p(H3.a('"Categories For The Working Mathematician"', '.italic', {href:"https://en.wikipedia.org/wiki/Categories_for_the_Working_Mathematician", target:"_blank"})), '##catHelpPnl.section'),
+				H3.div(	H3.small('All of mathematics is divided into one part: Category Theory', ''),
+						H3.h4('References'),
+						H3.p(H3.a('"Categories For The Working Mathematician"', '.italic', {href:"https://en.wikipedia.org/wiki/Categories_for_the_Working_Mathematician", target:"_blank"})), '##catHelpPnl.section'),
 			H3.button('Articles', '##referencesPnlBTn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'referencesPnl')}),
-			H3.div(	H3.p(H3.a('Intro To Categorical Programming', {href:"https://harrydole.com/wp/2017/09/16/cat-prog/"})),
-					H3.p(H3.a('V Is For Vortex - More Categorical Programming', {href:"https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"})), '##referencesPnl.section'),
+				H3.div(	H3.p(H3.a('Intro To Categorical Programming', {href:"https://harrydole.com/wp/2017/09/16/cat-prog/"})),
+						H3.p(H3.a('V Is For Vortex - More Categorical Programming', {href:"https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"})), '##referencesPnl.section'),
 			H3.button('Terms and Conditions', '##TermsPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'TermsPnl')}),
-			H3.div(	H3.p('No hate.'), '##TermsPnl.section'),
+				H3.div(	H3.p('No hate.'), '##TermsPnl.section'),
 			H3.button('License', '##licensePnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'licensePnl')}),
+				H3.div(H3.p('Use generated code as desired with no constraint.  See T&amp;C\'s'), '##licensePnl.section'),
 			H3.button('Credits', '##creditaPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'creditsPnl')}),
-			H3.div(	H3.a('Saunders Mac Lane', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=834"}),
-					H3.a('Harry Dole', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=222286"}), '##creditsPnl.section'),
+				H3.div(	H3.a('Saunders Mac Lane', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=834"}),
+						H3.a('Harry Dole', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=222286"}), '##creditsPnl.section'),
 			H3.button('Third Party Software', '##third-party.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'thirdPartySoftwarePnl')}),
-			H3.div( H3.a('3D', {href:"https://threejs.org/"}),
-					H3.a('Crypto', {href:"https://bitwiseshiftleft.github.io/sjcl/"}), '##thirdPartySoftwarePnl.section'),
+				H3.div( H3.a('3D', {href:"https://threejs.org/"}),
+						H3.a('Crypto', {href:"https://bitwiseshiftleft.github.io/sjcl/"}), '##thirdPartySoftwarePnl.section'),
 			H3.hr(),
 			H3.small('&copy;2018-2022 Harry Dole'),
 			H3.br(),
@@ -7762,10 +7711,7 @@ class SettingsPanel extends Panel
 		const showEventsChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.showEvents = !Cat.R.default.showEvents; D.saveDefaults();}});
 		if (R.default.showEvents)
 			showEventsChkbox.checked = true;
-		const settings = [	H3.tr(	H3.td(gridChkbox),
-									H3.td('Snap objects to a grid.', '.left')),
-							H3.tr(	H3.td(H3.input({type:"checkbox", onchange:e => D.setDarkmode(e.target.checked), id:'check-darkmode'})),
-									H3.td('Dark mode', '.left'))];
+		const settings = [H3.tr(H3.td(H3.input({type:"checkbox", onchange:e => D.setDarkmode(e.target.checked), id:'check-darkmode'})), H3.td('Dark mode', '.left'))];
 		const elts =
 		[
 			H3.table(H3.tr(H3.td(this.closeBtnCell())), '.buttonBarRight.stdBackground'),
@@ -11762,7 +11708,7 @@ class ProjectAction extends Action
 		const isTerminal = indices.length === 1 && indices[0] === -1;
 		const factor = isTerminal ? R.diagram.getTerminal(this.dual) : object.getFactor(indices);
 		const sub = isTerminal ? '' : indices.join();
-		const btn = H3.button(factor.properName, {'data-indices':indices.toString(), onclick:e => Cat.D.del(e.target)});
+		const btn = H3.button(factor.properName, {'data-indices':indices.toString(), onclick:e => e.target.remove()});
 		sub !== '' && btn.appendChild(H3.sub(sub));
 		this.codomainDiv.appendChild(btn);
 	}
@@ -12132,7 +12078,7 @@ class LanguageAction extends Action
 		const code = this.generate(elt);
 		const blob = new Blob([code], {type:`application/${this.ext}`});
 		const url = D.url.createObjectURL(blob);
-		D.download(url, `${this.getType(elt)}.${this.ext}`);
+		D.download(url, `${U.Token(elt.name)}.${this.ext}`);
 	}
 	hidden() { return true; }
 	initialize()	{}		// fitb
@@ -15862,17 +15808,17 @@ class IndexBlob
 {
 	constructor(seed)		// index object or morphism
 	{
+		const sd = IndexBlob.getObject(seed);
 		Object.defineProperties(this,
 		{
-			'seed':			{value:seed,		writable: false},
+			'seed':			{value:sd,			writable: false},
 			'objects':		{value:new Set(),	writable: false},
 			'morphisms':	{value:new Set(),	writable: false},
 			'levels':		{value:[],			writable: true},
 			'cells':		{value:new Set(),	writable: false},
 			'quantifiers':	{value:new Set(),	writable: false},
 		});
-		const ndxObj = IndexBlob.getObject(seed);
-		const scanning = [ndxObj];
+		const scanning = [sd];
 		const scanned = new Set();
 		while(scanning.length > 0)
 		{
@@ -19767,7 +19713,7 @@ class Diagram extends Functor
 	}
 	savePng(e, fn = null)
 	{
-		!D.textEditActive() && D.svg2canvas(this, (png, pngName) =>
+		!D.isTextEditActive() && D.svg2canvas(this, (png, pngName) =>
 		{
 			D.diagramPNGs.set(this.name, png);
 			const tx = D.store.transaction(['PNGs'], 'readwrite');
