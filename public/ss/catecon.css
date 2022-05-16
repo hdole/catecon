@@ -9,6 +9,7 @@
 	--color-element-border-color:		#ccc #ddd #eee #ccc;
 	--color-emphasis:	#00f;
 	--color-emphasis2:	#77c;
+	--color-good:		#ddf;
 	--color-hidden-cell:#ddd;
 	--color-hover:		#777;
 	--color-link:		#33f;
@@ -22,6 +23,7 @@
 	--color-text:		#000;
 	--color-toolbar-bg:	#eee;
 	--color-toolbar-shadow:	#bbb;
+	--color-warn:		#ff0;
 }
 
 [data-theme="dark"]
@@ -35,6 +37,7 @@
 	--color-element-border-color:		#333 #444 #222 #333;
 	--color-emphasis:	#0ff;
 	--color-emphasis2:	#77c;
+	--color-good:		#ddf;
 	--color-hidden-cell:#444;
 	--color-hover:		#aaa;
 	--color-link:		gold;
@@ -48,6 +51,7 @@
 	--color-text:		#fff;
 	--color-toolbar-bg:	#444;
 	--color-toolbar-shadow:	#333;
+	--color-warn:		#ff0;
 }
 
 html, body
