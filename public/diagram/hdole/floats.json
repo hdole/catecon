@@ -2206,7 +2206,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_1",
         "codomain": "o_2",
-        "to": "zero64"
+        "to": "hdole/floats/fzero64"
       },
       {
         "basename": "m_1",
@@ -2234,14 +2234,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_9",
         "codomain": "o_10",
-        "to": "Z64toF64"
+        "to": "hdole/floats/i64tof64"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
         "domain": "o_11",
         "codomain": "o_12",
-        "to": "abs64"
+        "to": "hdole/floats/fabs64"
       },
       {
         "basename": "m_6",
@@ -2255,42 +2255,42 @@
         "prototype": "IndexMorphism",
         "domain": "o_16",
         "codomain": "o_17",
-        "to": "sub64"
+        "to": "hdole/floats/fsub64"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
         "domain": "o_18",
         "codomain": "o_19",
-        "to": "mult64"
+        "to": "hdole/floats/fmult64"
       },
       {
         "basename": "m_9",
         "prototype": "IndexMorphism",
         "domain": "o_21",
         "codomain": "o_22",
-        "to": "div64"
+        "to": "hdole/floats/fdiv64"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
         "domain": "o_25",
         "codomain": "o_26",
-        "to": "lt64"
+        "to": "hdole/floats/flt64"
       },
       {
         "basename": "m_12",
         "prototype": "IndexMorphism",
         "domain": "o_27",
         "codomain": "o_28",
-        "to": "lte64"
+        "to": "hdole/floats/flte64"
       },
       {
         "basename": "m_13",
         "prototype": "IndexMorphism",
         "domain": "o_29",
         "codomain": "o_30",
-        "to": "eq64"
+        "to": "hdole/floats/feq64"
       },
       {
         "basename": "m_14",
@@ -2339,35 +2339,35 @@
         "prototype": "IndexMorphism",
         "domain": "o_44",
         "codomain": "o_45",
-        "to": "max64"
+        "to": "hdole/floats/fmax64"
       },
       {
         "basename": "m_21",
         "prototype": "IndexMorphism",
         "domain": "o_46",
         "codomain": "o_47",
-        "to": "min64"
+        "to": "hdole/floats/fmin64"
       },
       {
         "basename": "m_22",
         "prototype": "IndexMorphism",
         "domain": "o_48",
         "codomain": "o_49",
-        "to": "one64"
+        "to": "hdole/floats/fone64"
       },
       {
         "basename": "m_23",
         "prototype": "IndexMorphism",
         "domain": "o_20",
         "codomain": "o_43",
-        "to": "zero32"
+        "to": "hdole/floats/fzero32"
       },
       {
         "basename": "m_24",
         "prototype": "IndexMorphism",
         "domain": "o_50",
         "codomain": "o_51",
-        "to": "one32"
+        "to": "hdole/floats/fone32"
       },
       {
         "basename": "m_25",
@@ -2381,14 +2381,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_57",
         "codomain": "o_58",
-        "to": "zero128"
+        "to": "hdole/floats/fzero128"
       },
       {
         "basename": "m_27",
         "prototype": "IndexMorphism",
         "domain": "o_59",
         "codomain": "o_60",
-        "to": "one128"
+        "to": "hdole/floats/fone128"
       },
       {
         "basename": "m_28",
@@ -2430,42 +2430,42 @@
         "prototype": "IndexMorphism",
         "domain": "o_70",
         "codomain": "o_69",
-        "to": "Z32toF32"
+        "to": "hdole/floats/i32tof32"
       },
       {
         "basename": "m_34",
         "prototype": "IndexMorphism",
         "domain": "o_71",
         "codomain": "o_72",
-        "to": "Z128toF128"
+        "to": "hdole/floats/i128tof128"
       },
       {
         "basename": "m_35",
         "prototype": "IndexMorphism",
         "domain": "o_73",
         "codomain": "o_74",
-        "to": "F32toF64"
+        "to": "hdole/floats/f32tof64"
       },
       {
         "basename": "m_36",
         "prototype": "IndexMorphism",
         "domain": "o_75",
         "codomain": "o_76",
-        "to": "F64toF128"
+        "to": "hdole/floats/f64tof128"
       },
       {
         "basename": "m_37",
         "prototype": "IndexMorphism",
         "domain": "o_77",
         "codomain": "o_78",
-        "to": "abs32"
+        "to": "hdole/floats/fabs32"
       },
       {
         "basename": "m_38",
         "prototype": "IndexMorphism",
         "domain": "o_80",
         "codomain": "o_79",
-        "to": "abs128"
+        "to": "hdole/floats/fabs128"
       },
       {
         "basename": "m_39",
@@ -2486,77 +2486,77 @@
         "prototype": "IndexMorphism",
         "domain": "o_85",
         "codomain": "o_86",
-        "to": "sub32"
+        "to": "hdole/floats/fsub32"
       },
       {
         "basename": "m_42",
         "prototype": "IndexMorphism",
         "domain": "o_87",
         "codomain": "o_88",
-        "to": "sub128"
+        "to": "hdole/floats/fsub128"
       },
       {
         "basename": "m_43",
         "prototype": "IndexMorphism",
         "domain": "o_89",
         "codomain": "o_90",
-        "to": "mult32"
+        "to": "hdole/floats/fmult32"
       },
       {
         "basename": "m_44",
         "prototype": "IndexMorphism",
         "domain": "o_91",
         "codomain": "o_92",
-        "to": "mult128"
+        "to": "hdole/floats/fmult128"
       },
       {
         "basename": "m_46",
         "prototype": "IndexMorphism",
         "domain": "o_96",
         "codomain": "o_95",
-        "to": "div128"
+        "to": "hdole/floats/fdiv128"
       },
       {
         "basename": "m_10",
         "prototype": "IndexMorphism",
         "domain": "o_23",
         "codomain": "o_24",
-        "to": "lt32"
+        "to": "hdole/floats/flt32"
       },
       {
         "basename": "m_47",
         "prototype": "IndexMorphism",
         "domain": "o_97",
         "codomain": "o_98",
-        "to": "lt128"
+        "to": "hdole/floats/flt128"
       },
       {
         "basename": "m_48",
         "prototype": "IndexMorphism",
         "domain": "o_99",
         "codomain": "o_100",
-        "to": "lte32"
+        "to": "hdole/floats/flte32"
       },
       {
         "basename": "m_49",
         "prototype": "IndexMorphism",
         "domain": "o_101",
         "codomain": "o_102",
-        "to": "lte128"
+        "to": "hdole/floats/flte128"
       },
       {
         "basename": "m_50",
         "prototype": "IndexMorphism",
         "domain": "o_103",
         "codomain": "o_104",
-        "to": "eq32"
+        "to": "hdole/floats/feq32"
       },
       {
         "basename": "m_51",
         "prototype": "IndexMorphism",
         "domain": "o_105",
         "codomain": "o_106",
-        "to": "eq128"
+        "to": "hdole/floats/feq128"
       },
       {
         "basename": "m_52",
@@ -2647,35 +2647,35 @@
         "prototype": "IndexMorphism",
         "domain": "o_93",
         "codomain": "o_139",
-        "to": "div32"
+        "to": "hdole/floats/fdiv32"
       },
       {
         "basename": "m_64",
         "prototype": "IndexMorphism",
         "domain": "o_132",
         "codomain": "o_137",
-        "to": "max128"
+        "to": "hdole/floats/fmax128"
       },
       {
         "basename": "m_65",
         "prototype": "IndexMorphism",
         "domain": "o_131",
         "codomain": "o_135",
-        "to": "max32"
+        "to": "hdole/floats/fmax32"
       },
       {
         "basename": "m_66",
         "prototype": "IndexMorphism",
         "domain": "o_133",
         "codomain": "o_136",
-        "to": "min32"
+        "to": "hdole/floats/fmin32"
       },
       {
         "basename": "m_67",
         "prototype": "IndexMorphism",
         "domain": "o_134",
         "codomain": "o_138",
-        "to": "min128"
+        "to": "hdole/floats/fmin128"
       },
       {
         "basename": "m_68",
@@ -2689,21 +2689,21 @@
         "prototype": "IndexMorphism",
         "domain": "o_141",
         "codomain": "o_142",
-        "to": "Z32toF64"
+        "to": "hdole/floats/i32tof64"
       },
       {
         "basename": "m_70",
         "prototype": "IndexMorphism",
         "domain": "o_143",
         "codomain": "o_144",
-        "to": "Z32toF128"
+        "to": "hdole/floats/i32tof128"
       },
       {
         "basename": "m_71",
         "prototype": "IndexMorphism",
         "domain": "o_145",
         "codomain": "o_146",
-        "to": "Z64toF128"
+        "to": "hdole/floats/i64tof128"
       },
       {
         "basename": "m_72",
@@ -2724,21 +2724,21 @@
         "prototype": "IndexMorphism",
         "domain": "o_151",
         "codomain": "o_152",
-        "to": "N64toF64"
+        "to": "hdole/floats/n64tof64"
       },
       {
         "basename": "m_75",
         "prototype": "IndexMorphism",
         "domain": "o_153",
         "codomain": "o_154",
-        "to": "N64toF128"
+        "to": "hdole/floats/n64tof128"
       },
       {
         "basename": "m_76",
         "prototype": "IndexMorphism",
         "domain": "o_155",
         "codomain": "o_156",
-        "to": "N128toF128"
+        "to": "hdole/floats/n128tof128"
       },
       {
         "basename": "m_77",
@@ -2751,7 +2751,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F128,F128}oP:F128_0}aF"
+        "to": "Fa{Po{F128,F128}oP:F128_0}aF"
       },
       {
         "basename": "m_78",
@@ -2768,21 +2768,21 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F128,F128}oP:F128_1}aF"
+        "to": "Fa{Po{F128,F128}oP:F128_1}aF"
       },
       {
         "basename": "m_79",
         "prototype": "IndexMorphism",
         "domain": "o_160",
         "codomain": "o_159",
-        "to": "zero128"
+        "to": "hdole/floats/fzero128"
       },
       {
         "basename": "m_80",
         "prototype": "IndexMorphism",
         "domain": "o_157",
         "codomain": "o_161",
-        "to": "eq128"
+        "to": "hdole/floats/feq128"
       },
       {
         "basename": "m_86",
@@ -2795,7 +2795,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F64,F64}oP:F64_0}aF"
+        "to": "Fa{Po{F64,F64}oP:F64_0}aF"
       },
       {
         "basename": "m_87",
@@ -2812,21 +2812,21 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F64,F64}oP:F64_1}aF"
+        "to": "Fa{Po{F64,F64}oP:F64_1}aF"
       },
       {
         "basename": "m_88",
         "prototype": "IndexMorphism",
         "domain": "o_166",
         "codomain": "o_169",
-        "to": "eq64"
+        "to": "hdole/floats/feq64"
       },
       {
         "basename": "m_89",
         "prototype": "IndexMorphism",
         "domain": "o_170",
         "codomain": "o_168",
-        "to": "zero64"
+        "to": "hdole/floats/fzero64"
       },
       {
         "basename": "m_95",
@@ -2839,7 +2839,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F32,F32}oP:F32_0}aF"
+        "to": "Fa{Po{F32,F32}oP:F32_0}aF"
       },
       {
         "basename": "m_96",
@@ -2856,42 +2856,42 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F32,F32}oP:F32_1}aF"
+        "to": "Fa{Po{F32,F32}oP:F32_1}aF"
       },
       {
         "basename": "m_97",
         "prototype": "IndexMorphism",
         "domain": "o_178",
         "codomain": "o_177",
-        "to": "zero32"
+        "to": "hdole/floats/fzero32"
       },
       {
         "basename": "m_98",
         "prototype": "IndexMorphism",
         "domain": "o_175",
         "codomain": "o_179",
-        "to": "eq32"
+        "to": "hdole/floats/feq32"
       },
       {
         "basename": "m_81",
         "prototype": "IndexMorphism",
         "domain": "o_162",
         "codomain": "o_163",
-        "to": "hdole/floats/Fa{F32:F32_,#1_-1}aF"
+        "to": "Fa{F32:F32_,#1_-1}aF"
       },
       {
         "basename": "m_82",
         "prototype": "IndexMorphism",
         "domain": "o_163",
         "codomain": "o_164",
-        "to": "Pm{Id{F32}dI,zero32}mP"
+        "to": "hdole/floats/Pm{Id{F32}dI,fzero32}mP"
       },
       {
         "basename": "m_83",
         "prototype": "IndexMorphism",
         "domain": "o_164",
         "codomain": "o_165",
-        "to": "eq32"
+        "to": "hdole/floats/feq32"
       },
       {
         "basename": "m_84",
@@ -2904,28 +2904,28 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Fa{F32:F32_,#1_-1}aF,Pm{Id{F32}dI,zero32}mP,eq32}mC"
+        "to": "hdole/floats/Cm{Fa{F32:F32_,#1_-1}aF,Pm{Id{F32}dI,fzero32}mP,feq32}mC"
       },
       {
         "basename": "m_85",
         "prototype": "IndexMorphism",
         "domain": "o_171",
         "codomain": "o_172",
-        "to": "hdole/floats/Fa{F64:F64_,#1_-1}aF"
+        "to": "Fa{F64:F64_,#1_-1}aF"
       },
       {
         "basename": "m_90",
         "prototype": "IndexMorphism",
         "domain": "o_172",
         "codomain": "o_173",
-        "to": "Pm{Id{F64}dI,zero64}mP"
+        "to": "hdole/floats/Pm{Id{F64}dI,fzero64}mP"
       },
       {
         "basename": "m_91",
         "prototype": "IndexMorphism",
         "domain": "o_173",
         "codomain": "o_174",
-        "to": "eq64"
+        "to": "hdole/floats/feq64"
       },
       {
         "basename": "m_92",
@@ -2938,28 +2938,28 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Fa{F64:F64_,#1_-1}aF,Pm{Id{F64}dI,zero64}mP,eq64}mC"
+        "to": "hdole/floats/Cm{Fa{F64:F64_,#1_-1}aF,Pm{Id{F64}dI,fzero64}mP,feq64}mC"
       },
       {
         "basename": "m_93",
         "prototype": "IndexMorphism",
         "domain": "o_180",
         "codomain": "o_181",
-        "to": "hdole/floats/Fa{F128:F128_,#1_-1}aF"
+        "to": "Fa{F128:F128_,#1_-1}aF"
       },
       {
         "basename": "m_94",
         "prototype": "IndexMorphism",
         "domain": "o_181",
         "codomain": "o_182",
-        "to": "Pm{Id{F128}dI,zero128}mP"
+        "to": "hdole/floats/Pm{Id{F128}dI,fzero128}mP"
       },
       {
         "basename": "m_99",
         "prototype": "IndexMorphism",
         "domain": "o_182",
         "codomain": "o_183",
-        "to": "eq128"
+        "to": "hdole/floats/feq128"
       },
       {
         "basename": "m_100",
@@ -2972,7 +2972,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Fa{F128:F128_,#1_-1}aF,Pm{Id{F128}dI,zero128}mP,eq128}mC"
+        "to": "hdole/floats/Cm{Fa{F128:F128_,#1_-1}aF,Pm{Id{F128}dI,fzero128}mP,feq128}mC"
       },
       {
         "basename": "m_101",
@@ -2985,7 +2985,7 @@
             5
           ]
         ],
-        "to": "eq0_32"
+        "to": "hdole/floats/feq0_32"
       },
       {
         "basename": "m_102",
@@ -2998,7 +2998,7 @@
             5
           ]
         ],
-        "to": "eq0_64"
+        "to": "hdole/floats/feq0_64"
       },
       {
         "basename": "m_103",
@@ -3011,14 +3011,14 @@
             5
           ]
         ],
-        "to": "eq0_128"
+        "to": "hdole/floats/feq0_128"
       },
       {
         "basename": "m_104",
         "prototype": "IndexMorphism",
         "domain": "o_185",
         "codomain": "o_186",
-        "to": "sub128"
+        "to": "hdole/floats/fsub128"
       },
       {
         "basename": "m_105",
@@ -3031,7 +3031,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F128,F128}oP:F128_0}aF"
+        "to": "Fa{Po{F128,F128}oP:F128_0}aF"
       },
       {
         "basename": "m_106",
@@ -3048,35 +3048,35 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F128,F128}oP:F128_1}aF"
+        "to": "Fa{Po{F128,F128}oP:F128_1}aF"
       },
       {
         "basename": "m_107",
         "prototype": "IndexMorphism",
         "domain": "o_188",
         "codomain": "o_184",
-        "to": "one128"
+        "to": "hdole/floats/fone128"
       },
       {
         "basename": "m_108",
         "prototype": "IndexMorphism",
         "domain": "o_189",
         "codomain": "o_190",
-        "to": "hdole/floats/Fa{F128:F128_0,#1_-1}aF"
+        "to": "Fa{F128:F128_0,#1_-1}aF"
       },
       {
         "basename": "m_109",
         "prototype": "IndexMorphism",
         "domain": "o_190",
         "codomain": "o_191",
-        "to": "Pm{Id{F128}dI,one128}mP"
+        "to": "hdole/floats/Pm{Id{F128}dI,fone128}mP"
       },
       {
         "basename": "m_110",
         "prototype": "IndexMorphism",
         "domain": "o_191",
         "codomain": "o_192",
-        "to": "sub128"
+        "to": "hdole/floats/fsub128"
       },
       {
         "basename": "m_111",
@@ -3089,7 +3089,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Fa{F128:F128_0,#1_-1}aF,Pm{Id{F128}dI,one128}mP,sub128}mC"
+        "to": "hdole/floats/Cm{Fa{F128:F128_0,#1_-1}aF,Pm{Id{F128}dI,fone128}mP,fsub128}mC"
       },
       {
         "basename": "m_112",
@@ -3106,7 +3106,7 @@
             true
           ]
         ],
-        "to": "decr128"
+        "to": "hdole/floats/fdecr128"
       },
       {
         "basename": "m_113",
@@ -3119,7 +3119,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F64,F64}oP:F64_0}aF"
+        "to": "Fa{Po{F64,F64}oP:F64_0}aF"
       },
       {
         "basename": "m_114",
@@ -3136,42 +3136,42 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F64,F64}oP:F64_1}aF"
+        "to": "Fa{Po{F64,F64}oP:F64_1}aF"
       },
       {
         "basename": "m_115",
         "prototype": "IndexMorphism",
         "domain": "o_196",
         "codomain": "o_195",
-        "to": "one64"
+        "to": "hdole/floats/fone64"
       },
       {
         "basename": "m_116",
         "prototype": "IndexMorphism",
         "domain": "o_193",
         "codomain": "o_197",
-        "to": "sub64"
+        "to": "hdole/floats/fsub64"
       },
       {
         "basename": "m_117",
         "prototype": "IndexMorphism",
         "domain": "o_198",
         "codomain": "o_199",
-        "to": "hdole/floats/Fa{F64:F64_0,#1_-1}aF"
+        "to": "Fa{F64:F64_0,#1_-1}aF"
       },
       {
         "basename": "m_118",
         "prototype": "IndexMorphism",
         "domain": "o_199",
         "codomain": "o_200",
-        "to": "Pm{Id{F64}dI,one64}mP"
+        "to": "hdole/floats/Pm{Id{F64}dI,fone64}mP"
       },
       {
         "basename": "m_119",
         "prototype": "IndexMorphism",
         "domain": "o_200",
         "codomain": "o_201",
-        "to": "sub64"
+        "to": "hdole/floats/fsub64"
       },
       {
         "basename": "m_120",
@@ -3184,7 +3184,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Fa{F64:F64_0,#1_-1}aF,Pm{Id{F64}dI,one64}mP,sub64}mC"
+        "to": "hdole/floats/Cm{Fa{F64:F64_0,#1_-1}aF,Pm{Id{F64}dI,fone64}mP,fsub64}mC"
       },
       {
         "basename": "m_121",
@@ -3201,7 +3201,7 @@
             true
           ]
         ],
-        "to": "decr64"
+        "to": "hdole/floats/fdecr64"
       },
       {
         "basename": "m_122",
@@ -3214,7 +3214,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F32,F32}oP:F32_0}aF"
+        "to": "Fa{Po{F32,F32}oP:F32_0}aF"
       },
       {
         "basename": "m_123",
@@ -3231,42 +3231,42 @@
             true
           ]
         ],
-        "to": "hdole/floats/Fa{Po{F32,F32}oP:F32_1}aF"
+        "to": "Fa{Po{F32,F32}oP:F32_1}aF"
       },
       {
         "basename": "m_124",
         "prototype": "IndexMorphism",
         "domain": "o_205",
         "codomain": "o_204",
-        "to": "one32"
+        "to": "hdole/floats/fone32"
       },
       {
         "basename": "m_125",
         "prototype": "IndexMorphism",
         "domain": "o_202",
         "codomain": "o_206",
-        "to": "sub32"
+        "to": "hdole/floats/fsub32"
       },
       {
         "basename": "m_126",
         "prototype": "IndexMorphism",
         "domain": "o_207",
         "codomain": "o_208",
-        "to": "Pm{one32,Id{F32}dI}mP"
+        "to": "hdole/floats/Pm{fone32,Id{F32}dI}mP"
       },
       {
         "basename": "m_127",
         "prototype": "IndexMorphism",
         "domain": "o_208",
         "codomain": "o_209",
-        "to": "hdole/floats/Fa{Po{F32,F32}oP:F32_1,F32_0}aF"
+        "to": "Fa{Po{F32,F32}oP:F32_1,F32_0}aF"
       },
       {
         "basename": "m_128",
         "prototype": "IndexMorphism",
         "domain": "o_209",
         "codomain": "o_210",
-        "to": "sub32"
+        "to": "hdole/floats/fsub32"
       },
       {
         "basename": "m_129",
@@ -3279,14 +3279,14 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Pm{one32,Id{F32}dI}mP,Cm{Fa{Po{F32,F32}oP:F32_1,F32_0}aF,sub32}mC}mC"
+        "to": "hdole/floats/Cm{Pm{fone32,Id{F32}dI}mP,Cm{Fa{Po{F32,F32}oP:F32_1,F32_0}aF,fsub32}mC}mC"
       },
       {
         "basename": "m_130",
         "prototype": "IndexMorphism",
         "domain": "o_189",
         "codomain": "o_211",
-        "to": "hdole/floats/Fa{F128:F128_,#1_-1}aF"
+        "to": "Fa{F128:F128_,#1_-1}aF"
       }
     ],
     "cells": []
@@ -3409,7 +3409,7 @@
     },
     {
       "description": "The 64-bit floating point zero",
-      "basename": "zero64",
+      "basename": "fzero64",
       "prototype": "Morphism",
       "properName": "0.0&#x2086;&#x2084;",
       "code": {
@@ -3458,7 +3458,7 @@
     },
     {
       "description": "every integer is (sort of) a floating point number",
-      "basename": "Z64toF64",
+      "basename": "i64tof64",
       "prototype": "Morphism",
       "properName": "⊂&#x2086;&#x2084;",
       "code": {
@@ -3470,7 +3470,7 @@
     },
     {
       "description": "the absolute value of a floating point number",
-      "basename": "abs64",
+      "basename": "fabs64",
       "prototype": "Morphism",
       "properName": "abs₆₄",
       "code": {
@@ -3494,7 +3494,7 @@
     },
     {
       "description": "subtraction of two floating point numbers",
-      "basename": "sub64",
+      "basename": "fsub64",
       "prototype": "Morphism",
       "properName": "sub₆₄",
       "code": {
@@ -3506,7 +3506,7 @@
     },
     {
       "description": "Multiplication of two floating point numbers",
-      "basename": "mult64",
+      "basename": "fmult64",
       "prototype": "Morphism",
       "properName": "mult₆₄",
       "code": {
@@ -3518,7 +3518,7 @@
     },
     {
       "description": "division of two floating point numbers or an exception",
-      "basename": "div64",
+      "basename": "fdiv64",
       "prototype": "Morphism",
       "properName": "div₆₄",
       "code": {
@@ -3530,7 +3530,7 @@
     },
     {
       "description": "Is the first given floating point number less than the second",
-      "basename": "lt64",
+      "basename": "flt64",
       "prototype": "Morphism",
       "properName": "lt₆₄",
       "code": {
@@ -3542,7 +3542,7 @@
     },
     {
       "description": "Is the first floating point number less than or equal to the second",
-      "basename": "lte64",
+      "basename": "flte64",
       "prototype": "Morphism",
       "properName": "lte₆₄",
       "code": {
@@ -3554,7 +3554,7 @@
     },
     {
       "description": "compare two floating point numbers for equality",
-      "basename": "eq64",
+      "basename": "feq64",
       "prototype": "Morphism",
       "properName": "eq₆₄",
       "code": {
@@ -3638,7 +3638,7 @@
     },
     {
       "description": "The maximum floating point number of the given list",
-      "basename": "max64",
+      "basename": "fmax64",
       "prototype": "Morphism",
       "properName": "max&#x2086;&#x2084;",
       "code": {
@@ -3650,7 +3650,7 @@
     },
     {
       "description": "The minimum floating point number of the given list",
-      "basename": "min64",
+      "basename": "fmin64",
       "prototype": "Morphism",
       "properName": "min&#x2086;&#x2084;",
       "code": {
@@ -3661,7 +3661,7 @@
       "codomain": "F64"
     },
     {
-      "basename": "one64",
+      "basename": "fone64",
       "prototype": "Morphism",
       "properName": "1.0&#x2086;&#x2084;",
       "code": {
@@ -3673,7 +3673,7 @@
     },
     {
       "description": "The 32-bit floating point zero",
-      "basename": "zero32",
+      "basename": "fzero32",
       "prototype": "Morphism",
       "properName": "0.0&#x2083;&#x2082;",
       "code": {
@@ -3684,7 +3684,7 @@
     },
     {
       "description": "The 32-bit floating point one",
-      "basename": "one32",
+      "basename": "fone32",
       "prototype": "Morphism",
       "properName": "1.0&#x2083;&#x2082;",
       "code": {
@@ -3706,7 +3706,7 @@
     },
     {
       "description": "The 128-bit floating point zero",
-      "basename": "zero128",
+      "basename": "fzero128",
       "prototype": "Morphism",
       "properName": "0.0&#x2081;&#x2082;&#x2088;",
       "code": {
@@ -3717,7 +3717,7 @@
     },
     {
       "description": "The 128-bit floating point one",
-      "basename": "one128",
+      "basename": "fone128",
       "prototype": "Morphism",
       "properName": "1.0&#x2081;&#x2082;&#x2088;",
       "code": {
@@ -3771,7 +3771,7 @@
       "codomain": "F128"
     },
     {
-      "basename": "Z32toF32",
+      "basename": "i32tof32",
       "prototype": "Morphism",
       "properName": "⊂&#x2083;&#x2082;",
       "code": {
@@ -3781,7 +3781,7 @@
       "codomain": "F32"
     },
     {
-      "basename": "Z128toF128",
+      "basename": "i128tof128",
       "prototype": "Morphism",
       "properName": "⊂&#x2081;&#x2082;&#x2088;",
       "code": {
@@ -3791,7 +3791,7 @@
       "codomain": "F128"
     },
     {
-      "basename": "F32toF64",
+      "basename": "f32tof64",
       "prototype": "Morphism",
       "properName": "⊂&#x2083;&#x2082;",
       "code": {
@@ -3801,7 +3801,7 @@
       "codomain": "F64"
     },
     {
-      "basename": "F64toF128",
+      "basename": "f64tof128",
       "prototype": "Morphism",
       "properName": "⊂&#x2086;&#x2084;",
       "code": {
@@ -3812,7 +3812,7 @@
     },
     {
       "description": "The absolute value of a 32-bit number",
-      "basename": "abs32",
+      "basename": "fabs32",
       "prototype": "Morphism",
       "properName": "abs&#x2083;&#x2082;",
       "code": {
@@ -3823,7 +3823,7 @@
     },
     {
       "description": "The absolute value of a 128-bit number",
-      "basename": "abs128",
+      "basename": "fabs128",
       "prototype": "Morphism",
       "properName": "abs₁₂₈",
       "code": {
@@ -3856,7 +3856,7 @@
     },
     {
       "description": "The subtraction of two 32-bit numbers",
-      "basename": "sub32",
+      "basename": "fsub32",
       "prototype": "Morphism",
       "properName": "sub&#x2083;&#x2082;",
       "code": {
@@ -3867,7 +3867,7 @@
     },
     {
       "description": "The subtraction of two 128-bit floating point numbers",
-      "basename": "sub128",
+      "basename": "fsub128",
       "prototype": "Morphism",
       "properName": "sub₁₂₈",
       "code": {
@@ -3878,7 +3878,7 @@
     },
     {
       "description": "The multiplication of two 32-bit floating point numbers",
-      "basename": "mult32",
+      "basename": "fmult32",
       "prototype": "Morphism",
       "properName": "mult&#x2083;&#x2082;",
       "code": {
@@ -3889,7 +3889,7 @@
     },
     {
       "description": "The multiplication of two 128-bit floating point numbers",
-      "basename": "mult128",
+      "basename": "fmult128",
       "prototype": "Morphism",
       "properName": "mult₁₂₈",
       "code": {
@@ -3899,7 +3899,7 @@
       "codomain": "F128"
     },
     {
-      "basename": "div128",
+      "basename": "fdiv128",
       "prototype": "Morphism",
       "properName": "div₁₂₈",
       "code": {
@@ -3909,7 +3909,7 @@
       "codomain": "CPo{F128,#1}oPC"
     },
     {
-      "basename": "lt32",
+      "basename": "flt32",
       "prototype": "Morphism",
       "properName": "lt&#x2083;&#x2082;",
       "code": {
@@ -3919,7 +3919,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "lt128",
+      "basename": "flt128",
       "prototype": "Morphism",
       "properName": "lt₁₂₈",
       "code": {
@@ -3929,7 +3929,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "lte32",
+      "basename": "flte32",
       "prototype": "Morphism",
       "properName": "lte&#x2083;&#x2082;",
       "code": {
@@ -3939,7 +3939,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "lte128",
+      "basename": "flte128",
       "prototype": "Morphism",
       "properName": "lte₁₂₈",
       "code": {
@@ -3949,7 +3949,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "eq32",
+      "basename": "feq32",
       "prototype": "Morphism",
       "properName": "eq&#x2083;&#x2082;",
       "code": {
@@ -3959,7 +3959,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "eq128",
+      "basename": "feq128",
       "prototype": "Morphism",
       "properName": "eq₁₂₈",
       "code": {
@@ -4089,7 +4089,7 @@
       "codomain": "CPo{F128,#1}oPC"
     },
     {
-      "basename": "div32",
+      "basename": "fdiv32",
       "prototype": "Morphism",
       "properName": "div&#x2083;&#x2082;",
       "code": {
@@ -4100,7 +4100,7 @@
     },
     {
       "description": "The maximum value of the two 128-bit floating point numbers",
-      "basename": "max128",
+      "basename": "fmax128",
       "prototype": "Morphism",
       "properName": "max₁₂₈",
       "code": {
@@ -4111,7 +4111,7 @@
     },
     {
       "description": "The maximum value of two 32-bit floating point numbers",
-      "basename": "max32",
+      "basename": "fmax32",
       "prototype": "Morphism",
       "properName": "max&#x2083;&#x2082;",
       "code": {
@@ -4121,7 +4121,7 @@
       "codomain": "F32"
     },
     {
-      "basename": "min32",
+      "basename": "fmin32",
       "prototype": "Morphism",
       "properName": "min&#x2083;&#x2082;",
       "code": {
@@ -4131,7 +4131,7 @@
       "codomain": "F32"
     },
     {
-      "basename": "min128",
+      "basename": "fmin128",
       "prototype": "Morphism",
       "properName": "min₁₂₈",
       "code": {
@@ -4151,7 +4151,7 @@
       "codomain": "F32"
     },
     {
-      "basename": "Z32toF64",
+      "basename": "i32tof64",
       "prototype": "Morphism",
       "properName": "⊂&#x2083;&#x2082;",
       "code": {
@@ -4161,7 +4161,7 @@
       "codomain": "F64"
     },
     {
-      "basename": "Z32toF128",
+      "basename": "i32tof128",
       "prototype": "Morphism",
       "properName": "⊂&#x2083;&#x2082;",
       "code": {
@@ -4171,7 +4171,7 @@
       "codomain": "F128"
     },
     {
-      "basename": "Z64toF128",
+      "basename": "i64tof128",
       "prototype": "Morphism",
       "properName": "⊂&#x2086;&#x2084;",
       "code": {
@@ -4201,7 +4201,7 @@
       "codomain": "F128"
     },
     {
-      "basename": "N64toF64",
+      "basename": "n64tof64",
       "prototype": "Morphism",
       "properName": "⊂&#x2086;&#x2084;",
       "code": {
@@ -4211,7 +4211,7 @@
       "codomain": "F64"
     },
     {
-      "basename": "N64toF128",
+      "basename": "n64tof128",
       "prototype": "Morphism",
       "properName": "⊂&#x2086;&#x2084;",
       "code": {
@@ -4221,7 +4221,7 @@
       "codomain": "F128"
     },
     {
-      "basename": "N128toF128",
+      "basename": "n128tof128",
       "prototype": "Morphism",
       "properName": "⊂&#x2081;&#x2082;&#x2088;",
       "code": {
@@ -4288,7 +4288,7 @@
       "codomain": "Po{F32,F32}oP",
       "morphisms": [
         "Id{F32}dI",
-        "zero32"
+        "fzero32"
       ]
     },
     {
@@ -4306,8 +4306,8 @@
       "codomain": "CPo{#1,#1}oPC",
       "morphisms": [
         "Fa{F32:F32_,#1_-1}aF",
-        "Pm{Id{F32}dI,zero32}mP",
-        "eq32"
+        "Pm{Id{F32}dI,fzero32}mP",
+        "feq32"
       ]
     },
     {
@@ -4320,7 +4320,7 @@
       "codomain": "Po{F64,F64}oP",
       "morphisms": [
         "Id{F64}dI",
-        "zero64"
+        "fzero64"
       ]
     },
     {
@@ -4338,8 +4338,8 @@
       "codomain": "CPo{#1,#1}oPC",
       "morphisms": [
         "Fa{F64:F64_,#1_-1}aF",
-        "Pm{Id{F64}dI,zero64}mP",
-        "eq64"
+        "Pm{Id{F64}dI,fzero64}mP",
+        "feq64"
       ]
     },
     {
@@ -4352,7 +4352,7 @@
       "codomain": "Po{F128,F128}oP",
       "morphisms": [
         "Id{F128}dI",
-        "zero128"
+        "fzero128"
       ]
     },
     {
@@ -4370,33 +4370,33 @@
       "codomain": "CPo{#1,#1}oPC",
       "morphisms": [
         "Fa{F128:F128_,#1_-1}aF",
-        "Pm{Id{F128}dI,zero128}mP",
-        "eq128"
+        "Pm{Id{F128}dI,fzero128}mP",
+        "feq128"
       ]
     },
     {
-      "basename": "eq0_32",
+      "basename": "feq0_32",
       "prototype": "NamedMorphism",
       "properName": "=0&#x2083;&#x2082;",
       "domain": "F32",
       "codomain": "CPo{#1,#1}oPC",
-      "source": "hdole/floats/Cm{Fa{F32:F32_,#1_-1}aF,Pm{Id{F32}dI,zero32}mP,eq32}mC"
+      "source": "hdole/floats/Cm{Fa{F32:F32_,#1_-1}aF,Pm{Id{F32}dI,fzero32}mP,feq32}mC"
     },
     {
-      "basename": "eq0_64",
+      "basename": "feq0_64",
       "prototype": "NamedMorphism",
       "properName": "=0₆₄",
       "domain": "F64",
       "codomain": "CPo{#1,#1}oPC",
-      "source": "hdole/floats/Cm{Fa{F64:F64_,#1_-1}aF,Pm{Id{F64}dI,zero64}mP,eq64}mC"
+      "source": "hdole/floats/Cm{Fa{F64:F64_,#1_-1}aF,Pm{Id{F64}dI,fzero64}mP,feq64}mC"
     },
     {
-      "basename": "eq0_128",
+      "basename": "feq0_128",
       "prototype": "NamedMorphism",
       "properName": "=0&#x2081;&#x2082;&#x2088;",
       "domain": "F128",
       "codomain": "CPo{#1,#1}oPC",
-      "source": "hdole/floats/Cm{Fa{F128:F128_,#1_-1}aF,Pm{Id{F128}dI,zero128}mP,eq128}mC"
+      "source": "hdole/floats/Cm{Fa{F128:F128_,#1_-1}aF,Pm{Id{F128}dI,fzero128}mP,feq128}mC"
     },
     {
       "prototype": "ProductMorphism",
@@ -4404,7 +4404,7 @@
       "codomain": "Po{F128,F128}oP",
       "morphisms": [
         "Id{F128}dI",
-        "one128"
+        "fone128"
       ]
     },
     {
@@ -4422,18 +4422,18 @@
       "codomain": "F128",
       "morphisms": [
         "Fa{F128:F128_0,#1_-1}aF",
-        "Pm{Id{F128}dI,one128}mP",
-        "sub128"
+        "Pm{Id{F128}dI,fone128}mP",
+        "fsub128"
       ]
     },
     {
       "description": "decrement by one",
-      "basename": "decr128",
+      "basename": "fdecr128",
       "prototype": "NamedMorphism",
       "properName": "decr₁₂₈",
       "domain": "F128",
       "codomain": "F128",
-      "source": "hdole/floats/Cm{Fa{F128:F128_0,#1_-1}aF,Pm{Id{F128}dI,one128}mP,sub128}mC"
+      "source": "hdole/floats/Cm{Fa{F128:F128_0,#1_-1}aF,Pm{Id{F128}dI,fone128}mP,fsub128}mC"
     },
     {
       "prototype": "ProductMorphism",
@@ -4441,7 +4441,7 @@
       "codomain": "Po{F64,F64}oP",
       "morphisms": [
         "Id{F64}dI",
-        "one64"
+        "fone64"
       ]
     },
     {
@@ -4459,17 +4459,17 @@
       "codomain": "F64",
       "morphisms": [
         "Fa{F64:F64_0,#1_-1}aF",
-        "Pm{Id{F64}dI,one64}mP",
-        "sub64"
+        "Pm{Id{F64}dI,fone64}mP",
+        "fsub64"
       ]
     },
     {
-      "basename": "decr64",
+      "basename": "fdecr64",
       "prototype": "NamedMorphism",
       "properName": "decr&#x2086;&#x2084;",
       "domain": "F64",
       "codomain": "F64",
-      "source": "hdole/floats/Cm{Fa{F64:F64_0,#1_-1}aF,Pm{Id{F64}dI,one64}mP,sub64}mC"
+      "source": "hdole/floats/Cm{Fa{F64:F64_0,#1_-1}aF,Pm{Id{F64}dI,fone64}mP,fsub64}mC"
     },
     {
       "prototype": "FactorMorphism",
@@ -4486,7 +4486,7 @@
       "codomain": "F32",
       "morphisms": [
         "Fa{Po{F32,F32}oP:F32_1,F32_0}aF",
-        "sub32"
+        "fsub32"
       ]
     },
     {
@@ -4494,7 +4494,7 @@
       "domain": "Po{#1,F32}oP",
       "codomain": "Po{F32,F32}oP",
       "morphisms": [
-        "one32",
+        "fone32",
         "Id{F32}dI"
       ]
     },
@@ -4503,13 +4503,13 @@
       "domain": "Po{#1,F32}oP",
       "codomain": "F32",
       "morphisms": [
-        "Pm{one32,Id{F32}dI}mP",
-        "Cm{Fa{Po{F32,F32}oP:F32_1,F32_0}aF,sub32}mC"
+        "Pm{fone32,Id{F32}dI}mP",
+        "Cm{Fa{Po{F32,F32}oP:F32_1,F32_0}aF,fsub32}mC"
       ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1652505279257,
+  "timestamp": 1652505279258,
   "version": 0,
   "viewport": {
     "x": 979,

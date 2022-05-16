@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1010,
-          "y": 330
+          "y": 360
         },
         "height": 250,
         "weight": "bold"
@@ -915,7 +915,7 @@
         "height": 24
       },
       {
-        "description": "Close toolbar, close panels, change view mode between single diagram view (for editing) and multi-diagram view.",
+        "description": "Close toolbar, close panels, change view mode between single diagram view (for editing) and multi-diagram view,\nclose editing.",
         "basename": "t_86",
         "prototype": "IndexText",
         "xy": {
@@ -1217,7 +1217,7 @@
         "textAnchor": "end"
       },
       {
-        "description": "If nothing selected, place object '2' at mouse location.  If an object A or morphism m is\nselected, then AxA or mxm is placed.",
+        "description": "If nothing selected, place object '2' at mouse location.  If an object A or morphism m is\nselected, then the square AxA or mxm is placed.",
         "basename": "t_112",
         "prototype": "IndexText",
         "xy": {
@@ -1463,7 +1463,7 @@
         "textAnchor": "end"
       },
       {
-        "description": "Decrease text font size",
+        "description": "Decrease selected text font size",
         "basename": "t_134",
         "prototype": "IndexText",
         "xy": {
@@ -1485,7 +1485,7 @@
         "textAnchor": "end"
       },
       {
-        "description": "Increase text font size",
+        "description": "Increase selected text font size",
         "basename": "t_136",
         "prototype": "IndexText",
         "xy": {
@@ -1521,11 +1521,11 @@
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1652179519671,
+  "timestamp": 1652643103644,
   "version": 0,
   "viewport": {
     "x": -925,
     "y": -107,
-    "scale": 1.2829865197628199
+    "scale": 1.2831309205872476
   }
 }

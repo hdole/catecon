@@ -2653,7 +2653,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_161",
         "codomain": "o_162",
-        "to": "hdole/int/abs64"
+        "to": "hdole/int/iabs64"
       },
       {
         "basename": "m_81",
@@ -2673,7 +2673,7 @@
             true
           ]
         ],
-        "to": "Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
+        "to": "hdole/cpp/Cm{off_tToZ64,hdole/int/iabs64,N64toSize_t}mC"
       },
       {
         "basename": "m_83",
@@ -2718,20 +2718,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_172",
         "codomain": "o_173",
-        "to": "Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
+        "to": "hdole/cpp/Cm{off_tToZ64,hdole/int/iabs64,N64toSize_t}mC"
       }
     ],
     "cells": []
   },
   "elements": [
-    {
-      "description": "Set by system calls and some library functions when something goes wrong",
-      "basename": "Errno",
-      "prototype": "CatObject",
-      "code": {
-        "cpp": "//"
-      }
-    },
     {
       "basename": "#1",
       "prototype": "FiniteObject",
@@ -2739,6 +2731,14 @@
       "size": 1,
       "min": 0,
       "max": 1
+    },
+    {
+      "description": "Set by system calls and some library functions when something goes wrong",
+      "basename": "Errno",
+      "prototype": "CatObject",
+      "code": {
+        "cpp": "//"
+      }
     },
     {
       "description": "The standard input object reads from a tty device.",
@@ -3706,7 +3706,7 @@
       "codomain": "size_t",
       "morphisms": [
         "off_tToZ64",
-        "hdole/int/abs64",
+        "hdole/int/iabs64",
         "N64toSize_t"
       ]
     },
@@ -3716,7 +3716,7 @@
       "properName": "to",
       "domain": "off_t",
       "codomain": "size_t",
-      "source": "hdole/cpp/Cm{off_tToZ64,hdole/int/abs64,N64toSize_t}mC"
+      "source": "hdole/cpp/Cm{off_tToZ64,hdole/int/iabs64,N64toSize_t}mC"
     },
     {
       "description": "Time of last modification",
@@ -3744,7 +3744,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1651958773433,
+  "timestamp": 1651958773434,
   "version": 0,
   "viewport": {
     "x": 782,

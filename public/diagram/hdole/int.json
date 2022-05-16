@@ -3074,7 +3074,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "zero64"
+        "element": "izero64"
       },
       {
         "description": "%0 = 1;",
@@ -3086,7 +3086,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "one64"
+        "element": "ione64"
       },
       {
         "description": "%2 = %0 + %1;",
@@ -3098,7 +3098,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "addr64"
+        "element": "iaddr64"
       },
       {
         "description": "%2 = %0 < %1;",
@@ -3110,7 +3110,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "lt64"
+        "element": "ilt64"
       },
       {
         "description": "%2 = %0 <= %1;",
@@ -3122,7 +3122,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "lte64"
+        "element": "ilte64"
       },
       {
         "description": "%0 = 0;",
@@ -3134,7 +3134,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "zero16"
+        "element": "izero16"
       },
       {
         "description": "%2 = %0 + %1;",
@@ -3146,7 +3146,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "addr16"
+        "element": "iaddr16"
       },
       {
         "description": "%2 = %0 * %1;",
@@ -3158,7 +3158,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "mult16"
+        "element": "imult16"
       },
       {
         "description": "%2 = %0 & %1;",
@@ -3170,7 +3170,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "and16"
+        "element": "iand16"
       },
       {
         "description": "%2 = %0 | %1;",
@@ -3182,7 +3182,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "or16"
+        "element": "ior16"
       },
       {
         "description": "%2 = %0 ^ %1;",
@@ -3194,7 +3194,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "xor16"
+        "element": "ixor16"
       },
       {
         "description": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}",
@@ -3206,7 +3206,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "mod16"
+        "element": "imod16"
       },
       {
         "description": "%2 = %0 < %1;",
@@ -3218,7 +3218,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "lt16"
+        "element": "ilt16"
       },
       {
         "description": "%2 = %0 <= %1;",
@@ -3230,7 +3230,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "lte16"
+        "element": "ilte16"
       },
       {
         "description": "if (%0 < 0x7fffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;",
@@ -3242,7 +3242,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "succ64"
+        "element": "iincr64"
       },
       {
         "description": "if (%0 != 0xffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;",
@@ -3254,7 +3254,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "decr"
+        "element": "idecr64"
       },
       {
         "description": "%2 = %0 == %1;",
@@ -3278,7 +3278,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "zero32"
+        "element": "izero32"
       },
       {
         "description": "%1 = %0;\n",
@@ -3290,7 +3290,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "Z82Z16"
+        "element": "i8toi16"
       },
       {
         "description": "if (%0 < 0x7fffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;",
@@ -3302,7 +3302,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "succ32"
+        "element": "iincr32"
       },
       {
         "description": "if (%0 != 0xffffffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;",
@@ -3314,7 +3314,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "decr32"
+        "element": "fdecr32"
       },
       {
         "description": "if (%0 < 0x7fff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;",
@@ -3326,7 +3326,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "succ16"
+        "element": "iincr16"
       },
       {
         "description": "%0 = 0;\n",
@@ -3338,7 +3338,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "zero8"
+        "element": "izero8"
       },
       {
         "description": "if (%0 != 0xff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;",
@@ -3350,7 +3350,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "decr8"
+        "element": "idecr8"
       },
       {
         "description": "if (%0 < 0x7f)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;",
@@ -3362,7 +3362,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "succ8"
+        "element": "iincr8"
       },
       {
         "description": "if (%0 != 0xffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;",
@@ -3374,7 +3374,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "decr16"
+        "element": "idecr16"
       },
       {
         "description": "%2 = %0 + %1;",
@@ -3386,7 +3386,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "addr32"
+        "element": "iaddr32"
       },
       {
         "description": "%2 = %0 + %1;",
@@ -3398,7 +3398,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "addr8"
+        "element": "iaddr8"
       },
       {
         "description": "%2 = %0 - %1;",
@@ -3410,7 +3410,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "subr32"
+        "element": "isubr32"
       },
       {
         "description": "%2 = %0 * %1;",
@@ -3422,7 +3422,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "mult64"
+        "element": "imult64"
       },
       {
         "description": "%2 = %0 * %1;",
@@ -3434,7 +3434,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "mult32"
+        "element": "imult32"
       },
       {
         "description": "%2 = %0 - %1;",
@@ -3446,7 +3446,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "subr64"
+        "element": "isubr64"
       },
       {
         "description": "%2 = %0 - %1;",
@@ -3458,7 +3458,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "subr8"
+        "element": "isubr8"
       },
       {
         "description": "%2 = %0 * %1;",
@@ -3470,7 +3470,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "mult8"
+        "element": "imultp"
       },
       {
         "description": "%2 = %0 & %1;",
@@ -3482,7 +3482,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "and8"
+        "element": "iand8"
       },
       {
         "description": "%2 = %0 | %1;",
@@ -3494,7 +3494,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "or8"
+        "element": "ior8"
       },
       {
         "description": "%0 = 0;",
@@ -3506,7 +3506,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "zero128"
+        "element": "izero128"
       },
       {
         "description": "%0 = 1;",
@@ -3518,7 +3518,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "one128"
+        "element": "ione128"
       },
       {
         "description": "if (%0 < 0x7fffffffffffffffffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.m_0 = %0 + 1;\n}\nelse\t// carry\n\t%1.c = 1;",
@@ -3530,7 +3530,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "succ128"
+        "element": "iincr128"
       },
       {
         "description": "if (%0 != 0xffffffffffffffffffffffffffffffff)\n{\n\t%1.c = 0;\n\t%1.v = %0 - 1;\n}\nelse\n\t%1.c = 1;",
@@ -3542,7 +3542,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "decr128"
+        "element": "idecr128"
       },
       {
         "description": "%2 = %0 + %1;",
@@ -3554,7 +3554,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "addr128"
+        "element": "iaddr128"
       },
       {
         "description": "%2 = %0 & %1;",
@@ -3566,7 +3566,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "and32"
+        "element": "iand32"
       },
       {
         "description": "%2 = %0 & %1;",
@@ -3578,7 +3578,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "and64"
+        "element": "iand64"
       },
       {
         "description": "%2 = %0 & %1;",
@@ -3590,7 +3590,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "and128"
+        "element": "iand128"
       },
       {
         "description": "%2 = %0 ^ %1;",
@@ -3602,7 +3602,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "xor8"
+        "element": "ixor8"
       },
       {
         "description": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}",
@@ -3614,7 +3614,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "mod8"
+        "element": "imod8"
       },
       {
         "description": "%2 = %0 == %1;",
@@ -3626,7 +3626,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "equ8"
+        "element": "iequ8"
       },
       {
         "description": "%2 = %0 == %1;",
@@ -3638,7 +3638,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "equ32"
+        "element": "iequ32"
       },
       {
         "description": "%2 = %0 < %1;",
@@ -3650,7 +3650,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "lt8"
+        "element": "ilt8"
       },
       {
         "description": "%2 = %0 < %1;",
@@ -3662,7 +3662,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "lt32"
+        "element": "ilt32"
       },
       {
         "description": "%2 = %0 | %1;",
@@ -3674,7 +3674,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "or32"
+        "element": "ior32"
       },
       {
         "description": "%2 = %0 | %1;",
@@ -3686,7 +3686,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "or64"
+        "element": "ior64"
       },
       {
         "description": "%2 = %0 | %1;",
@@ -3698,7 +3698,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "or128"
+        "element": "ior128"
       },
       {
         "description": "%2 = %0 <= %1;",
@@ -3710,7 +3710,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "lte32"
+        "element": "ilte32"
       },
       {
         "description": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n",
@@ -3722,7 +3722,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "mod32"
+        "element": "imod32"
       },
       {
         "description": "%2 = %0 ^ %1;",
@@ -3734,7 +3734,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "xor32"
+        "element": "ixor32"
       },
       {
         "description": "%2 = %0 <= %1;",
@@ -3746,7 +3746,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "lte128"
+        "element": "ilte128"
       },
       {
         "description": "%2 = %0 ^ %1;",
@@ -3758,7 +3758,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "xor64"
+        "element": "ixor64"
       },
       {
         "description": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n",
@@ -3770,7 +3770,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "mod64"
+        "element": "imod64"
       },
       {
         "description": "%2 = %0 ^ %1;",
@@ -3782,7 +3782,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "xor128"
+        "element": "ixor128"
       },
       {
         "description": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 % %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}\n",
@@ -3794,7 +3794,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "mod128"
+        "element": "imod128"
       },
       {
         "description": "%2 = %0 == %1;",
@@ -3806,7 +3806,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "equ128"
+        "element": "iequ128"
       },
       {
         "description": "%2 = %0 < %1;",
@@ -3818,7 +3818,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "lt128"
+        "element": "ilt128"
       },
       {
         "description": "%2 = %0 > %1;",
@@ -3830,7 +3830,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "gt8"
+        "element": "igt8"
       },
       {
         "description": "%2 = %0 >= %1;",
@@ -3842,7 +3842,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "gte8"
+        "element": "igte8"
       },
       {
         "description": "%2 = %0 >> %1;",
@@ -3854,7 +3854,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "rsh8"
+        "element": "irsh8"
       },
       {
         "description": "%1 = ! %0;",
@@ -3866,7 +3866,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "not8"
+        "element": "inot8"
       },
       {
         "description": "%2 = %0 - %1;",
@@ -3878,7 +3878,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "subr128"
+        "element": "isubr128"
       },
       {
         "description": "%2 = %0 - %1;",
@@ -3890,7 +3890,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "subr16"
+        "element": "isubr16"
       },
       {
         "description": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;",
@@ -3902,7 +3902,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "add8"
+        "element": "iadd8"
       },
       {
         "description": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;",
@@ -3914,7 +3914,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "sub8"
+        "element": "isub8"
       },
       {
         "description": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;",
@@ -3926,7 +3926,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "sub16"
+        "element": "isub16"
       },
       {
         "description": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;",
@@ -3938,7 +3938,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "sub32"
+        "element": "isub32"
       },
       {
         "description": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;",
@@ -3950,7 +3950,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "sub64"
+        "element": "isub64"
       },
       {
         "description": "%2.m_0 = %0 - %1;\n%2.c = %2.m_0 > %0;",
@@ -3962,7 +3962,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "sub128"
+        "element": "isub128"
       },
       {
         "description": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;",
@@ -3974,7 +3974,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "add128"
+        "element": "iadd128"
       },
       {
         "description": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;",
@@ -3986,7 +3986,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "add64"
+        "element": "iadd64"
       },
       {
         "description": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;",
@@ -3998,7 +3998,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "add32"
+        "element": "iadd32"
       },
       {
         "description": "%2.m_0 = %0 + %1;\n%2.c = %2.m_0 < %0;",
@@ -4010,7 +4010,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "add16"
+        "element": "iadd16"
       },
       {
         "description": "// TODO\n%2.c = 0;\n%2.m_0 = %0 * %1;",
@@ -4022,7 +4022,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "mult128c"
+        "element": "imult128c"
       },
       {
         "description": "%1 = ! %0;",
@@ -4034,7 +4034,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "not16"
+        "element": "inot16"
       },
       {
         "description": "%1 = ! %0;",
@@ -4046,7 +4046,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "not32"
+        "element": "inot32"
       },
       {
         "description": "%1 = ! %0;",
@@ -4058,7 +4058,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "not64"
+        "element": "inot64"
       },
       {
         "description": "%1 = ! %0;",
@@ -4070,7 +4070,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "not128"
+        "element": "inot128"
       },
       {
         "description": "%2 = std::max(%0, %1);",
@@ -4082,7 +4082,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "max8"
+        "element": "imax8"
       },
       {
         "description": "%2 = std::min(%0, %1);",
@@ -4094,7 +4094,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "min8"
+        "element": "imin8"
       },
       {
         "description": "%2 = std::max(%0, %1);",
@@ -4106,7 +4106,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "max16"
+        "element": "imax16"
       },
       {
         "description": "%2 = std::min(%0, %1);",
@@ -4118,7 +4118,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "min16"
+        "element": "imin16"
       },
       {
         "description": "%2 = std::max(%0, %1);",
@@ -4130,7 +4130,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "max32"
+        "element": "imax32"
       },
       {
         "description": "%2 = std::min(%0, %1);",
@@ -4142,7 +4142,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "min32"
+        "element": "imin32"
       },
       {
         "description": "%2 = std::max(%0, %1);",
@@ -4154,7 +4154,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "max64"
+        "element": "imax64"
       },
       {
         "description": "%2 = std::min(%0, %1);",
@@ -4166,7 +4166,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "min64"
+        "element": "imin64"
       },
       {
         "description": "%2 = std::max(%0, %1);",
@@ -4178,7 +4178,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "max128"
+        "element": "imax128"
       },
       {
         "description": "%2 = std::min(%0, %1);",
@@ -4190,7 +4190,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "min128"
+        "element": "imin128"
       },
       {
         "description": "%2 = %0 > %1;",
@@ -4202,7 +4202,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "gt16"
+        "element": "igt16"
       },
       {
         "description": "%2 = %0 > %1;",
@@ -4214,7 +4214,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "gt32"
+        "element": "igt32"
       },
       {
         "description": "%2 = %0 > %1;",
@@ -4226,7 +4226,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "gt64"
+        "element": "igt64"
       },
       {
         "description": "%2 = %0 > %1;",
@@ -4238,7 +4238,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "gt128"
+        "element": "igt128"
       },
       {
         "description": "%2 = %0 >= %1;",
@@ -4250,7 +4250,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "gte16"
+        "element": "igte16"
       },
       {
         "description": "%2 = %0 <= %1;",
@@ -4262,7 +4262,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "lte8"
+        "element": "ilte8"
       },
       {
         "description": "%2 = %0 >= %1;",
@@ -4274,7 +4274,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "gte32"
+        "element": "igte32"
       },
       {
         "description": "%2 = %0 >= %1;",
@@ -4286,7 +4286,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "gte64"
+        "element": "igte64"
       },
       {
         "description": "%2 = %0 >= %1;",
@@ -4298,7 +4298,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "gte128"
+        "element": "igte128"
       },
       {
         "description": "%2 = %0 >> %1;",
@@ -4310,7 +4310,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "rsh16"
+        "element": "irsh16"
       },
       {
         "description": "%2 = %0 >> %1;",
@@ -4322,7 +4322,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "rsh32"
+        "element": "irsh32"
       },
       {
         "description": "%2 = %0 >> %1;",
@@ -4334,7 +4334,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "rsh64"
+        "element": "irsh64"
       },
       {
         "description": "%2 = %0 >> %1;",
@@ -4346,7 +4346,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "rsh128"
+        "element": "irsh128"
       },
       {
         "description": "%0 = -1;",
@@ -4358,7 +4358,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "minus_one16"
+        "element": "neg1_16"
       },
       {
         "description": "%0 = -1;\n",
@@ -4370,7 +4370,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "minus_one32"
+        "element": "neg1_32"
       },
       {
         "description": "%0 = -1;\n",
@@ -4382,7 +4382,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "minus_one8"
+        "element": "neg1_8"
       },
       {
         "description": "%0 = 0x7fffffffffffffff;\n",
@@ -4394,7 +4394,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "inf64"
+        "element": "iinf64"
       },
       {
         "description": "%0 = 0x7fff;",
@@ -4406,7 +4406,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "inf16"
+        "element": "iinf16"
       },
       {
         "description": "%0 = 0x7fffffff;",
@@ -4418,7 +4418,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "inf32"
+        "element": "iinf32"
       },
       {
         "description": "%0 = 0x7f;\n",
@@ -4430,7 +4430,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "inf8"
+        "element": "iinf8"
       },
       {
         "description": "%0 = 0x7fffffffffffffffffffffffffffffff;",
@@ -4442,7 +4442,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "inf128"
+        "element": "iinf128"
       },
       {
         "description": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}",
@@ -4454,7 +4454,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "div8"
+        "element": "idiv8"
       },
       {
         "description": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}",
@@ -4466,7 +4466,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "div16"
+        "element": "idiv16"
       },
       {
         "description": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}",
@@ -4478,7 +4478,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "div32"
+        "element": "idiv32"
       },
       {
         "description": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}",
@@ -4490,7 +4490,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "div64"
+        "element": "idiv64"
       },
       {
         "description": "if (%1 != 0)\n{\n\t%2 = 0;\n\t%3 = %0 / %1;\n}\nelse\n{\n\t%2 = 1;\n\t%3 = 0;\n}",
@@ -4502,7 +4502,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "div128"
+        "element": "idiv128"
       },
       {
         "description": "%0 = 1;",
@@ -4514,7 +4514,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "one8"
+        "element": "ione8"
       },
       {
         "description": "%0 = 1;",
@@ -4526,7 +4526,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "one16"
+        "element": "ione16"
       },
       {
         "description": "%0 = 1;",
@@ -4538,7 +4538,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "one32"
+        "element": "ione32"
       },
       {
         "description": "%0 = -1;",
@@ -4550,7 +4550,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "minus_one64"
+        "element": "neg1_64"
       },
       {
         "description": "%0 = -1;",
@@ -4562,7 +4562,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "minus_one128"
+        "element": "neg1_128"
       },
       {
         "description": "%0 = 0xff;\nvoid %Type(const %Dom args, %Cod out)\n{\n}\n",
@@ -4574,7 +4574,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "minus_inf8"
+        "element": "neginf8"
       },
       {
         "description": "%0 = 0x8000;",
@@ -4586,7 +4586,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "minus_inf16"
+        "element": "neginf16"
       },
       {
         "description": "%0 = 0x80000000;",
@@ -4598,7 +4598,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "minus_inf32"
+        "element": "neginf32"
       },
       {
         "description": "%0 = 0x8000000000000000;",
@@ -4610,7 +4610,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "minus_inf64"
+        "element": "neginf64"
       },
       {
         "description": "%0 = 0x80000000000000000000000000000000;",
@@ -4622,7 +4622,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "minus_infin128"
+        "element": "neginf128"
       },
       {
         "description": "%2 = %0 << %1;",
@@ -4694,7 +4694,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "abs8"
+        "element": "iabs8"
       },
       {
         "description": "%1 = ::abs(%0);",
@@ -4706,7 +4706,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "abs16"
+        "element": "iabs16"
       },
       {
         "description": "%1 = ::abs(%0);",
@@ -4718,7 +4718,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "abs32"
+        "element": "iabs32"
       },
       {
         "description": "%1 = ::abs(%0);",
@@ -4730,7 +4730,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "abs64"
+        "element": "iabs64"
       },
       {
         "description": "%1 = ::abs(%0);",
@@ -4742,7 +4742,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "abs128"
+        "element": "iabs128"
       },
       {
         "description": "%1 = %0;\n",
@@ -4754,7 +4754,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "N62toZ128"
+        "element": "i64toi128"
       },
       {
         "description": "%1 = %0;\n",
@@ -4766,7 +4766,7 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "Z322Z64"
+        "element": "i32toi64"
       },
       {
         "description": "%1 = %0;\n",
@@ -4778,119 +4778,119 @@
         },
         "height": 6,
         "ext": "cpp",
-        "element": "Z162Z32"
+        "element": "i16toi32"
       },
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_2",
         "codomain": "o_3",
-        "to": "zero64"
+        "to": "hdole/int/izero64"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_4",
         "codomain": "o_5",
-        "to": "one64"
+        "to": "hdole/int/ione64"
       },
       {
         "basename": "m_3",
         "prototype": "IndexMorphism",
         "domain": "o_9",
         "codomain": "o_10",
-        "to": "addr64"
+        "to": "hdole/int/iaddr64"
       },
       {
         "basename": "m_7",
         "prototype": "IndexMorphism",
         "domain": "o_17",
         "codomain": "o_18",
-        "to": "lt64"
+        "to": "hdole/int/ilt64"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
         "domain": "o_19",
         "codomain": "o_20",
-        "to": "lte64"
+        "to": "hdole/int/ilte64"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
         "domain": "o_27",
         "codomain": "o_28",
-        "to": "zero16"
+        "to": "hdole/int/izero16"
       },
       {
         "basename": "m_14",
         "prototype": "IndexMorphism",
         "domain": "o_33",
         "codomain": "o_34",
-        "to": "addr16"
+        "to": "hdole/int/iaddr16"
       },
       {
         "basename": "m_16",
         "prototype": "IndexMorphism",
         "domain": "o_37",
         "codomain": "o_38",
-        "to": "mult16"
+        "to": "hdole/int/imult16"
       },
       {
         "basename": "m_17",
         "prototype": "IndexMorphism",
         "domain": "o_39",
         "codomain": "o_40",
-        "to": "and16"
+        "to": "hdole/int/iand16"
       },
       {
         "basename": "m_18",
         "prototype": "IndexMorphism",
         "domain": "o_41",
         "codomain": "o_42",
-        "to": "or16"
+        "to": "hdole/int/ior16"
       },
       {
         "basename": "m_19",
         "prototype": "IndexMorphism",
         "domain": "o_43",
         "codomain": "o_44",
-        "to": "xor16"
+        "to": "hdole/int/ixor16"
       },
       {
         "basename": "m_21",
         "prototype": "IndexMorphism",
         "domain": "o_47",
         "codomain": "o_48",
-        "to": "mod16"
+        "to": "hdole/int/imod16"
       },
       {
         "basename": "m_23",
         "prototype": "IndexMorphism",
         "domain": "o_51",
         "codomain": "o_52",
-        "to": "lt16"
+        "to": "hdole/int/ilt16"
       },
       {
         "basename": "m_24",
         "prototype": "IndexMorphism",
         "domain": "o_53",
         "codomain": "o_54",
-        "to": "lte16"
+        "to": "hdole/int/ilte16"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
         "domain": "o_14",
         "codomain": "o_55",
-        "to": "succ64"
+        "to": "hdole/int/iincr64"
       },
       {
         "basename": "m_6",
         "prototype": "IndexMorphism",
         "domain": "o_15",
         "codomain": "o_13",
-        "to": "decr"
+        "to": "hdole/int/idecr64"
       },
       {
         "basename": "m_22",
@@ -4904,791 +4904,791 @@
         "prototype": "IndexMorphism",
         "domain": "o_23",
         "codomain": "o_50",
-        "to": "zero32"
+        "to": "hdole/int/izero32"
       },
       {
         "basename": "m_27",
         "prototype": "IndexMorphism",
         "domain": "o_58",
         "codomain": "o_25",
-        "to": "Z82Z16"
+        "to": "hdole/int/i8toi16"
       },
       {
         "basename": "m_32",
         "prototype": "IndexMorphism",
         "domain": "o_66",
         "codomain": "o_70",
-        "to": "succ32"
+        "to": "hdole/int/iincr32"
       },
       {
         "basename": "m_33",
         "prototype": "IndexMorphism",
         "domain": "o_73",
         "codomain": "o_71",
-        "to": "decr32"
+        "to": "hdole/int/fdecr32"
       },
       {
         "basename": "m_38",
         "prototype": "IndexMorphism",
         "domain": "o_67",
         "codomain": "o_59",
-        "to": "succ16"
+        "to": "hdole/int/iincr16"
       },
       {
         "basename": "m_39",
         "prototype": "IndexMorphism",
         "domain": "o_74",
         "codomain": "o_1",
-        "to": "zero8"
+        "to": "hdole/int/izero8"
       },
       {
         "basename": "m_43",
         "prototype": "IndexMorphism",
         "domain": "o_81",
         "codomain": "o_79",
-        "to": "decr8"
+        "to": "hdole/int/idecr8"
       },
       {
         "basename": "m_44",
         "prototype": "IndexMorphism",
         "domain": "o_78",
         "codomain": "o_77",
-        "to": "succ8"
+        "to": "hdole/int/iincr8"
       },
       {
         "basename": "m_45",
         "prototype": "IndexMorphism",
         "domain": "o_82",
         "codomain": "o_80",
-        "to": "decr16"
+        "to": "hdole/int/idecr16"
       },
       {
         "basename": "m_46",
         "prototype": "IndexMorphism",
         "domain": "o_86",
         "codomain": "o_85",
-        "to": "addr32"
+        "to": "hdole/int/iaddr32"
       },
       {
         "basename": "m_42",
         "prototype": "IndexMorphism",
         "domain": "o_84",
         "codomain": "o_83",
-        "to": "addr8"
+        "to": "hdole/int/iaddr8"
       },
       {
         "basename": "m_47",
         "prototype": "IndexMorphism",
         "domain": "o_90",
         "codomain": "o_89",
-        "to": "subr32"
+        "to": "hdole/int/isubr32"
       },
       {
         "basename": "m_51",
         "prototype": "IndexMorphism",
         "domain": "o_11",
         "codomain": "o_103",
-        "to": "mult64"
+        "to": "hdole/int/imult64"
       },
       {
         "basename": "m_52",
         "prototype": "IndexMorphism",
         "domain": "o_87",
         "codomain": "o_95",
-        "to": "mult32"
+        "to": "hdole/int/imult32"
       },
       {
         "basename": "m_53",
         "prototype": "IndexMorphism",
         "domain": "o_91",
         "codomain": "o_92",
-        "to": "subr64"
+        "to": "hdole/int/isubr64"
       },
       {
         "basename": "m_57",
         "prototype": "IndexMorphism",
         "domain": "o_105",
         "codomain": "o_106",
-        "to": "subr8"
+        "to": "hdole/int/isubr8"
       },
       {
         "basename": "m_59",
         "prototype": "IndexMorphism",
         "domain": "o_108",
         "codomain": "o_109",
-        "to": "mult8"
+        "to": "hdole/int/imultp"
       },
       {
         "basename": "m_61",
         "prototype": "IndexMorphism",
         "domain": "o_110",
         "codomain": "o_111",
-        "to": "and8"
+        "to": "hdole/int/iand8"
       },
       {
         "basename": "m_62",
         "prototype": "IndexMorphism",
         "domain": "o_112",
         "codomain": "o_113",
-        "to": "or8"
+        "to": "hdole/int/ior8"
       },
       {
         "basename": "m_71",
         "prototype": "IndexMorphism",
         "domain": "o_63",
         "codomain": "o_101",
-        "to": "zero128"
+        "to": "hdole/int/izero128"
       },
       {
         "basename": "m_72",
         "prototype": "IndexMorphism",
         "domain": "o_64",
         "codomain": "o_102",
-        "to": "one128"
+        "to": "hdole/int/ione128"
       },
       {
         "basename": "m_74",
         "prototype": "IndexMorphism",
         "domain": "o_125",
         "codomain": "o_124",
-        "to": "succ128"
+        "to": "hdole/int/iincr128"
       },
       {
         "basename": "m_75",
         "prototype": "IndexMorphism",
         "domain": "o_126",
         "codomain": "o_127",
-        "to": "decr128"
+        "to": "hdole/int/idecr128"
       },
       {
         "basename": "m_76",
         "prototype": "IndexMorphism",
         "domain": "o_129",
         "codomain": "o_128",
-        "to": "addr128"
+        "to": "hdole/int/iaddr128"
       },
       {
         "basename": "m_96",
         "prototype": "IndexMorphism",
         "domain": "o_139",
         "codomain": "o_140",
-        "to": "and32"
+        "to": "hdole/int/iand32"
       },
       {
         "basename": "m_97",
         "prototype": "IndexMorphism",
         "domain": "o_161",
         "codomain": "o_162",
-        "to": "and64"
+        "to": "hdole/int/iand64"
       },
       {
         "basename": "m_98",
         "prototype": "IndexMorphism",
         "domain": "o_171",
         "codomain": "o_179",
-        "to": "and128"
+        "to": "hdole/int/iand128"
       },
       {
         "basename": "m_102",
         "prototype": "IndexMorphism",
         "domain": "o_114",
         "codomain": "o_115",
-        "to": "xor8"
+        "to": "hdole/int/ixor8"
       },
       {
         "basename": "m_104",
         "prototype": "IndexMorphism",
         "domain": "o_186",
         "codomain": "o_192",
-        "to": "mod8"
+        "to": "hdole/int/imod8"
       },
       {
         "basename": "m_105",
         "prototype": "IndexMorphism",
         "domain": "o_188",
         "codomain": "o_158",
-        "to": "equ8"
+        "to": "hdole/int/iequ8"
       },
       {
         "basename": "m_106",
         "prototype": "IndexMorphism",
         "domain": "o_150",
         "codomain": "o_152",
-        "to": "equ32"
+        "to": "hdole/int/iequ32"
       },
       {
         "basename": "m_107",
         "prototype": "IndexMorphism",
         "domain": "o_189",
         "codomain": "o_159",
-        "to": "lt8"
+        "to": "hdole/int/ilt8"
       },
       {
         "basename": "m_109",
         "prototype": "IndexMorphism",
         "domain": "o_149",
         "codomain": "o_153",
-        "to": "lt32"
+        "to": "hdole/int/ilt32"
       },
       {
         "basename": "m_110",
         "prototype": "IndexMorphism",
         "domain": "o_141",
         "codomain": "o_142",
-        "to": "or32"
+        "to": "hdole/int/ior32"
       },
       {
         "basename": "m_111",
         "prototype": "IndexMorphism",
         "domain": "o_163",
         "codomain": "o_164",
-        "to": "or64"
+        "to": "hdole/int/ior64"
       },
       {
         "basename": "m_112",
         "prototype": "IndexMorphism",
         "domain": "o_172",
         "codomain": "o_180",
-        "to": "or128"
+        "to": "hdole/int/ior128"
       },
       {
         "basename": "m_113",
         "prototype": "IndexMorphism",
         "domain": "o_151",
         "codomain": "o_154",
-        "to": "lte32"
+        "to": "hdole/int/ilte32"
       },
       {
         "basename": "m_114",
         "prototype": "IndexMorphism",
         "domain": "o_148",
         "codomain": "o_147",
-        "to": "mod32"
+        "to": "hdole/int/imod32"
       },
       {
         "basename": "m_116",
         "prototype": "IndexMorphism",
         "domain": "o_143",
         "codomain": "o_144",
-        "to": "xor32"
+        "to": "hdole/int/ixor32"
       },
       {
         "basename": "m_117",
         "prototype": "IndexMorphism",
         "domain": "o_178",
         "codomain": "o_157",
-        "to": "lte128"
+        "to": "hdole/int/ilte128"
       },
       {
         "basename": "m_118",
         "prototype": "IndexMorphism",
         "domain": "o_165",
         "codomain": "o_166",
-        "to": "xor64"
+        "to": "hdole/int/ixor64"
       },
       {
         "basename": "m_120",
         "prototype": "IndexMorphism",
         "domain": "o_170",
         "codomain": "o_169",
-        "to": "mod64"
+        "to": "hdole/int/imod64"
       },
       {
         "basename": "m_121",
         "prototype": "IndexMorphism",
         "domain": "o_173",
         "codomain": "o_181",
-        "to": "xor128"
+        "to": "hdole/int/ixor128"
       },
       {
         "basename": "m_123",
         "prototype": "IndexMorphism",
         "domain": "o_175",
         "codomain": "o_183",
-        "to": "mod128"
+        "to": "hdole/int/imod128"
       },
       {
         "basename": "m_124",
         "prototype": "IndexMorphism",
         "domain": "o_176",
         "codomain": "o_155",
-        "to": "equ128"
+        "to": "hdole/int/iequ128"
       },
       {
         "basename": "m_125",
         "prototype": "IndexMorphism",
         "domain": "o_177",
         "codomain": "o_156",
-        "to": "lt128"
+        "to": "hdole/int/ilt128"
       },
       {
         "basename": "m_126",
         "prototype": "IndexMorphism",
         "domain": "o_193",
         "codomain": "o_195",
-        "to": "gt8"
+        "to": "hdole/int/igt8"
       },
       {
         "basename": "m_127",
         "prototype": "IndexMorphism",
         "domain": "o_194",
         "codomain": "o_196",
-        "to": "gte8"
+        "to": "hdole/int/igte8"
       },
       {
         "basename": "m_129",
         "prototype": "IndexMorphism",
         "domain": "o_199",
         "codomain": "o_200",
-        "to": "rsh8"
+        "to": "hdole/int/irsh8"
       },
       {
         "basename": "m_130",
         "prototype": "IndexMorphism",
         "domain": "o_201",
         "codomain": "o_202",
-        "to": "not8"
+        "to": "hdole/int/inot8"
       },
       {
         "basename": "m_131",
         "prototype": "IndexMorphism",
         "domain": "o_136",
         "codomain": "o_131",
-        "to": "subr128"
+        "to": "hdole/int/isubr128"
       },
       {
         "basename": "m_15",
         "prototype": "IndexMorphism",
         "domain": "o_35",
         "codomain": "o_36",
-        "to": "subr16"
+        "to": "hdole/int/isubr16"
       },
       {
         "basename": "m_49",
         "prototype": "IndexMorphism",
         "domain": "o_203",
         "codomain": "o_93",
-        "to": "add8"
+        "to": "hdole/int/iadd8"
       },
       {
         "basename": "m_58",
         "prototype": "IndexMorphism",
         "domain": "o_204",
         "codomain": "o_107",
-        "to": "sub8"
+        "to": "hdole/int/isub8"
       },
       {
         "basename": "m_92",
         "prototype": "IndexMorphism",
         "domain": "o_205",
         "codomain": "o_94",
-        "to": "sub16"
+        "to": "hdole/int/isub16"
       },
       {
         "basename": "m_56",
         "prototype": "IndexMorphism",
         "domain": "o_206",
         "codomain": "o_104",
-        "to": "sub32"
+        "to": "hdole/int/isub32"
       },
       {
         "basename": "m_54",
         "prototype": "IndexMorphism",
         "domain": "o_207",
         "codomain": "o_98",
-        "to": "sub64"
+        "to": "hdole/int/isub64"
       },
       {
         "basename": "m_79",
         "prototype": "IndexMorphism",
         "domain": "o_208",
         "codomain": "o_132",
-        "to": "sub128"
+        "to": "hdole/int/isub128"
       },
       {
         "basename": "m_80",
         "prototype": "IndexMorphism",
         "domain": "o_209",
         "codomain": "o_130",
-        "to": "add128"
+        "to": "hdole/int/iadd128"
       },
       {
         "basename": "m_55",
         "prototype": "IndexMorphism",
         "domain": "o_210",
         "codomain": "o_97",
-        "to": "add64"
+        "to": "hdole/int/iadd64"
       },
       {
         "basename": "m_77",
         "prototype": "IndexMorphism",
         "domain": "o_211",
         "codomain": "o_138",
-        "to": "add32"
+        "to": "hdole/int/iadd32"
       },
       {
         "basename": "m_48",
         "prototype": "IndexMorphism",
         "domain": "o_212",
         "codomain": "o_88",
-        "to": "add16"
+        "to": "hdole/int/iadd16"
       },
       {
         "basename": "m_81",
         "prototype": "IndexMorphism",
         "domain": "o_12",
         "codomain": "o_134",
-        "to": "mult128c"
+        "to": "hdole/int/imult128c"
       },
       {
         "basename": "m_4",
         "prototype": "IndexMorphism",
         "domain": "o_99",
         "codomain": "o_135",
-        "to": "not16"
+        "to": "hdole/int/inot16"
       },
       {
         "basename": "m_50",
         "prototype": "IndexMorphism",
         "domain": "o_213",
         "codomain": "o_214",
-        "to": "not32"
+        "to": "hdole/int/inot32"
       },
       {
         "basename": "m_60",
         "prototype": "IndexMorphism",
         "domain": "o_215",
         "codomain": "o_216",
-        "to": "not64"
+        "to": "hdole/int/inot64"
       },
       {
         "basename": "m_82",
         "prototype": "IndexMorphism",
         "domain": "o_217",
         "codomain": "o_218",
-        "to": "not128"
+        "to": "hdole/int/inot128"
       },
       {
         "basename": "m_95",
         "prototype": "IndexMorphism",
         "domain": "o_225",
         "codomain": "o_226",
-        "to": "max8"
+        "to": "hdole/int/imax8"
       },
       {
         "basename": "m_132",
         "prototype": "IndexMorphism",
         "domain": "o_227",
         "codomain": "o_228",
-        "to": "min8"
+        "to": "hdole/int/imin8"
       },
       {
         "basename": "m_200",
         "prototype": "IndexMorphism",
         "domain": "o_270",
         "codomain": "o_271",
-        "to": "max16"
+        "to": "hdole/int/imax16"
       },
       {
         "basename": "m_201",
         "prototype": "IndexMorphism",
         "domain": "o_272",
         "codomain": "o_273",
-        "to": "min16"
+        "to": "hdole/int/imin16"
       },
       {
         "basename": "m_202",
         "prototype": "IndexMorphism",
         "domain": "o_280",
         "codomain": "o_281",
-        "to": "max32"
+        "to": "hdole/int/imax32"
       },
       {
         "basename": "m_203",
         "prototype": "IndexMorphism",
         "domain": "o_282",
         "codomain": "o_283",
-        "to": "min32"
+        "to": "hdole/int/imin32"
       },
       {
         "basename": "m_204",
         "prototype": "IndexMorphism",
         "domain": "o_290",
         "codomain": "o_291",
-        "to": "max64"
+        "to": "hdole/int/imax64"
       },
       {
         "basename": "m_205",
         "prototype": "IndexMorphism",
         "domain": "o_292",
         "codomain": "o_293",
-        "to": "min64"
+        "to": "hdole/int/imin64"
       },
       {
         "basename": "m_206",
         "prototype": "IndexMorphism",
         "domain": "o_300",
         "codomain": "o_301",
-        "to": "max128"
+        "to": "hdole/int/imax128"
       },
       {
         "basename": "m_207",
         "prototype": "IndexMorphism",
         "domain": "o_302",
         "codomain": "o_303",
-        "to": "min128"
+        "to": "hdole/int/imin128"
       },
       {
         "basename": "m_133",
         "prototype": "IndexMorphism",
         "domain": "o_229",
         "codomain": "o_230",
-        "to": "gt16"
+        "to": "hdole/int/igt16"
       },
       {
         "basename": "m_134",
         "prototype": "IndexMorphism",
         "domain": "o_231",
         "codomain": "o_232",
-        "to": "gt32"
+        "to": "hdole/int/igt32"
       },
       {
         "basename": "m_135",
         "prototype": "IndexMorphism",
         "domain": "o_233",
         "codomain": "o_234",
-        "to": "gt64"
+        "to": "hdole/int/igt64"
       },
       {
         "basename": "m_136",
         "prototype": "IndexMorphism",
         "domain": "o_235",
         "codomain": "o_236",
-        "to": "gt128"
+        "to": "hdole/int/igt128"
       },
       {
         "basename": "m_137",
         "prototype": "IndexMorphism",
         "domain": "o_237",
         "codomain": "o_238",
-        "to": "gte16"
+        "to": "hdole/int/igte16"
       },
       {
         "basename": "m_108",
         "prototype": "IndexMorphism",
         "domain": "o_190",
         "codomain": "o_160",
-        "to": "lte8"
+        "to": "hdole/int/ilte8"
       },
       {
         "basename": "m_140",
         "prototype": "IndexMorphism",
         "domain": "o_239",
         "codomain": "o_240",
-        "to": "gte32"
+        "to": "hdole/int/igte32"
       },
       {
         "basename": "m_141",
         "prototype": "IndexMorphism",
         "domain": "o_241",
         "codomain": "o_242",
-        "to": "gte64"
+        "to": "hdole/int/igte64"
       },
       {
         "basename": "m_142",
         "prototype": "IndexMorphism",
         "domain": "o_243",
         "codomain": "o_244",
-        "to": "gte128"
+        "to": "hdole/int/igte128"
       },
       {
         "basename": "m_145",
         "prototype": "IndexMorphism",
         "domain": "o_253",
         "codomain": "o_96",
-        "to": "rsh16"
+        "to": "hdole/int/irsh16"
       },
       {
         "basename": "m_146",
         "prototype": "IndexMorphism",
         "domain": "o_255",
         "codomain": "o_254",
-        "to": "rsh32"
+        "to": "hdole/int/irsh32"
       },
       {
         "basename": "m_147",
         "prototype": "IndexMorphism",
         "domain": "o_257",
         "codomain": "o_256",
-        "to": "rsh64"
+        "to": "hdole/int/irsh64"
       },
       {
         "basename": "m_148",
         "prototype": "IndexMorphism",
         "domain": "o_259",
         "codomain": "o_258",
-        "to": "rsh128"
+        "to": "hdole/int/irsh128"
       },
       {
         "basename": "m_150",
         "prototype": "IndexMorphism",
         "domain": "o_262",
         "codomain": "o_263",
-        "to": "minus_one16"
+        "to": "hdole/int/neg1_16"
       },
       {
         "basename": "m_151",
         "prototype": "IndexMorphism",
         "domain": "o_264",
         "codomain": "o_265",
-        "to": "minus_one32"
+        "to": "hdole/int/neg1_32"
       },
       {
         "basename": "m_152",
         "prototype": "IndexMorphism",
         "domain": "o_266",
         "codomain": "o_267",
-        "to": "minus_one8"
+        "to": "hdole/int/neg1_8"
       },
       {
         "basename": "m_154",
         "prototype": "IndexMorphism",
         "domain": "o_274",
         "codomain": "o_275",
-        "to": "inf64"
+        "to": "hdole/int/iinf64"
       },
       {
         "basename": "m_155",
         "prototype": "IndexMorphism",
         "domain": "o_276",
         "codomain": "o_277",
-        "to": "inf16"
+        "to": "hdole/int/iinf16"
       },
       {
         "basename": "m_156",
         "prototype": "IndexMorphism",
         "domain": "o_278",
         "codomain": "o_279",
-        "to": "inf32"
+        "to": "hdole/int/iinf32"
       },
       {
         "basename": "m_157",
         "prototype": "IndexMorphism",
         "domain": "o_284",
         "codomain": "o_285",
-        "to": "inf8"
+        "to": "hdole/int/iinf8"
       },
       {
         "basename": "m_158",
         "prototype": "IndexMorphism",
         "domain": "o_286",
         "codomain": "o_287",
-        "to": "inf128"
+        "to": "hdole/int/iinf128"
       },
       {
         "basename": "m_20",
         "prototype": "IndexMorphism",
         "domain": "o_187",
         "codomain": "o_191",
-        "to": "div8"
+        "to": "hdole/int/idiv8"
       },
       {
         "basename": "m_103",
         "prototype": "IndexMorphism",
         "domain": "o_45",
         "codomain": "o_46",
-        "to": "div16"
+        "to": "hdole/int/idiv16"
       },
       {
         "basename": "m_115",
         "prototype": "IndexMorphism",
         "domain": "o_146",
         "codomain": "o_145",
-        "to": "div32"
+        "to": "hdole/int/idiv32"
       },
       {
         "basename": "m_119",
         "prototype": "IndexMorphism",
         "domain": "o_167",
         "codomain": "o_168",
-        "to": "div64"
+        "to": "hdole/int/idiv64"
       },
       {
         "basename": "m_122",
         "prototype": "IndexMorphism",
         "domain": "o_174",
         "codomain": "o_182",
-        "to": "div128"
+        "to": "hdole/int/idiv128"
       },
       {
         "basename": "m_12",
         "prototype": "IndexMorphism",
         "domain": "o_75",
         "codomain": "o_24",
-        "to": "one8"
+        "to": "hdole/int/ione8"
       },
       {
         "basename": "m_26",
         "prototype": "IndexMorphism",
         "domain": "o_29",
         "codomain": "o_30",
-        "to": "one16"
+        "to": "hdole/int/ione16"
       },
       {
         "basename": "m_40",
         "prototype": "IndexMorphism",
         "domain": "o_56",
         "codomain": "o_57",
-        "to": "one32"
+        "to": "hdole/int/ione32"
       },
       {
         "basename": "m_149",
         "prototype": "IndexMorphism",
         "domain": "o_260",
         "codomain": "o_261",
-        "to": "minus_one64"
+        "to": "hdole/int/neg1_64"
       },
       {
         "basename": "m_153",
         "prototype": "IndexMorphism",
         "domain": "o_268",
         "codomain": "o_269",
-        "to": "minus_one128"
+        "to": "hdole/int/neg1_128"
       },
       {
         "basename": "m_159",
         "prototype": "IndexMorphism",
         "domain": "o_288",
         "codomain": "o_289",
-        "to": "minus_inf8"
+        "to": "hdole/int/neginf8"
       },
       {
         "basename": "m_160",
         "prototype": "IndexMorphism",
         "domain": "o_294",
         "codomain": "o_295",
-        "to": "minus_inf16"
+        "to": "hdole/int/neginf16"
       },
       {
         "basename": "m_161",
         "prototype": "IndexMorphism",
         "domain": "o_296",
         "codomain": "o_297",
-        "to": "minus_inf32"
+        "to": "hdole/int/neginf32"
       },
       {
         "basename": "m_162",
         "prototype": "IndexMorphism",
         "domain": "o_298",
         "codomain": "o_299",
-        "to": "minus_inf64"
+        "to": "hdole/int/neginf64"
       },
       {
         "basename": "m_163",
         "prototype": "IndexMorphism",
         "domain": "o_304",
         "codomain": "o_305",
-        "to": "minus_infin128"
+        "to": "hdole/int/neginf128"
       },
       {
         "basename": "m_128",
@@ -5730,63 +5730,63 @@
         "prototype": "IndexMorphism",
         "domain": "o_321",
         "codomain": "o_322",
-        "to": "abs8"
+        "to": "hdole/int/iabs8"
       },
       {
         "basename": "m_170",
         "prototype": "IndexMorphism",
         "domain": "o_323",
         "codomain": "o_324",
-        "to": "abs16"
+        "to": "hdole/int/iabs16"
       },
       {
         "basename": "m_171",
         "prototype": "IndexMorphism",
         "domain": "o_325",
         "codomain": "o_326",
-        "to": "abs32"
+        "to": "hdole/int/iabs32"
       },
       {
         "basename": "m_172",
         "prototype": "IndexMorphism",
         "domain": "o_327",
         "codomain": "o_328",
-        "to": "abs64"
+        "to": "hdole/int/iabs64"
       },
       {
         "basename": "m_173",
         "prototype": "IndexMorphism",
         "domain": "o_329",
         "codomain": "o_330",
-        "to": "abs128"
+        "to": "hdole/int/iabs128"
       },
       {
         "basename": "m_99",
         "prototype": "IndexMorphism",
         "domain": "o_6",
         "codomain": "o_184",
-        "to": "N62toZ128"
+        "to": "hdole/int/i64toi128"
       },
       {
         "basename": "m_31",
         "prototype": "IndexMorphism",
         "domain": "o_7",
         "codomain": "o_0",
-        "to": "Z322Z64"
+        "to": "hdole/int/i32toi64"
       },
       {
         "basename": "m_30",
         "prototype": "IndexMorphism",
         "domain": "o_26",
         "codomain": "o_62",
-        "to": "Z162Z32"
+        "to": "hdole/int/i16toi32"
       },
       {
         "basename": "m_2",
         "prototype": "IndexMorphism",
         "domain": "o_21",
         "codomain": "o_22",
-        "to": "equ64"
+        "to": "hdole/int/iequ64"
       }
     ],
     "cells": []
@@ -5961,7 +5961,7 @@
     },
     {
       "description": "The 64-bit zero",
-      "basename": "zero64",
+      "basename": "izero64",
       "prototype": "Morphism",
       "properName": "0₆₄",
       "code": {
@@ -5973,7 +5973,7 @@
     },
     {
       "description": "The 64-bit one",
-      "basename": "one64",
+      "basename": "ione64",
       "prototype": "Morphism",
       "properName": "1₆₄",
       "code": {
@@ -5985,7 +5985,7 @@
     },
     {
       "description": "The maximum 64-bit integer 9,223,372,036,854,775,807",
-      "basename": "inf64",
+      "basename": "iinf64",
       "prototype": "Morphism",
       "properName": "∞₆₄",
       "code": {
@@ -5997,7 +5997,7 @@
     },
     {
       "description": "Addition of two integers with rollover",
-      "basename": "addr64",
+      "basename": "iaddr64",
       "prototype": "Morphism",
       "properName": "addr₆₄",
       "code": {
@@ -6009,7 +6009,7 @@
     },
     {
       "description": "Is the first 64-bit integer less than the second",
-      "basename": "lt64",
+      "basename": "ilt64",
       "prototype": "Morphism",
       "properName": "lt₆₄",
       "code": {
@@ -6021,7 +6021,7 @@
     },
     {
       "description": "Is the first integer less than or equal to the second",
-      "basename": "lte64",
+      "basename": "ilte64",
       "prototype": "Morphism",
       "properName": "lte₆₄",
       "code": {
@@ -6033,7 +6033,7 @@
     },
     {
       "description": "compare two 64-bit integers for equality",
-      "basename": "equ128",
+      "basename": "iequ128",
       "prototype": "Morphism",
       "properName": "equ₁₂₈",
       "code": {
@@ -6045,7 +6045,7 @@
     },
     {
       "description": "Sixteen bit zero",
-      "basename": "zero16",
+      "basename": "izero16",
       "prototype": "Morphism",
       "properName": "0₁₆",
       "code": {
@@ -6057,7 +6057,7 @@
     },
     {
       "description": "Sixteen bit one",
-      "basename": "minus_one16",
+      "basename": "neg1_16",
       "prototype": "Morphism",
       "properName": "-1₁₆",
       "code": {
@@ -6069,7 +6069,7 @@
     },
     {
       "description": "Max sixteen bit integer 32767",
-      "basename": "inf16",
+      "basename": "iinf16",
       "prototype": "Morphism",
       "properName": "&infin;",
       "code": {
@@ -6081,7 +6081,7 @@
     },
     {
       "description": "Addition of two 16-bit integers with rollover",
-      "basename": "addr16",
+      "basename": "iaddr16",
       "prototype": "Morphism",
       "properName": "addr₁₆",
       "code": {
@@ -6092,7 +6092,7 @@
     },
     {
       "description": "Mulitiplication of two 16-bit integers",
-      "basename": "mult16",
+      "basename": "imult16",
       "prototype": "Morphism",
       "properName": "mult₁₆",
       "code": {
@@ -6103,7 +6103,7 @@
     },
     {
       "description": "Bit-wise and of two 16-bit integers",
-      "basename": "and16",
+      "basename": "iand16",
       "prototype": "Morphism",
       "properName": "and₁₆",
       "code": {
@@ -6114,7 +6114,7 @@
     },
     {
       "description": "Bit-wise or of two 16-bit integers",
-      "basename": "or16",
+      "basename": "ior16",
       "prototype": "Morphism",
       "properName": "or₁₆",
       "code": {
@@ -6125,7 +6125,7 @@
     },
     {
       "description": "Bit-wise exclusive or of two 16-bit integers",
-      "basename": "xor16",
+      "basename": "ixor16",
       "prototype": "Morphism",
       "properName": "xor₁₆",
       "code": {
@@ -6136,7 +6136,7 @@
     },
     {
       "description": "Modulus of one 16-bit integer of the other, or an exception",
-      "basename": "mod16",
+      "basename": "imod16",
       "prototype": "Morphism",
       "properName": "mod₁₆",
       "code": {
@@ -6147,7 +6147,7 @@
     },
     {
       "description": "Is the 16-bit integer less than to the second",
-      "basename": "lt16",
+      "basename": "ilt16",
       "prototype": "Morphism",
       "properName": "lt₁₆",
       "code": {
@@ -6158,7 +6158,7 @@
     },
     {
       "description": "Is the 16-bit integer less than or equal to the second",
-      "basename": "lte16",
+      "basename": "ilte16",
       "prototype": "Morphism",
       "properName": "lte₁₆",
       "code": {
@@ -6169,7 +6169,7 @@
     },
     {
       "description": "The successor function for 64-bit integers",
-      "basename": "succ64",
+      "basename": "iincr64",
       "prototype": "Morphism",
       "properName": "incr₆₄",
       "code": {
@@ -6180,7 +6180,7 @@
     },
     {
       "description": "Decrement function for integers",
-      "basename": "decr",
+      "basename": "idecr64",
       "prototype": "Morphism",
       "properName": "decr₆₄",
       "code": {
@@ -6202,7 +6202,7 @@
     },
     {
       "description": "32-bit zero",
-      "basename": "zero32",
+      "basename": "izero32",
       "prototype": "Morphism",
       "properName": "0₃₂",
       "code": {
@@ -6213,7 +6213,7 @@
     },
     {
       "description": "The number one",
-      "basename": "minus_one32",
+      "basename": "neg1_32",
       "prototype": "Morphism",
       "properName": "-1₃₂",
       "code": {
@@ -6223,7 +6223,7 @@
       "codomain": "Z32"
     },
     {
-      "basename": "Z82Z16",
+      "basename": "i8toi16",
       "prototype": "Morphism",
       "properName": "⊂",
       "code": {
@@ -6233,7 +6233,7 @@
       "codomain": "Z16"
     },
     {
-      "basename": "Z162Z32",
+      "basename": "i16toi32",
       "prototype": "Morphism",
       "properName": "⊂",
       "code": {
@@ -6243,7 +6243,7 @@
       "codomain": "Z32"
     },
     {
-      "basename": "Z322Z64",
+      "basename": "i32toi64",
       "prototype": "Morphism",
       "properName": "⊂₃₂",
       "code": {
@@ -6253,7 +6253,7 @@
       "codomain": "Z64"
     },
     {
-      "basename": "succ32",
+      "basename": "iincr32",
       "prototype": "Morphism",
       "properName": "incr₃₂",
       "code": {
@@ -6263,7 +6263,7 @@
       "codomain": "CPo{Z32,#1}oPC"
     },
     {
-      "basename": "decr32",
+      "basename": "fdecr32",
       "prototype": "Morphism",
       "properName": "decr₃₂",
       "code": {
@@ -6274,7 +6274,7 @@
     },
     {
       "description": "The maximum 32-bit integer 2,147,483,647",
-      "basename": "inf32",
+      "basename": "iinf32",
       "prototype": "Morphism",
       "properName": "∞₃₂",
       "code": {
@@ -6284,7 +6284,7 @@
       "codomain": "Z32"
     },
     {
-      "basename": "succ16",
+      "basename": "iincr16",
       "prototype": "Morphism",
       "properName": "incr₁₆",
       "code": {
@@ -6295,7 +6295,7 @@
     },
     {
       "description": "Zero for unsigned eight bit numbers",
-      "basename": "zero8",
+      "basename": "izero8",
       "prototype": "Morphism",
       "properName": "0₈",
       "code": {
@@ -6306,7 +6306,7 @@
     },
     {
       "description": "One in the eight bit unsigned numbers",
-      "basename": "minus_one8",
+      "basename": "neg1_8",
       "prototype": "Morphism",
       "properName": "-1₈",
       "code": {
@@ -6317,7 +6317,7 @@
     },
     {
       "description": "The maximum safe unsigned eight bit number",
-      "basename": "inf8",
+      "basename": "iinf8",
       "prototype": "Morphism",
       "properName": "∞₈",
       "code": {
@@ -6328,7 +6328,7 @@
     },
     {
       "description": "Decrement an eight bit unsigned number.",
-      "basename": "decr8",
+      "basename": "idecr8",
       "prototype": "Morphism",
       "properName": "decr₈",
       "code": {
@@ -6339,7 +6339,7 @@
     },
     {
       "description": "The successor for eight bit unsigned numbers.",
-      "basename": "succ8",
+      "basename": "iincr8",
       "prototype": "Morphism",
       "properName": "incr₈",
       "code": {
@@ -6350,7 +6350,7 @@
     },
     {
       "description": "The decrement of a sixteen bit unsigned number.",
-      "basename": "decr16",
+      "basename": "idecr16",
       "prototype": "Morphism",
       "properName": "decr₁₆",
       "code": {
@@ -6361,7 +6361,7 @@
     },
     {
       "description": "Addition of two 32 bit unsigned numbers",
-      "basename": "addr32",
+      "basename": "iaddr32",
       "prototype": "Morphism",
       "properName": "addr₃₂",
       "code": {
@@ -6372,7 +6372,7 @@
     },
     {
       "description": "Addition of eight bit unsigned numbers",
-      "basename": "addr8",
+      "basename": "iaddr8",
       "prototype": "Morphism",
       "properName": "addr₈",
       "code": {
@@ -6383,7 +6383,7 @@
     },
     {
       "description": "Subtraction of two 32 bit numbers",
-      "basename": "subr32",
+      "basename": "isubr32",
       "prototype": "Morphism",
       "properName": "subr₃₂",
       "code": {
@@ -6394,7 +6394,7 @@
     },
     {
       "description": "Addition with carry",
-      "basename": "add16",
+      "basename": "iadd16",
       "prototype": "Morphism",
       "properName": "add₁₆",
       "code": {
@@ -6405,7 +6405,7 @@
     },
     {
       "description": "Addition with carry",
-      "basename": "add8",
+      "basename": "iadd8",
       "prototype": "Morphism",
       "properName": "add₈",
       "code": {
@@ -6416,7 +6416,7 @@
     },
     {
       "description": "Multiplication of two 64-bit numbers",
-      "basename": "mult64",
+      "basename": "imult64",
       "prototype": "Morphism",
       "properName": "mult₆₄",
       "code": {
@@ -6427,7 +6427,7 @@
     },
     {
       "description": "Multiplication of two unsigned 32-bit numbers",
-      "basename": "mult32",
+      "basename": "imult32",
       "prototype": "Morphism",
       "properName": "mult₃₂",
       "code": {
@@ -6438,7 +6438,7 @@
     },
     {
       "description": "Subtraction of two 64-bit unsigned numbers",
-      "basename": "subr64",
+      "basename": "isubr64",
       "prototype": "Morphism",
       "properName": "subr₆₄",
       "code": {
@@ -6449,7 +6449,7 @@
     },
     {
       "description": "Subtraction of two 64-bit numbers with underflow",
-      "basename": "sub64",
+      "basename": "isub64",
       "prototype": "Morphism",
       "properName": "sub₆₄",
       "code": {
@@ -6460,7 +6460,7 @@
     },
     {
       "description": "Addition of two 64-bit numbers with overflow",
-      "basename": "add64",
+      "basename": "iadd64",
       "prototype": "Morphism",
       "properName": "add₆₄",
       "code": {
@@ -6471,7 +6471,7 @@
     },
     {
       "description": "Subtraction of two 32-bit unsigned numbers with underflow",
-      "basename": "sub32",
+      "basename": "isub32",
       "prototype": "Morphism",
       "properName": "sub₃₂",
       "code": {
@@ -6482,7 +6482,7 @@
     },
     {
       "description": "Subtraction of two 8-bit numbers",
-      "basename": "subr8",
+      "basename": "isubr8",
       "prototype": "Morphism",
       "properName": "subr₈",
       "code": {
@@ -6493,7 +6493,7 @@
     },
     {
       "description": "Subtraction of two 8-bit numbers with underflow",
-      "basename": "sub8",
+      "basename": "isub8",
       "prototype": "Morphism",
       "properName": "sub₈",
       "code": {
@@ -6504,7 +6504,7 @@
     },
     {
       "description": "Multiplication of two 8-bit unsigned numbers",
-      "basename": "mult8",
+      "basename": "imultp",
       "prototype": "Morphism",
       "properName": "mult₈",
       "code": {
@@ -6515,7 +6515,7 @@
     },
     {
       "description": "Bit-wise and of two 8-bit unsigned numbers",
-      "basename": "and8",
+      "basename": "iand8",
       "prototype": "Morphism",
       "properName": "and₈",
       "code": {
@@ -6526,7 +6526,7 @@
     },
     {
       "description": "Bit-wise or of two unsigned numbers",
-      "basename": "or8",
+      "basename": "ior8",
       "prototype": "Morphism",
       "properName": "or₈",
       "code": {
@@ -6536,7 +6536,7 @@
       "codomain": "Z8"
     },
     {
-      "basename": "zero128",
+      "basename": "izero128",
       "prototype": "Morphism",
       "properName": "0₁₂₈",
       "code": {
@@ -6546,7 +6546,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "one128",
+      "basename": "ione128",
       "prototype": "Morphism",
       "properName": "1₁₂₈",
       "code": {
@@ -6556,7 +6556,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "inf128",
+      "basename": "iinf128",
       "prototype": "Morphism",
       "properName": "∞₁₂₈",
       "code": {
@@ -6566,7 +6566,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "succ128",
+      "basename": "iincr128",
       "prototype": "Morphism",
       "properName": "incr₁₂₈",
       "code": {
@@ -6576,7 +6576,7 @@
       "codomain": "CPo{Z128,#1}oPC"
     },
     {
-      "basename": "decr128",
+      "basename": "idecr128",
       "prototype": "Morphism",
       "properName": "decr₁₂₈",
       "code": {
@@ -6586,7 +6586,7 @@
       "codomain": "CPo{Z128,#1}oPC"
     },
     {
-      "basename": "addr128",
+      "basename": "iaddr128",
       "prototype": "Morphism",
       "properName": "addr₁₂₈",
       "code": {
@@ -6596,7 +6596,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "add32",
+      "basename": "iadd32",
       "prototype": "Morphism",
       "properName": "add₃₂",
       "code": {
@@ -6606,7 +6606,7 @@
       "codomain": "CPo{Z32,#1}oPC"
     },
     {
-      "basename": "add128",
+      "basename": "iadd128",
       "prototype": "Morphism",
       "properName": "add₁₂₈",
       "code": {
@@ -6616,7 +6616,7 @@
       "codomain": "CPo{Z128,#1}oPC"
     },
     {
-      "basename": "sub128",
+      "basename": "isub128",
       "prototype": "Morphism",
       "properName": "sub₁₂₈",
       "code": {
@@ -6626,7 +6626,7 @@
       "codomain": "CPo{Z128,#1}oPC"
     },
     {
-      "basename": "and32",
+      "basename": "iand32",
       "prototype": "Morphism",
       "properName": "and₃₂",
       "code": {
@@ -6636,7 +6636,7 @@
       "codomain": "Z32"
     },
     {
-      "basename": "and64",
+      "basename": "iand64",
       "prototype": "Morphism",
       "properName": "and₆₄",
       "code": {
@@ -6646,7 +6646,7 @@
       "codomain": "Z64"
     },
     {
-      "basename": "and128",
+      "basename": "iand128",
       "prototype": "Morphism",
       "properName": "and₁₂₈",
       "code": {
@@ -6656,7 +6656,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "N62toZ128",
+      "basename": "i64toi128",
       "prototype": "Morphism",
       "properName": "⊂₆₄",
       "code": {
@@ -6666,7 +6666,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "xor8",
+      "basename": "ixor8",
       "prototype": "Morphism",
       "properName": "xor₈",
       "code": {
@@ -6676,7 +6676,7 @@
       "codomain": "Z8"
     },
     {
-      "basename": "mod8",
+      "basename": "imod8",
       "prototype": "Morphism",
       "properName": "mod₈",
       "code": {
@@ -6686,7 +6686,7 @@
       "codomain": "CPo{Z8,#1}oPC"
     },
     {
-      "basename": "equ8",
+      "basename": "iequ8",
       "prototype": "Morphism",
       "properName": "equ₈",
       "code": {
@@ -6696,7 +6696,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "equ32",
+      "basename": "iequ32",
       "prototype": "Morphism",
       "properName": "equ₃₂",
       "code": {
@@ -6706,7 +6706,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "lt8",
+      "basename": "ilt8",
       "prototype": "Morphism",
       "properName": "lt₈",
       "code": {
@@ -6716,7 +6716,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "lt32",
+      "basename": "ilt32",
       "prototype": "Morphism",
       "properName": "lt₃₂",
       "code": {
@@ -6726,7 +6726,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "or32",
+      "basename": "ior32",
       "prototype": "Morphism",
       "properName": "or₃₂",
       "code": {
@@ -6736,7 +6736,7 @@
       "codomain": "Z32"
     },
     {
-      "basename": "or64",
+      "basename": "ior64",
       "prototype": "Morphism",
       "properName": "or₆₄",
       "code": {
@@ -6746,7 +6746,7 @@
       "codomain": "Z64"
     },
     {
-      "basename": "or128",
+      "basename": "ior128",
       "prototype": "Morphism",
       "properName": "or₁₂₈",
       "code": {
@@ -6756,7 +6756,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "lte32",
+      "basename": "ilte32",
       "prototype": "Morphism",
       "properName": "lte₃₂",
       "code": {
@@ -6766,7 +6766,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "mod32",
+      "basename": "imod32",
       "prototype": "Morphism",
       "properName": "mod₃₂",
       "code": {
@@ -6776,7 +6776,7 @@
       "codomain": "CPo{Z32,#1}oPC"
     },
     {
-      "basename": "xor32",
+      "basename": "ixor32",
       "prototype": "Morphism",
       "properName": "xor₃₂",
       "code": {
@@ -6786,7 +6786,7 @@
       "codomain": "Z32"
     },
     {
-      "basename": "lte128",
+      "basename": "ilte128",
       "prototype": "Morphism",
       "properName": "lte₁₂₈",
       "code": {
@@ -6796,7 +6796,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "xor64",
+      "basename": "ixor64",
       "prototype": "Morphism",
       "properName": "xor₆₄",
       "code": {
@@ -6806,7 +6806,7 @@
       "codomain": "Z64"
     },
     {
-      "basename": "mod64",
+      "basename": "imod64",
       "prototype": "Morphism",
       "properName": "mod₆₄",
       "code": {
@@ -6816,7 +6816,7 @@
       "codomain": "CPo{Z64,#1}oPC"
     },
     {
-      "basename": "xor128",
+      "basename": "ixor128",
       "prototype": "Morphism",
       "properName": "xor₁₂₈",
       "code": {
@@ -6826,7 +6826,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "mod128",
+      "basename": "imod128",
       "prototype": "Morphism",
       "properName": "mod₁₂₈",
       "code": {
@@ -6836,7 +6836,7 @@
       "codomain": "CPo{Z128,#1}oPC"
     },
     {
-      "basename": "lt128",
+      "basename": "ilt128",
       "prototype": "Morphism",
       "properName": "lt₁₂₈",
       "code": {
@@ -6846,7 +6846,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "gt8",
+      "basename": "igt8",
       "prototype": "Morphism",
       "properName": "gt₈",
       "code": {
@@ -6856,7 +6856,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "gte8",
+      "basename": "igte8",
       "prototype": "Morphism",
       "properName": "gte₈",
       "code": {
@@ -6867,7 +6867,7 @@
     },
     {
       "description": "Arithmetic shift right",
-      "basename": "rsh8",
+      "basename": "irsh8",
       "prototype": "Morphism",
       "properName": "rsh₈",
       "code": {
@@ -6878,7 +6878,7 @@
     },
     {
       "description": "Bit-wise not operation of an eight bit number",
-      "basename": "not8",
+      "basename": "inot8",
       "prototype": "Morphism",
       "properName": "not₈",
       "code": {
@@ -6888,7 +6888,7 @@
       "codomain": "Z8"
     },
     {
-      "basename": "subr128",
+      "basename": "isubr128",
       "prototype": "Morphism",
       "properName": "subr₁₂₈",
       "code": {
@@ -6898,7 +6898,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "subr16",
+      "basename": "isubr16",
       "prototype": "Morphism",
       "properName": "subr₁₆",
       "code": {
@@ -6908,7 +6908,7 @@
       "codomain": "Z16"
     },
     {
-      "basename": "sub16",
+      "basename": "isub16",
       "prototype": "Morphism",
       "properName": "sub",
       "code": {
@@ -6918,7 +6918,7 @@
       "codomain": "CPo{Z16,#1}oPC"
     },
     {
-      "basename": "mult128c",
+      "basename": "imult128c",
       "prototype": "Morphism",
       "properName": "mult₁₂₈",
       "code": {
@@ -6928,7 +6928,7 @@
       "codomain": "CPo{Z128,#1}oPC"
     },
     {
-      "basename": "not16",
+      "basename": "inot16",
       "prototype": "Morphism",
       "properName": "not₁₆",
       "code": {
@@ -6938,7 +6938,7 @@
       "codomain": "Z16"
     },
     {
-      "basename": "not32",
+      "basename": "inot32",
       "prototype": "Morphism",
       "properName": "not₃₂",
       "code": {
@@ -6948,7 +6948,7 @@
       "codomain": "Z32"
     },
     {
-      "basename": "not64",
+      "basename": "inot64",
       "prototype": "Morphism",
       "properName": "not₆₄",
       "code": {
@@ -6958,7 +6958,7 @@
       "codomain": "Z64"
     },
     {
-      "basename": "not128",
+      "basename": "inot128",
       "prototype": "Morphism",
       "properName": "not₁₂₈",
       "code": {
@@ -6968,7 +6968,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "max8",
+      "basename": "imax8",
       "prototype": "Morphism",
       "properName": "max₈",
       "code": {
@@ -6978,7 +6978,7 @@
       "codomain": "Z8"
     },
     {
-      "basename": "min8",
+      "basename": "imin8",
       "prototype": "Morphism",
       "properName": "min₈",
       "code": {
@@ -6988,7 +6988,7 @@
       "codomain": "Z8"
     },
     {
-      "basename": "gt16",
+      "basename": "igt16",
       "prototype": "Morphism",
       "properName": "gt₁₆",
       "code": {
@@ -6998,7 +6998,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "gt32",
+      "basename": "igt32",
       "prototype": "Morphism",
       "properName": "gt₃₂",
       "code": {
@@ -7008,7 +7008,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "gt64",
+      "basename": "igt64",
       "prototype": "Morphism",
       "properName": "gt₆₄",
       "code": {
@@ -7018,7 +7018,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "gt128",
+      "basename": "igt128",
       "prototype": "Morphism",
       "properName": "gt₁₂₈",
       "code": {
@@ -7028,7 +7028,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "gte16",
+      "basename": "igte16",
       "prototype": "Morphism",
       "properName": "gte₁₆",
       "code": {
@@ -7038,7 +7038,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "lte8",
+      "basename": "ilte8",
       "prototype": "Morphism",
       "properName": "lte₈",
       "code": {
@@ -7048,7 +7048,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "gte32",
+      "basename": "igte32",
       "prototype": "Morphism",
       "properName": "gte₃₂",
       "code": {
@@ -7058,7 +7058,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "gte64",
+      "basename": "igte64",
       "prototype": "Morphism",
       "properName": "gte₆₄",
       "code": {
@@ -7068,7 +7068,7 @@
       "codomain": "CPo{#1,#1}oPC"
     },
     {
-      "basename": "gte128",
+      "basename": "igte128",
       "prototype": "Morphism",
       "properName": "gte₁₂₈",
       "code": {
@@ -7079,7 +7079,7 @@
     },
     {
       "description": "Arithmetic shift right",
-      "basename": "rsh16",
+      "basename": "irsh16",
       "prototype": "Morphism",
       "properName": "rsh₁₆",
       "code": {
@@ -7090,7 +7090,7 @@
     },
     {
       "description": "Arithmetic shift right",
-      "basename": "rsh32",
+      "basename": "irsh32",
       "prototype": "Morphism",
       "properName": "rsh₃₂",
       "code": {
@@ -7101,7 +7101,7 @@
     },
     {
       "description": "Arithmetic shift right",
-      "basename": "rsh64",
+      "basename": "irsh64",
       "prototype": "Morphism",
       "properName": "rsh₆₄",
       "code": {
@@ -7112,7 +7112,7 @@
     },
     {
       "description": "Arithmetic shift right",
-      "basename": "rsh128",
+      "basename": "irsh128",
       "prototype": "Morphism",
       "properName": "rsh₁₂₈",
       "code": {
@@ -7122,7 +7122,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "max16",
+      "basename": "imax16",
       "prototype": "Morphism",
       "properName": "max₁₆",
       "code": {
@@ -7132,7 +7132,7 @@
       "codomain": "Z16"
     },
     {
-      "basename": "min16",
+      "basename": "imin16",
       "prototype": "Morphism",
       "properName": "min₁₆",
       "code": {
@@ -7142,7 +7142,7 @@
       "codomain": "Z16"
     },
     {
-      "basename": "max32",
+      "basename": "imax32",
       "prototype": "Morphism",
       "properName": "max₃₂",
       "code": {
@@ -7152,7 +7152,7 @@
       "codomain": "Z32"
     },
     {
-      "basename": "min32",
+      "basename": "imin32",
       "prototype": "Morphism",
       "properName": "min₃₂",
       "code": {
@@ -7162,7 +7162,7 @@
       "codomain": "Z32"
     },
     {
-      "basename": "max64",
+      "basename": "imax64",
       "prototype": "Morphism",
       "properName": "max₆₄",
       "code": {
@@ -7172,7 +7172,7 @@
       "codomain": "Z64"
     },
     {
-      "basename": "min64",
+      "basename": "imin64",
       "prototype": "Morphism",
       "properName": "min₆₄",
       "code": {
@@ -7182,7 +7182,7 @@
       "codomain": "Z64"
     },
     {
-      "basename": "max128",
+      "basename": "imax128",
       "prototype": "Morphism",
       "properName": "max₁₂₈",
       "code": {
@@ -7192,7 +7192,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "min128",
+      "basename": "imin128",
       "prototype": "Morphism",
       "properName": "min₁₂₈",
       "code": {
@@ -7202,7 +7202,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "div8",
+      "basename": "idiv8",
       "prototype": "Morphism",
       "properName": "div₈",
       "code": {
@@ -7212,7 +7212,7 @@
       "codomain": "CPo{Z8,#1}oPC"
     },
     {
-      "basename": "div16",
+      "basename": "idiv16",
       "prototype": "Morphism",
       "properName": "div₁₆",
       "code": {
@@ -7222,7 +7222,7 @@
       "codomain": "CPo{Z16,#1}oPC"
     },
     {
-      "basename": "div32",
+      "basename": "idiv32",
       "prototype": "Morphism",
       "properName": "div₃₂",
       "code": {
@@ -7232,7 +7232,7 @@
       "codomain": "CPo{Z32,#1}oPC"
     },
     {
-      "basename": "div64",
+      "basename": "idiv64",
       "prototype": "Morphism",
       "properName": "div₆₄",
       "code": {
@@ -7242,7 +7242,7 @@
       "codomain": "CPo{Z64,#1}oPC"
     },
     {
-      "basename": "div128",
+      "basename": "idiv128",
       "prototype": "Morphism",
       "properName": "div₁₂₈",
       "code": {
@@ -7252,7 +7252,7 @@
       "codomain": "CPo{Z128,#1}oPC"
     },
     {
-      "basename": "one8",
+      "basename": "ione8",
       "prototype": "Morphism",
       "properName": "1₈",
       "code": {
@@ -7262,7 +7262,7 @@
       "codomain": "Z8"
     },
     {
-      "basename": "one16",
+      "basename": "ione16",
       "prototype": "Morphism",
       "properName": "1₁₆",
       "code": {
@@ -7272,7 +7272,7 @@
       "codomain": "Z16"
     },
     {
-      "basename": "one32",
+      "basename": "ione32",
       "prototype": "Morphism",
       "properName": "1₃₂",
       "code": {
@@ -7282,7 +7282,7 @@
       "codomain": "Z32"
     },
     {
-      "basename": "minus_one64",
+      "basename": "neg1_64",
       "prototype": "Morphism",
       "properName": "-1₆₄",
       "code": {
@@ -7292,7 +7292,7 @@
       "codomain": "Z64"
     },
     {
-      "basename": "minus_one128",
+      "basename": "neg1_128",
       "prototype": "Morphism",
       "properName": "-1₁₂₈",
       "code": {
@@ -7302,7 +7302,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "minus_inf8",
+      "basename": "neginf8",
       "prototype": "Morphism",
       "properName": "-∞₈",
       "code": {
@@ -7312,7 +7312,7 @@
       "codomain": "Z8"
     },
     {
-      "basename": "minus_inf16",
+      "basename": "neginf16",
       "prototype": "Morphism",
       "properName": "-∞₁₆",
       "code": {
@@ -7322,7 +7322,7 @@
       "codomain": "Z16"
     },
     {
-      "basename": "minus_inf32",
+      "basename": "neginf32",
       "prototype": "Morphism",
       "properName": "-∞₃₂",
       "code": {
@@ -7333,7 +7333,7 @@
     },
     {
       "description": "The minimum 64-bit integer -9,223,372,036,854,775,808",
-      "basename": "minus_inf64",
+      "basename": "neginf64",
       "prototype": "Morphism",
       "properName": "-∞₆₄",
       "code": {
@@ -7343,7 +7343,7 @@
       "codomain": "Z64"
     },
     {
-      "basename": "minus_infin128",
+      "basename": "neginf128",
       "prototype": "Morphism",
       "properName": "-∞₁₂₈",
       "code": {
@@ -7408,7 +7408,7 @@
       "codomain": "Z128"
     },
     {
-      "basename": "abs8",
+      "basename": "iabs8",
       "prototype": "Morphism",
       "properName": "abs₈",
       "code": {
@@ -7418,7 +7418,7 @@
       "codomain": "hdole/nat/N8"
     },
     {
-      "basename": "abs16",
+      "basename": "iabs16",
       "prototype": "Morphism",
       "properName": "abs₁₆",
       "code": {
@@ -7428,7 +7428,7 @@
       "codomain": "hdole/nat/N16"
     },
     {
-      "basename": "abs32",
+      "basename": "iabs32",
       "prototype": "Morphism",
       "properName": "abs₃₂",
       "code": {
@@ -7438,7 +7438,7 @@
       "codomain": "hdole/nat/N32"
     },
     {
-      "basename": "abs64",
+      "basename": "iabs64",
       "prototype": "Morphism",
       "properName": "abs₆₄",
       "code": {
@@ -7448,7 +7448,7 @@
       "codomain": "hdole/nat/N64"
     },
     {
-      "basename": "abs128",
+      "basename": "iabs128",
       "prototype": "Morphism",
       "properName": "abs₁₂₈",
       "code": {
@@ -7458,7 +7458,7 @@
       "codomain": "hdole/nat/N128"
     },
     {
-      "basename": "equ64",
+      "basename": "iequ64",
       "prototype": "Morphism",
       "properName": "equ₆₄",
       "domain": "Po{Z64,Z64}oP",
@@ -7466,7 +7466,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652437451818,
+  "timestamp": 1652437451819,
   "version": 0,
   "viewport": {
     "x": 1225,

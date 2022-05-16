@@ -1227,14 +1227,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_17",
         "codomain": "o_30",
-        "to": "hdole/test/Fa{hdole/floats/F64:hdole/floats/F64_,hdole/floats/F64_,hdole/floats/F64_}aF"
+        "to": "Fa{hdole/floats/F64:hdole/floats/F64_,hdole/floats/F64_,hdole/floats/F64_}aF"
       },
       {
         "basename": "m_24",
         "prototype": "IndexMorphism",
         "domain": "o_30",
         "codomain": "o_32",
-        "to": "hdole/test/Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_1,hdole/floats/F64_2}aF"
+        "to": "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_1,hdole/floats/F64_2}aF"
       },
       {
         "basename": "m_25",
@@ -1254,21 +1254,21 @@
             true
           ]
         ],
-        "to": "hdole/test/Cm{Fa{hdole/floats/F64:hdole/floats/F64_,hdole/floats/F64_,hdole/floats/F64_}aF,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_1,hdole/floats/F64_2}aF,Id{Po{hdole/floats/F64,hdole/floats/F64}oP}dI}mC"
+        "to": "Cm{Fa{hdole/floats/F64:hdole/floats/F64_,hdole/floats/F64_,hdole/floats/F64_}aF,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_1,hdole/floats/F64_2}aF,Id{Po{hdole/floats/F64,hdole/floats/F64}oP}dI}mC"
       },
       {
         "basename": "m_0",
         "prototype": "IndexMorphism",
         "domain": "o_12",
         "codomain": "o_21",
-        "to": "hdole/test/Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF"
+        "to": "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF"
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_21",
         "codomain": "o_25",
-        "to": "hdole/floats/mult64"
+        "to": "hdole/floats/fmult64"
       },
       {
         "basename": "m_3",
@@ -1281,7 +1281,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC"
+        "to": "hdole/test/Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC"
       },
       {
         "basename": "m_4",
@@ -1294,7 +1294,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP"
+        "to": "hdole/test/Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP"
       },
       {
         "basename": "m_10",
@@ -1308,7 +1308,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_12",
         "codomain": "o_35",
-        "to": "hdole/test/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
+        "to": "hdole/test/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
       },
       {
         "basename": "m_17",
@@ -1321,21 +1321,21 @@
             true
           ]
         ],
-        "to": "hdole/test/Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF"
+        "to": "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF"
       },
       {
         "basename": "m_19",
         "prototype": "IndexMorphism",
         "domain": "o_1",
         "codomain": "o_2",
-        "to": "hdole/floats/mult64"
+        "to": "hdole/floats/fmult64"
       },
       {
         "basename": "m_20",
         "prototype": "IndexMorphism",
         "domain": "o_0",
         "codomain": "o_3",
-        "to": "hdole/test/Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF"
+        "to": "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF"
       },
       {
         "basename": "m_23",
@@ -1352,7 +1352,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Fa{hdole/floats/Po{F64,F64}oP:hdole/floats/F64_0}aF"
+        "to": "Fa{hdole/floats/Po{F64,F64}oP:hdole/floats/F64_0}aF"
       },
       {
         "basename": "m_27",
@@ -1373,7 +1373,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Fa{hdole/floats/Po{F64,F64}oP:hdole/floats/F64_1}aF"
+        "to": "Fa{hdole/floats/Po{F64,F64}oP:hdole/floats/F64_1}aF"
       },
       {
         "basename": "m_22",
@@ -1387,7 +1387,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_11",
         "codomain": "o_15",
-        "to": "hdole/test/Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP"
+        "to": "hdole/test/Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP"
       },
       {
         "basename": "m_29",
@@ -1407,7 +1407,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
+        "to": "hdole/test/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
       },
       {
         "basename": "m_32",
@@ -1537,7 +1537,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Fa{Po{A,C}oP:A_0}aF"
+        "to": "Fa{Po{A,C}oP:A_0}aF"
       },
       {
         "basename": "m_48",
@@ -1557,7 +1557,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Fa{Po{A,B}oP:A_0}aF"
+        "to": "Fa{Po{A,B}oP:A_0}aF"
       },
       {
         "basename": "m_50",
@@ -1577,7 +1577,7 @@
             true
           ]
         ],
-        "to": "hdole/test/CFa{CPo{#1,#1}oPC:#1_0}aFC"
+        "to": "CFa{CPo{#1,#1}oPC:#1_0}aFC"
       },
       {
         "basename": "m_52",
@@ -1607,7 +1607,7 @@
             true
           ]
         ],
-        "to": "hdole/test/CFa{CPo{#1,#1}oPC:#1_1}aFC"
+        "to": "CFa{CPo{#1,#1}oPC:#1_1}aFC"
       },
       {
         "basename": "m_54",
@@ -1624,7 +1624,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Fa{B:#1_-1}aF"
+        "to": "Fa{B:#1_-1}aF"
       },
       {
         "basename": "m_55",
@@ -1638,7 +1638,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_12",
         "codomain": "o_69",
-        "to": "hdole/test/Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF"
+        "to": "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF"
       },
       {
         "basename": "m_49",
@@ -1655,28 +1655,28 @@
             true
           ]
         ],
-        "to": "hdole/test/Fa{Po{A,B}oP:B_1}aF"
+        "to": "Fa{Po{A,B}oP:B_1}aF"
       },
       {
         "basename": "m_40",
         "prototype": "IndexMorphism",
         "domain": "o_24",
         "codomain": "o_26",
-        "to": "hdole/test/Fa{Po{Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP:CPo{Po{A,C}oP,Po{B,C}oP}oPC_1}aF"
+        "to": "Fa{Po{Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP:CPo{Po{A,C}oP,Po{B,C}oP}oPC_1}aF"
       },
       {
         "basename": "m_61",
         "prototype": "IndexMorphism",
         "domain": "o_24",
         "codomain": "o_40",
-        "to": "hdole/test/Fa{Po{Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP:Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP_0}aF"
+        "to": "Fa{Po{Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP:Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP_0}aF"
       },
       {
         "basename": "m_62",
         "prototype": "IndexMorphism",
         "domain": "o_40",
         "codomain": "o_41",
-        "to": "hdole/test/Fa{Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP:Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP_0}aF"
+        "to": "Fa{Po{Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP,Po{CPo{A,B}oPC,C}oP}oP:Po{Po{CPo{Po{A,B}oP,C}oPC,Po{Po{Po{Po{Po{Po{Po{CPo{A,B}oPC,CPo{A,B}oPC}oP,Po{A,B}oP}oP,CPo{Po{A,B}oP,C}oPC}oP,CPo{C,D}oPC}oP,CPo{Po{A,C}oP,Po{B,C}oP}oPC}oP,CPo{C,Po{A,B}oP}oPC}oP,Po{CPo{A,B}oPC,C}oP}oP}oP,Po{Po{C,B}oP,Po{C,B}oP}oP}oP_0}aF"
       },
       {
         "basename": "m_63",
@@ -1721,14 +1721,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_73",
         "codomain": "o_74",
-        "to": "hdole/test/Fa{Po{A,B,C}oP:A_0}aF"
+        "to": "Fa{Po{A,B,C}oP:A_0}aF"
       },
       {
         "basename": "m_68",
         "prototype": "IndexMorphism",
         "domain": "o_77",
         "codomain": "o_78",
-        "to": "hdole/test/Fa{Po{A,B,C}oP:A_0,A_0,B_1,B_1,C_2,C_2}aF"
+        "to": "Fa{Po{A,B,C}oP:A_0,A_0,B_1,B_1,C_2,C_2}aF"
       },
       {
         "basename": "m_69",
@@ -1769,14 +1769,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_91",
         "codomain": "o_90",
-        "to": "hdole/test/CFa{CPo{A,B,C}oPC:A_0}aFC"
+        "to": "CFa{CPo{A,B,C}oPC:A_0}aFC"
       },
       {
         "basename": "m_74",
         "prototype": "IndexMorphism",
         "domain": "o_93",
         "codomain": "o_90",
-        "to": "hdole/test/CFa{CPo{A,B,C}oPC:A_0,A_0,B_1,B_1,C_2,C_2}aFC"
+        "to": "CFa{CPo{A,B,C}oPC:A_0,A_0,B_1,B_1,C_2,C_2}aFC"
       },
       {
         "basename": "m_75",
@@ -1829,7 +1829,7 @@
             true
           ]
         ],
-        "to": "hdole/test/CFa{CPo{A,A,B,B,C,C}oPC:A_0}aFC"
+        "to": "CFa{CPo{A,A,B,B,C,C}oPC:A_0}aFC"
       },
       {
         "basename": "m_81",
@@ -1935,21 +1935,21 @@
         "prototype": "IndexMorphism",
         "domain": "o_57",
         "codomain": "o_115",
-        "to": "hdole/test/Fa{CPo{C,Po{A,B}oP}oPC:#1_-1}aF"
+        "to": "Fa{CPo{C,Po{A,B}oP}oPC:#1_-1}aF"
       },
       {
         "basename": "m_90",
         "prototype": "IndexMorphism",
         "domain": "o_116",
         "codomain": "o_57",
-        "to": "hdole/test/CFa{CPo{C,Po{A,B}oP}oPC:C_0}aFC"
+        "to": "CFa{CPo{C,Po{A,B}oP}oPC:C_0}aFC"
       },
       {
         "basename": "m_91",
         "prototype": "IndexMorphism",
         "domain": "o_117",
         "codomain": "o_57",
-        "to": "hdole/test/CFa{CPo{C,Po{A,B}oP}oPC:Po{A,B}oP_1}aFC"
+        "to": "CFa{CPo{C,Po{A,B}oP}oPC:Po{A,B}oP_1}aFC"
       },
       {
         "basename": "m_76",
@@ -1963,7 +1963,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_119",
         "codomain": "o_93",
-        "to": "hdole/test/CFa{CPo{A,A,B,B,C,C}oPC:B_3}aFC"
+        "to": "CFa{CPo{A,A,B,B,C,C}oPC:B_3}aFC"
       },
       {
         "description": "",
@@ -2499,7 +2499,7 @@
       "codomain": "hdole/floats/F64",
       "morphisms": [
         "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF",
-        "hdole/floats/mult64"
+        "hdole/floats/fmult64"
       ]
     },
     {
@@ -2507,7 +2507,7 @@
       "domain": "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
       "codomain": "Po{hdole/floats/F64,hdole/floats/F64}oP",
       "morphisms": [
-        "Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC",
+        "Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC",
         "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF"
       ]
     },
@@ -2516,7 +2516,7 @@
       "domain": "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
       "codomain": "hdole/floats/F64",
       "morphisms": [
-        "Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/mult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP",
+        "Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP",
         "hdole/floats/add64"
       ]
     },
@@ -2901,7 +2901,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652503595742,
+  "timestamp": 1652503595743,
   "version": 0,
   "viewport": {
     "x": 920,
