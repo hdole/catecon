@@ -22,7 +22,7 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": -160,
+          "x": -150,
           "y": 90
         },
         "height": 200,
@@ -402,7 +402,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_7",
         "codomain": "o_8",
-        "to": "hdole/group/Fa{G:G_,G_}aF"
+        "to": "Fa{G:G_,G_}aF"
       },
       {
         "basename": "m_6",
@@ -416,7 +416,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_7",
         "codomain": "o_11",
-        "to": "hdole/group/Fa{G:#1_-1}aF"
+        "to": "Fa{G:#1_-1}aF"
       },
       {
         "basename": "m_4",
@@ -437,7 +437,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_10",
         "codomain": "o_14",
-        "to": "hdole/group/Fa{G:G_,G_}aF"
+        "to": "Fa{G:G_,G_}aF"
       },
       {
         "basename": "m_10",
@@ -451,7 +451,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_10",
         "codomain": "o_18",
-        "to": "hdole/group/Fa{G:#1_-1}aF"
+        "to": "Fa{G:#1_-1}aF"
       },
       {
         "basename": "m_12",
@@ -472,7 +472,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_19",
         "codomain": "o_21",
-        "to": "hdole/group/Pa{Fa{Po{G,G,G}oP:G_0}aF,Fa{Po{G,G,G}oP:G_1,G_2}aF}aP"
+        "to": "Pa{Fa{Po{G,G,G}oP:G_0}aF,Fa{Po{G,G,G}oP:G_1,G_2}aF}aP"
       },
       {
         "basename": "m_18",
@@ -485,7 +485,7 @@
             true
           ]
         ],
-        "to": "hdole/group/Pa{Fa{Po{G,G,G}oP:G_0,G_1}aF,Fa{Po{G,G,G}oP:G_2}aF}aP"
+        "to": "Pa{Fa{Po{G,G,G}oP:G_0,G_1}aF,Fa{Po{G,G,G}oP:G_2}aF}aP"
       },
       {
         "basename": "m_19",
@@ -539,7 +539,7 @@
             true
           ]
         ],
-        "to": "hdole/group/Fa{G:G_,#1_-1}aF"
+        "to": "Fa{G:G_,#1_-1}aF"
       },
       {
         "basename": "m_21",
@@ -566,7 +566,7 @@
             true
           ]
         ],
-        "to": "hdole/group/Fa{G:#1_-1,G_}aF"
+        "to": "Fa{G:#1_-1,G_}aF"
       },
       {
         "basename": "m_24",
@@ -600,6 +600,29 @@
             "bezier",
             0
           ]
+        ]
+      },
+      {
+        "description": "Definition of group",
+        "basename": "d_0",
+        "prototype": "Definition",
+        "xy": {
+          "x": 0,
+          "y": 2220
+        },
+        "height": 24,
+        "defname": "group",
+        "sequence": [
+          "mult",
+          "unit",
+          "inv"
+        ],
+        "blobs": [
+          "hdole/group/o_20",
+          "hdole/group/o_24",
+          "hdole/group/o_19",
+          "hdole/group/o_7",
+          "hdole/group/o_10"
         ]
       }
     ],
@@ -908,11 +931,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652437334735,
+  "timestamp": 1652735091935,
   "version": 0,
   "viewport": {
-    "x": 899,
-    "y": 228,
-    "scale": 2.116180831073854
+    "x": 1177,
+    "y": 102,
+    "scale": 0.5740830079739924
   }
 }
