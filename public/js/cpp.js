@@ -78,51 +78,7 @@ var Cat = Cat || require('./Cat.js');
 		{
 			if (elt instanceof Cat.Morphism)
 				return `fun_${elt.signature}`;
-			let isLocal = false;
-			if (!this.currentDiagram)
-				this.currentDiagram = this.context;
-			isLocal = elt.diagram === this.currentDiagram;
-			const priorDiagram = this.currentDiagram;
-			this.currentDiagram = elt.diagram;
-			let basetype = '';
-			const name = U.Token(this.currentDiagram.name + '/');
-			switch(elt.constructor.name)
-			{
-				case 'ProductObject':
-					basetype = name + (elt.dual ? 'Copr_' : 'Pr_') + elt.objects.map(o => this.getType(o, false)).join('_c_');
-					break;
-				case 'ProductMorphism':
-					basetype = name + (elt.dual ? 'Copr_' : 'Pr_') + elt.morphisms.map(m => this.getType(m, false)).join('_c_');
-					break;
-				case 'HomObject':
-					basetype = name + `hom_${this.getType(elt.objects[0], false)}_c_${this.getType(elt.objects[1], false)}`;
-					break;
-				case 'HomMorphism':
-					basetype = name + `hom_${this.getType(elt.morphisms[0], false)}_c_${this.getType(elt.morphisms[1], false)}`;
-					break;
-				case 'Identity':
-					basetype = name + `id_${this.getType(elt.domain, false)}`;
-					break;
-				case 'Composite':
-					basetype = name + 'Comp_' + elt.morphisms.slice().reverse().map(m => this.getType(m, false)).join('_c_');
-					break;
-				case 'Evaluation':
-					basetype = name + `Eval_${this.getType(elt.domain.objects[0])}_by_${this.getType(elt.domain.objects[1])}_to_${this.getType(elt.codomain)}`;
-					break;
-				case 'FactorMorphism':
-					basetype = name + (elt.dual ? 'Cofctr_' : 'Fctr_') + this.getType(this.dual ? elt.codomain : elt.domain, false) + '_' + U.Token(elt.factors.map(f => U.a2s(f, '_', '_c_', '_')).join('_c_'));
-					break;
-				case 'ProductAssembly':
-					basetype = name + (elt.dual ? 'CoPrAs_' : 'PrAs_') + elt.morphisms.map(m => this.getType(m, false)).join('_c_');
-					break;
-				default:
-					basetype = U.Token(elt.name);
-					break;
-			}
-			if (!first && elt.needsParens())
-				basetype = `Pa_${basetype}_aP`;
-			this.currentDiagram = priorDiagram;
-			return basetype;
+			return U.Token(elt.name);
 		}
 		hasHomObject(object)
 		{
