@@ -2199,7 +2199,7 @@ class Toolbar
 		const selected = diagram.selected;
 		const toolBbox = new D2(this.element.getBoundingClientRect());
 		const oldBox = diagram.userToDiagramCoords(this.element.getBoundingClientRect());
-		const nuBox = diagram.diagramToUserCoords(diagram.autoplaceSvg(oldBox, '', oldBox.height/2, 4, this.mouseCoords));
+		const nuBox = diagram.diagramToUserCoords(diagram.autoplaceSvg(oldBox, '', oldBox.height/2, 4, this.mouseCoords, 20));
 		const wid = D.width();
 		const hgt = D.height();
 		if (nuBox.x < 0)
@@ -6259,7 +6259,7 @@ class Display
 			fn && fn(H3.img('.stdBackground', nuArgs));
 		});
 	}
-	placeComposite(e, diagram, comp)
+	placeComposite(e, diagram, comp, xy)
 	{
 		const morphisms = comp instanceof Composite ? comp.morphisms : [comp];
 		const objects = [morphisms[0].domain];
@@ -6277,7 +6277,6 @@ class Display
 		morphisms.map(m => compScan(m));
 		const bbox = diagram.svgBase.getBBox();
 		const stdGrid = this.default.arrow.length;
-		const xy = new D2({x:bbox.x, y:bbox.y + bbox.height + stdGrid}).grid(stdGrid);
 		const indexObjects = objects.map((o, i) =>
 		{
 			const ndxObj = diagram.placeObject(o, xy, false);
@@ -8615,7 +8614,7 @@ class Graph
 					return false;
 				const ndxCpy = ndx.slice();
 				let i = null;
-				while((i = ndxCpy.pop()))
+				while((i = ndxCpy.shift()))
 					if ('covered' in this.getFactor(i))
 						return false;		// an ancestor is covered
 				factor.covered = true;
@@ -9314,8 +9313,10 @@ class HomObject extends MultiObject
 	{
 		if (D)
 		{
+			const pos = data.position;
 			data.position += D.bracketWidth;
 			const g = super.getGraph(this.constructor.name, data, 0, D.commaWidth, D.textWidth(this.properName), false);
+			g.position = pos;
 			data.position -= D.bracketWidth;
 			return g;
 		}
@@ -10737,9 +10738,11 @@ class CompositeAction extends Action
 	}
 	doit(e, diagram, indexMorphisms)
 	{
-		const morphisms = indexMorphisms .map(m => m.to);
+		const objects = {};
+		const compMorphisms = CompositeAction.getLeg(indexMorphisms, objects);
+		const morphisms = compMorphisms.map(m => m.to);
 		const to = diagram.get('Composite', {morphisms});
-		const from = new IndexMorphism(diagram, {to, domain:Composite.Domain(indexMorphisms), codomain:Composite.Codomain(indexMorphisms)});
+		const from = new IndexMorphism(diagram, {to, domain:objects.domain, codomain:objects.codomain});
 		from.mayFlipName();
 		return from;
 	}
@@ -10750,18 +10753,47 @@ class CompositeAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length > 1)
-		{
-			const leg = Category.getLeg(ary);
-			return leg.length === ary.length;
-		}
-		return false;
+		return CompositeAction.getLeg(ary).length === ary.length;
 	}
 	static Reduce(leg)
 	{
 		if (leg.length === 1 && leg[0] instanceof Composite)
 			return leg[0].morphisms;
 		return null;
+	}
+	static getLeg(ary, objects = {})
+	{
+		if (ary.length < 1 || ary.filter(e => e instanceof Morphism).length !== ary.length)
+			return [];
+		const scanning = ary.slice();
+		const leg = [];
+		const scanned = new Set();
+		while(scanning.length > 0)
+		{
+			const m = scanning.shift();
+			if (leg.length > 0)
+			{
+				if (m.codomain === leg[0].domain)
+					leg.unshift(m);
+				else if (m.domain === leg[leg.length -1].codomain)
+					leg.push(m);
+				else
+				{
+					if (!scanned.has(m))		// scan only once
+						scanned.add(m);
+					else
+						break;
+					scanning.push(m);
+				}
+			}
+			else
+				leg[0] = m;
+		}
+		if (leg.length !== ary.length)
+			return [];
+		objects.domain = Composite.Domain(leg);
+		objects.codomain = Composite.Codomain(leg);
+		return leg;
 	}
 }
 
@@ -10861,6 +10893,7 @@ class NameAction extends Action
 			nuArgs.codomain = sourceNdx.codomain.to;
 			const to = new NamedMorphism(diagram, nuArgs);
 			const nuFrom = new IndexMorphism(diagram, {to, domain:sourceNdx.domain, codomain:sourceNdx.codomain});
+			nuFrom.mayFlipName();
 			sourceNdx.update();
 			diagram.makeSelected(nuFrom);
 			nuFrom.checkCells();
@@ -11598,6 +11631,7 @@ class DeleteAction extends Action
 			diagram.makeSelected(...objects);
 			D.emitCellEvent(diagram, 'check');
 		}
+		D.deEmphasize();
 		return notDeleted;
 	}
 	replay(e, diagram, args)
@@ -11831,7 +11865,7 @@ class LambdaMorphismAction extends Action
 					H3.small('Click to move to codomain:'),
 					H3.span(this.getButtons(domain, {dir:0, fromId:'lambda-domain', toId:'lambda-codomain'}), {id:'lambda-domain'}),
 					H3.h5('Codomain'),
-					H3.small('Click to move to codomain: ['),
+					H3.small('Click to move to domain: ['),
 					H3.span(...homCod, {id:'lambda-codomain'}),
 					H3.span(`, ${codomain instanceof HomObject ? codomain.baseHomDom().properName : codomain.properName}]`),
 					H3.span(D.getIcon('lambda', 'edit', e => Cat.R.Actions.lambda.action(e, Cat.R.diagram, Cat.R.diagram.selected), {title:'Create lambda morphism'})));
@@ -12794,6 +12828,7 @@ class DefinitionAction extends Action
 		const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height/2, width, height:D.default.font.height};
 		const place = diagram.autoplaceSvg(bbox, null, 16);
 		const def = diagram.get('Definition', {description, defname, sequence, blobs, xy:{x:place.x, y:place.y}});
+		def.postload();
 		diagram.makeSelected(def);
 	}
 	hasForm(diagram, ary)
@@ -13837,7 +13872,7 @@ class Morphism extends Element
 		if (this.recursor && this.recursor instanceof Morphism)
 		{
 			oldRecursor = this.recursor;
-			this.recursor = null;
+			delete(this.recursor);
 		}
 		const rcrs = typeof r === 'string' ? this.diagram.getElement(r) : r;
 		if (rcrs)
@@ -14730,6 +14765,9 @@ class IndexMorphism extends Morphism
 			attributes:		{value: attributes,	writable: false},
 			domains:		{value: new Set(),	writable: false},
 			codomains:		{value: new Set(),	writable: false},
+			svg:			{value: null,		writable: true},
+			svg_name:		{value: null,		writable: true},
+			svg_path:		{value: null,		writable: true},
 		});
 		this.setupArrow(nuArgs);
 		if (this.constructor.name === 'IndexMorphism')
@@ -15048,6 +15086,26 @@ class IndexMorphism extends Morphism
 			this.update();
 		}
 	}
+	/*
+	mayChangeBezier()
+	{
+		let attempts = 8;
+		let bzr = this.attributes.has('bezier') ? this.attributes.get('bezier') : 0;
+		while(attempts > 0)
+		{
+			const nmBox = this.diagram.userToDiagramCoords(this.svg_path.getBoundingClientRect());
+			if (this.diagram.hasOverlap(nmBox, this.name))
+			{
+				bzr += attempts % 2 ? bzr : bzr + 1;
+				this.updateBezier((attempts % 2 ? 1 : -1) * bzr)
+				this.update();
+				attempts--;
+			}
+			else
+				break;
+		}
+	}
+	*/
 	static LinkId(data, lnk)
 	{
 		return `link_${data.elementId}_${data.index.join('_')}:${lnk.join('_')}`;
@@ -19389,7 +19447,7 @@ class Diagram extends Functor
 		this.sync = sync;
 		D.default.arrow.dir = oldArrowDir;
 	}
-	autoplaceSvg(bbox, name, scale = 4, modulo = 8, mouseLoc = null)
+	autoplaceSvg(bbox, name, scale = 4, modulo = 8, mouseLoc = null, attempts = 100)
 	{
 		let nubox = new D2(bbox);
 		let elt = null;
@@ -19414,7 +19472,7 @@ class Diagram extends Functor
 				this.svgBase.appendChild(rect);
 			}
 			ndx++;
-			if (ndx > 100)	// give up; too complex
+			if (ndx > attempts)	// give up; too complex
 				break;
 		}
 		R.debug(2) && console.log('autoplace ndx', name, ndx);
@@ -20927,7 +20985,15 @@ class Assembler
 			{
 				if (morphism instanceof Composite)
 				{
-					const compObjs = D.placeComposite(e, this.diagram, morphism);
+					let x = Number.MAX_SAFE_INTEGER;
+					let y = Number.MIN_SAFE_INTEGER;
+					this.objects.forEach(o =>
+					{
+						x = Math.min(x, o.x);
+						y = Math.max(y, o.y);
+					});
+					y += D.default.arrow.length;
+					const compObjs = D.placeComposite(e, this.diagram, morphism, D.grid({x, y}));
 					R.Actions.zoom.action(e, this.diagram, compObjs);
 				}
 				else
