@@ -126,7 +126,7 @@
         }
       },
       {
-        "description": "Ratio of a circle&#39;s circumference to its diameter",
+        "description": "The first real interesting complex number, or &pi;",
         "basename": "t_4",
         "prototype": "IndexText",
         "xy": {
@@ -630,14 +630,14 @@
         }
       },
       {
-        "description": "𝔽 Floating Point",
+        "description": "𝔽loating Point",
         "basename": "t_27",
         "prototype": "IndexText",
         "xy": {
           "x": -740,
           "y": 120
         },
-        "height": 300,
+        "height": 308,
         "weight": "bold"
       },
       {
@@ -2206,7 +2206,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_1",
         "codomain": "o_2",
-        "to": "hdole/floats/fzero64"
+        "to": "fzero64"
       },
       {
         "basename": "m_1",
@@ -2234,14 +2234,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_9",
         "codomain": "o_10",
-        "to": "hdole/floats/i64tof64"
+        "to": "i64tof64"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
         "domain": "o_11",
         "codomain": "o_12",
-        "to": "hdole/floats/fabs64"
+        "to": "fabs64"
       },
       {
         "basename": "m_6",
@@ -2255,42 +2255,42 @@
         "prototype": "IndexMorphism",
         "domain": "o_16",
         "codomain": "o_17",
-        "to": "hdole/floats/fsub64"
+        "to": "fsub64"
       },
       {
         "basename": "m_8",
         "prototype": "IndexMorphism",
         "domain": "o_18",
         "codomain": "o_19",
-        "to": "hdole/floats/fmult64"
+        "to": "fmult64"
       },
       {
         "basename": "m_9",
         "prototype": "IndexMorphism",
         "domain": "o_21",
         "codomain": "o_22",
-        "to": "hdole/floats/fdiv64"
+        "to": "fdiv64"
       },
       {
         "basename": "m_11",
         "prototype": "IndexMorphism",
         "domain": "o_25",
         "codomain": "o_26",
-        "to": "hdole/floats/flt64"
+        "to": "flt64"
       },
       {
         "basename": "m_12",
         "prototype": "IndexMorphism",
         "domain": "o_27",
         "codomain": "o_28",
-        "to": "hdole/floats/flte64"
+        "to": "flte64"
       },
       {
         "basename": "m_13",
         "prototype": "IndexMorphism",
         "domain": "o_29",
         "codomain": "o_30",
-        "to": "hdole/floats/feq64"
+        "to": "feq64"
       },
       {
         "basename": "m_14",
@@ -2339,35 +2339,35 @@
         "prototype": "IndexMorphism",
         "domain": "o_44",
         "codomain": "o_45",
-        "to": "hdole/floats/fmax64"
+        "to": "fmax64"
       },
       {
         "basename": "m_21",
         "prototype": "IndexMorphism",
         "domain": "o_46",
         "codomain": "o_47",
-        "to": "hdole/floats/fmin64"
+        "to": "fmin64"
       },
       {
         "basename": "m_22",
         "prototype": "IndexMorphism",
         "domain": "o_48",
         "codomain": "o_49",
-        "to": "hdole/floats/fone64"
+        "to": "fone64"
       },
       {
         "basename": "m_23",
         "prototype": "IndexMorphism",
         "domain": "o_20",
         "codomain": "o_43",
-        "to": "hdole/floats/fzero32"
+        "to": "fzero32"
       },
       {
         "basename": "m_24",
         "prototype": "IndexMorphism",
         "domain": "o_50",
         "codomain": "o_51",
-        "to": "hdole/floats/fone32"
+        "to": "fone32"
       },
       {
         "basename": "m_25",
@@ -2381,14 +2381,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_57",
         "codomain": "o_58",
-        "to": "hdole/floats/fzero128"
+        "to": "fzero128"
       },
       {
         "basename": "m_27",
         "prototype": "IndexMorphism",
         "domain": "o_59",
         "codomain": "o_60",
-        "to": "hdole/floats/fone128"
+        "to": "fone128"
       },
       {
         "basename": "m_28",
@@ -2430,42 +2430,42 @@
         "prototype": "IndexMorphism",
         "domain": "o_70",
         "codomain": "o_69",
-        "to": "hdole/floats/i32tof32"
+        "to": "i32tof32"
       },
       {
         "basename": "m_34",
         "prototype": "IndexMorphism",
         "domain": "o_71",
         "codomain": "o_72",
-        "to": "hdole/floats/i128tof128"
+        "to": "i128tof128"
       },
       {
         "basename": "m_35",
         "prototype": "IndexMorphism",
         "domain": "o_73",
         "codomain": "o_74",
-        "to": "hdole/floats/f32tof64"
+        "to": "f32tof64"
       },
       {
         "basename": "m_36",
         "prototype": "IndexMorphism",
         "domain": "o_75",
         "codomain": "o_76",
-        "to": "hdole/floats/f64tof128"
+        "to": "f64tof128"
       },
       {
         "basename": "m_37",
         "prototype": "IndexMorphism",
         "domain": "o_77",
         "codomain": "o_78",
-        "to": "hdole/floats/fabs32"
+        "to": "fabs32"
       },
       {
         "basename": "m_38",
         "prototype": "IndexMorphism",
         "domain": "o_80",
         "codomain": "o_79",
-        "to": "hdole/floats/fabs128"
+        "to": "fabs128"
       },
       {
         "basename": "m_39",
@@ -2486,77 +2486,77 @@
         "prototype": "IndexMorphism",
         "domain": "o_85",
         "codomain": "o_86",
-        "to": "hdole/floats/fsub32"
+        "to": "fsub32"
       },
       {
         "basename": "m_42",
         "prototype": "IndexMorphism",
         "domain": "o_87",
         "codomain": "o_88",
-        "to": "hdole/floats/fsub128"
+        "to": "fsub128"
       },
       {
         "basename": "m_43",
         "prototype": "IndexMorphism",
         "domain": "o_89",
         "codomain": "o_90",
-        "to": "hdole/floats/fmult32"
+        "to": "fmult32"
       },
       {
         "basename": "m_44",
         "prototype": "IndexMorphism",
         "domain": "o_91",
         "codomain": "o_92",
-        "to": "hdole/floats/fmult128"
+        "to": "fmult128"
       },
       {
         "basename": "m_46",
         "prototype": "IndexMorphism",
         "domain": "o_96",
         "codomain": "o_95",
-        "to": "hdole/floats/fdiv128"
+        "to": "fdiv128"
       },
       {
         "basename": "m_10",
         "prototype": "IndexMorphism",
         "domain": "o_23",
         "codomain": "o_24",
-        "to": "hdole/floats/flt32"
+        "to": "flt32"
       },
       {
         "basename": "m_47",
         "prototype": "IndexMorphism",
         "domain": "o_97",
         "codomain": "o_98",
-        "to": "hdole/floats/flt128"
+        "to": "flt128"
       },
       {
         "basename": "m_48",
         "prototype": "IndexMorphism",
         "domain": "o_99",
         "codomain": "o_100",
-        "to": "hdole/floats/flte32"
+        "to": "flte32"
       },
       {
         "basename": "m_49",
         "prototype": "IndexMorphism",
         "domain": "o_101",
         "codomain": "o_102",
-        "to": "hdole/floats/flte128"
+        "to": "flte128"
       },
       {
         "basename": "m_50",
         "prototype": "IndexMorphism",
         "domain": "o_103",
         "codomain": "o_104",
-        "to": "hdole/floats/feq32"
+        "to": "feq32"
       },
       {
         "basename": "m_51",
         "prototype": "IndexMorphism",
         "domain": "o_105",
         "codomain": "o_106",
-        "to": "hdole/floats/feq128"
+        "to": "feq128"
       },
       {
         "basename": "m_52",
@@ -2647,35 +2647,35 @@
         "prototype": "IndexMorphism",
         "domain": "o_93",
         "codomain": "o_139",
-        "to": "hdole/floats/fdiv32"
+        "to": "fdiv32"
       },
       {
         "basename": "m_64",
         "prototype": "IndexMorphism",
         "domain": "o_132",
         "codomain": "o_137",
-        "to": "hdole/floats/fmax128"
+        "to": "fmax128"
       },
       {
         "basename": "m_65",
         "prototype": "IndexMorphism",
         "domain": "o_131",
         "codomain": "o_135",
-        "to": "hdole/floats/fmax32"
+        "to": "fmax32"
       },
       {
         "basename": "m_66",
         "prototype": "IndexMorphism",
         "domain": "o_133",
         "codomain": "o_136",
-        "to": "hdole/floats/fmin32"
+        "to": "fmin32"
       },
       {
         "basename": "m_67",
         "prototype": "IndexMorphism",
         "domain": "o_134",
         "codomain": "o_138",
-        "to": "hdole/floats/fmin128"
+        "to": "fmin128"
       },
       {
         "basename": "m_68",
@@ -2689,21 +2689,21 @@
         "prototype": "IndexMorphism",
         "domain": "o_141",
         "codomain": "o_142",
-        "to": "hdole/floats/i32tof64"
+        "to": "i32tof64"
       },
       {
         "basename": "m_70",
         "prototype": "IndexMorphism",
         "domain": "o_143",
         "codomain": "o_144",
-        "to": "hdole/floats/i32tof128"
+        "to": "i32tof128"
       },
       {
         "basename": "m_71",
         "prototype": "IndexMorphism",
         "domain": "o_145",
         "codomain": "o_146",
-        "to": "hdole/floats/i64tof128"
+        "to": "i64tof128"
       },
       {
         "basename": "m_72",
@@ -2724,21 +2724,21 @@
         "prototype": "IndexMorphism",
         "domain": "o_151",
         "codomain": "o_152",
-        "to": "hdole/floats/n64tof64"
+        "to": "n64tof64"
       },
       {
         "basename": "m_75",
         "prototype": "IndexMorphism",
         "domain": "o_153",
         "codomain": "o_154",
-        "to": "hdole/floats/n64tof128"
+        "to": "n64tof128"
       },
       {
         "basename": "m_76",
         "prototype": "IndexMorphism",
         "domain": "o_155",
         "codomain": "o_156",
-        "to": "hdole/floats/n128tof128"
+        "to": "n128tof128"
       },
       {
         "basename": "m_77",
@@ -2775,14 +2775,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_160",
         "codomain": "o_159",
-        "to": "hdole/floats/fzero128"
+        "to": "fzero128"
       },
       {
         "basename": "m_80",
         "prototype": "IndexMorphism",
         "domain": "o_157",
         "codomain": "o_161",
-        "to": "hdole/floats/feq128"
+        "to": "feq128"
       },
       {
         "basename": "m_86",
@@ -2819,14 +2819,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_166",
         "codomain": "o_169",
-        "to": "hdole/floats/feq64"
+        "to": "feq64"
       },
       {
         "basename": "m_89",
         "prototype": "IndexMorphism",
         "domain": "o_170",
         "codomain": "o_168",
-        "to": "hdole/floats/fzero64"
+        "to": "fzero64"
       },
       {
         "basename": "m_95",
@@ -2863,14 +2863,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_178",
         "codomain": "o_177",
-        "to": "hdole/floats/fzero32"
+        "to": "fzero32"
       },
       {
         "basename": "m_98",
         "prototype": "IndexMorphism",
         "domain": "o_175",
         "codomain": "o_179",
-        "to": "hdole/floats/feq32"
+        "to": "feq32"
       },
       {
         "basename": "m_81",
@@ -2884,14 +2884,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_163",
         "codomain": "o_164",
-        "to": "hdole/floats/Pm{Id{F32}dI,fzero32}mP"
+        "to": "Pm{Id{F32}dI,fzero32}mP"
       },
       {
         "basename": "m_83",
         "prototype": "IndexMorphism",
         "domain": "o_164",
         "codomain": "o_165",
-        "to": "hdole/floats/feq32"
+        "to": "feq32"
       },
       {
         "basename": "m_84",
@@ -2904,7 +2904,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Fa{F32:F32_,#1_-1}aF,Pm{Id{F32}dI,fzero32}mP,feq32}mC"
+        "to": "Cm{Fa{F32:F32_,#1_-1}aF,Pm{Id{F32}dI,fzero32}mP,feq32}mC"
       },
       {
         "basename": "m_85",
@@ -2918,14 +2918,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_172",
         "codomain": "o_173",
-        "to": "hdole/floats/Pm{Id{F64}dI,fzero64}mP"
+        "to": "Pm{Id{F64}dI,fzero64}mP"
       },
       {
         "basename": "m_91",
         "prototype": "IndexMorphism",
         "domain": "o_173",
         "codomain": "o_174",
-        "to": "hdole/floats/feq64"
+        "to": "feq64"
       },
       {
         "basename": "m_92",
@@ -2938,7 +2938,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Fa{F64:F64_,#1_-1}aF,Pm{Id{F64}dI,fzero64}mP,feq64}mC"
+        "to": "Cm{Fa{F64:F64_,#1_-1}aF,Pm{Id{F64}dI,fzero64}mP,feq64}mC"
       },
       {
         "basename": "m_93",
@@ -2952,14 +2952,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_181",
         "codomain": "o_182",
-        "to": "hdole/floats/Pm{Id{F128}dI,fzero128}mP"
+        "to": "Pm{Id{F128}dI,fzero128}mP"
       },
       {
         "basename": "m_99",
         "prototype": "IndexMorphism",
         "domain": "o_182",
         "codomain": "o_183",
-        "to": "hdole/floats/feq128"
+        "to": "feq128"
       },
       {
         "basename": "m_100",
@@ -2972,7 +2972,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Fa{F128:F128_,#1_-1}aF,Pm{Id{F128}dI,fzero128}mP,feq128}mC"
+        "to": "Cm{Fa{F128:F128_,#1_-1}aF,Pm{Id{F128}dI,fzero128}mP,feq128}mC"
       },
       {
         "basename": "m_101",
@@ -2985,7 +2985,7 @@
             5
           ]
         ],
-        "to": "hdole/floats/feq0_32"
+        "to": "feq0_32"
       },
       {
         "basename": "m_102",
@@ -2998,7 +2998,7 @@
             5
           ]
         ],
-        "to": "hdole/floats/feq0_64"
+        "to": "feq0_64"
       },
       {
         "basename": "m_103",
@@ -3011,14 +3011,14 @@
             5
           ]
         ],
-        "to": "hdole/floats/feq0_128"
+        "to": "feq0_128"
       },
       {
         "basename": "m_104",
         "prototype": "IndexMorphism",
         "domain": "o_185",
         "codomain": "o_186",
-        "to": "hdole/floats/fsub128"
+        "to": "fsub128"
       },
       {
         "basename": "m_105",
@@ -3055,7 +3055,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_188",
         "codomain": "o_184",
-        "to": "hdole/floats/fone128"
+        "to": "fone128"
       },
       {
         "basename": "m_108",
@@ -3069,14 +3069,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_190",
         "codomain": "o_191",
-        "to": "hdole/floats/Pm{Id{F128}dI,fone128}mP"
+        "to": "Pm{Id{F128}dI,fone128}mP"
       },
       {
         "basename": "m_110",
         "prototype": "IndexMorphism",
         "domain": "o_191",
         "codomain": "o_192",
-        "to": "hdole/floats/fsub128"
+        "to": "fsub128"
       },
       {
         "basename": "m_111",
@@ -3089,7 +3089,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Fa{F128:F128_0,#1_-1}aF,Pm{Id{F128}dI,fone128}mP,fsub128}mC"
+        "to": "Cm{Fa{F128:F128_0,#1_-1}aF,Pm{Id{F128}dI,fone128}mP,fsub128}mC"
       },
       {
         "basename": "m_112",
@@ -3106,7 +3106,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/fdecr128"
+        "to": "fdecr128"
       },
       {
         "basename": "m_113",
@@ -3143,14 +3143,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_196",
         "codomain": "o_195",
-        "to": "hdole/floats/fone64"
+        "to": "fone64"
       },
       {
         "basename": "m_116",
         "prototype": "IndexMorphism",
         "domain": "o_193",
         "codomain": "o_197",
-        "to": "hdole/floats/fsub64"
+        "to": "fsub64"
       },
       {
         "basename": "m_117",
@@ -3164,14 +3164,14 @@
         "prototype": "IndexMorphism",
         "domain": "o_199",
         "codomain": "o_200",
-        "to": "hdole/floats/Pm{Id{F64}dI,fone64}mP"
+        "to": "Pm{Id{F64}dI,fone64}mP"
       },
       {
         "basename": "m_119",
         "prototype": "IndexMorphism",
         "domain": "o_200",
         "codomain": "o_201",
-        "to": "hdole/floats/fsub64"
+        "to": "fsub64"
       },
       {
         "basename": "m_120",
@@ -3184,7 +3184,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Fa{F64:F64_0,#1_-1}aF,Pm{Id{F64}dI,fone64}mP,fsub64}mC"
+        "to": "Cm{Fa{F64:F64_0,#1_-1}aF,Pm{Id{F64}dI,fone64}mP,fsub64}mC"
       },
       {
         "basename": "m_121",
@@ -3201,7 +3201,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/fdecr64"
+        "to": "fdecr64"
       },
       {
         "basename": "m_122",
@@ -3238,21 +3238,21 @@
         "prototype": "IndexMorphism",
         "domain": "o_205",
         "codomain": "o_204",
-        "to": "hdole/floats/fone32"
+        "to": "fone32"
       },
       {
         "basename": "m_125",
         "prototype": "IndexMorphism",
         "domain": "o_202",
         "codomain": "o_206",
-        "to": "hdole/floats/fsub32"
+        "to": "fsub32"
       },
       {
         "basename": "m_126",
         "prototype": "IndexMorphism",
         "domain": "o_207",
         "codomain": "o_208",
-        "to": "hdole/floats/Pm{fone32,Id{F32}dI}mP"
+        "to": "Pm{fone32,Id{F32}dI}mP"
       },
       {
         "basename": "m_127",
@@ -3266,7 +3266,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_209",
         "codomain": "o_210",
-        "to": "hdole/floats/fsub32"
+        "to": "fsub32"
       },
       {
         "basename": "m_129",
@@ -3279,7 +3279,7 @@
             true
           ]
         ],
-        "to": "hdole/floats/Cm{Pm{fone32,Id{F32}dI}mP,Cm{Fa{Po{F32,F32}oP:F32_1,F32_0}aF,fsub32}mC}mC"
+        "to": "Cm{Pm{fone32,Id{F32}dI}mP,Cm{Fa{Po{F32,F32}oP:F32_1,F32_0}aF,fsub32}mC}mC"
       },
       {
         "basename": "m_130",
@@ -4509,7 +4509,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652505279258,
+  "timestamp": 1652780199683,
   "version": 0,
   "viewport": {
     "x": 979,

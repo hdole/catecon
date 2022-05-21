@@ -25,7 +25,7 @@
           "x": 250,
           "y": 150
         },
-        "height": "36",
+        "height": 36,
         "weight": "bold"
       },
       {
@@ -36,17 +36,17 @@
           "x": 250,
           "y": 200
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>identity</icon>  Identity:  Place the identity morphism.",
+        "description": "<icon>identity</icon>  Identity:  Place the identity morphism",
         "basename": "t_4",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 900
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>graph</icon>  <diagram name=\"hdole/graph\">Graph</diagram>:  Show the string graphs.",
@@ -56,27 +56,27 @@
           "x": 300,
           "y": 800
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "This diagram describes the various actions that are available in which types of categories.",
+        "description": "This diagram describes the various built-in actions.",
         "basename": "t_9",
         "prototype": "IndexText",
         "xy": {
           "x": 250,
           "y": 50
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "Actions",
+        "description": "Builtin Actions",
         "basename": "t_10",
         "prototype": "IndexText",
         "xy": {
-          "x": 240,
-          "y": -80
+          "x": 250,
+          "y": -50
         },
-        "height": "400",
+        "height": 156,
         "weight": "bold"
       },
       {
@@ -87,17 +87,17 @@
           "x": 300,
           "y": 1300
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>action</icon>  <diagram name=\"hdole/actionAction\">Action</diagram>:  Generalize the selected elements to a new action.",
+        "description": "<icon>action</icon>:  Generalize the selected elements to a new action",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 300
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>referenceMorphism</icon>  Reference Morphism:  The projection or injeciton morphism is designated as a reference.",
@@ -107,17 +107,17 @@
           "x": 300,
           "y": 1250
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>name</icon>  Name:  Create a named element for the selected element.",
+        "description": "<icon>name</icon>  Name:  Create a named element for the selected element",
         "basename": "t_7",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 1150
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>composite</icon>  Composite:  Form a composite of appropriately selected morphisms.",
@@ -127,17 +127,17 @@
           "x": 300,
           "y": 450
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>detachDomain</icon>  Detach Domain:  Disconnect the morphism's domain from the blob.",
+        "description": "<icon>detachDomain</icon>  Detach Domain:  Disconnect the morphism's domain from the blob",
         "basename": "t_11",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 550
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>detachCodomain</icon>  Detach Codomain:  Disconnect the morphism's codomain from the blob.",
@@ -147,7 +147,7 @@
           "x": 300,
           "y": 600
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>homLeft</icon>  Hom Left:  Show the morphisms with the same codomain.",
@@ -157,17 +157,17 @@
           "x": 300,
           "y": 950
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>morphismAssembly</icon>  Morphism Assembly:  Build a morphism from a blob using references.",
+        "description": "<icon>morphismAssembly</icon>  Morphism Assembly:  Build a morphism from a blob using references",
         "basename": "t_14",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 1100
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>expression</icon>  Expression:  Form an expression from a blob.",
@@ -177,37 +177,37 @@
           "x": 300,
           "y": 700
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>copy</icon>  Copy:  Copy the selected elements.",
+        "description": "<icon>copy</icon>  Copy:  Copy the selected elements",
         "basename": "t_16",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 500
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>flipName</icon>  Flip Name:  Move the morphism's name to the opposite side.",
+        "description": "<icon>flipName</icon>  Flip Name:  Move the morphism's name to the opposite side",
         "basename": "t_17",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 750
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>help</icon>  Help:  Show information regarding the element.",
+        "description": "<icon>help</icon>  Help:  Show information regarding the element",
         "basename": "t_18",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 850
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>run</icon>  Run:  Evaluate the morphism.",
@@ -217,27 +217,27 @@
           "x": 300,
           "y": 1550
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>alignHorizontal</icon>  Align Horizontal:  Align elements horizontally.",
+        "description": "<icon>alignHorizontal</icon>  Align Horizontal:  Align elements horizontally",
         "basename": "t_20",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 350
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>alignVertical</icon>  Align Vertical:  Align elements vertically.",
+        "description": "<icon>alignVertical</icon>  Align Vertical:  Align elements vertically",
         "basename": "t_21",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 400
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "Product Actions",
@@ -247,7 +247,7 @@
           "x": 250,
           "y": 1650
         },
-        "height": "36",
+        "height": 36,
         "weight": "bold"
       },
       {
@@ -258,7 +258,7 @@
           "x": 300,
           "y": 1750
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "These actions are associated with categories that have products or pullbacks.",
@@ -268,7 +268,7 @@
           "x": 250,
           "y": 1700
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>project</icon>  Project:  Form projection morphisms from a product object.",
@@ -278,7 +278,7 @@
           "x": 300,
           "y": 1800
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>productAssembly</icon>  Product Assembly:  Form the product assembly of morphisms with a common domain.",
@@ -288,17 +288,17 @@
           "x": 300,
           "y": 1850
         },
-        "height": "24"
+        "height": 24
       },
       {
-        "description": "<icon>recursion</icon>  Recursion:  Set the recursor for a morphism if the other morphism uses it.",
+        "description": "<icon>recursion</icon>  Recursion:  Set the recursor for a morphism if the other morphism uses it",
         "basename": "t_27",
         "prototype": "IndexText",
         "xy": {
           "x": 300,
           "y": 1200
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>homRight</icon>  Hom Right:  Show the morphisms with the same domain.",
@@ -308,7 +308,7 @@
           "x": 300,
           "y": 1000
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "Coproduct Actions",
@@ -318,7 +318,7 @@
           "x": 250,
           "y": 2000
         },
-        "height": "36",
+        "height": 36,
         "weight": "bold"
       },
       {
@@ -379,7 +379,7 @@
           "x": 300,
           "y": 1900
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>pushout</icon>  Pushout:  Form the pushout of a source.",
@@ -389,7 +389,7 @@
           "x": 300,
           "y": 2300
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>homset</icon>  Homset:  Create a morphism between two objects.",
@@ -399,7 +399,7 @@
           "x": 300,
           "y": 1050
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "Homset Actions",
@@ -409,7 +409,7 @@
           "x": 250,
           "y": 2400
         },
-        "height": "36",
+        "height": 36,
         "weight": "bold"
       },
       {
@@ -430,7 +430,7 @@
           "x": 300,
           "y": 2500
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>lambda</icon>  Lambda:  Form a lambda morphism by selecting factors.",
@@ -440,7 +440,7 @@
           "x": 300,
           "y": 2550
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "<icon>delete</icon>  Delete:  Remove the selected elements from the diagram.",
@@ -460,7 +460,7 @@
           "x": 250,
           "y": 1400
         },
-        "height": "36",
+        "height": 36,
         "weight": "bold"
       },
       {
@@ -488,11 +488,11 @@
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1644713957953,
+  "timestamp": 1653042923835,
   "version": 0,
   "viewport": {
-    "x": -96,
-    "y": 682,
-    "scale": 1.490215090126815
+    "x": -205,
+    "y": 418,
+    "scale": 1.8714404826836144
   }
 }

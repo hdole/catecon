@@ -558,14 +558,14 @@
         }
       },
       {
-        "description": "ℕ Natural Numbers",
+        "description": "ℕatural Numbers",
         "basename": "t_31",
         "prototype": "IndexText",
         "xy": {
           "x": -1210,
           "y": -290
         },
-        "height": 306,
+        "height": 338,
         "weight": "bold"
       },
       {
@@ -5354,7 +5354,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652687584242,
+  "timestamp": 1652779938429,
   "version": 0,
   "viewport": {
     "x": 1143,

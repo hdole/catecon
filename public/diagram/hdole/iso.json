@@ -72,7 +72,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 650,
-          "y": 650
+          "y": 660
         },
         "height": 24
       },
@@ -278,7 +278,7 @@
         "prototype": "Definition",
         "xy": {
           "x": 650,
-          "y": 1050
+          "y": 1020
         },
         "height": 24,
         "defname": "isomorphism",
@@ -379,11 +379,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652437434218,
+  "timestamp": 1652941741446,
   "version": 0,
   "viewport": {
-    "x": -1959,
-    "y": -1711,
-    "scale": 3.4707942123852593
+    "x": -18847,
+    "y": -13343,
+    "scale": 95.7812671296373
   }
 }
