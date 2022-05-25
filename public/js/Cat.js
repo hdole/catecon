@@ -2199,7 +2199,7 @@ class Toolbar
 		const selected = diagram.selected;
 		const toolBbox = new D2(this.element.getBoundingClientRect());
 		const oldBox = diagram.userToDiagramCoords(this.element.getBoundingClientRect());
-		const nuBox = diagram.diagramToUserCoords(diagram.autoplaceSvg(oldBox, '', oldBox.height/2, 4, this.mouseCoords, 20));
+		const nuBox = diagram.diagramToUserCoords(diagram.autoplaceSvg(oldBox, '', oldBox.height/2, 4, this.mouseCoords, 80));
 		const wid = D.width();
 		const hgt = D.height();
 		if (nuBox.x < 0)
@@ -2317,8 +2317,11 @@ class Toolbar
 	}
 	deactivateButtons()
 	{
-		const btns = this.buttons.querySelectorAll('span.icon');
-		btns.forEach(btn => btn.querySelector('.btn').classList.remove('icon-active'));
+		if (this.buttons)
+		{
+			const btns = this.buttons.querySelectorAll('span.icon');
+			btns.forEach(btn => btn.querySelector('.btn').classList.remove('icon-active'));
+		}
 	}
 	adjustPosition()
 	{
@@ -6971,16 +6974,49 @@ class Display
 		navigator.clipboard.writeText(str);
 		D.statusbar.show(e, 'Copied');
 	}
-	getFactorsById(id)
+	getFactorsById(id, levels = [])
 	{
-		const btns = document.getElementById(id).querySelectorAll('button');
-		let factors = [];
-		btns.forEach(b =>
+		const target = document.getElementById(id);
+		let elt = target.firstChild;
+		const buttons = [];
+		const factors = [];
+		let lvl = 0;
+		const index = [];
+		while(elt)
 		{
-			const idx = JSON.parse(`[${b.dataset.indices}]`);
-			factors.push(idx.length === 1 && idx[0] === -1 ? idx[0] : idx);
+			if (elt instanceof HTMLSpanElement)
+			{
+				if (elt.innerText === '(')
+					lvl++;
+				else
+				{
+					lvl--;
+					index.pop();
+				}
+			}
+			else
+			{
+				levels.push(lvl);
+				buttons.push(elt);
+			}
+			elt = elt.nextSibling;
+		}
+		// down level single elements with parens
+		if (levels.length > 1)
+		{
+			for (let i=0; i<levels.lengh; ++i)
+			{
+				let lvl = levels[i];
+				while(lvl > 0 && ((i > 0 && levels[i -1] < lvl) || i === 0) && ((i < levels.length -1 && levels[i +1] < lvl) || i === levels.length -1))
+					--lvl;
+				levels[i] = lvl;
+			}
+		}
+		return buttons.map(btn =>
+		{
+			const idx = JSON.parse(`[${btn.dataset.indices}]`);
+			return idx.length === 1 && idx[0] === -1 ? idx[0] : idx;
 		});
-		return factors;
 	}
 }
 
@@ -8253,6 +8289,7 @@ class Graph
 		else
 			this.graphs.map((g, i) => g.scanCheck(check, process, U.pushFactor(ndx, i)));
 	}
+	// used by cpp
 	scanLinks(top, check, process, ndx = [])
 	{
 		this.scanCheck(check, (g, n) =>
@@ -8364,7 +8401,7 @@ class Graph
 		if (this.isLeaf() && this.links.length > 0)
 		{
 			let colorIndex = Number.MAX_VALUE;
-			const srcKey = IndexMorphism.LinkColorKey(data.index, data.dom, data.cod);
+			const srcKey = IndexMorphism.LinkColorKey(data.index, data.domain.basename, data.codomain.basename);
 			if (!('colorIndex' in this))
 			{
 				if (!(srcKey in diagram.link2colorIndex))
@@ -8391,7 +8428,7 @@ class Graph
 					continue;
 				const {coords, vertical} = this.svgLinkUpdate(nuLnk, data);
 				const linkId = IndexMorphism.LinkId(data, lnk);
-				const lnkKey = IndexMorphism.LinkColorKey(lnk, data.dom, data.cod);
+				const lnkKey = IndexMorphism.LinkColorKey(lnk, data.domain.basename, data.codomain.basename);
 				if (lnkKey in diagram.link2colorIndex)
 				{
 					let linkColorIndex = diagram.link2colorIndex[lnkKey];
@@ -8451,7 +8488,20 @@ class Graph
 		const dy = cod.y - this.xy.y;
 		const adx = Math.abs(dx);
 		const ady = Math.abs(dy);
-		const normal = dy === 0 ? ((this.xy.y - this.xy.y) > 0 ? new D2({x:0, y:-1}) : new D2({x:0, y:1})) : cod.subtract(this.xy).normal().normalize();
+		let normal = null;
+		if (lnk[0] === data.index[0])
+		{
+			const obj = lnk[0] === 0 ? data.domain.getXY() : data.codomain.getXY();
+			normal = data.center.subtract(obj).normalize();
+			if (normal.y === 0)
+			{
+				normal.y = dx > 0 ? -1 : 1;
+			}
+			normal.x = 0;
+			normal = normal.normalize();
+		}
+		else
+			normal = dy === 0 ? new D2({x:0, y:-1}) : cod.subtract(this.xy).normal().normalize();
 		let h = (adx - ady) / (1.0 * adx);
 		const dist = cod.dist(this.xy);
 		if (dist < 100)
@@ -8467,7 +8517,7 @@ class Graph
 		const diagram = this.element.diagram;
 		if (this.isLeaf() && this.links.length > 0)
 		{
-			const srcKey = IndexMorphism.LinkColorKey(data.index, data.dom, data.cod);
+			const srcKey = IndexMorphism.LinkColorKey(data.index, data.domain.basename, data.codomain.basename);
 			let colorIndex = diagram.link2colorIndex[srcKey];
 			while(colorIndex in diagram.colorIndex2colorIndex)
 				colorIndex = diagram.colorIndex2colorIndex[colorIndex];
@@ -8475,7 +8525,7 @@ class Graph
 			{
 				const lnk = this.links[i];
 				const lnkStr = lnk.toString();	// TODO use U.a2s?
-				const lnkKey = IndexMorphism.LinkColorKey(lnk, data.dom, data.cod);
+				const lnkKey = IndexMorphism.LinkColorKey(lnk, data.domain.name, data.codomain.name);
 				let linkColorIndex = diagram.link2colorIndex[lnkKey];
 				while(linkColorIndex in diagram.colorIndex2colorIndex)
 					linkColorIndex = diagram.colorIndex2colorIndex[linkColorIndex];
@@ -8867,7 +8917,14 @@ class MultiObject extends CatObject
 	{
 		super.help();
 		D.toolbar.table.appendChild(hdr);
-		this.objects.map(o => D.toolbar.table.appendChild(H3.tr(H3.td(o.getHtmlRow(), {colspan:2}))));
+		this.objects.map(o =>
+		{
+			const row = o.getHtmlRow();
+			const td = row.querySelector('td');
+			td.colSpan = 2;
+			o.addButtons(row);
+			D.toolbar.table.appendChild(row);
+		});
 	}
 	decrRefcnt()
 	{
@@ -10753,7 +10810,7 @@ class CompositeAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		return CompositeAction.getLeg(ary).length === ary.length;
+		return ary.length > 1 && CompositeAction.getLeg(ary).length === ary.length;
 	}
 	static Reduce(leg)
 	{
@@ -11312,7 +11369,7 @@ class HomAction extends Action
 	}
 	doit(e, diagram, elements)
 	{
-		const xy = D.barycenter(elements);
+		const xy = D.mouse.diagramPosition(diagram);
 		if (elements[0] instanceof IndexObject)
 			return diagram.placeObject(diagram.get('HomObject', {objects:elements.map(o => o.to)}), xy);
 		else if (elements[0] instanceof IndexMorphism)
@@ -11681,23 +11738,60 @@ class ProjectAction extends Action
 			dual,
 		};
 		super(diagram, args);
+		this.targetDiv = null;
 		D && D.replayCommands.set(this.basename, this);
 	}
 	action(e, diagram, elements)
 	{
 		const from = elements[0];
-		const factors = D.getFactorsById(this.dual ? 'inject-domain' : 'project-codomain');
-		const elt = this.doit(e, diagram, from, factors);
+		const levels = [];
+		const factors = D.getFactorsById(this.dual ? 'inject-domain' : 'project-codomain', levels);
+		const elt = this.doit(e, diagram, from, factors, levels);
 		diagram.log({command:this.name, object:from.name, factors});
 		diagram.antilog({command:'delete', elements:[elt.name]});
 	}
-	doit(e, diagram, from, factors)
+	doit(e, diagram, from, factors, levels)
 	{
-		let m = null;
-		const args = {factors, dual:this.dual};
+		let morphism = null;
+		const args = {dual:this.dual};
 		args[this.dual ? 'codomain' : 'domain'] = from.to;
-		m = diagram.get('FactorMorphism', args);
-		return diagram.placeMorphismByObject(e, this.dual ? 'codomain' : 'domain', from, m);
+		const fctrs = [];
+		let lastLvl = 0;
+		const factorMorphs = [];
+		const factorMorphLvl = [];
+		let lvl = null;
+		const process = _ =>
+		{
+			if (fctrs.length > 0)
+			{
+				args.factors = fctrs;
+				factorMorphs.push(diagram.get('FactorMorphism', args));
+				factorMorphLvl.push(lastLvl);
+				fctrs.length = 0;
+				lastLvl = lvl;
+			}
+		}
+		for (let i=0; i<factors.length; ++i)
+		{
+			lvl = levels[i];
+			const fctr = factors[i];
+			if (lvl !== lastLvl)
+				process();
+			fctrs.push(fctr);
+		}
+		process();
+		if (factorMorphs.length === 1)
+			morphism = factorMorphs[0];
+		else
+		{
+			for (let i=0; i<factorMorphLvl.length; ++i)
+			{
+				const lvl = factorMorphLvl[i];
+			}
+			// TODO got general enough
+			morphism = diagram.get('ProductAssembly', {morphisms:factorMorphs, dual:this.dual});
+		}
+		return diagram.placeMorphismByObject(e, this.dual ? 'codomain' : 'domain', from, morphism);
 	}
 	replay(e, diagram, args)
 	{
@@ -11708,43 +11802,57 @@ class ProjectAction extends Action
 	{
 		return diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexObject;
 	}
+	getDropTarget()
+	{
+		const id = this.dual ? 'inject-domain' : 'project-codomain';
+		const div = H3.div('.dropTarget', 
+		{
+			id,
+			ondrop:e => this.dropHandler(e),
+			ondragover:e => e.preventDefault(),
+		});
+		return div;
+	}
+	dropHandler(e)
+	{
+		e.preventDefault();
+		const id = e.dataTransfer.getData('button');
+		const button = document.getElementById(id);
+		const object = R.diagram.getElement(button.dataset.name);
+		const indices = JSON.parse(`[${button.dataset.indices}]`);
+		this.addFactor(object, ...indices);
+	}
 	html(e, diagram, ary)
 	{
 		super.html();
+		D.toolbar.clear();
 		const to = ary[0].to.getBase();
 		const canFlatten = ProductObject.CanFlatten(to);
-		const id = this.dual ? 'inject-domain' : 'project-codomain';
 		const obj = this.dual ? 'domain' : 'codomain';
-		D.toolbar.clear();
+		this.targetDiv = this.getDropTarget();
 		const elements = [H3.h4(`Create ${this.dual ? 'Cof' : 'F'}actor Morphism`),
 					(canFlatten ?
 						H3.div(H3.span('Remove parenthesis', '.little'),
 							H3.button(`Flatten ${this.dual ? 'Coproduct' : 'Product'}`, {onclick:e => this.flatten(e, diagram, diagram.getSelected())})) : null),
 					H3.h5(`${this.dual ? 'Codomain' : 'Domain'} Factors`),
-					H3.small(`Click to place in ${obj}`),
-					H3.button(this.dual ? '0' : '*', {id:diagram.elementId(), title:`Add ${this.dual ? 'initial' : 'terminal'} object`, onclick:e => this.addFactor(to.name, -1)}),
-					ProjectAction.FactorButton(obj, to, to, [], this.dual),
+					H3.small(`Click or drag to place in ${obj}`),
+					this.factorButton(diagram.getTerminal(this.dual), [], this.dual),
+					this.factorButton(to, [], this.dual),
 					H3.h5(`${this.dual ? 'Domain' : 'Codomain'} Factors`),
-					H3.br(),
-					H3.span(`Click objects to remove from ${obj}`, '.smallPrint.italic'),
-					H3.div({id})];
+					H3.ul(
+						H3.li(H3.small(`Click objects to remove from ${obj}`)),
+						H3.li(H3.small('Shift-click to add a level of parenthesis')),
+						H3.li(H3.small('Control-clikc to remove a level of parenthesis'))),
+					this.targetDiv,
+					D.getIcon(this.dual ? 'inject' : 'project', 'edit', e => this.action(e, Cat.R.diagram, Cat.R.diagram.selected), {title:'Create morphism'})];
 		elements.map(elt => elt && D.toolbar.body.appendChild(elt));
-		this.codomainDiv = document.getElementById(id);
 	}
-	addFactor(root, ...indices)
+	addFactor(object, ...indices)
 	{
-		if (this.codomainDiv.childElementCount === 0)
-		{
-			D.removeChildren(this.codomainDiv);
-			this.codomainDiv.appendChild(D.getIcon(this.dual ? 'inject' : 'project', 'edit', e => this.action(e, Cat.R.diagram, Cat.R.diagram.selected), {title:'Create morphism'}));
-		}
-		const object = R.diagram.getElement(root);
 		const isTerminal = indices.length === 1 && indices[0] === -1;
-		const factor = isTerminal ? R.diagram.getTerminal(this.dual) : object.getFactor(indices);
 		const sub = isTerminal ? '' : indices.join();
-		const btn = H3.button(factor.properName, {'data-indices':indices.toString(), onclick:e => e.target.remove()});
-		sub !== '' && btn.appendChild(H3.sub(sub));
-		this.codomainDiv.appendChild(btn);
+		const btn = this.factorButton(object, indices, this.dual, true);
+		this.targetDiv.appendChild(btn);
 	}
 	flatten(e, diagram, from)
 	{
@@ -11767,28 +11875,151 @@ class ProjectAction extends Action
 		const m = diagram.get('FactorMorphism', {domain:to, factors, dual:this.dual});
 		diagram.placeMorphismByObject(e, this.dual ? 'codomain' : 'domain', from, m);
 	}
-	static ObjectFactorButton(dir, root, object, index, dual)
+	objectFactorButton(root, object, index, dual, remove)
 	{
 		const subscript = index.length > 0 ? H3.sub(index.join()) : null;
-		return H3.table(H3.tr(H3.td(H3.button(object.properName, subscript, {id:Cat.R.diagram.elementId('project'), title:'Place object',
-			'data-indices':index.toString(), onclick:e => Cat.R.Actions[dual ? 'inject' : 'project'].addFactor(root.name, ...index)}))));
+		const id = object.elementId('project');
+		const onclick = e =>
+		{
+			const insertLeftParen = elt => elt.parentNode.insertBefore(H3.span('.bold', '('), elt);
+			const insertRightParen = elt => elt.after(H3.span('.bold', ')'));
+			const items = [];
+			let elt = this.targetDiv.firstChild;
+			let indx = -1;
+			let ondx = -1;
+			const objects = [];
+			const objectLevels = [];
+			const levels = [];
+			let lvl = 0;
+			while (elt)
+			{
+				if (elt === e.target)
+				{
+					indx = items.length;
+					ondx = objects.length;
+				}
+				items.push(elt);
+				if (elt instanceof HTMLSpanElement && elt.innerText === '(')
+					lvl += 1;
+				else if (elt instanceof HTMLButtonElement)
+				{
+					objects.push(R.diagram.getElement(elt.dataset.name));
+					objectLevels.push(lvl);
+				}
+				levels.push(lvl);
+				if (elt instanceof HTMLSpanElement && elt.innerText === ')')
+					lvl -= 1;
+				elt = elt.nextSibling;
+			}
+			const del = remove && !e.shiftKey && !e.ctrlKey;
+			if (del)
+			{
+				ProjectAction.removeButton(e.target)
+				const leftNdx = indx -1;
+				const rightNdx = indx +1;
+				if (indx > 0 && items[leftNdx] instanceof HTMLSpanElement && items[leftNdx].innerText === '(' && indx < items.length -1 && items[rightNdx] instanceof HTMLSpanElement && items[rightNdx].innerText === ')')
+				{
+					items[leftNdx].remove();
+					items[rightNdx].remove();
+				}
+				return;
+			}
+			if (e.shiftKey || e.ctrlKey)
+			{
+				if (ondx === -1)
+					return;
+				lvl = levels[indx];
+				if (lvl === 0 && e.ctrlKey)
+					return;
+				elt = items[indx];
+				if (e.shiftKey)
+				{
+					if (lvl >= objects.length -2)
+						return;
+					let doLeft = true;
+					let doRight = true;
+					if (ondx > 0)
+					{
+						const left = objects[ondx -1];
+						const leftLvl = levels[ondx -1];
+						if (leftLvl === lvl +1)
+						{
+							items[indx -1].remove();
+							doLeft = false;
+						}
+					}
+					if (ondx < objects.length -1)
+					{
+						const right = objects[ondx +1];
+						const rightLvl = levels[ondx +1];
+						if (rightLvl === lvl +1)
+						{
+							items[indx +1].remove();
+							doRight = false;
+						}
+					}
+					doLeft && insertLeftParen(elt);
+					doRight && insertRightParen(elt);
+				}
+				else if (lvl > 0)
+				{
+					const leftItem = items[indx -1];
+					const rightItem = items[indx +1];
+					if (leftItem instanceof HTMLButtonElement)
+						insertRightParen(leftItem);
+					else if (levels[indx -1] === lvl)
+						leftItem.remove();
+					if (rightItem instanceof HTMLButtonElement)
+						insertLeftParen(rightItem);
+					else if (levels[indx +1] === lvl)
+						rightItem.remove();
+				}
+			}
+			else
+				Cat.R.Actions[dual ? 'inject' : 'project'].addFactor(root, ...index);
+		};
+		return H3.button(object.properName, subscript,
+			{
+				id,
+				'data-name':root.name,
+				'data-indices':index.toString(),
+				title: remove ? 'Remove object' : 'Place object',
+				onclick,
+				draggable:true,
+				ondragstart:e => e.dataTransfer.setData('button', id),
+			});
 	}
-	static ProductObjectFactorButton(dir, root, object, index, dual)
+	productObjectFactorButton(root, object, index, dual)
 	{
-		const header = H3.tr(H3.td(ProjectAction.ObjectFactorButton(dir, root, object, index, dual)), '.sidename');
+		const header = H3.tr(H3.td(this.objectFactorButton(root, object, index, dual)), '.sidename');
 		const cells = [];
 		object.objects.map((o, i) =>
 		{
 			const subIndex = index.slice();
 			subIndex.push(i);
-			cells.push(H3.td(ProjectAction.FactorButton(dir, root, o, subIndex, dual)));
+			cells.push(H3.td(this.factorButton(root, subIndex, dual)));
 		});
 		return H3.table(header, H3.tr(H3.td(H3.table(H3.tr(cells))), '.sidename'));
 	}
-	static FactorButton(dir, root, object, index, dual)
+	factorButton(root, index, dual, remove = false)
 	{
-		return (object instanceof ProductObject && object.dual === dual) ? ProjectAction.ProductObjectFactorButton(dir, root, object, index, dual) :
-			ProjectAction.ObjectFactorButton(dir, root, object, index, dual);
+		const object = root.getFactor(index);
+		return (object instanceof ProductObject && object.dual === dual) ? this.productObjectFactorButton(root, object, index, dual, remove) :
+			this.objectFactorButton(root, object, index, dual, remove);
+	}
+	static removeButton(itm)
+	{
+		let elt = itm;
+		while(elt)
+		{
+			if (elt.constructor.name !== 'HTMLButtonElement')
+				elt = elt.parentElement;
+			else
+			{
+				elt.remove();
+				break;
+			}
+		}
 	}
 }
 
@@ -11879,14 +12110,14 @@ class LambdaMorphismAction extends Action
 		const homBtn = H3.button('&times;', {title:'Convert to hom', 'data-indices':"-1", onclick:e => Cat.R.Actions.lambda.toggleOp(e.currentTarget)});
 		const codSide = data.dir === 1 && 'objects' in object;
 		const index = data.dir === 0 ? '0' : '1, 0';
-		if ('objects' in object)
+		if ('objects' in object && object instanceof ProductObject && !object.dual)
 			object.objects.map((o, i) =>
 			{
 				html.push(H3.button(o.properName, H3.sub(i.toString()), {id:D.elementId(), 'data-indices':`${index}, ${i}`, onclick:e => Cat.R.Actions.lambda.moveFactor(e.currentTarget)}));
 				codSide && i < object.objects.length - 1 && html.push(homBtn);
 			});
 		else if (!object.isTerminal())
-			html.push(H3.button(object.properName, {id:D.elementId(), 'data-indices':`${index}, 0`, onclick:e => Cat.R.Actions.lambda.moveFactor(e.currentTarget)}));
+			html.push(H3.button(object.properName, {id:D.elementId(), 'data-indices':`${index}`, onclick:e => Cat.R.Actions.lambda.moveFactor(e.currentTarget)}));
 		if (codSide)
 			html.push(H3.button('[', {title:'Convert to product', 'data-indices':"-2", onclick:e => Cat.R.Actions.lambda.toggleOp(e.currentTarget)}));
 		return html;
@@ -13686,9 +13917,13 @@ class Morphism extends Element
 			D && D.emitElementEvent(diagram, 'new', this);
 		}
 	}
+	getPlacementIcon()
+	{
+		return D.getIcon('place-morphism', 'place', e => R.diagram.placeElement(this, D.mouse.diagramPosition(this.diagram)), {title:'Place morphism'});
+	}
 	getButtons()
 	{
-		return [D.getIcon('place-morphism', 'place', e => R.diagram.placeElement(this, D.mouse.diagramPosition(this.diagram)), {title:'Place morphism'})];
+		return [this.getPlacementIcon()];
 	}
 	setSignature()
 	{
@@ -14625,7 +14860,7 @@ const Arrow =
 			}
 		}
 		if ('graph' in this)
-			this.graph.updateGraph({root:this.graph, index:[], dom:this.domain.name, cod:this.codomain.name, visited:[], elementId:this.elementId()});
+			this.graph.updateGraph(this.getData());
 		if (this instanceof IndexMorphism)		// debugging tool
 		{
 			if (!this.domain.to.isEquivalent(this.to.domain))
@@ -15000,6 +15235,20 @@ class IndexMorphism extends Morphism
 		if (!('graph' in this))
 			this.graph = this.to.getGraph();
 	}
+	getData()
+	{
+		const center = new D2(this.domain.getXY()).add(this.codomain.getXY()).scale(0.5);
+		return {
+					index:[],
+					root:this.graph,
+					domain:this.domain,
+					codomain:this.codomain,
+					visited:[],
+					elementId:this.elementId(),
+					color:this.signature.substring(0, 6),
+					center,
+		};
+	}
 	showGraph()
 	{
 		if (!('graph' in this && 'svg' in this.graph))
@@ -15012,8 +15261,8 @@ class IndexMorphism extends Morphism
 			xy = new D2({x:cod.x - cod.width()/2, y:cod.y}).round();
 			this.graph.graphs[1].updateXY(xy);	// set locations inside codomain
 			const id = this.graphId();
-			this.graph.makeSVG(this.svg, id,
-				{index:[], root:this.graph, dom:dom.name, cod:cod.name, visited:[], elementId:this.elementId(), color:this.signature.substring(0, 6)});
+			const center = new D2(this.domain.getXY()).add(this.codomain.getXY()).scale(0.5);
+			this.graph.makeSVG(this.svg, id, this.getData());
 		}
 		else
 			this.graph.svg.classList.remove('hidden');
@@ -16243,7 +16492,14 @@ class MultiMorphism extends Morphism
 		super.help();
 		D.toolbar.table.appendChild(hdr);
 		D.toolbar.table.appendChild(H3.tr(H3.th('Morphisms', {colspan:2})));
-		this.morphisms.map(m => D.toolbar.table.appendChild(H3.tr(H3.td({colspan:2}, m.getHtmlRow()))));
+		this.morphisms.map(m =>
+		{
+			const row = m.getHtmlRow();
+			const td = row.querySelector('td');
+			td.colSpan = 2;
+			m.addButtons(row);
+			D.toolbar.table.appendChild(row);
+		});
 	}
 	decrRefcnt()
 	{
@@ -16386,6 +16642,7 @@ class Composite extends MultiMorphism
 		{
 			graph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
 			graph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
+graph.check();
 		});
 		this.morphisms.map((m, i) =>
 		{
@@ -16494,8 +16751,9 @@ class ProductMorphism extends MultiMorphism
 		this.morphisms.map((m, i) =>
 		{
 			const g = m.getGraph(data);
-			graph.graphs[0].graphs[i].copyGraph({src:g.graphs[0], map:[[[1], [1, i]]]});
-			graph.graphs[1].graphs[i].copyGraph({src:g.graphs[1], map:[[[0], [0, i]]]});
+			const map = [[[0], [0, i]], [[1], [1, i]]];
+			graph.graphs[0].graphs[i].copyGraph({src:g.graphs[0], map});
+			graph.graphs[1].graphs[i].copyGraph({src:g.graphs[1], map});
 		});
 		graph.tagGraph(this.dual ? 'Coproduct' : ' Product');
 		return graph;
@@ -17057,7 +17315,7 @@ class LambdaMorphism extends Morphism
 	{
 		super.help();
 		D.toolbar.table.appendChild(H3.tr(H3.td('Type:'), H3.td('Lambda')));
-		D.toolbar.table.appendChild(H3.tr(H3.td('Pre-Curry:'), H3.td(this.preCurry.properName)));
+		D.toolbar.table.appendChild(H3.tr(H3.td('Pre-Curry:'), H3.td(this.preCurry.properName, this.preCurry.getPlacementIcon())));
 		D.toolbar.table.appendChild(H3.tr(H3.td('Domain Factors:'), H3.td(this.domFactors)));
 		D.toolbar.table.appendChild(H3.tr(H3.td('Codomain Factors:'), H3.td(this.homFactors)));
 	}
@@ -17098,8 +17356,6 @@ class LambdaMorphism extends Morphism
 		}
 		const dom = graph.graphs[0];
 		const cod = graph.graphs[1];
-		const codIsHom = this.codomain instanceof HomObject;
-		const homDom = codIsHom ? cod.graphs[0] : new Graph(this);
 		const homMap = [];
 		let base = [1, 0];
 		const homFactors = this.homFactors;
@@ -17135,23 +17391,27 @@ class LambdaMorphism extends Morphism
 				}
 			});
 		factorMap.push(...homMap);
-		factorMap.push([[1], codIsHom ? codFactor : []]);
-		let obj = this.preCurry.codomain;
-		let preCurryHomCodGraph = preCurryGraph.graphs[1];
-		while (obj instanceof HomObject)
-		{
-			preCurryHomCodGraph = preCurryHomCodGraph.graphs[1];
-			obj = obj.objects[1];
-		}
+		factorMap.push([[1], [1, 1]]);
+		let preCurryCodomainGraph = preCurryGraph.graphs[1];
 		// copy hom codomain links
-		obj = this.codomain;
-		let homCod = cod;
-		while (obj instanceof HomObject)
+		let factorDepth = LambdaMorphism.getFactorDepth(homFactors);
+		const homFactorDepth = homFactors.filter(f => f.length === 1 && f[0] === -2).length;
+		let nuHomDepth = factorDepth + homFactorDepth;
+		while(factorDepth > 0)
 		{
-			homCod = homCod.graphs[1];
-			obj = obj.objects[1];
+			preCurryCodomainGraph = preCurryCodomainGraph.graphs[1];
+			--factorDepth;
 		}
-		homCod.copyGraph({map:factorMap, src:preCurryHomCodGraph});
+		let baseCod = cod;
+		if (homFactorDepth === 0)
+			nuHomDepth += homFactors.length > 0 ? 1 : 0;
+		while(nuHomDepth > 0)
+		{
+			baseCod = baseCod.graphs[1];
+			--nuHomDepth;
+		}
+		baseCod.copyGraph({map:factorMap, src:preCurryCodomainGraph});
+
 		// copy dom factor links
 		if (domFactors.length === 1)
 			dom.copyGraph({map:factorMap, src:preCurryGraph.getFactor(domFactors[0])});
@@ -17202,6 +17462,7 @@ class LambdaMorphism extends Morphism
 			});
 		}
 		graph.tagGraph(this.constructor.name);
+		graph.check();
 		return graph;
 	}
 	isBare()
@@ -17233,6 +17494,35 @@ class LambdaMorphism extends Morphism
 	{
 		return Element.Codename(diagram, {basename:LambdaMorphism.Basename(diagram, args)});
 	}
+	static getFactorDepth(homFactors)
+	{
+		let depth = 0;
+		homFactors.map(f =>
+		{
+			let d = 0;
+			for (let i=0; i<f.length; ++i)
+			{
+				if (f[i] === 1)
+					++d;
+				else
+					break;
+			}
+			depth = Math.max(depth, d);
+		});
+		return depth;
+	}
+	static Base(obj, homFactors)
+	{
+		const depth = LambdaMorphism.getFactorDepth(homFactors);
+		let base = obj;
+		for (let i=0; i<depth; ++i)
+		{
+			if (!(base instanceof HomObject))
+				throw 'not a hom object';
+			base = base.objects[1];
+		}
+		return depth;
+	}
 	static Domain(diagram, preCurry, factors)
 	{
 		const dom = diagram.get('ProductObject', {objects:factors.map(f => f[0] === 0 ? preCurry.domain.getFactor(f.slice(1)) : preCurry.codomain.getFactor(f.slice(1)))});
@@ -17240,11 +17530,16 @@ class LambdaMorphism extends Morphism
 	}
 	static Codomain(diagram, preCurry, factors)
 	{
-		const isCodHom = preCurry.codomain instanceof HomObject;
-		let codomain = isCodHom ? preCurry.codomain.baseHomDom() : preCurry.codomain;
+		let codomain = preCurry.codomain;
 		const fctrs = factors.slice();
 		let objects = [];
 		let isProd = true;
+		let depth = LambdaMorphism.Base(codomain, factors);
+		while(depth > 0)
+		{
+			codomain = codomain.objects[1];
+			--depth;
+		}
 		while(fctrs.length > 0)
 		{
 			const f = fctrs.pop();
@@ -18878,6 +19173,7 @@ class Diagram extends Functor
 	}
 	emphasis(item, on)		// item can be index item or not
 	{
+		D.deEmphasize();
 		let rtrn = null;
 		let elt = 'to' in item ? item.to : this.getElement(item);
 		if (elt)
@@ -19116,7 +19412,7 @@ class Diagram extends Functor
 	}
 	hom(...elements)
 	{
-		this.opcheck(morphisms);
+		this.opcheck(elements);
 		return elements[0] instanceof CatObject ? this.get('HomObject', {objects:elements}) : this.get('HomMorphism', {morphisms:elements});
 	}
 	pull(...morphisms)
