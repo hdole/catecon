@@ -69,6 +69,9 @@ class H3
 	static button(...args)		{ return H3._h('button', args); }
 	static code(...args)		{ return H3._h('code', args); }
 	static div(...args)			{ return H3._h('div', args); }
+	static dd(...args)			{ return H3._h('dd', args); }
+	static dl(...args)			{ return H3._h('dl', args); }
+	static dt(...args)			{ return H3._h('dt', args); }
 	static em(...args)			{ return H3._h('em', args); }
 	static form(...args)		{ return H3._h('form', args); }
 	static h1(...args)			{ return H3._h('h1', args); }
@@ -80,7 +83,9 @@ class H3
 	static img(...args)			{ return H3._h('img', args); }
 	static input(...args)		{ return H3._h('input', args); }
 	static label(...args)		{ return H3._h('label', args); }
+	static li(...args)			{ return H3._h('li', args); }
 	static mark(...args)		{ return H3._h('mark', args); }
+	static ol(...args)			{ return H3._h('ol', args); }
 	static option(...args)		{ return H3._h('option', args); }
 	static p(...args)			{ return H3._h('p', args); }
 	static pre(...args)			{ return H3._h('pre', args); }
@@ -97,6 +102,7 @@ class H3
 	static td(...args)			{ return H3._h('td', args); }
 	static th(...args)			{ return H3._h('th', args); }
 	static tr(...args)			{ return H3._h('tr', args); }
+	static ul(...args)			{ return H3._h('ul', args); }
 	// SVG
 	static animateTransform(...args)	{ return H3._v('animateTransform', args); }
 	static circle(...args)				{ return H3._v('circle', args); }
