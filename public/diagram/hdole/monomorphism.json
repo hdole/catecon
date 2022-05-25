@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": -580
+          "y": -570
         },
         "height": 92,
         "weight": "bold"
@@ -177,8 +177,8 @@
         "basename": "d_0",
         "prototype": "Definition",
         "xy": {
-          "x": -200,
-          "y": -10
+          "x": -70,
+          "y": 0
         },
         "height": 24,
         "defname": "monomorphism",
@@ -268,11 +268,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1651050401764,
+  "timestamp": 1653279395816,
   "version": 0,
   "viewport": {
-    "x": 765,
-    "y": 1368,
-    "scale": 0.36611549159743534
+    "x": 882,
+    "y": 2094,
+    "scale": 3.0978225418809093
   }
 }

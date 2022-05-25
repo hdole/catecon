@@ -277,8 +277,8 @@
         "basename": "d_0",
         "prototype": "Definition",
         "xy": {
-          "x": 650,
-          "y": 1020
+          "x": 790,
+          "y": 1010
         },
         "height": 24,
         "defname": "isomorphism",
@@ -379,11 +379,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652941741446,
+  "timestamp": 1653263194073,
   "version": 0,
   "viewport": {
     "x": -18847,
-    "y": -13343,
+    "y": -13847,
     "scale": 95.7812671296373
   }
 }

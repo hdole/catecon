@@ -23,9 +23,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": 540,
-          "y": 330
+          "y": 340
         },
-        "height": "76",
+        "height": 76,
         "weight": "bold"
       },
       {
@@ -63,7 +63,7 @@
           "x": 550,
           "y": 400
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "In other words, f is a epimorphism if it can always\nbe cancelled on the right:  gf = hf implies g = h.",
@@ -71,9 +71,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": 540,
-          "y": 840
+          "y": 990
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "Compare the dual notion of <diagram name=\"hdole/monomorphism\">monomorphism</diagram>",
@@ -81,9 +81,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": 540,
-          "y": 930
+          "y": 1080
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "Known as &#39;epi&#39; in [CWMp19].",
@@ -91,9 +91,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": 540,
-          "y": 1020
+          "y": 1170
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_3",
@@ -191,6 +191,23 @@
             0
           ]
         ]
+      },
+      {
+        "description": "Definition of epimorphism",
+        "basename": "d_0",
+        "prototype": "Definition",
+        "xy": {
+          "x": 610,
+          "y": 840
+        },
+        "height": 24,
+        "defname": "epimorphism",
+        "sequence": [
+          "f"
+        ],
+        "blobs": [
+          "hdole/epimorphism/o_1"
+        ]
       }
     ],
     "cells": [
@@ -271,11 +288,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1645517378906,
+  "timestamp": 1653279369080,
   "version": 0,
   "viewport": {
     "x": -1797,
     "y": -956,
-    "scale": 3.8132614588779914
+    "scale": 3.8136389931153385
   }
 }

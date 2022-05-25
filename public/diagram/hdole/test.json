@@ -1281,7 +1281,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC"
+        "to": "Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC"
       },
       {
         "basename": "m_4",
@@ -1294,7 +1294,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP"
+        "to": "Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP"
       },
       {
         "basename": "m_10",
@@ -1308,7 +1308,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_12",
         "codomain": "o_35",
-        "to": "hdole/test/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
+        "to": "Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
       },
       {
         "basename": "m_17",
@@ -1387,7 +1387,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_11",
         "codomain": "o_15",
-        "to": "hdole/test/Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP"
+        "to": "Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP"
       },
       {
         "basename": "m_29",
@@ -1407,7 +1407,7 @@
             true
           ]
         ],
-        "to": "hdole/test/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
+        "to": "Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
       },
       {
         "basename": "m_32",
@@ -2070,6 +2070,60 @@
         "domain": "o_118",
         "codomain": "o_121",
         "to": "f"
+      },
+      {
+        "basename": "o_76",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 1310,
+          "y": 780
+        }
+      },
+      {
+        "basename": "o_80",
+        "prototype": "IndexObject",
+        "to": "C",
+        "xy": {
+          "x": 1400,
+          "y": 880
+        }
+      },
+      {
+        "basename": "m_35",
+        "prototype": "IndexMorphism",
+        "domain": "o_76",
+        "codomain": "o_80",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "h"
+      },
+      {
+        "basename": "o_83",
+        "prototype": "IndexObject",
+        "to": "B",
+        "xy": {
+          "x": 1400,
+          "y": 780
+        }
+      },
+      {
+        "basename": "m_36",
+        "prototype": "IndexMorphism",
+        "domain": "o_76",
+        "codomain": "o_83",
+        "to": "f"
+      },
+      {
+        "basename": "m_57",
+        "prototype": "IndexMorphism",
+        "domain": "o_83",
+        "codomain": "o_80",
+        "to": "g"
       }
     ],
     "cells": []
@@ -2901,11 +2955,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652503595743,
+  "timestamp": 1653268839566,
   "version": 0,
   "viewport": {
-    "x": 920,
-    "y": 649,
-    "scale": 0.4747234867291576
+    "x": -4927,
+    "y": -3178,
+    "scale": 4.568479181171428
   }
 }

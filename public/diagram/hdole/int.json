@@ -520,8 +520,8 @@
         "basename": "t_31",
         "prototype": "IndexText",
         "xy": {
-          "x": -1340,
-          "y": -330
+          "x": -1320,
+          "y": -390
         },
         "height": 660,
         "weight": "bold"
@@ -7466,11 +7466,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1653044572678,
+  "timestamp": 1653302154710,
   "version": 0,
   "viewport": {
     "x": 1225,
-    "y": -441,
+    "y": 711,
     "scale": 0.7184798524762981
   }
 }

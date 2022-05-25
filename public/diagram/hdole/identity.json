@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 470,
-          "y": 180
+          "y": 190
         },
         "height": 172,
         "weight": "bold"
@@ -193,8 +193,8 @@
         "basename": "d_0",
         "prototype": "Definition",
         "xy": {
-          "x": 490,
-          "y": 650
+          "x": 620,
+          "y": 620
         },
         "height": 24,
         "defname": "identity",
@@ -274,11 +274,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1649758749551,
+  "timestamp": 1653302226773,
   "version": 0,
   "viewport": {
-    "x": -277,
-    "y": 36,
-    "scale": 1.936439585549016
+    "x": -1267,
+    "y": -58,
+    "scale": 3.252996247888243
   }
 }
