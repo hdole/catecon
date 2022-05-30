@@ -640,6 +640,13 @@ p
 	stroke-width:	25px;
 }
 
+.icon-thin
+{
+	fill:			none;
+	stroke:			var(--color-morphism);
+	stroke-width:	20px;
+}
+
 .arrow3 {fill:none; stroke:#333; stroke-width:20px;}
 .arrow6 {fill:none; stroke:#666; stroke-width:20px;}
 .arrow9 {fill:none; stroke:#999; stroke-width:20px;}
