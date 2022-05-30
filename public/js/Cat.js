@@ -99,10 +99,6 @@ else
 
 class U		// utilities
 {
-	static getUserSecret(s)
-	{
-		return U.sig(`TURKEYINTHESTRAW${s}THEWORLDWONDERS`);
-	}
 	static getError(err)
 	{
 		return typeof err === 'string' ? err : `${err.name}: ${err.message}`;
@@ -495,7 +491,6 @@ Object.defineProperties(U,
 {
 	basenameEx:		{value:RegExp('^[a-zA-Z_$]+[a-zA-Z0-9_$\/]*$'),	writable:false},
 	finiteEx:		{value:RegExp('^#[0-9]+[0-9]*$'),				writable:false},
-	secret:			{value:'0afd575e4ad6d1b5076a20bf53fcc9d2b110d3f0aa7f64a66f4eee36ec8d201f',	writable:false},
 	submap:
 	{
 		value:
@@ -1746,11 +1741,7 @@ class Amazon extends Cloud
 	{
 		const userName = U.HtmlSafe(document.getElementById('signupUserName').value);
 		const email = U.HtmlSafe(document.getElementById('signupUserEmail').value);
-		if (U.secret !== U.getUserSecret(U.HtmlSafe(document.getElementById('SignupSecret').value)))
-		{
-			alert('Your secret is not good enough');
-			return;
-		}
+		const secret = U.HtmlSafe(document.getElementById('SignupSecret').value);
 		const password = document.getElementById('SignupUserPassword').value;
 		const confirmPassword = document.getElementById('SignupUserPasswordConfirm').value;
 		if (password !== confirmPassword)
@@ -1766,6 +1757,7 @@ class Amazon extends Cloud
 		const attributes =
 		[
 			new AmazonCognitoIdentity.CognitoUserAttribute({Name:'email', Value:email}),
+			new AmazonCognitoIdentity.CognitoUserAttribute({Name:'custom:secret', Value:secret}),
 		];
 		this.userPool.signUp(userName, password, attributes, null, (err, result) =>
 		{
@@ -1909,7 +1901,20 @@ class Navbar
 		this.element.onmouseleave = _ => D.mouse.onGUI = null;
 		window.addEventListener('Login', _ => this.update());
 		window.addEventListener('Registration', _ => this.updateByUserStatus());
-		window.addEventListener('CAT', e => e.detail.command === 'default' && D.navbar.update(e));
+		window.addEventListener('CAT', e =>
+		{
+			switch(e.detail.command)
+			{
+				case 'default':
+					this.update(e);
+					this.updateStatusTools();
+					break;
+				case 'new':
+				case 'load':
+					this.updateStatusTools();
+					break;
+			}
+		});
 		window.addEventListener('Diagram', e =>
 		{
 			switch(e.detail.command)
@@ -1941,7 +1946,6 @@ class Navbar
 			else
 				this.element.style.height = `${D.default.icon}px`;
 		});
-		window.addEventListener('View', e => this.update(e));
 		window.addEventListener('Application', e => this.update(e));
 	}
 	updateByUserStatus()
@@ -2044,7 +2048,6 @@ class Navbar
 			D.removeChildren(this.categoryElt);
 		}
 		this.updateByUserStatus();
-		this.updateStatusTools();
 	}
 }
 
@@ -4016,7 +4019,6 @@ class Display
 			// the svg text element being editted
 			editElement:	{value: null,		writable: true},
 			elementTool:	{value: null,		writable: true},
-			emphasized:		{value: new Set(),	writable: false},
 			factoryDefaults:{value: null,		writable: true},
 			gradients:		{value: {radgrad1:null, radgrad2:null},	writable: false},
 			graphColors:	{value: [],			writable: false},
@@ -4377,6 +4379,11 @@ class Display
 					},
 		//			ControlKeyJ(e)		BROWSER RESERVED: open download history
 					KeyK(e)		// compose
+					{
+						if (R.Actions.composite.hasForm(R.diagram, R.diagram.selected))
+							R.Actions.composite.action(e, R.diagram, R.diagram.selected);
+					},
+					ShiftKeyK(e)		// compose at mouse
 					{
 						if (R.Actions.composite.hasForm(R.diagram, R.diagram.selected))
 							R.Actions.composite.action(e, R.diagram, R.diagram.selected);
@@ -4930,6 +4937,7 @@ class Display
 	}
 	autohide()
 	{
+		this.showBorderAlerts();
 		window.dispatchEvent(new CustomEvent('Autohide', {detail:	{command:'show'}}));
 		this.cancelAutohide();
 		this.setCursor();
@@ -5598,7 +5606,7 @@ class Display
 						this.autosave(diagram);
 						break;
 				}
-			this.autohide(e);
+			this.autohide();
 		});
 		window.addEventListener('CAT', e =>
 		{
@@ -5667,9 +5675,9 @@ class Display
 			}
 		});
 		window.onresize = _ => this.resize();
-		window.addEventListener('mousemove', e => this.autohide(e));
-		window.addEventListener('mousedown', e => this.autohide(e));
-		window.addEventListener('keydown', e => this.autohide(e));
+		window.addEventListener('mousemove', e => this.autohide());
+		window.addEventListener('mousedown', e => this.autohide());
+		window.addEventListener('keydown', e => this.autohide());
 		window.addEventListener('Morphism', e => this.updateMorphismDisplay(e));
 		window.addEventListener('Text', e => this.updateTextDisplay(e));
 		window.addEventListener('mousemove', e => this.mousemove(e));
@@ -5757,7 +5765,8 @@ class Display
 						diagram.autoplace();
 					this.diagramSVG.classList.remove('hidden');
 					diagram.show();
-					this.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
+					if (this.diagramSVG.lastChild !== diagram.svgRoot)
+						this.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
 					if (action === 'home')
 						diagram.home();
 					else if (action === 'defaultView')
@@ -6937,10 +6946,6 @@ class Display
 			}
 		}
 	}
-	deEmphasize()
-	{
-		this.emphasized.forEach(elt => elt.svg && elt.emphasis(false));
-	}
 	toggleShowCommutivity(e)
 	{
 		D.default.showCommutivity = !D.default.showCommutivity;
@@ -7703,6 +7708,7 @@ class LoginPanel extends Panel
 															H3.tr(H3.td(H3.input('##signupUserEmail', {type:'text', placeholder:'Email'}))),
 													LoginPanel.PasswordForm(Cat.R.cloud.signup),
 													H3.tr(H3.td(H3.button('Sign up', {onclick:_ => Cat.R.cloud.signup()})))), '##signupPnl.section'));
+				this.loginInfoElt.appendChild(form);
 				break;
 			case 'registered':
 				this.loginInfoElt.appendChild(getConfirmationInput(H3.tr(H3.td(H3.button('Submit Confirmation Code', {onclick:e => Cat.R.cloud.confirm(e)})))));
@@ -7725,12 +7731,13 @@ class LoginPanel extends Panel
 	}
 	static PasswordForm(onkeydown)
 	{
-		return H3.tr(H3.td('Categorical Access Key')),
+		return [H3.tr(H3.td('Categorical Access Key')),
 				H3.tr(H3.td(H3.input(`##SignupSecret`, {type:'text', placeholder:'????????', autocomplete:"none"}))),
 				H3.tr(H3.td('Password')),
+				H3.tr(H3.td(H3.span('.little', 'Length >= 8, Uppercase, lowercase, numeric and special characters'))),
 				H3.tr(H3.td(H3.input(`##SignupUserPassword`, {type:'password', placeholder:'Password', autocomplete:"new-password"}))),
 				H3.tr(H3.td('Confirm password')),
-				H3.tr(H3.td(H3.input(`##SignupUserPasswordConfirm`, {type:'password', placeholder:'Confirm', autocomplete:"confirm-password", onkeydown:e => Cat.D.onEnter(e, onkeydown, Cat.R.cloud)})));
+				H3.tr(H3.td(H3.input(`##SignupUserPasswordConfirm`, {type:'password', placeholder:'Confirm', autocomplete:"confirm-password", onkeydown:e => Cat.D.onEnter(e, onkeydown, Cat.R.cloud)})))];
 	}
 }
 
@@ -7746,12 +7753,11 @@ class SettingsPanel extends Panel
 		const showEventsChkbox = H3.input({type:"checkbox", onchange:e => {Cat.R.default.showEvents = !Cat.R.default.showEvents; D.saveDefaults();}});
 		if (R.default.showEvents)
 			showEventsChkbox.checked = true;
-		const settings = [H3.tr(H3.td(H3.input({type:"checkbox", onchange:e => D.setDarkmode(e.target.checked), id:'check-darkmode'})), H3.td('Dark mode', '.left'))];
 		const elts =
 		[
 			H3.table(H3.tr(H3.td(this.closeBtnCell())), '.buttonBarRight.stdBackground'),
 			H3.button('Settings', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-actions')}),
-			H3.div(H3.table('##settings-table', settings), '##settings-actions.section'),
+			H3.div(H3.table('##settings-table'), '##settings-actions.section'),
 			H3.button('Equator', '##catActionPnlBtn.sidenavAccordion', {title:'Help for mouse and key actions', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'settings-equator')}),
 			H3.div('##settings-equator.section')
 		];
@@ -7772,12 +7778,16 @@ class SettingsPanel extends Panel
 			else if (msg.data.command === 'LoadDiagrams')
 				R.workers.equator.postMessage({command:'Info'});
 		});
+		this.update();
 		window.addEventListener('Login', _ => this.update());
 	}
 	update()
 	{
-		document.getElementById('check-darkmode').checked = D.default.darkmode;
 		const tbl = this.elt.querySelector('#settings-table');
+		D.removeChildren(tbl);
+		const input = H3.input({type:"checkbox", onchange:e => D.setDarkmode(e.target.checked), id:'check-darkmode'});
+		input.checked = D.default.darkmode;
+		tbl.appendChild(H3.tr(H3.td(input), H3.td('Dark mode', '.left')));
 		tbl.appendChild(H3.tr(H3.td(H3.button('Reset Defaults', '.textButton', {onclick:_ =>
 		{
 			Cat.D.resetDefaults();
@@ -8027,10 +8037,7 @@ class Element
 		}
 		return -1;
 	}
-	emphasis(on)	// or override as needed
-	{
-		on ? D.emphasized.add(this) : D.emphasized.delete(this);
-	}
+	emphasis(on) {}		// or override as needed
 	find(elt, index = [])			{ return elt === this ? index : []; }
 	basic()							{ return 'base' in this ? this.base : this; }
 	getBase()						{ return this; }
@@ -8413,11 +8420,7 @@ class Graph
 			while(colorIndex in diagram.colorIndex2colorIndex)	// look for new color
 				colorIndex = diagram.colorIndex2colorIndex[colorIndex];
 			let path = null;
-			const onmouseover = e =>
-			{
-				Cat.D.statusbar.show(e, this.tags.sort().join(', '));
-				D.deEmphasize();
-			};
+			const onmouseover = e => Cat.D.statusbar.show(e, this.tags.sort().join(', '));
 			for (let i=0; i<this.links.length; ++i)
 			{
 				const lnk = this.links[i];
@@ -9225,7 +9228,10 @@ class PullbackObject extends ProductObject
 	{
 		const nuArgs = U.clone(args);
 		nuArgs.dual = U.getArg(args, 'dual', false);
-		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects, args.category);
+		if ('objects' in nuArgs)
+			nuArgs.objects = MultiObject.GetObjects(diagram, args.objects, args.category);
+		else
+			nuArgs.objects = MultiObject.GetObjects(diagram, args.morphisms.map(m => m.domain), args.category);
 		nuArgs.basename = PullbackObject.Basename(diagram, {morphisms:nuArgs.morphisms});
 		nuArgs.name = PullbackObject.Codename(diagram, {morphisms:nuArgs.morphisms});
 		super(diagram, nuArgs);
@@ -9337,7 +9343,8 @@ class HomObject extends MultiObject
 		nuArgs.objects = MultiObject.GetObjects(diagram, args.objects);
 		nuArgs.basename = HomObject.Basename(diagram, {objects:nuArgs.objects});
 		nuArgs.properName = HomObject.ProperName(nuArgs.objects);
-		nuArgs.description = `The homset from ${nuArgs.objects[0].properName} to ${nuArgs.objects[1].properName}`;
+		nuArgs.description = '';
+		nuArgs.description = '';
 		super(diagram, nuArgs);
 		if (this.constructor.name === 'HomObject')
 		{
@@ -10788,18 +10795,22 @@ class CompositeAction extends Action
 	action(e, diagram, morphisms)
 	{
 		const names = morphisms.map(m => m.name);
-		const from = this.doit(e, diagram, morphisms);
+		const from = this.doit(e, diagram, morphisms, e.shiftKey);
 		diagram.log({command:'composite', morphisms:names});
 		diagram.antilog({command:'delete', elements:[from.name]});
 		diagram.makeSelected(from);
 	}
-	doit(e, diagram, indexMorphisms)
+	doit(e, diagram, indexMorphisms, atMouse)
 	{
 		const objects = {};
 		const compMorphisms = CompositeAction.getLeg(indexMorphisms, objects);
 		const morphisms = compMorphisms.map(m => m.to);
 		const to = diagram.get('Composite', {morphisms});
-		const from = new IndexMorphism(diagram, {to, domain:objects.domain, codomain:objects.codomain});
+		let from = null;
+		if (atMouse)
+			from = diagram.placeMorphism(to, D.mouse.diagramPosition(diagram));
+		else
+			from = new IndexMorphism(diagram, {to, domain:objects.domain, codomain:objects.codomain});
 		from.mayFlipName();
 		return from;
 	}
@@ -11669,6 +11680,7 @@ class DeleteAction extends Action
 			hasMorphism = hasMorphism || Arrow.isArrow(elt);
 			if (elt.refcnt === 1)
 			{
+				elt.emphasis(false);
 				elt.decrRefcnt();
 				elt instanceof Morphism && diagram.domain.removeMorphism(elt);
 			}
@@ -11688,7 +11700,7 @@ class DeleteAction extends Action
 			diagram.makeSelected(...objects);
 			D.emitCellEvent(diagram, 'check');
 		}
-		D.deEmphasize();
+		diagram.svgBase.querySelectorAll('.emphasis2').forEach(elt => elt.classList.remove('emphasis2'));
 		return notDeleted;
 	}
 	replay(e, diagram, args)
@@ -12032,11 +12044,30 @@ class LambdaMorphismAction extends Action
 		super(diagram, args);
 		D && D.replayCommands.set(this.basename, this);
 	}
+	checkFactorsIdentical(diagram, dom, domFactors, cod, homFactors)
+	{
+		if (dom instanceof ProductObject && !dom.dual)
+		{
+			for (let i=0; i<dom.objects.length; ++i)
+			{
+				const fctr = domFactors[i];
+				if (fctr.length !== 2 || fctr[0] !== 0 || fctr[1] !== i)
+					return false;
+			}
+		}
+		else if (domFactors.length !== 1 && domFactors[0] !== 0)
+			return false;
+		return true;
+	}
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
 		const domFactors = D.getFactorsById('lambda-domain');
 		const homFactors = D.getFactorsById('lambda-codomain');
+		if (this.checkFactorsIdentical(diagram, from.to.domain, domFactors, from.to.codomain))
+		{
+			debugger;
+		}
 		try
 		{
 			const elt = this.doit(e, diagram, from, domFactors, homFactors);
@@ -12060,10 +12091,10 @@ class LambdaMorphismAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (diagram.isEditable() && ary.length === 1 && ary[0] instanceof IndexMorphism)
+		if (diagram.isEditable() && ary.length === 1 && (ary[0] instanceof IndexMorphism || ary[0] instanceof IndexObject))
 		{
 			const m = ary[0].to;
-			if (m.domain.isTerminal() && !(m.codomain instanceof HomObject))
+			if (m instanceof Morphism && m.domain.isTerminal() && !(m.codomain instanceof HomObject))
 				return false;
 			return true;
 		}
@@ -12072,8 +12103,11 @@ class LambdaMorphismAction extends Action
 	html(e, diagram, ary)
 	{
 		super.html();
-		const domain = ary[0].domain.to;
-		const codomain = ary[0].codomain.to;
+		let preCurry = ary[0].to;
+		if (preCurry instanceof CatObject)
+			preCurry = diagram.id(preCurry);
+		const domain = preCurry.domain;
+		const codomain = preCurry.codomain;
 		let obj = codomain;
 		let homCod = [];
 		let id = 0;
@@ -12083,7 +12117,8 @@ class LambdaMorphismAction extends Action
 			homCod.push(...this.getButtons(obj, {dir:1, fromId:'lambda-codomain', toId:'lambda-domain'}));
 		}
 		homCod.length > 0 && homCod.pop();		// remove trailing '[' button
-		const html = [];
+		const html = [	H3.h4('Curry Morphism'),
+						H3.h5(preCurry.getHtmlRep())];
 		if (!domain.isTerminal())
 		{
 			html.push(	H3.h4('Create Element Morphism'),
@@ -12091,8 +12126,7 @@ class LambdaMorphismAction extends Action
 							{id:'lambda-element-morphism', onclick: e => Cat.R.Actions.lambda.createElementMorphism(e, Cat.R.diagram, Cat.R.diagram.getSelected())}),
 						H3.hr());
 		}
-		html.push(	H3.h4('Curry Morphism'),
-					H3.h5('Domain'),
+		html.push(	H3.h5('Domain'),
 					H3.small('Click to move to codomain:'),
 					H3.span(this.getButtons(domain, {dir:0, fromId:'lambda-domain', toId:'lambda-codomain'}), {id:'lambda-domain'}),
 					H3.h5('Codomain'),
@@ -12104,17 +12138,32 @@ class LambdaMorphismAction extends Action
 		this.domainElt = document.getElementById('lambda-domain');
 		this.codomainElt = document.getElementById('lambda-codomain');
 	}
+	getFactors(object, data)
+	{
+		let factors = [];
+		const codSide = data.dir === 1 && 'objects' in object;
+		const index = data.dir === 0 ? [0] : [1, 0];
+		if ('objects' in object && object instanceof ProductObject && !object.dual)
+			object.objects.map((o, i) =>
+			{
+				const fctr = index.slice();
+				fctr.push(i);
+				factors.push(fctr);
+			});
+		else if (!object.isTerminal())
+			factors.push(index);
+		return factors;
+	}
 	getButtons(object, data)
 	{
 		let html = [];
-		const homBtn = H3.button('&times;', {title:'Convert to hom', 'data-indices':"-1", onclick:e => Cat.R.Actions.lambda.toggleOp(e.currentTarget)});
 		const codSide = data.dir === 1 && 'objects' in object;
 		const index = data.dir === 0 ? '0' : '1, 0';
 		if ('objects' in object && object instanceof ProductObject && !object.dual)
 			object.objects.map((o, i) =>
 			{
 				html.push(H3.button(o.properName, H3.sub(i.toString()), {id:D.elementId(), 'data-indices':`${index}, ${i}`, onclick:e => Cat.R.Actions.lambda.moveFactor(e.currentTarget)}));
-				codSide && i < object.objects.length - 1 && html.push(homBtn);
+				codSide && i < object.objects.length - 1 && html.push(H3.button('&times;', {title:'Convert to hom', 'data-indices':"-1", onclick:e => Cat.R.Actions.lambda.toggleOp(e.currentTarget)}));
 			});
 		else if (!object.isTerminal())
 			html.push(H3.button(object.properName, {id:D.elementId(), 'data-indices':`${index}`, onclick:e => Cat.R.Actions.lambda.moveFactor(e.currentTarget)}));
@@ -13012,7 +13061,7 @@ class DefinitionAction extends Action
 		].map(elt => body.appendChild(elt));
 		const focus = body.querySelector('.ifocus');
 		focus && focus.focus();
-		const blobs = this.getBlobs(diagram, ary);
+		const blobs = this.getBlobs(diagram, ary.filter(elt => elt instanceof CatObject || elt instanceof Morphism));
 		Definition.show(diagram, this.getSequence(blobs), blobs);
 	}
 	isValid(quantifier)
@@ -13216,7 +13265,7 @@ class ElementOfAction extends Action
 	action(e, diagram, ary)
 	{
 		const from = ary[0];
-		diagram.newElement(e, 'object', elt => this.doit(e, diagram, from, elt));
+		diagram.newElement(e, 'object', from.to, elt => this.doit(e, diagram, from, elt));
 	}
 	doit(e, diagram, from, element)
 	{
@@ -13569,7 +13618,7 @@ class Category extends CatObject
 		if (!U.isValidBasename(basename))
 			throw 'bad basename';
 		const o = diagram.getElement(basename);
-		return o ? o : new CatObject(diagram, {basename});
+		return o ? o : new CatObject(diagram, {category:this, basename});
 	}
 	newMorphism(e, diagram, basename, dom = null, cod = null)
 	{
@@ -14955,7 +15004,6 @@ const Arrow =
 	},
 	emphasis(on)
 	{
-		on ? D.emphasized.add(this) : D.emphasized.delete(this);
 		this.svg_path.classList.remove('emphasis2');
 		if (this.svg_name)
 		{
@@ -15033,7 +15081,7 @@ class IndexMorphism extends Morphism
 		let domainElt = null;
 		let codomainElt = null;
 		const diagram = R.diagram;
-		if (this.isEditable() && this.refcnt <= 1 && this.to.refcnt <= 1)
+		if (this.isEditable() && this.refcnt <= 1 && this.to.refcnt <= 1 && this.to.constructor.name === 'Morphism')
 		{
 			const objects = this.diagram.getObjects();
 			if (this.domain.refcnt === 2)
@@ -15591,7 +15639,7 @@ class Cell
 								D.getIcon('notEqual', 'notEqual', e => this.action(e, 'notEqual'), {title:'Set to not equal'}));
 		}
 		buttons.push(D.getIcon('viewCell', 'view', e => R.Actions.zoom.action(e, R.diagram, [this]), {title:'View cell'}));
-		/*R.debug(1) &&*/ buttons.push(D.getIcon('edit', 'edit', e => this.check(), {title:'Check cell'}));
+		R.debug(1) && buttons.push(D.getIcon('edit', 'edit', e => this.check(), {title:'Check cell'}));
 		return buttons;
 	}
 	isEqual()
@@ -15946,7 +15994,6 @@ class Cell
 	}
 	emphasis(on)
 	{
-		on ? D.emphasized.add(this) : D.emphasized.delete(this);
 		!this.svg && this.makeSVG(this.diagram.svgBase);
 		D.setClass('emphasis', on, this.svg);
 		this.left.map(m => m.emphasis(on));
@@ -16642,7 +16689,6 @@ class Composite extends MultiMorphism
 		{
 			graph.graphs[i].mergeGraphs({from:g.graphs[0], base:[0], inbound:[i], outbound:[i+1]});
 			graph.graphs[i+1].mergeGraphs({from:g.graphs[1], base:[1], inbound:[i+1], outbound:[i]});
-graph.check();
 		});
 		this.morphisms.map((m, i) =>
 		{
@@ -17411,7 +17457,6 @@ class LambdaMorphism extends Morphism
 			--nuHomDepth;
 		}
 		baseCod.copyGraph({map:factorMap, src:preCurryCodomainGraph});
-
 		// copy dom factor links
 		if (domFactors.length === 1)
 			dom.copyGraph({map:factorMap, src:preCurryGraph.getFactor(domFactors[0])});
@@ -17566,6 +17611,12 @@ class LambdaMorphism extends Morphism
 			if (Array.isArray(f) && f.length === 2 && f[0] === 0 && f[1] === 0)
 				return `&lsquo;${preCurry.properName}&rsquo;`;
 		}
+		else if (Morphism.isIdentity(preCurry) && preCurry.domain instanceof ProductObject & !preCurry.domain.dual)
+		{
+			if (domFactors.length > 0 && domFactors.reduce((r, f) => r && f.length === 2 && f[0] === 0 && f[1] !== -1, true) &&
+				homFactors.length > 0 && homFactors.reduce((r, f) => r && f.length === 2 && f[0] === 0 && f[1] !== -1, true))
+				return 'd';
+		}
 		const df = domFactors.map(f =>
 		{
 			if (Array.isArray(f))
@@ -17605,7 +17656,7 @@ class HomMorphism extends MultiMorphism
 		nuArgs.codomain = HomMorphism.Codomain(diagram, morphisms);
 		nuArgs.morphisms = morphisms;
 		nuArgs.properName = HomMorphism.ProperName(morphisms);
-		nuArgs.description = `The hom morphism formed from ${nuArgs.morphisms[0].properName} and ${nuArgs.morphisms[1].properName}`;
+		nuArgs.description = '';
 		super(diagram, nuArgs);
 		if (this.constructor.name === 'HomMorphism')
 		{
@@ -19173,7 +19224,11 @@ class Diagram extends Functor
 	}
 	emphasis(item, on)		// item can be index item or not
 	{
-		D.deEmphasize();
+		if (!on)
+		{
+			this.svgBase.querySelectorAll('.emphasis, .emphasis2').forEach(elt => elt.classList.remove('emphasis', 'emphasis2'));
+			return;
+		}
 		let rtrn = null;
 		let elt = 'to' in item ? item.to : this.getElement(item);
 		if (elt)
@@ -19228,7 +19283,7 @@ class Diagram extends Functor
 		return flat;
 	}
 	// is an object covered by the listed factors
-	isCovered(obj, factors, issues)
+	isCovered(obj, factors, issues = {})
 	{
 		if (!obj.isTerminal() && factors.length === 1 && factors[0] === -1)		// terminals only cover terminals
 			return false;
@@ -19783,7 +19838,7 @@ class Diagram extends Functor
 		text.textEditor();
 		this.sync = oldSync;
 	}
-	newElement(e, type, fn = null)
+	newElement(e, type, cat = null, fn = null)
 	{
 		const shiftKey = e.shiftKey;
 		const xy = this.userToDiagramCoords({x:e.clientX, y:e.clientY});
@@ -19943,7 +19998,8 @@ class Diagram extends Functor
 								}
 								else
 								{
-									const elt = type === 'object' ? R.category.newObject(this, tok) : R.diagram.getElement(tok);
+									const category = cat ? cat : R.category;
+									const elt = type === 'object' ? cat.newObject(this, tok) : R.diagram.getElement(tok);
 									if (ndx > -1 && elements.length > 0)		// admit prior elements with operator
 									{
 										type === 'object' ? placeObjects() : placeMorphisms();;
