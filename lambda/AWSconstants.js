@@ -1,4 +1,4 @@
-// (C) 2018 Harry Dole
+// (C) 2018-2022 Harry Doe
 // Catecon:  The Categorical Console
 //
 if(typeof exports === "undefined")
@@ -28,6 +28,11 @@ AWSConstants.prototype =
 		exports.RECENT_DIAGRAM_TABLE =	'Catecon-recent';
 		exports.REGION =				'us-west-1';
 		exports.USERCOUNT =				10;
+		exports.MYSQL_HOST =			'database-1.clttpr0ykowa.us-west-2.rds.amazonaws.com';
+		exports.MYSQL_PORT =			3306;
+		exports.MYSQL_USER =			'catecon';
+		exports.MYSQL_PASSWORD =		'ILoveCategoryTheory';
+		exports.MYSQL_DATABASE =		'Catecon';
 	}
 };
 
