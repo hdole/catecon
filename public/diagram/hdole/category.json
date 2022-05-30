@@ -22,7 +22,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 50
         }
       },
@@ -31,7 +31,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 50
         }
       },
@@ -40,7 +40,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 150
         }
       },
@@ -49,7 +49,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 150
         }
       },
@@ -58,7 +58,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 250
         }
       },
@@ -67,7 +67,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 350
         }
       },
@@ -76,7 +76,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 350
         }
       },
@@ -85,7 +85,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 500
         }
       },
@@ -94,7 +94,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 600
         }
       },
@@ -103,7 +103,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 600
         }
       },
@@ -112,7 +112,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 750
         }
       },
@@ -122,37 +122,17 @@
         "prototype": "IndexText",
         "xy": {
           "x": -210,
-          "y": -520
+          "y": -510
         },
         "height": 374,
         "weight": "bold"
-      },
-      {
-        "description": "The construct C is an internal category in D if given\ntwo objects C0 and C1 in D, respectively the objects\nand morphisms of C, if the following diagrams commute.",
-        "basename": "t_1",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -150,
-          "y": -150
-        },
-        "height": 24
-      },
-      {
-        "description": "Map objects to their identity morphism",
-        "basename": "t_3",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -150,
-          "y": 50
-        },
-        "height": 24
       },
       {
         "basename": "o_0",
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": -50
         }
       },
@@ -161,7 +141,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": -150
         }
       },
@@ -170,7 +150,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 850
         }
       },
@@ -179,7 +159,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 1000
         }
       },
@@ -188,7 +168,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 1000
         }
       },
@@ -197,7 +177,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 850
         }
       },
@@ -206,7 +186,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 1250
         }
       },
@@ -215,7 +195,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 1250
         }
       },
@@ -224,7 +204,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 1450
         }
       },
@@ -233,7 +213,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 1450
         }
       },
@@ -242,7 +222,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 1550
         }
       },
@@ -251,7 +231,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 1550
         }
       },
@@ -260,7 +240,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 1750
         }
       },
@@ -269,7 +249,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 1750
         }
       },
@@ -278,8 +258,8 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 550,
-          "y": 1100
+          "x": 750,
+          "y": 1120
         }
       },
       {
@@ -287,8 +267,8 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 750,
-          "y": 1100
+          "x": 950,
+          "y": 1120
         }
       },
       {
@@ -296,7 +276,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 2100
         }
       },
@@ -305,7 +285,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 750,
+          "x": 950,
           "y": 2300
         }
       },
@@ -314,7 +294,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 2300
         }
       },
@@ -323,7 +303,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 2100
         }
       },
@@ -332,7 +312,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 1050,
+          "x": 1250,
           "y": 1850
         }
       },
@@ -341,7 +321,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 850,
+          "x": 1050,
           "y": 2050
         }
       },
@@ -350,7 +330,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 1050,
+          "x": 1250,
           "y": 2050
         }
       },
@@ -359,7 +339,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 450,
+          "x": 650,
           "y": 2350
         }
       },
@@ -368,7 +348,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 250,
+          "x": 450,
           "y": 2550
         }
       },
@@ -377,17 +357,17 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 450,
+          "x": 650,
           "y": 2550
         }
       },
       {
-        "description": "Internal Definition",
+        "description": "Internal",
         "basename": "t_4",
         "prototype": "IndexText",
         "xy": {
-          "x": -150,
-          "y": -400
+          "x": 750,
+          "y": -350
         },
         "height": 48,
         "weight": "bold"
@@ -397,7 +377,7 @@
         "prototype": "IndexObject",
         "to": "Pb{Id{C0}dI,dom}bP",
         "xy": {
-          "x": 250,
+          "x": 450,
           "y": 2700
         }
       },
@@ -406,7 +386,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 650,
+          "x": 850,
           "y": 2700
         }
       },
@@ -415,7 +395,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,Id{C0}dI}bP",
         "xy": {
-          "x": 1050,
+          "x": 1250,
           "y": 2700
         }
       },
@@ -424,22 +404,22 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 650,
+          "x": 850,
           "y": 2900
         }
       },
       {
-        "description": "Form the pullbacks of objects and morphisms\nand lift to the pullback assembly of composable\npairs of identities and morphisms.",
+        "description": "Form all the composable pairs of an object’s identity as\nthe first morphism in a composable pair, and another\nsuch collection with said identity as the second\nmorphism of a composable pair.",
         "basename": "t_6",
         "prototype": "IndexText",
         "xy": {
-          "x": -460,
-          "y": 1940
+          "x": -150,
+          "y": 1850
         },
         "height": 24
       },
       {
-        "description": "Form the pullback of composable morphisms\nwhere the first's codomain equals the second's\ndomain.",
+        "description": "A composable pair of morphisms are two morphisms\nof which the first morphism’s codomain is the second\none’s domain.",
         "basename": "t_7",
         "prototype": "IndexText",
         "xy": {
@@ -449,7 +429,7 @@
         "height": 24
       },
       {
-        "description": "The composite of two morphisms can now be\nexpressed with the pullback object above as\nthe domain of the composition morphism.",
+        "description": "Define composition of two composable morphisms\nas an operation that produces a single morphism.",
         "basename": "t_8",
         "prototype": "IndexText",
         "xy": {
@@ -459,7 +439,7 @@
         "height": 24
       },
       {
-        "description": "The domain of the composite is the domain\nof the first morphism:  dom(A&rarr;B&rarr;C) = A",
+        "description": "The domain of the composite is the domain of the\nfirst morphism in the composable pair.",
         "basename": "t_9",
         "prototype": "IndexText",
         "xy": {
@@ -469,7 +449,7 @@
         "height": 24
       },
       {
-        "description": "The codomain of the composite is the codomain\nof the latter morphism:  cod(A&rarr;B&rarr;C) = C",
+        "description": "The codomain of the composite is the codomain of the\nsecond morphism in the composable pair.",
         "basename": "t_10",
         "prototype": "IndexText",
         "xy": {
@@ -479,17 +459,7 @@
         "height": 24
       },
       {
-        "description": "The codomain of the identity morphism of an object is\nthat object itself.",
-        "basename": "t_11",
-        "prototype": "IndexText",
-        "xy": {
-          "x": -150,
-          "y": 600
-        },
-        "height": 24
-      },
-      {
-        "description": "The domain of the identity morphism of an object is\nthat object itself.",
+        "description": "For every object in C₀, the domain and codomain\nof its corresponding identity morphism is that object\nitself.",
         "basename": "t_12",
         "prototype": "IndexText",
         "xy": {
@@ -499,11 +469,11 @@
         "height": 24
       },
       {
-        "description": "We have the morphisms needed to state\nthe associative law for composition of\nmorphisms: (A→B→C)→D = A→(B→C→D)",
+        "description": "Composition in a category is associative if the composites\nof f, then g, h is the same as the composite of f, g, then h.",
         "basename": "t_17",
         "prototype": "IndexText",
         "xy": {
-          "x": -200,
+          "x": -150,
           "y": 5300
         },
         "height": 24
@@ -513,7 +483,7 @@
         "prototype": "IndexObject",
         "to": "D",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": -250
         }
       },
@@ -522,7 +492,7 @@
         "prototype": "IndexObject",
         "to": "em/Cat",
         "xy": {
-          "x": 740,
+          "x": 950,
           "y": -250
         }
       },
@@ -531,7 +501,7 @@
         "prototype": "IndexObject",
         "to": "D",
         "xy": {
-          "x": 740,
+          "x": 950,
           "y": -150
         }
       },
@@ -540,12 +510,12 @@
         "prototype": "IndexObject",
         "to": "D",
         "xy": {
-          "x": 740,
+          "x": 950,
           "y": -50
         }
       },
       {
-        "description": "Let D be a category.",
+        "description": "Let D be something which has collections.",
         "basename": "t_5",
         "prototype": "IndexText",
         "xy": {
@@ -555,7 +525,7 @@
         "height": 24
       },
       {
-        "description": "Morphisms have a domain and a codomain.",
+        "description": "For every morphism of C₁, it has domain and codomain\nobjects in C₀.",
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
@@ -569,7 +539,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 250
         }
       },
@@ -578,8 +548,8 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 510,
-          "y": 3340
+          "x": 750,
+          "y": 3350
         }
       },
       {
@@ -587,8 +557,8 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 810,
-          "y": 3340
+          "x": 1050,
+          "y": 3350
         }
       },
       {
@@ -596,8 +566,8 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 810,
-          "y": 3190
+          "x": 1050,
+          "y": 3200
         }
       },
       {
@@ -605,8 +575,8 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 810,
-          "y": 3040
+          "x": 1050,
+          "y": 3050
         }
       },
       {
@@ -614,8 +584,8 @@
         "prototype": "IndexObject",
         "to": "Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP",
         "xy": {
-          "x": 510,
-          "y": 3040
+          "x": 750,
+          "y": 3050
         }
       },
       {
@@ -623,8 +593,8 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 650,
-          "y": 3620
+          "x": 1100,
+          "y": 3650
         }
       },
       {
@@ -632,8 +602,8 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 650,
-          "y": 3770
+          "x": 1100,
+          "y": 3800
         }
       },
       {
@@ -641,8 +611,8 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 810,
-          "y": 3770
+          "x": 1250,
+          "y": 3800
         }
       },
       {
@@ -650,8 +620,8 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 810,
-          "y": 3620
+          "x": 1250,
+          "y": 3650
         }
       },
       {
@@ -659,8 +629,8 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 810,
-          "y": 3470
+          "x": 1250,
+          "y": 3500
         }
       },
       {
@@ -668,8 +638,8 @@
         "prototype": "IndexObject",
         "to": "Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP",
         "xy": {
-          "x": 410,
-          "y": 3470
+          "x": 850,
+          "y": 3500
         }
       },
       {
@@ -677,7 +647,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 800,
+          "x": 1050,
           "y": 4250
         }
       },
@@ -686,7 +656,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 1000,
+          "x": 1250,
           "y": 4250
         }
       },
@@ -695,8 +665,8 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 1000,
-          "y": 4080
+          "x": 1250,
+          "y": 4100
         }
       },
       {
@@ -704,7 +674,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 1000,
+          "x": 1250,
           "y": 3900
         }
       },
@@ -713,7 +683,7 @@
         "prototype": "IndexObject",
         "to": "Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP",
         "xy": {
-          "x": 220,
+          "x": 500,
           "y": 3900
         }
       },
@@ -722,7 +692,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 550,
+          "x": 800,
           "y": 4250
         }
       },
@@ -731,8 +701,8 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 550,
-          "y": 5690
+          "x": 750,
+          "y": 5700
         }
       },
       {
@@ -740,8 +710,8 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 1000,
-          "y": 5690
+          "x": 1200,
+          "y": 5700
         }
       },
       {
@@ -749,7 +719,7 @@
         "prototype": "IndexObject",
         "to": "Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP",
         "xy": {
-          "x": 340,
+          "x": 700,
           "y": 4400
         }
       },
@@ -758,7 +728,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 840,
+          "x": 1200,
           "y": 4400
         }
       },
@@ -767,8 +737,8 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 840,
-          "y": 4530
+          "x": 1200,
+          "y": 4550
         }
       },
       {
@@ -776,8 +746,8 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 660,
-          "y": 4680
+          "x": 1050,
+          "y": 4700
         }
       },
       {
@@ -785,8 +755,8 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 660,
-          "y": 4530
+          "x": 1050,
+          "y": 4550
         }
       },
       {
@@ -794,8 +764,8 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 840,
-          "y": 4680
+          "x": 1200,
+          "y": 4700
         }
       },
       {
@@ -803,7 +773,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 400,
+          "x": 650,
           "y": 5150
         }
       },
@@ -812,7 +782,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 800,
+          "x": 1050,
           "y": 5150
         }
       },
@@ -821,7 +791,7 @@
         "prototype": "IndexObject",
         "to": "C1",
         "xy": {
-          "x": 1000,
+          "x": 1250,
           "y": 5000
         }
       },
@@ -830,7 +800,7 @@
         "prototype": "IndexObject",
         "to": "C0",
         "xy": {
-          "x": 1000,
+          "x": 1250,
           "y": 5150
         }
       },
@@ -839,17 +809,17 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 800,
+          "x": 1050,
           "y": 5000
         }
       },
       {
-        "description": "Now require that the composite of the\nidentity 1:A→A with any f:A→B is f, and\nthe composite of any g:C→A with\n1:A→A is g.",
+        "description": "For any object A and the identity 1 on A,\nand for any morphism f:A→B, then\nf ∘ 1 = f.  Similarly for the identity 1 on B\nthat 1 ∘ f = f.",
         "basename": "t_16",
         "prototype": "IndexText",
         "xy": {
-          "x": -350,
-          "y": 2710
+          "x": -150,
+          "y": 2700
         },
         "height": 24
       },
@@ -858,8 +828,8 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP:C1_0}aF,dom}mC}bP",
         "xy": {
-          "x": 550,
-          "y": 4080
+          "x": 800,
+          "y": 4100
         }
       },
       {
@@ -867,7 +837,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP:C1_0}aF,dom}mC}bP",
         "xy": {
-          "x": 400,
+          "x": 650,
           "y": 4850
         }
       },
@@ -876,7 +846,7 @@
         "prototype": "IndexObject",
         "to": "Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 5300
         }
       },
@@ -885,7 +855,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP:C1_0}aF,dom}mC}bP",
         "xy": {
-          "x": 550,
+          "x": 750,
           "y": 5500
         }
       },
@@ -894,7 +864,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,dom}bP",
         "xy": {
-          "x": 1000,
+          "x": 1200,
           "y": 5300
         }
       },
@@ -903,7 +873,7 @@
         "prototype": "IndexObject",
         "to": "Pb{cod,Id{C0}dI}bP",
         "xy": {
-          "x": 250,
+          "x": 450,
           "y": 2350
         }
       },
@@ -912,12 +882,12 @@
         "prototype": "IndexObject",
         "to": "Pb{Id{C0}dI,dom}bP",
         "xy": {
-          "x": 850,
+          "x": 1050,
           "y": 1850
         }
       },
       {
-        "description": "Form the pullback of the composable\ntriples in the form (A→B→C)→D.",
+        "description": "Form the collection of composable triples in the\nform f, g, and then h.",
         "basename": "t_14",
         "prototype": "IndexText",
         "xy": {
@@ -927,44 +897,103 @@
         "height": 24
       },
       {
-        "description": "Form the lift from the composable triple\n(A→B→C)→D to the composable pair B→C→D.",
+        "description": "From the composable triple above, form the\ncollection of composable pairs g, h.",
         "basename": "t_18",
         "prototype": "IndexText",
         "xy": {
-          "x": -270,
+          "x": -150,
           "y": 3480
         },
         "height": 24
       },
       {
-        "description": "Form the lift from the composable triple\n(A→B→C)→D to the composable triple A→(B→C→D).",
+        "description": "From the collection of composable triples above,\nreform as the collection of composable triples in the\nform of f, then g, h.",
         "basename": "t_15",
         "prototype": "IndexText",
         "xy": {
-          "x": -540,
-          "y": 3920
+          "x": -150,
+          "y": 4000
         },
         "height": 24
       },
       {
-        "description": "Form the lift from the composable triple\n(A→B→C)→D to the composable pair A→C→D.",
+        "description": "From the first composable triple above, f, g, then h, form\nthe collection of f composed with g, and h.",
         "basename": "t_19",
         "prototype": "IndexText",
         "xy": {
           "x": -150,
-          "y": 4600
+          "y": 4400
         },
         "height": 24
       },
       {
-        "description": "Form the lift from the composable triple\nA→(B→C→D) to the composable pair A→B→D.",
+        "description": "From the second composable triple above, f, then g, h, form\nthe collection of f, and g composed with h.",
         "basename": "t_21",
         "prototype": "IndexText",
         "xy": {
           "x": -150,
-          "y": 4750
+          "y": 4830
         },
         "height": 24
+      },
+      {
+        "description": "Classic",
+        "basename": "t_13",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 0,
+          "y": -350
+        },
+        "height": 48,
+        "weight": "bold"
+      },
+      {
+        "description": "Let C₀ and C₁ be two collections in D.",
+        "basename": "t_1",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": -150
+        },
+        "height": 24
+      },
+      {
+        "description": "For every object in C₀ there is a corresponding\nmorphism in C₁ called the identity of that object.",
+        "basename": "t_20",
+        "prototype": "IndexText",
+        "xy": {
+          "x": -150,
+          "y": 50
+        },
+        "height": 24
+      },
+      {
+        "description": "BUG: asserting does not initiate save",
+        "basename": "t_3",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 0,
+          "y": 540
+        },
+        "height": 24
+      },
+      {
+        "basename": "o_46",
+        "prototype": "IndexObject",
+        "to": "#1",
+        "xy": {
+          "x": 1360,
+          "y": -310
+        }
+      },
+      {
+        "basename": "o_53",
+        "prototype": "IndexObject",
+        "to": "#1",
+        "xy": {
+          "x": 1360,
+          "y": 5690
+        }
       },
       {
         "basename": "m_0",
@@ -1236,20 +1265,6 @@
         "domain": "o_38",
         "codomain": "o_30",
         "to": "id"
-      },
-      {
-        "basename": "m_42",
-        "prototype": "IndexMorphism",
-        "domain": "o_41",
-        "codomain": "o_43",
-        "to": "comp"
-      },
-      {
-        "basename": "m_43",
-        "prototype": "IndexMorphism",
-        "domain": "o_42",
-        "codomain": "o_43",
-        "to": "Fa{Pb{cod,Id{C0}dI}bP:C1_0}aF"
       },
       {
         "basename": "m_44",
@@ -1671,19 +1686,6 @@
         "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Id{C0}dI,dom}bP:C0_0}aF,id}mC,Fa{Pb{Id{C0}dI,dom}bP:C1_1}aF}uP"
       },
       {
-        "basename": "m_40",
-        "prototype": "IndexMorphism",
-        "domain": "o_42",
-        "codomain": "o_41",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{cod,Id{C0}dI}bP:C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP:C0_1}aF,id}mC}uP"
-      },
-      {
         "basename": "m_41",
         "prototype": "IndexMorphism",
         "domain": "o_40",
@@ -1776,6 +1778,40 @@
         "domain": "o_48",
         "codomain": "o_50",
         "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP:Pb{cod,dom}bP_0}aF,comp}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP:C1_1}aF}uP"
+      },
+      {
+        "basename": "m_42",
+        "prototype": "IndexMorphism",
+        "domain": "o_41",
+        "codomain": "o_43",
+        "to": "comp"
+      },
+      {
+        "basename": "m_40",
+        "prototype": "IndexMorphism",
+        "domain": "o_42",
+        "codomain": "o_41",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Pu{Pb{cod,dom}bP,Cm{Fa{Pb{cod,Id{C0}dI}bP:C1_0}aF,Id{C1}dI}mC,Cm{Fa{Pb{cod,Id{C0}dI}bP:C0_1}aF,id}mC}uP"
+      },
+      {
+        "basename": "m_43",
+        "prototype": "IndexMorphism",
+        "domain": "o_42",
+        "codomain": "o_43",
+        "to": "Fa{Pb{cod,Id{C0}dI}bP:C1_0}aF"
+      },
+      {
+        "basename": "m_60",
+        "prototype": "IndexMorphism",
+        "domain": "o_46",
+        "codomain": "o_53",
+        "to": "Id{#1}dI"
       }
     ],
     "cells": [
@@ -1871,6 +1907,14 @@
   },
   "elements": [
     {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
       "basename": "D",
       "prototype": "Category",
       "elements": [
@@ -1878,7 +1922,7 @@
           "description": "objects in this category",
           "basename": "C0",
           "prototype": "CatObject",
-          "properName": "C&#8320;"
+          "properName": "C₀"
         },
         {
           "description": "morphisms in this category",
@@ -2220,14 +2264,18 @@
           ]
         }
       ]
+    },
+    {
+      "prototype": "Identity",
+      "domain": "#1"
     }
   ],
   "user": "hdole",
-  "timestamp": 1653279355925,
+  "timestamp": 1653895570230,
   "version": 0,
   "viewport": {
-    "x": 843,
-    "y": 949,
-    "scale": 1.0751814213033506
+    "x": 530,
+    "y": 1102,
+    "scale": 1.2765355320974723
   }
 }

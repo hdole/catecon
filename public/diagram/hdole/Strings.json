@@ -341,7 +341,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": 110
+          "y": 120
         },
         "height": 356,
         "weight": "bold"
@@ -380,7 +380,7 @@
         "to": "hdole/nat/N128",
         "xy": {
           "x": 200,
-          "y": 1750
+          "y": 1800
         }
       },
       {
@@ -389,7 +389,7 @@
         "to": "str",
         "xy": {
           "x": 400,
-          "y": 1750
+          "y": 1800
         }
       },
       {
@@ -461,7 +461,7 @@
         "to": "CPo{hdole/nat/N128,#1}oPC",
         "xy": {
           "x": 600,
-          "y": 1750
+          "y": 1800
         }
       },
       {
@@ -472,6 +472,222 @@
           "x": 400,
           "y": 590
         }
+      },
+      {
+        "description": "}\n\n#include <string>;\n\t\t\nnamespace %Namespace\n{\n\ttypedef std::string str;\n",
+        "basename": "t_2",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 200,
+          "y": 280
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "str"
+      },
+      {
+        "description": "%0 = std::string('');",
+        "basename": "t_3",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 220,
+          "y": 480
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "empty"
+      },
+      {
+        "description": "%1 = %0.length;",
+        "basename": "t_8",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 380
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "length"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_9",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "append"
+      },
+      {
+        "description": "%2 = %0.find(%1) != std::string::npos;",
+        "basename": "t_15",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 880
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "includes"
+      },
+      {
+        "description": "{\nauto i = %0.find(%1);\nif (i != std::string::npos)\n{\n\t%2.c = 0;\n\t%2.v = i;\n}\nelse\n{\n\t%2.c = 1;\n\t%2.v = 0;\n}\n}",
+        "basename": "t_17",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 1030
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "indexOf"
+      },
+      {
+        "description": "%2 = std::string(%0[%1]);",
+        "basename": "t_18",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 1180
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "charAt"
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_19",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 240,
+          "y": 1680
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N64ToStr"
+      },
+      {
+        "description": "try\n{\n\t%1.v = std::stoul(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_20",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 430,
+          "y": 1680
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "strToN64"
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_21",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 1980
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "Z64ToStr"
+      },
+      {
+        "description": "try\n{\n\t%1.v = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_22",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 430,
+          "y": 1980
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "strToZ64"
+      },
+      {
+        "description": "try\n{\n\t%1.v = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_23",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 2180
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "F64ToStr"
+      },
+      {
+        "description": "try\n{\n\t%1.v = std::stod(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}",
+        "basename": "t_24",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 430,
+          "y": 2180
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "strToF64"
+      },
+      {
+        "description": "#include <iostream>\nstd::cout << %0;",
+        "basename": "t_25",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 2380
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "str2tty"
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_26",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 1380
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N8ToStr"
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_27",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 240,
+          "y": 1480
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N16ToStr"
+      },
+      {
+        "description": "%1 = std::to_string(%0);",
+        "basename": "t_28",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 240,
+          "y": 1580
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N32ToStr"
+      },
+      {
+        "description": "%0 = 0;",
+        "basename": "t_29",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 220,
+          "y": 500
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "hdole/nat/zero64"
       },
       {
         "basename": "m_0",
@@ -785,7 +1001,7 @@
       "properName": "index",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\tconst i = args[0].indexOf(args[1]);\n\treturn i > -1 ? [0, i] : [1, 1]\n}\n",
-        "cpp": "{auto i = %0.find(%1);\nif (i != std::string::npos)\n{\n\t%2.c = 0;\n\t%2.v = i;\n}\nelse\n{\n\t%2.c = 1;\n\t%2.v = 0;\n}\n}"
+        "cpp": "{\nauto i = %0.find(%1);\nif (i != std::string::npos)\n{\n\t%2.c = 0;\n\t%2.v = i;\n}\nelse\n{\n\t%2.c = 1;\n\t%2.v = 0;\n}\n}"
       },
       "domain": "Po{str,str}oP",
       "codomain": "hdole/nat/CPo{N64,#1}oPC"
@@ -844,7 +1060,7 @@
       "properName": "to",
       "code": {
         "js": "\nfunction %Type(args)\n{\n\treturn args.toString();\n}\n",
-        "cpp": "try\n{\n\t\t%1.v = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t\t%1.c = 0;\n}"
+        "cpp": "try\n{\n\t%1.v = std::stol(%0);\n\t%1.c = 0;\n}\ncatch(x)\n{\n\t%1.c = 1;\n}"
       },
       "domain": "str",
       "codomain": "hdole/int/CPo{Z64,#1}oPC"
@@ -952,11 +1168,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652503258922,
+  "timestamp": 1653891620448,
   "version": 0,
   "viewport": {
-    "x": 1161,
-    "y": 396,
-    "scale": 1.7621232053801932
+    "x": 1151,
+    "y": 393,
+    "scale": 1.7774956713345311
   }
 }

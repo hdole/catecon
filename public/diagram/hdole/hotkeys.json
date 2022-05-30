@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 1010,
-          "y": 360
+          "y": 380
         },
         "height": 250,
         "weight": "bold"
@@ -1515,17 +1515,27 @@
           "y": 5400
         },
         "height": 24
+      },
+      {
+        "description": "BUG:  Change tab text",
+        "basename": "t_139",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 1940,
+          "y": 5760
+        },
+        "height": 24
       }
     ],
     "cells": []
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1652643103644,
+  "timestamp": 1653895588698,
   "version": 0,
   "viewport": {
     "x": -925,
-    "y": -107,
-    "scale": 1.2831309205872476
+    "y": -146,
+    "scale": 1.2830449473501855
   }
 }
