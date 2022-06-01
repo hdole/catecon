@@ -1946,7 +1946,11 @@ class Navbar
 			else
 				this.element.style.height = `${D.default.icon}px`;
 		});
-		window.addEventListener('Application', e => this.update(e));
+		window.addEventListener('Application', e =>
+		{
+			this.update(e);
+			this.updateStatusTools();
+		});
 	}
 	updateByUserStatus()
 	{
@@ -3551,13 +3555,9 @@ class CatalogTool extends DiagramTool		// GUI only
 	}
 	getButtons(exclude = [])
 	{
-		const btns = [	D.getIcon('search', 'search', _ => this.showSection('search'), {title:'Search for diagram', id:'catalog-search-icon'}),
-						D.getIcon('new', 'edit', _ => this.showSection('new'), {title:'New diagram', id:'catalog-new-icon'})];
-		if (exclude.includes('upload-json'))
-			btns.push(D.getIcon('upload', 'upload', _ => this.showSection('upload'), {title:'Upload local diagram', id:'catalog-upload-icon'}));
-		else
-			btns.push(D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload'), {title:'Upload JSON file for diagram', id:'catalog-upload-icon'}));
-		return btns;
+		return [	D.getIcon('search', 'search', _ => this.showSection('search'), {title:'Search for diagram', id:'catalog-search-icon'}),
+					D.getIcon('new', 'edit', _ => this.showSection('new'), {title:'New diagram', id:'catalog-new-icon'}),
+					D.getIcon('upload-json', 'upload-json', _ => this.showSection('upload'), {title:'Upload JSON file for diagram', id:'catalog-upload-icon'})];
 	}
 	update()
 	{
@@ -3565,16 +3565,20 @@ class CatalogTool extends DiagramTool		// GUI only
 			return;
 		this.clear();
 		this.showSection(this.currentSection);
-		const toolbar = D.navbar.element.querySelector('.buttonBarLeft');
-		const buttons = D.session.mode === 'catalog' ? this.getButtons() : [];
-		const size = '.32in';
-		buttons.map(btn =>
+		// add our buttons to navbar
+		if (D.navbar.element.querySelector('#catalog-search-icon') === null)
 		{
-			btn.firstChild.style.width = size;
-			btn.firstChild.style.height = size;
-			toolbar.appendChild(btn);
-		});
-		toolbar.style.width = `${toolbar.childElementCount * D.default.icon}px`;
+			const toolbar = D.navbar.element.querySelector('.buttonBarLeft');
+			this.buttons = D.session.mode === 'catalog' ? this.getButtons() : [];
+			const size = '.32in';
+			this.buttons.map(btn =>
+			{
+				btn.firstChild.style.width = size;
+				btn.firstChild.style.height = size;
+				toolbar.appendChild(btn);
+			});
+			toolbar.style.width = `${toolbar.childElementCount * D.default.icon}px`;
+		}
 		switch(this.mode)
 		{
 			case 'search':
@@ -4425,24 +4429,6 @@ class Display
 						e.preventDefault();
 					},
 		//			ControlKeyO(e)		BROWSER RESERVED: open local page
-					KeyP(e)		// product
-					{
-						if (R.Actions.productAssembly.hasForm(R.diagram, R.diagram.selected))
-							R.Actions.productAssembly.action(e, R.diagram, R.diagram.selected);
-						else if (R.Actions.product.hasForm(R.diagram, R.diagram.selected))
-							R.Actions.product.action(e, R.diagram, R.diagram.selected);
-						else if (R.Actions.project.hasForm(R.diagram, R.diagram.selected))
-							R.diagram.actionHtml(e, 'project');
-					},
-					ShiftKeyP(e)		// coproduct
-					{
-						if (R.Actions.coproductAssembly.hasForm(R.diagram, R.diagram.selected))
-							R.Actions.coproductAssembly.action(e, R.diagram, R.diagram.selected);
-						else if (R.Actions.coproduct.hasForm(R.diagram, R.diagram.selected))
-							R.Actions.coproduct.action(e, R.diagram, R.diagram.selected);
-						else if (R.Actions.inject.hasForm(R.diagram, R.diagram.selected))
-							R.diagram.actionHtml(e, 'inject');
-					},
 		//			ControlKeyP(e)		BROWSER RESERVED: print page
 					KeyQ(e)		// help
 					{
@@ -4488,9 +4474,27 @@ class Display
 					},
 					ControlKeyV(e)	{	D.paste(e);	},
 		//			ControlKeyW(e)	 BROWSER RESERVED
-					KeyX(e)
+					KeyW(e)
 					{
 						Cat.R.diagram && D.advanceInputMode();
+					},
+					KeyX(e)		// product
+					{
+						if (R.Actions.productAssembly.hasForm(R.diagram, R.diagram.selected))
+							R.Actions.productAssembly.action(e, R.diagram, R.diagram.selected);
+						else if (R.Actions.product.hasForm(R.diagram, R.diagram.selected))
+							R.Actions.product.action(e, R.diagram, R.diagram.selected);
+						else if (R.Actions.project.hasForm(R.diagram, R.diagram.selected))
+							R.diagram.actionHtml(e, 'project');
+					},
+					ShiftKeyX(e)		// coproduct
+					{
+						if (R.Actions.coproductAssembly.hasForm(R.diagram, R.diagram.selected))
+							R.Actions.coproductAssembly.action(e, R.diagram, R.diagram.selected);
+						else if (R.Actions.coproduct.hasForm(R.diagram, R.diagram.selected))
+							R.Actions.coproduct.action(e, R.diagram, R.diagram.selected);
+						else if (R.Actions.inject.hasForm(R.diagram, R.diagram.selected))
+							R.diagram.actionHtml(e, 'inject');
 					},
 					KeyY(e)
 					{
@@ -4703,6 +4707,7 @@ class Display
 			panels:			{value: null,		writable: true},
 			params:			{value:null,		writable: true},	// URL parameters
 			pasteBuffer:	{value: [],			writable: true},
+			pathname:		{value: '',			writable: true},
 			replayCommands:	{value:	new Map(),	writable: false},
 			screenPan:		{value: 0,			writable: true},
 			settingsPanel:	{value: null,		writable: true},
@@ -4735,9 +4740,8 @@ class Display
 			topSVG:			{value: document.getElementById('topSVG'),						writable: false},
 			ttyPanel:		{value: null,													writable: true},
 			uiSVG:			{value: document.getElementById('uiSVG'),						writable: false},
-			version:		{value: 1,														writable: false},
+			url:			{value: null,													writable: true},
 			session:		{value: new Session(),											writable: false},
-			xmlns:			{value: 'http://www.w3.org/2000/svg',							writable: false},
 		});
 		this.initializeStorage();
 	}
@@ -4781,6 +4785,7 @@ class Display
 		this.Panel = 			Panel;
 		this.panels =		new Panels();
 		this.Panels =			Panels;
+		this.pathname =			window.location.pathname;
 		this.helpPanel =	new HelpPanel();
 		this.HelpPanel =		HelpPanel;
 		this.loginPanel =	new LoginPanel();
@@ -4816,10 +4821,17 @@ class Display
 		this.autohide();
 		this.setupReplay();
 		this.url = window.URL || window.webkitURL || window;
-		this.loadScript('js/javascript.js', _ => R.debug(1) && console.log('javascript loaded'));
-		this.loadScript('js/cpp.js');
+		this.loadScript('/js/javascript.js', _ => R.debug(1) && console.log('javascript loaded'));
+		this.loadScript('/js/cpp.js');
 // TODO?		this.loadScript('js/mysql.js');
 		this.params = (new URL(document.location)).searchParams;	// TODO node.js
+		const pathTokens = window.location.pathname.split('/');
+		pathTokens.shift();		// git rid of first '/'
+		if (pathTokens.length > 2 && pathTokens[0] === 'diagram')
+		{
+			pathTokens.shift();
+			this.params.set('diagram', pathTokens.join('/'));
+		}
 		if (this.params.has('debug'))
 		{
 			R.default.debug = Number.parseInt(this.params.get('debug'));
@@ -10619,7 +10631,30 @@ class IndexObject extends CatObject
 		const svg = H3.g(txt, '.grabbable.object', {draggable:true, transform:`translate(${this.x}, ${this.y})`, 'data-type':'object', 'data-name':this.name, 'data-sig':this.to.signature, id:this.elementId()});
 		txt.onmouseenter = e => this.mouseenter(e);
 		txt.onmouseout = e => this.mouseout(e);
-		txt.onmousedown = e => D.default.fullscreen && R.diagram && R.diagram.userSelectElement(e, name);
+		let startTime = 0;
+		txt.onmousedown = e =>
+		{
+			if (D.default.fullscreen && R.diagram)
+			{
+				R.diagram.userSelectElement(e, name);
+				startTime = Date.now();
+			}
+		};
+		if (this.to instanceof Category)
+			txt.onmouseup = e =>
+			{
+				if (D.default.fullscreen && R.diagram)
+				{
+					const now = Date.now();
+					if (now - startTime > 200)
+					{
+console.log('change');
+						D.statusbar.show(e, `Scope changed to ${this.to.properName}`);
+						D.setCategory(this.to);
+					}
+				}
+			};
+
 		txt.onmousemove = e => this.mousemove(e);
 		txt.ondblclick = e => this.isEditable() && this.placeProjection(e);		// defer test for editablity to due authentication loading is async
 		node.appendChild(svg);
