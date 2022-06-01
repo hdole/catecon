@@ -838,7 +838,7 @@
         "to": "Pb{cod,Cm{Fa{Pb{cod,dom}bP:C1_0}aF,dom}mC}bP",
         "xy": {
           "x": 650,
-          "y": 4850
+          "y": 4800
         }
       },
       {
@@ -1724,12 +1724,6 @@
         "prototype": "IndexMorphism",
         "domain": "o_48",
         "codomain": "o_49",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
         "to": "Pu{Pb{cod,Cm{Fa{Pb{cod,dom}bP:C1_0}aF,dom}mC}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP:Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP:C1_0}aF}mC,Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP:Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP:C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP:C1_1}aF}uP}uP"
       },
       {
@@ -1764,12 +1758,6 @@
         "prototype": "IndexMorphism",
         "domain": "o_49",
         "codomain": "o_109",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
         "to": "Pu{Pb{cod,dom}bP,Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP:C1_0}aF,dom}mC}bP:C1_0}aF,Cm{Fa{Pb{cod,Cm{Fa{Pb{cod,dom}bP:C1_0}aF,dom}mC}bP:Pb{cod,dom}bP_1}aF,comp}mC}uP"
       },
       {
@@ -2271,11 +2259,11 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1653895570230,
+  "timestamp": 1654061772909,
   "version": 0,
   "viewport": {
     "x": 530,
-    "y": 1102,
+    "y": -5872,
     "scale": 1.2765355320974723
   }
 }
