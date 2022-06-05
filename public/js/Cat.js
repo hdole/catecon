@@ -336,9 +336,9 @@ class U		// utilities
 		}
 		return ret;
 	}
-	static refcntSorter(a, b) { return a.refcnt > b.refcnt ? -1 : b.refcnt < a.refcnt ? 1 : 0; }		// high to low
+	static refcntSorter(a, b) { return a.refcnt < b.refcnt ? -1 : b.refcnt > a.refcnt ? 1 : 0; }		// high to low
 	static TimestampSorter(a, b) { return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0; }
-	static NameSorter(a, b) { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; }		// a to z
+	static NameSorter(a, b) { return a.name < b.name ? 1 : a.name > b.name ? -1 : 0; }		// a to z
 	static isIndexItem(elt)
 	{
 		return elt instanceof IndexObject || elt instanceof IndexText || Arrow.isArrow(elt);
@@ -710,6 +710,7 @@ class Runtime
 		this.$Cat = new Diagram(null, $CatArgs);
 		this.Cat.newObject = (diagram, basename) =>
 		{
+			this.getElement(basename);
 			const name = `${diagram.name}/${basename}`;
 			let cat = this.Cat.getElement(name);
 			cat = cat ? cat : new Category(diagram, {name, basename});
@@ -880,7 +881,6 @@ class Runtime
 				return;
 			}
 			this.reading.add(name);
-
 			const setup = _ => new Promise((resolve, reject) =>
 			{
 				let diagram = null;
@@ -1628,6 +1628,7 @@ class Runtime
 	}
 	setCategory(cat)
 	{
+if (!cat)debugger;
 		R.category = cat;
 	}
 	debug(level)
@@ -5487,6 +5488,16 @@ class Display
 				}
 			}
 		});
+		const updateMorphism = (m, args) =>
+		{
+			m.update();
+			args.diagram.domain.updateCells(m);
+			if ('bezier' in args && args.bezier)
+			{
+				m.domains.forEach(elt => elt.update());
+				m.codomains.forEach(elt => elt.update());
+			}
+		}
 		window.addEventListener('Morphism', e =>
 		{
 			const args = e.detail;
@@ -5499,14 +5510,13 @@ class Display
 					case 'detach':
 						element.attributes.set('bezier', 0);
 						break;
+					case 'fuse':
+						diagram.domain.loadCells();
+						diagram.domain.checkCells();
+						updateMorphism(element, args);
+						break;
 					case 'update':
-						element.update();
-						diagram.domain.updateCells(element);
-						if ('bezier' in args && args.bezier)
-						{
-							element.domains.forEach(elt => elt.update());
-							element.codomains.forEach(elt => elt.update());
-						}
+						updateMorphism(element, args);
 						break;
 					case 'new':
 						diagram.domain.loadCells();
@@ -5609,8 +5619,6 @@ class Display
 							R.diagram && R.diagram.selected.map(elt => (elt instanceof IndexObject || elt instanceof IndexMorphism) && cats.add(elt.to.category));
 							if (cats.size === 1)
 								R.setCategory([...cats][0]);
-							else if (cats.size > 1)
-								R.setCategory(null);		// TODO max cat?
 						}
 						args.arg && args.arg.showSelected();
 						break;
@@ -5690,7 +5698,16 @@ class Display
 		window.addEventListener('mousemove', e => this.autohide());
 		window.addEventListener('mousedown', e => this.autohide());
 		window.addEventListener('keydown', e => this.autohide());
-		window.addEventListener('Morphism', e => this.updateMorphismDisplay(e));
+		window.addEventListener('Morphism', e =>
+		{
+			const args = e.detail;
+			switch(args.command)
+			{
+				default:
+					this.updateMorphismDisplay(e);
+					break;
+			}
+		});
 		window.addEventListener('Text', e => this.updateTextDisplay(e));
 		window.addEventListener('mousemove', e => this.mousemove(e));
 		this.topSVG.addEventListener('mousedown', e => this.mousedown(e));
@@ -5863,6 +5880,7 @@ class Display
 				case 'notEquals':
 					cell.update();
 					cell.loadEquality();
+					this.autosave(diagram);
 					break;
 				case 'hide':
 				case 'show':
@@ -5886,6 +5904,7 @@ class Display
 					break;
 				case 'unknown':
 					cell.update();
+					this.autosave(diagram);
 					break;
 				case 'update':
 					cell.update();
@@ -5927,7 +5946,7 @@ class Display
 	}
 	updateMorphismDisplay(e)		// event handler
 	{
-		const {command, diagram, dual, element, old} = e.detail;
+		const {command, diagram, element} = e.detail;
 		if (Cat.R.diagram !== diagram)
 			return;
 		this.updateDisplay(e);
@@ -13059,7 +13078,7 @@ class DefinitionAction extends Action
 	getBlobs(diagram, ary)
 	{
 		const blobs = new Set();
-		ary.map(elt => blobs.add(diagram.getBlob(elt)));
+		ary.filter(elt => elt instanceof IndexObject || elt instanceof IndexMorphism).map(elt => blobs.add(diagram.getBlob(elt)));
 		return [...blobs];
 	}
 	getSequence(blobs)
@@ -13659,8 +13678,14 @@ class Category extends CatObject
 	{
 		if (dom && cod)
 		{
-			const domain = this.newObject(diagram, dom);
-			const codomain = this.newObject(diagram, cod);
+			let domain = diagram.getElement(dom);
+			domain = domain ? domain : this.newObject(diagram, dom);
+			if (!(domain instanceof CatObject))
+				return null;
+			let codomain = diagram.getElement(cod);
+			codomain = codomain ? codomain : this.newObject(diagram, cod);
+			if (!(codomain instanceof CatObject))
+				return null;
 			if (domain && codomain)
 			{
 				const m = diagram.getElement(basename);
@@ -15411,11 +15436,14 @@ class IndexMorphism extends Morphism
 	}
 	mayFlipName()
 	{
-		const nmBox = this.diagram.userToDiagramCoords(this.svg_name.getBoundingClientRect());
-		if (this.diagram.hasOverlap(nmBox, this.name))
+		if (this.svg_name)
 		{
-			this.attributes.set('flipName', !this.attributes.get('flipName'));
-			this.update();
+			const nmBox = this.diagram.userToDiagramCoords(this.svg_name.getBoundingClientRect());
+			if (this.diagram.hasOverlap(nmBox, this.name))
+			{
+				this.attributes.set('flipName', !this.attributes.get('flipName'));
+				this.update();
+			}
 		}
 	}
 	/*
@@ -19010,6 +19038,8 @@ class Diagram extends Functor
 	}
 	getElement(name, cat = null)
 	{
+		if (name === undefined)
+			throw 'no name';
 		if (name instanceof Element)
 			return name;
 		let elt = null;
@@ -19591,12 +19621,12 @@ class Diagram extends Functor
 			[...from.domains].map(m =>
 			{
 				m.setDomain(target);
-				D.emitElementEvent(R.diagram, 'update', m);
+				D.emitElementEvent(R.diagram, 'fuse', m);
 			});
 			[...from.codomains].map(m =>
 			{
 				m.setCodomain(target);
-				D.emitElementEvent(R.diagram, 'update', m);
+				D.emitElementEvent(R.diagram, 'fuse', m);
 			});
 		}
 		from.decrRefcnt();
@@ -19932,7 +19962,7 @@ class Diagram extends Functor
 					}
 					else		// must be object
 					{
-						if (checkToken(type, tok))
+						if (checkToken('object', tok))
 							elements[i] = tok;
 						else
 							return false;
@@ -20010,7 +20040,7 @@ class Diagram extends Functor
 						};
 						const placeMorphisms = _ =>
 						{
-							created.push(this.placeMorphism(this[operator === '*' ? 'prod' : 'coprod'](...elements), xy));
+							created.push(this.placeMorphism(this[operator === '*' ? 'prod' : 'coprod'](...elements.filter(elt => elt instanceof Morphism)), xy));
 							xy = D2.add(xy, stdNormal);
 							elements.length = 0;
 							operator = '';
@@ -20034,10 +20064,10 @@ class Diagram extends Functor
 								else
 								{
 									const category = cat ? cat : R.category;
-									const elt = type === 'object' ? cat.newObject(this, tok) : R.diagram.getElement(tok);
+									const elt = type === 'object' ? category.newObject(this, tok) : R.diagram.getElement(tok);
 									if (ndx > -1 && elements.length > 0)		// admit prior elements with operator
 									{
-										type === 'object' ? placeObjects() : placeMorphisms();;
+										type === 'object' ? placeObjects() : placeMorphisms();
 										i !== last && elements.push(elt);
 										operator = '';
 									}
@@ -20046,7 +20076,7 @@ class Diagram extends Functor
 									if (i === last)
 									{
 										elements.push(elt);
-										type === 'object' ? placeObjects() : placeMorphisms();;
+										type === 'object' ? placeObjects() : placeMorphisms();
 									}
 									ndx = i;
 								}
