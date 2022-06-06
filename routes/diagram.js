@@ -6,7 +6,7 @@ router.get('/', function(req, res, next)
 	res.render('diagram');
 });
 
-router.get('/diagram/*', function(req, res, next)
+router.get('/d/*', function(req, res, next)
 {
 	res.render('diagram');
 });

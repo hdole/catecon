@@ -4828,7 +4828,7 @@ class Display
 		this.params = (new URL(document.location)).searchParams;	// TODO node.js
 		const pathTokens = window.location.pathname.split('/');
 		pathTokens.shift();		// git rid of first '/'
-		if (pathTokens.length > 2 && pathTokens[0] === 'diagram')
+		if (pathTokens.length > 2 && pathTokens[0] === 'd')
 		{
 			pathTokens.shift();
 			this.params.set('diagram', pathTokens.join('/'));
@@ -5517,6 +5517,15 @@ class Display
 						break;
 					case 'update':
 						updateMorphism(element, args);
+						/*
+						element.update();
+						diagram.domain.updateCells(element);
+						if ('bezier' in args && args.bezier)
+						{
+							element.domains.forEach(elt => elt.update());
+							element.codomains.forEach(elt => elt.update());
+						}
+						*/
 						break;
 					case 'new':
 						diagram.domain.loadCells();
