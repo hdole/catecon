@@ -6290,8 +6290,21 @@ class Display
 			R.readPNG(name, png =>
 			{
 				if (png)
+				{
 					this.diagramPNGs.set(name, png);
-				fn(png);
+					fn(png);
+					return;
+				}
+				const url = R.getURL('diagram/' + name + '.png');
+				fetch(url).then(res => res.blob()).then(blob =>
+				{
+					if (blob)
+					{
+						this.savePNG(name, blob);
+						this.diagramPNGs.set(name, blob);
+						fn(blob);
+					}
+				});
 			});
 			return;
 		}
@@ -6303,7 +6316,10 @@ class Display
 		{
 			const nuArgs = U.clone(args);
 			if (png)
-				nuArgs.src = png;
+			{
+				const src = this.url.createObjectURL(png);
+				nuArgs.src = src;
+			}
 			nuArgs.id = U.SafeId(`img-el_${name}`);
 			if (!nuArgs.src && R.cloud)
 				nuArgs.src = R.getDiagramURL(name + '.png');
@@ -7063,6 +7079,16 @@ class Display
 			const idx = JSON.parse(`[${btn.dataset.indices}]`);
 			return idx.length === 1 && idx[0] === -1 ? idx[0] : idx;
 		});
+	}
+	savePNG(name, png)
+	{
+		D.diagramPNGs.set(name, png);
+		const tx = this.store.transaction(['PNGs'], 'readwrite');
+		tx.onsuccess = e => R.debug(1) && console.log('png stored', name);
+		tx.onerror = e => R.recordError(e);
+		const pngStore = tx.objectStore('PNGs');
+		pngStore.put({name, png});
+//		D.emitPNGEvent(diagram, 'new', png);
 	}
 }
 
@@ -19172,10 +19198,6 @@ class Diagram extends Functor
 	{
 		return R.actionDiagram.getElement('cpp').download(e, this);
 	}
-	downloadPNG()
-	{
-		D.download(D.diagramPNGs.get(this.name), `${this.name}.png`);
-	}
 	downloadLog(e)
 	{
 		D.downloadString(JSON.stringify(this._log), 'log', `${this.name}.json`);
@@ -20200,13 +20222,7 @@ class Diagram extends Functor
 	{
 		!D.isTextEditActive() && D.svg2canvas(this, (png, pngName) =>
 		{
-			D.diagramPNGs.set(this.name, png);
-			const tx = D.store.transaction(['PNGs'], 'readwrite');
-			tx.onsuccess = e => R.debug(1) && console.log('png stored', this.name);
-			tx.onerror = e => R.recordError(e);
-			const pngStore = tx.objectStore('PNGs');
-			pngStore.put({name:this.name, png});
-			D.emitPNGEvent(this, 'new', png);
+			D.savePNG(this, png);
 			fn && fn(e);
 		});
 	}
