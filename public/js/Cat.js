@@ -3480,15 +3480,18 @@ class CatalogTool extends DiagramTool		// GUI only
 	updateImage(info)
 	{
 		const div = this.getDiagramDiv(info.name);
-		const img = div.querySelector('img');
-		const parent = img.parentNode;
-		img && img.remove();
-		div.dataset.time = info.timestamp;
-		D.getImageElement(info.name, png =>
+		if (div)
 		{
-			this.setupImg(div, info, png);
-			parent.appendChild(png);
-		}, this.getArgs(info.name));
+			const img = div.querySelector('img');
+			const parent = img.parentNode;
+			img && img.remove();
+			div.dataset.time = info.timestamp;
+			D.getImageElement(info.name, png =>
+			{
+				this.setupImg(div, info, png);
+				parent.appendChild(png);
+			}, this.getArgs(info.name));
+		}
 	}
 	display(info)
 	{
