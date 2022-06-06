@@ -580,7 +580,7 @@ class Runtime
 				value:
 				{
 					name:	'Anon',
-					email:	'anon@example.com',
+					email:	'',
 					status:	'unauthorized',
 					cloud:	null,
 					isAdmin:	_ => this.user.cloud && this.user.cloud.permissions.includes('admin') !== null,
@@ -3849,6 +3849,10 @@ class Session
 	{
 		return this.current;
 	}
+	hasViewport(name)
+	{
+		return this.diagrams.has(name);
+	}
 	getViewport(name)
 	{
 		if (this.diagrams.has(name))
@@ -3925,11 +3929,15 @@ class Session
 		placement.y = plc.y;
 		placement.scale = plc.scale;
 	}
+	getStdPlacement()
+	{
+		return U.clone(this.getStdView().placement);
+	}
 	getPlacement(name)
 	{
 		if (this.diagrams.has(name))
 			return this.diagrams.get(name).placement;
-		return U.clone(this.getStdView().placement);
+		return this.getStdPlacement();
 	}
 	remove(name)
 	{
@@ -4806,7 +4814,6 @@ class Display
 		this.uiSVG.setAttribute('height', window.innerHeight);
 		this.busy();
 		this.catalog = new CatalogTool();
-		this.catalog.show(this.session.mode === 'catalog');
 		this.elementTool =
 		{
 			Category:	new CategoryTool('Category', this.toolbar.help, 'Create a new category'),
@@ -4851,6 +4858,7 @@ class Display
 		}
 		else if (this.session.getCurrentDiagram())
 			this.params.set('diagram', this.session.getCurrentDiagram());		// set default diagram
+		this.catalog.show(this.session.mode === 'catalog');
 		this.mouse.xy = [new D2(this.width()/2, this.height()/2)];				// in session coordinates
 		let delta = null;
 		const sessionMove = e =>
@@ -5517,15 +5525,6 @@ class Display
 						break;
 					case 'update':
 						updateMorphism(element, args);
-						/*
-						element.update();
-						diagram.domain.updateCells(element);
-						if ('bezier' in args && args.bezier)
-						{
-							element.domains.forEach(elt => elt.update());
-							element.codomains.forEach(elt => elt.update());
-						}
-						*/
 						break;
 					case 'new':
 						diagram.domain.loadCells();
@@ -5668,13 +5667,6 @@ class Display
 						};
 						doit();
 						this.diagramSVG.appendChild(diagram.svgRoot);
-						this.diagramSVG.classList.remove('trans');
-						if (!diagram.svgTranslate.attributes.transform)
-						{
-							const placement = this.session.getPlacement(diagram.name);
-							diagram.setPlacement(placement, false, 'default');		// do not emit view event
-						}
-						this.diagramSVG.classList.add('trans');
 						R.setCategory(diagram.codomain);
 					}
 					else
@@ -5797,31 +5789,37 @@ class Display
 			{
 				document.body.style.overflow = 'hidden';
 				document.getElementById('diagramView').classList.remove('hidden');
-				if (diagram)
+				if (diagram && this.default.fullscreen)
 				{
 					if (diagram.user === 'sys' || diagram.user === 'ctx')		// TODO better autoplace detection
 						diagram.autoplace();
 					this.diagramSVG.classList.remove('hidden');
 					diagram.show();
-					if (this.diagramSVG.lastChild !== diagram.svgRoot)
-						this.diagramSVG.appendChild(diagram.svgRoot);		// make top-most viewable diagram
-					if (action === 'home')
-						diagram.home();
-					else if (action === 'defaultView')
+					const defaultView = _ =>
 					{
-						const vp = new D2(diagram.viewport);
+						const vp = diagram.viewport;
 						if (vp.x === 0 && vp.y === 0 && vp.height === 0 && vp.width === 0)
 							diagram.homeTop();
 						else
 						{
-							const placement = this.session.getPlacement(diagram.name);
-							const placePosition = new D2(placement);
-							const nuvp = vp.sub(placePosition);
-							this.setSessionViewport({x:nuvp.x, y:nuvp.y, scale:placement.scale * diagram.viewport.scale});
+							this.setSessionViewport({x:vp.x, y:vp.y, scale:vp.scale});
+							this.session.setPlacement(diagram.name, this.session.getStdPlacement());
 						}
 					}
-					else if (this.default.fullscreen)
-						this.setSessionViewport(this.session.getViewport(diagram.name));
+					switch(action)
+					{
+						case 'home':
+							break;
+						case 'defaultView':
+							defaultView();
+							break;
+						case null:
+							if (this.session.hasViewport(diagram.name))
+								this.setSessionViewport(this.session.getViewport(diagram.name));
+							else
+								defaultView();
+							break;
+					}
 					this.session.save();
 					diagram.updateBackground();
 					this.updateBorderAlerts();
