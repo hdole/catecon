@@ -5796,6 +5796,12 @@ class Display
 				{
 					if (diagram.user === 'sys' || diagram.user === 'ctx')		// TODO better autoplace detection
 						diagram.autoplace();
+					let dgrmSvg = this.diagramSVG.firstChild;
+					while(dgrmSvg)
+					{
+						dgrmSvg.classList.add('hidden');
+						dgrmSvg = dgrmSvg.nextSibling;
+					}
 					this.diagramSVG.classList.remove('hidden');
 					diagram.show();
 					const defaultView = _ =>
