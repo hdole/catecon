@@ -13669,6 +13669,56 @@ class UserAction extends Action
 	}
 }
 
+// create the object of all such instances from a definition
+class AllSuchAction extends Action
+{
+	constructor(diagram)
+	{
+		const args =
+		{
+			description:	'Create the object of all such elements from a definition as applied to a category',
+			basename:		'allSuch',
+			actionOnly:		false,
+			priority:		90,
+		};
+		super(diagram, args);
+	}
+	html()
+	{
+		super.html();
+		const help = D.toolbar;
+		help.body.appendChild(H3.h3(`Action ${U.HtmlEntitySafe(this.basename)}`));
+
+		this.definition.hasAssertions() && help.body.appendChild(H3.span('Generate assertions from definition:', D.getIcon('edit', 'edit', e => this.action(e, R.diagram, R.diagram.selected))));
+		const rows = [H3.tr(H3.th('Source'), H3.th('Target'))];
+		rows.push(...this.definition.sequence.map((elt, i) => H3.tr(H3.td(elt.getHtmlRep()), H3.td(R.diagram.selected[i].getHtmlRep()))));
+		help.table.appendChild(H3.table(rows));
+		if (this.definition.generators.size > 0)
+		{
+			help.table.appendChild(H3.tr(H3.td(H3.hr())));
+			this.definition.generators.forEach(m =>
+			{
+				const row = m.getHtmlRow();
+				const toolbar = row.querySelector('.toolbar-element');
+				toolbar.appendChild(D.getIcon('place-morphism', 'place', e => this.action(e, R.diagram, R.diagram.selected, m)), {title:'Generate morphism'});
+				help.table.appendChild(row);
+			});
+		}
+	}
+	action(e, diagram, ary)
+	{
+		this.doit(e, diagram, ary);
+	}
+	doit(e, diagram, ary)
+	{
+		return diagram.viewElements(...ary);
+	}
+	hasForm(diagram, ary)
+	{
+		return ary.length === 1 && ary[0] instanceof IndexObject && ary[0].to instanceof Category;
+	}
+}
+
 class Category extends CatObject
 {
 	constructor(diagram, args)
@@ -16158,9 +16208,9 @@ class Cell
 				case 'unknown':
 					return '&#8799;';
 				case 'pullback':
-					return '&#8988;';	// upper left corner
-				case 'pushout':
 					return '&#8891;';	// bottom right corner
+				case 'pushout':
+					return '&#8988;';	// upper left corner
 				default:
 					return '?';
 			}
