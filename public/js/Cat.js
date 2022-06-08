@@ -3842,7 +3842,10 @@ class Session
 	}
 	getStdView()
 	{
-		return U.clone(this.stdView);
+		const vu = U.clone(this.stdView);
+		vu.viewport.width = D.width();
+		vu.viewport.height = D.height();
+		return vu;
 	}
 	setCurrentDiagram(diagram)
 	{
@@ -3856,10 +3859,20 @@ class Session
 	{
 		return this.diagrams.has(name);
 	}
-	getViewport(name)
+	addScreenWidthHeight(diagram, xy)
 	{
-		if (this.diagrams.has(name))
-			return this.diagrams.get(name).viewport;
+		xy.width = D.width();
+		xy.height = D.height();
+	}
+	getViewport(diagram)
+	{
+		if (this.diagrams.has(diagram.name))
+		{
+			const vu = this.diagrams.get(diagram.name).viewport;
+			if (!('width' in vu) || vu.width === undefined)
+				this.addScreenWidthHeight(diagram, vu);
+			return vu;
+		}
 		return this.getStdView().viewport;
 	}
 	setViewport(name, vp)
@@ -3870,6 +3883,8 @@ class Session
 		viewport.x = Math.round(vp.x);
 		viewport.y = Math.round(vp.y);
 		viewport.scale = vp.scale;
+		viewport.height = vp.height;
+		viewport.width = vp.width;
 	}
 	setCurrentViewport(vp = {x:0, y:0, scale:1.0, timestamp:0})
 	{
@@ -4078,6 +4093,14 @@ class Display
 							D.setFullscreen(true);
 							R.diagram.homeTop();
 							D.emitViewEvent(D.session.mode, R.diagram);
+						}
+					},
+					ControlShiftHome(e)
+					{
+						if (R.diagram && D.session.mode === 'diagram')
+						{
+							D.setFullscreen(true);
+							D.emitViewEvent(D.session.mode, R.diagram, 'defaultView');
 						}
 					},
 					ControlEnd(e)
@@ -5807,12 +5830,18 @@ class Display
 					const defaultView = _ =>
 					{
 						const vp = diagram.viewport;
+						// TODO REMOVE PATCH
+						if (!('width' in vp))
+						{
+							vp.width = D.width();
+							vp.height = D.height();
+						}
 						if (vp.x === 0 && vp.y === 0 && vp.height === 0 && vp.width === 0)
 							diagram.homeTop();
 						else
 						{
-							this.setSessionViewport({x:vp.x, y:vp.y, scale:vp.scale});
 							this.session.setPlacement(diagram.name, this.session.getStdPlacement());
+							this.setSessionViewport(D.getViewportByBBox2(vp));	// bbox in session coordinates
 						}
 					}
 					switch(action)
@@ -5824,7 +5853,7 @@ class Display
 							break;
 						case null:
 							if (this.session.hasViewport(diagram.name))
-								this.setSessionViewport(this.session.getViewport(diagram.name));
+								this.setSessionViewport(this.session.getViewport(diagram));
 							else
 								defaultView();
 							break;
@@ -6078,7 +6107,7 @@ class Display
 		const hRat = winHeight / ssHeight;
 		const rat = hRat < wRat ? wRat : hRat;
 		const p = this.session.getPlacement(diagram.name);
-		const vp = this.session.getViewport(diagram.name);
+		const vp = this.session.getViewport(diagram);
 		const x = (p.x * vp.scale + vp.x) / rat;
 		const y = (p.y * vp.scale + vp.y) / rat;
 		const s = vp.scale * p.scale / rat;
@@ -6526,10 +6555,23 @@ class Display
 	}
 	setSessionViewport(viewport)
 	{
-		const vp = this.session.getViewport(R.diagram.name);
-		const oldScale = vp.scale;
 		this.session.setCurrentViewport(viewport);
 		this.diagramSVG.setAttribute('transform', `translate(${viewport.x} ${viewport.y}) scale(${viewport.scale} ${viewport.scale})`);
+	}
+	getViewportByBBox2(bbox)	// bbox in session coordinates
+	{
+		const dw = this.width();
+		const dh = this.height();
+		const xRatio = bbox.width / dw;
+		const yRatio = bbox.height / dh;
+		const scale = 1.0/Math.max(xRatio, yRatio);
+		let x = bbox.x * scale;
+		let y = bbox.y * scale;
+		if (xRatio > yRatio)
+			y += dh/2 - scale * bbox.height/2;
+		else
+			x += dw/2 - scale * bbox.width/2;
+		return {x, y, scale:scale * bbox.scale, width:bbox.width, height:bbox.height};
 	}
 	getViewportByBBox(bbox)	// bbox in session coordinates
 	{
@@ -6547,7 +6589,7 @@ class Display
 			y += dh/2 - scale * bbox.height/2;
 		else
 			x += dw/2 - scale * bbox.width/2;
-		return {x, y, scale};
+		return {x, y, scale, width:bbox.width, height:bbox.height};
 	}
 	getViewportByBBoxTop(bbox)	// bbox in session coordinates
 	{
@@ -7090,7 +7132,6 @@ class Display
 		tx.onerror = e => R.recordError(e);
 		const pngStore = tx.objectStore('PNGs');
 		pngStore.put({name, png});
-//		D.emitPNGEvent(diagram, 'new', png);
 	}
 }
 
@@ -16204,9 +16245,9 @@ class Cell
 				case 'unknown':
 					return '&#8799;';
 				case 'pullback':
-					return '&#8891;';	// bottom right corner
+					return '&#8991;';	// upper left corner
 				case 'pushout':
-					return '&#8988;';	// upper left corner
+					return '&#8988;';	// bottom right corner
 				default:
 					return '?';
 			}
@@ -16220,9 +16261,9 @@ class Cell
 				case 'unknown':
 					return '&#8799;';
 				case 'pullback':
-					return '&#8988;';	// upper left corner
+					return '&#8991;';	// bottom right corner
 				case 'pushout':
-					return '&#8891;';	// bottom right corner
+					return '&#8988;';	// upper left corner
 				default:
 					return '';
 			}
@@ -18157,6 +18198,11 @@ class Diagram extends Functor
 			version:					{value:U.getArg(args, 'version', 0),			writable:true},
 			viewport:					{value:{x:0, y:0, scale:1.0},					writable:true},
 		});
+		if (D)
+		{
+			this.viewport.width = D.width();
+			this.viewport.height = D.height();
+		}
 		// TODO fix this
 		const term = this.getTerminal();
 		if ('references' in args)
@@ -20473,9 +20519,9 @@ class Diagram extends Functor
 	setViewport()
 	{
 		const placement = D.session.getPlacement(this.name);
-		const viewport = D.session.getViewport(this.name);
+		const viewport = D.session.getViewport(this);
 		const vp = new D2(viewport).add(placement);
-		this.viewport = {x:vp.x, y:vp.y, scale:viewport.scale / placement.scale};
+		this.viewport = {x:vp.x, y:vp.y, scale:viewport.scale / placement.scale, width:viewport.width, height:viewport.height};
 	}
 	getCell(name)
 	{
