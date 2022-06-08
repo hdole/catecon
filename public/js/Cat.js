@@ -6104,11 +6104,7 @@ class Display
 			ctx.fillRect(0, 0, ssWidth, ssHeight);
 			ctx.drawImage(img, 0, 0);
 			this.url.revokeObjectURL(url);
-			if (fn)
-			{
-				const cargo = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-				fn(cargo, `${diagram.name}.png`);
-			}
+			fn && canvas.toBlob(blob => fn(blob, `${diagram.name}.png`));
 		};
 		img.crossOrigin = "";
 		img.src = url;
@@ -20278,7 +20274,7 @@ class Diagram extends Functor
 	{
 		!D.isTextEditActive() && D.svg2canvas(this, (png, pngName) =>
 		{
-			D.savePNG(this, png);
+			D.savePNG(this.name, png);
 			fn && fn(e);
 		});
 	}
