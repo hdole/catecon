@@ -24,10 +24,10 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": -1020,
+          "x": -1010,
           "y": -140
         },
-        "height": "316",
+        "height": 316,
         "weight": "bold"
       },
       {
@@ -83,7 +83,7 @@
           "x": -520,
           "y": -40
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "The Access panel allows login access to the server for uploading diagrams.\nWhen logged in the panel shows the username, email, and permissions on the\nserver.  The user may log out or reset the account’s password.",
@@ -93,7 +93,7 @@
           "x": -520,
           "y": 230
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "m_0",
@@ -171,11 +171,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644486147520,
+  "timestamp": 1654678877156,
   "version": 0,
   "viewport": {
     "x": 2017,
     "y": 739,
-    "scale": 1.7103299656068351
+    "scale": 1.7103299656068351,
+    "width": 2560,
+    "height": 1369
   }
 }

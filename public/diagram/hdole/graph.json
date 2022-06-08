@@ -59,7 +59,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 30,
-          "y": 430
+          "y": 440
         },
         "height": 180,
         "weight": "bold"
@@ -642,6 +642,15 @@
         }
       },
       {
+        "basename": "o_50",
+        "prototype": "IndexObject",
+        "to": "Ho{Ho{Po{A,B}oP,I}oH,I}oH",
+        "xy": {
+          "x": 1150,
+          "y": 5580
+        }
+      },
+      {
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_2",
@@ -1013,15 +1022,6 @@
         "to": "Lm{Id{Po{Po{Ho{Ho{A,I}oH,I}oH,Ho{Ho{B,I}oH,I}oH}oP,Ho{Po{A,B}oP,I}oH}oP}dI:[[0,0]]:[[0,1]]}mL"
       },
       {
-        "basename": "o_50",
-        "prototype": "IndexObject",
-        "to": "Ho{Ho{Po{A,B}oP,I}oH,I}oH",
-        "xy": {
-          "x": 1150,
-          "y": 5580
-        }
-      },
-      {
         "basename": "m_70",
         "prototype": "IndexMorphism",
         "domain": "o_112",
@@ -1057,7 +1057,6 @@
       "prototype": "CatObject"
     },
     {
-      "description": "The homset from A to B",
       "prototype": "HomObject",
       "objects": [
         "A",
@@ -1072,7 +1071,6 @@
       ]
     },
     {
-      "description": "The homset from [A, B] to B",
       "prototype": "HomObject",
       "objects": [
         "Ho{A,B}oH",
@@ -1080,7 +1078,6 @@
       ]
     },
     {
-      "description": "The homset from [[A, B], B] to C",
       "prototype": "HomObject",
       "objects": [
         "Ho{Ho{A,B}oH,B}oH",
@@ -1088,7 +1085,6 @@
       ]
     },
     {
-      "description": "The homset from A to C",
       "prototype": "HomObject",
       "objects": [
         "A",
@@ -1096,7 +1092,6 @@
       ]
     },
     {
-      "description": "The homset from [A, C] to D",
       "prototype": "HomObject",
       "objects": [
         "Ho{A,C}oH",
@@ -1111,7 +1106,6 @@
       ]
     },
     {
-      "description": "The homset from [[A, C], D] to D",
       "prototype": "HomObject",
       "objects": [
         "Ho{Ho{A,C}oH,D}oH",
@@ -1216,7 +1210,6 @@
       ]
     },
     {
-      "description": "The homset from A to A&times;A",
       "prototype": "HomObject",
       "objects": [
         "A",
@@ -1224,7 +1217,6 @@
       ]
     },
     {
-      "description": "The homset from A&plus;A to A",
       "prototype": "HomObject",
       "objects": [
         "CPo{A,A}oPC",
@@ -1237,7 +1229,6 @@
       "elements": []
     },
     {
-      "description": "The homset from A to I",
       "prototype": "HomObject",
       "objects": [
         "A",
@@ -1245,7 +1236,6 @@
       ]
     },
     {
-      "description": "The homset from [A, I] to I",
       "prototype": "HomObject",
       "objects": [
         "Ho{A,I}oH",
@@ -1253,7 +1243,6 @@
       ]
     },
     {
-      "description": "The homset from B to I",
       "prototype": "HomObject",
       "objects": [
         "B",
@@ -1261,7 +1250,6 @@
       ]
     },
     {
-      "description": "The homset from [B, I] to I",
       "prototype": "HomObject",
       "objects": [
         "Ho{B,I}oH",
@@ -1276,7 +1264,6 @@
       ]
     },
     {
-      "description": "The homset from A&times;B to I",
       "prototype": "HomObject",
       "objects": [
         "Po{A,B}oP",
@@ -1291,7 +1278,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to ([[A, I], I]&times;[[B, I], I])&times;[A&times;B, I]",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1314,7 +1300,6 @@
       ]
     },
     {
-      "description": "The homset from A to [[B, I], I]&times;[A&times;B, I]&times;A",
       "prototype": "HomObject",
       "objects": [
         "A",
@@ -1344,7 +1329,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to [[A, I], I]&times;[A, [[B, I], I]&times;[A&times;B, I]&times;A]",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1374,7 +1358,6 @@
       ]
     },
     {
-      "description": "The homset from A to [B, I]",
       "prototype": "HomObject",
       "objects": [
         "A",
@@ -1418,7 +1401,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to I",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1426,7 +1408,6 @@
       ]
     },
     {
-      "description": "The homset from A to [[B, I], I]&times;[A, [B, I]]&times;A",
       "prototype": "HomObject",
       "objects": [
         "A",
@@ -1441,7 +1422,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to [[A, I], I]&times;[A, [[B, I], I]&times;[A, [B, I]]&times;A]",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1449,7 +1429,6 @@
       ]
     },
     {
-      "description": "The homset from A to [[B, I], I]&times;[B, I]",
       "prototype": "HomObject",
       "objects": [
         "A",
@@ -1464,7 +1443,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to [[A, I], I]&times;[A, [[B, I], I]&times;[B, I]]",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1472,7 +1450,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to [[A, I], I]&times;[A, I]",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1501,7 +1478,6 @@
       ]
     },
     {
-      "description": "The homset from B to ([[A, I], I]&times;[A&times;B, I])&times;B",
       "prototype": "HomObject",
       "objects": [
         "B",
@@ -1509,7 +1485,6 @@
       ]
     },
     {
-      "description": "The homset from B to [A, I]",
       "prototype": "HomObject",
       "objects": [
         "B",
@@ -1554,7 +1529,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to [[B, I], I]&times;([[A, I], I]&times;[A&times;B, I])",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1562,7 +1536,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to [[B, I], I]&times;[B, ([[A, I], I]&times;[A&times;B, I])&times;B]",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1570,7 +1543,6 @@
       ]
     },
     {
-      "description": "The homset from B to [[A, I], I]&times;[B, [A, I]]&times;B",
       "prototype": "HomObject",
       "objects": [
         "B",
@@ -1585,7 +1557,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to [[B, I], I]&times;[B, [[A, I], I]&times;[B, [A, I]]&times;B]",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1593,7 +1564,6 @@
       ]
     },
     {
-      "description": "The homset from B to [[A, I], I]&times;[A, I]",
       "prototype": "HomObject",
       "objects": [
         "B",
@@ -1608,7 +1578,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to [[B, I], I]&times;[B, [[A, I], I]&times;[A, I]]",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1616,7 +1585,6 @@
       ]
     },
     {
-      "description": "The homset from [A&times;B, I] to [[B, I], I]&times;[B, I]",
       "prototype": "HomObject",
       "objects": [
         "Ho{Po{A,B}oP,I}oH",
@@ -1748,7 +1716,6 @@
       "domain": "C"
     },
     {
-      "description": "The hom morphism formed from &lambda;&lt;&#119890;&#x2081;&#8331;&#x2080;&gt; and 1",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Ho{A,B}oH,B}oH,C}oH",
       "codomain": "Ho{A,C}oH",
@@ -1976,7 +1943,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and (1&times;&lambda;&lt;1&#x2080;,&#x2081;&#8331;&#x2082;&gt;)&#8728;(&Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;)&#8728;&#119901;&#8202;&#x2080;&#806&#x2080;,&#8202;&#x2080;&#806&#x2081;,&#8202;&#x2081;",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Po{Ho{Ho{A,I}oH,I}oH,Ho{Ho{B,I}oH,I}oH}oP,Ho{Po{A,B}oP,I}oH}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{Po{A,B}oP,I}oH,A}oP}oH}oP}oH",
@@ -2148,7 +2114,6 @@
       "codomain": "I"
     },
     {
-      "description": "The hom morphism formed from 1 and 1&times;&lambda;&lt;&lambda;&lt;&#119890;&#8728;(&Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;)&#x2080;,&#x2081;&#8331;&#x2082;&gt;&#x2080;&#8331;&#x2081;&gt;&times;1",
       "prototype": "HomMorphism",
       "domain": "Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{Po{A,B}oP,I}oH,A}oP}oH",
       "codomain": "Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{A,Ho{B,I}oH}oH,A}oP}oH",
@@ -2167,7 +2132,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and 1&times;[1, 1&times;&lambda;&lt;&lambda;&lt;&#119890;&#8728;(&Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;)&#x2080;,&#x2081;&#8331;&#x2082;&gt;&#x2080;&#8331;&#x2081;&gt;&times;1]",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{Po{A,B}oP,I}oH,A}oP}oH}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{A,Ho{B,I}oH}oH,A}oP}oH}oP}oH",
@@ -2186,7 +2150,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and (1&times;&#119890;)&#8728;(&Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;)",
       "prototype": "HomMorphism",
       "domain": "Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{A,Ho{B,I}oH}oH,A}oP}oH",
       "codomain": "Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,I}oH}oP}oH",
@@ -2205,7 +2168,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and 1&times;[1, (1&times;&#119890;)&#8728;(&Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;)]",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{A,Ho{B,I}oH}oH,A}oP}oH}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,I}oH}oP}oH}oP}oH",
@@ -2215,7 +2177,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and &#119890;",
       "prototype": "HomMorphism",
       "domain": "Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,I}oH}oP}oH",
       "codomain": "Ho{A,I}oH",
@@ -2234,7 +2195,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and 1&times;[1, &#119890;]",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,I}oH}oP}oH}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,I}oH}oP}oH",
@@ -2244,7 +2204,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and &#119890;",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,I}oH}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,I}oH",
@@ -2405,7 +2364,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and &Pi;&lt;&#119901;&#8202;&#x2080;&#806&#x2081;,&#119901;&#8202;&#x2080;&#806&#x2080;,&#8202;&#x2081;&gt;",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Po{Ho{Ho{A,I}oH,I}oH,Ho{Ho{B,I}oH,I}oH}oP,Ho{Po{A,B}oP,I}oH}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{B,I}oH,I}oH,Po{Ho{Ho{A,I}oH,I}oH,Ho{Po{A,B}oP,I}oH}oP}oP}oH",
@@ -2415,7 +2373,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and 1&times;&lambda;&lt;1&#x2080;&#8331;&#x2081;&gt;",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{B,I}oH,I}oH,Po{Ho{Ho{A,I}oH,I}oH,Ho{Po{A,B}oP,I}oH}oP}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,Po{Po{Ho{Ho{A,I}oH,I}oH,Ho{Po{A,B}oP,I}oH}oP,B}oP}oH}oP}oH",
@@ -2452,7 +2409,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and (1&times;&lambda;&lt;1&#8331;&#x2080;&#8202&#x2081;/&#x2080;&#8202&#x2080;&gt;&times;1)&#8728;&#119901;&#8202;&#x2080;&#806&#x2080;,&#8202;&#x2080;&#806&#x2081;,&#8202;&#x2081;",
       "prototype": "HomMorphism",
       "domain": "Ho{B,Po{Po{Ho{Ho{A,I}oH,I}oH,Ho{Po{A,B}oP,I}oH}oP,B}oP}oH",
       "codomain": "Ho{B,Po{Ho{Ho{A,I}oH,I}oH,Ho{B,Ho{A,I}oH}oH,B}oP}oH",
@@ -2471,7 +2427,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and 1&times;[1, (1&times;&lambda;&lt;1&#8331;&#x2080;&#8202&#x2081;/&#x2080;&#8202&#x2080;&gt;&times;1)&#8728;&#119901;&#8202;&#x2080;&#806&#x2080;,&#8202;&#x2080;&#806&#x2081;,&#8202;&#x2081;]",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,Po{Po{Ho{Ho{A,I}oH,I}oH,Ho{Po{A,B}oP,I}oH}oP,B}oP}oH}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,Po{Ho{Ho{A,I}oH,I}oH,Ho{B,Ho{A,I}oH}oH,B}oP}oH}oP}oH",
@@ -2490,7 +2445,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and (1&times;&#119890;)&#8728;(&Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;)",
       "prototype": "HomMorphism",
       "domain": "Ho{B,Po{Ho{Ho{A,I}oH,I}oH,Ho{B,Ho{A,I}oH}oH,B}oP}oH",
       "codomain": "Ho{B,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,I}oH}oP}oH",
@@ -2509,7 +2463,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and 1&times;[1, (1&times;&#119890;)&#8728;(&Pi;&lt;&#119901;&#8202;&#x2080;,&#119901;&#8202;&#x2081;,&#8202;&#x2082;&gt;)]",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,Po{Ho{Ho{A,I}oH,I}oH,Ho{B,Ho{A,I}oH}oH,B}oP}oH}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,I}oH}oP}oH}oP}oH",
@@ -2519,7 +2472,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and &#119890;",
       "prototype": "HomMorphism",
       "domain": "Ho{B,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,I}oH}oP}oH",
       "codomain": "Ho{B,I}oH",
@@ -2538,7 +2490,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and 1&times;[1, &#119890;]",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,Po{Ho{Ho{A,I}oH,I}oH,Ho{A,I}oH}oP}oH}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,I}oH}oP}oH",
@@ -2548,7 +2499,6 @@
       ]
     },
     {
-      "description": "The hom morphism formed from 1 and &#119890;",
       "prototype": "HomMorphism",
       "domain": "Ho{Ho{Po{A,B}oP,I}oH,Po{Ho{Ho{B,I}oH,I}oH,Ho{B,I}oH}oP}oH",
       "codomain": "Ho{Ho{Po{A,B}oP,I}oH,I}oH",
@@ -2609,11 +2559,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1653691566792,
+  "timestamp": 1654678670506,
   "version": 0,
   "viewport": {
     "x": 195,
     "y": -349,
-    "scale": 1.6390577670118693
+    "scale": 1.6390577670118693,
+    "width": 2560,
+    "height": 1369
   }
 }

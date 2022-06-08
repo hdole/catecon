@@ -22,10 +22,10 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 160,
-          "y": 1550
+          "x": 170,
+          "y": 1650
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -36,18 +36,20 @@
           "x": 270,
           "y": 1760
         },
-        "height": "24"
+        "height": 24
       }
     ],
     "cells": []
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1644129700428,
+  "timestamp": 1654678913728,
   "version": 0,
   "viewport": {
     "x": -195,
     "y": -3636,
-    "scale": 2.537893927981801
+    "scale": 2.537893927981801,
+    "width": 2560,
+    "height": 1369
   }
 }

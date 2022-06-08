@@ -22,10 +22,10 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 550,
+          "x": 560,
           "y": 380
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -36,7 +36,7 @@
           "x": 580,
           "y": 540
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "The Categorical Console",
@@ -46,7 +46,7 @@
           "x": 570,
           "y": 470
         },
-        "height": "66",
+        "height": 66,
         "weight": "bolder"
       }
     ],
@@ -54,11 +54,13 @@
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1644310599620,
+  "timestamp": 1654678886440,
   "version": 0,
   "viewport": {
     "x": -1057,
     "y": -499,
-    "scale": 2.394703326536897
+    "scale": 2.394703326536897,
+    "width": 2560,
+    "height": 1369
   }
 }

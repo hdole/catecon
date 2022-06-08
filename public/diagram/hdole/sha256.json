@@ -42,10 +42,10 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": -210,
-          "y": 390
+          "x": -220,
+          "y": 410
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -263,7 +263,7 @@
           "x": -500,
           "y": 600
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "m_0",
@@ -476,11 +476,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1643699045065,
+  "timestamp": 1654678920011,
   "version": 0,
   "viewport": {
     "x": 1166,
     "y": -282,
-    "scale": 1.801737471891685
+    "scale": 1.801737471891685,
+    "width": 2560,
+    "height": 1369
   }
 }

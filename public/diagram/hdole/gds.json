@@ -637,7 +637,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -130,
-          "y": 0
+          "y": 10
         },
         "height": 96,
         "weight": "bold"
@@ -887,7 +887,7 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1,
       "min": 0,
       "max": 1
@@ -1096,7 +1096,6 @@
       "codomain": "Point"
     },
     {
-      "description": "The homset from &Nopf;&#8321;&#8326; to Point",
       "prototype": "HomObject",
       "objects": [
         "hdole/nat/N16",
@@ -1143,7 +1142,6 @@
       "codomain": "Property"
     },
     {
-      "description": "The homset from &Nopf;&#8321;&#8326; to Property",
       "prototype": "HomObject",
       "objects": [
         "hdole/nat/N16",
@@ -1567,11 +1565,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644486278006,
+  "timestamp": 1654678813807,
   "version": 0,
   "viewport": {
     "x": 340,
     "y": 272,
-    "scale": 1
+    "scale": 1,
+    "width": 2560,
+    "height": 1369
   }
 }

@@ -61,9 +61,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": 120,
-          "y": -300
+          "y": -310
         },
-        "height": "48"
+        "height": 48
       }
     ],
     "cells": []
@@ -76,11 +76,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1641589083301,
+  "timestamp": 1654678933346,
   "version": 0,
   "viewport": {
     "x": 589,
     "y": 674,
-    "scale": 1.5024233003637482
+    "scale": 1.5024233003637482,
+    "width": 2560,
+    "height": 1369
   }
 }

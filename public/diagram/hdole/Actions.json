@@ -74,7 +74,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 250,
-          "y": -50
+          "y": -40
         },
         "height": 156,
         "weight": "bold"
@@ -488,11 +488,13 @@
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1653042923835,
+  "timestamp": 1654678721753,
   "version": 0,
   "viewport": {
     "x": -205,
     "y": 418,
-    "scale": 1.8714404826836144
+    "scale": 1.8714404826836144,
+    "width": 2560,
+    "height": 1369
   }
 }

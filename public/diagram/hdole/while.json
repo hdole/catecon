@@ -85,7 +85,7 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 360,
+          "x": 380,
           "y": 80
         },
         "height": 414,
@@ -173,7 +173,7 @@
             true
           ]
         ],
-        "to": "hdole/while/Fa{S:#1_-1}aF"
+        "to": "Fa{S:#1_-1}aF"
       },
       {
         "basename": "m_8",
@@ -207,7 +207,7 @@
             true
           ]
         ],
-        "to": "hdole/while/Fa{S:#1_-1}aF"
+        "to": "Fa{S:#1_-1}aF"
       },
       {
         "basename": "m_10",
@@ -273,7 +273,7 @@
             true
           ]
         ],
-        "to": "hdole/while/CFa{CPo{#1,#1}oPC:#1_0}aFC"
+        "to": "CFa{CPo{#1,#1}oPC:#1_0}aFC"
       },
       {
         "basename": "m_4",
@@ -294,7 +294,7 @@
             true
           ]
         ],
-        "to": "hdole/while/CFa{CPo{#1,#1}oPC:#1_1}aFC"
+        "to": "CFa{CPo{#1,#1}oPC:#1_1}aFC"
       },
       {
         "basename": "m_11",
@@ -407,11 +407,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652433546582,
+  "timestamp": 1654678765409,
   "version": 0,
   "viewport": {
     "x": 61,
     "y": 432,
-    "scale": 1.2141131442921609
+    "scale": 1.2141131442921609,
+    "width": 2560,
+    "height": 1369
   }
 }

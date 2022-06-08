@@ -204,7 +204,7 @@
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
-          "x": -1070,
+          "x": -1120,
           "y": -840
         },
         "height": 500,
@@ -1135,6 +1135,33 @@
         "xy": {
           "x": -1010,
           "y": -260
+        }
+      },
+      {
+        "basename": "o_76",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 1310,
+          "y": 780
+        }
+      },
+      {
+        "basename": "o_80",
+        "prototype": "IndexObject",
+        "to": "C",
+        "xy": {
+          "x": 1400,
+          "y": 880
+        }
+      },
+      {
+        "basename": "o_83",
+        "prototype": "IndexObject",
+        "to": "B",
+        "xy": {
+          "x": 1400,
+          "y": 780
         }
       },
       {
@@ -2072,24 +2099,6 @@
         "to": "f"
       },
       {
-        "basename": "o_76",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": 1310,
-          "y": 780
-        }
-      },
-      {
-        "basename": "o_80",
-        "prototype": "IndexObject",
-        "to": "C",
-        "xy": {
-          "x": 1400,
-          "y": 880
-        }
-      },
-      {
         "basename": "m_35",
         "prototype": "IndexMorphism",
         "domain": "o_76",
@@ -2101,15 +2110,6 @@
           ]
         ],
         "to": "h"
-      },
-      {
-        "basename": "o_83",
-        "prototype": "IndexObject",
-        "to": "B",
-        "xy": {
-          "x": 1400,
-          "y": 780
-        }
       },
       {
         "basename": "m_36",
@@ -2359,7 +2359,6 @@
       ]
     },
     {
-      "description": "The homset from A to C",
       "prototype": "HomObject",
       "objects": [
         "A",
@@ -2367,7 +2366,6 @@
       ]
     },
     {
-      "description": "The homset from A&times;B to C",
       "prototype": "HomObject",
       "objects": [
         "Po{A,B}oP",
@@ -2409,7 +2407,6 @@
       ]
     },
     {
-      "description": "The homset from A to B",
       "prototype": "HomObject",
       "objects": [
         "A",
@@ -2955,11 +2952,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1653268839566,
+  "timestamp": 1654678708902,
   "version": 0,
   "viewport": {
-    "x": -4927,
-    "y": -3178,
-    "scale": 4.568479181171428
+    "x": 921,
+    "y": 657,
+    "scale": 0.4815014031427349,
+    "width": 2560,
+    "height": 1369
   }
 }

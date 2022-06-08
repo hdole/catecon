@@ -22,7 +22,7 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": -480,
+          "x": -470,
           "y": 60
         },
         "height": 286,
@@ -192,7 +192,7 @@
         "prototype": "IndexMorphism",
         "domain": "o_3",
         "codomain": "o_4",
-        "to": "hdole/product/Fa{Po{A,B}oP:A_0}aF"
+        "to": "Fa{Po{A,B}oP:A_0}aF"
       },
       {
         "basename": "m_1",
@@ -205,14 +205,14 @@
             true
           ]
         ],
-        "to": "hdole/product/Fa{Po{A,B}oP:B_1}aF"
+        "to": "Fa{Po{A,B}oP:B_1}aF"
       },
       {
         "basename": "m_5",
         "prototype": "IndexMorphism",
         "domain": "o_2",
         "codomain": "o_12",
-        "to": "hdole/product/Fa{Po{A,B}oP:A_0}aF"
+        "to": "Fa{Po{A,B}oP:A_0}aF"
       },
       {
         "basename": "m_6",
@@ -225,7 +225,7 @@
             true
           ]
         ],
-        "to": "hdole/product/Fa{Po{A,B}oP:B_1}aF"
+        "to": "Fa{Po{A,B}oP:B_1}aF"
       },
       {
         "basename": "m_2",
@@ -419,11 +419,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652437544851,
+  "timestamp": 1654678753372,
   "version": 0,
   "viewport": {
     "x": 1005,
     "y": 330,
-    "scale": 1.6147219583014416
+    "scale": 1.6147219583014416,
+    "width": 2560,
+    "height": 1369
   }
 }

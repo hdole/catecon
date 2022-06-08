@@ -26,7 +26,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 830,
-          "y": 330
+          "y": 340
         },
         "height": 196,
         "weight": "bold"
@@ -363,6 +363,42 @@
         "xy": {
           "x": 1150,
           "y": 2400
+        }
+      },
+      {
+        "basename": "o_36",
+        "prototype": "IndexObject",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2000,
+          "y": 1890
+        }
+      },
+      {
+        "basename": "o_37",
+        "prototype": "IndexObject",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2150,
+          "y": 1890
+        }
+      },
+      {
+        "basename": "o_38",
+        "prototype": "IndexObject",
+        "to": "hdole/cpp/stdin",
+        "xy": {
+          "x": 1850,
+          "y": 1890
+        }
+      },
+      {
+        "basename": "o_39",
+        "prototype": "IndexObject",
+        "to": "hdole/cpp/stdout",
+        "xy": {
+          "x": 2150,
+          "y": 2050
         }
       },
       {
@@ -716,24 +752,6 @@
         "to": "Cm{Cm{Fa{hdole/floats/F64:hdole/floats/F64_,hdole/floats/F64_0}aF,Pm{hdole/floats/feq0_64,Id{hdole/floats/F64}dI}mP}mC,Cm{Di{Po{CPo{#1,#1}oPC,hdole/floats/F64}oP-L}iD,CPm{Cm{Fa{Po{#1,hdole/floats/F64}oP:hdole/floats/F64_1}aF,Cm{Fa{hdole/floats/F64:#1_-1,hdole/floats/F64_1}aF,Cm{Fa{Po{#1,hdole/floats/F64}oP:hdole/floats/F64_1}aF,Cm{Cm{Fa{hdole/floats/F64:hdole/floats/F64_,hdole/floats/F64_0}aF,Pm{Cm{hdole/floats/fdecr64,fact}mC,Id{hdole/floats/F64}dI}mP}mC,Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_1,hdole/floats/F64_0}aF,hdole/floats/fmult64}mC}mC}mC}mC}mC,Cm{Fa{Po{#1,hdole/floats/F64}oP:hdole/floats/F64_1}aF,Fa{hdole/floats/F64:#1_-1}aF,hdole/floats/fone64}mC}mPC,CFa{hdole/floats/F64:hdole/floats/F64_,hdole/floats/F64_}aFC}mC}mC"
       },
       {
-        "basename": "o_36",
-        "prototype": "IndexObject",
-        "to": "hdole/floats/F64",
-        "xy": {
-          "x": 2000,
-          "y": 1890
-        }
-      },
-      {
-        "basename": "o_37",
-        "prototype": "IndexObject",
-        "to": "hdole/floats/F64",
-        "xy": {
-          "x": 2150,
-          "y": 1890
-        }
-      },
-      {
         "basename": "m_36",
         "prototype": "IndexMorphism",
         "domain": "o_36",
@@ -741,29 +759,11 @@
         "to": "fact"
       },
       {
-        "basename": "o_38",
-        "prototype": "IndexObject",
-        "to": "hdole/cpp/stdin",
-        "xy": {
-          "x": 1850,
-          "y": 1890
-        }
-      },
-      {
         "basename": "m_37",
         "prototype": "IndexMorphism",
         "domain": "o_38",
         "codomain": "o_36",
         "to": "hdole/cpp/stdinToF64"
-      },
-      {
-        "basename": "o_39",
-        "prototype": "IndexObject",
-        "to": "hdole/cpp/stdout",
-        "xy": {
-          "x": 2150,
-          "y": 2050
-        }
       },
       {
         "basename": "m_38",
@@ -1202,11 +1202,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652732757012,
+  "timestamp": 1654678742303,
   "version": 0,
   "viewport": {
     "x": 545,
     "y": -39,
-    "scale": 0.5847853892448585
+    "scale": 0.5847853892448585,
+    "width": 2560,
+    "height": 1369
   }
 }

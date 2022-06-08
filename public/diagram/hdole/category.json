@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -210,
-          "y": -510
+          "y": -520
         },
         "height": 374,
         "weight": "bold"
@@ -1011,12 +1011,6 @@
         "prototype": "IndexMorphism",
         "domain": "o_6",
         "codomain": "o_7",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
         "to": "id"
       },
       {
@@ -1024,12 +1018,6 @@
         "prototype": "IndexMorphism",
         "domain": "o_8",
         "codomain": "o_9",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
         "to": "dom"
       },
       {
@@ -2190,11 +2178,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1654482584990,
+  "timestamp": 1654678620560,
   "version": 0,
   "viewport": {
     "x": 536,
     "y": 1110,
-    "scale": 1.3028284649745518
+    "scale": 1.3028284649745518,
+    "width": 2560,
+    "height": 1369
   }
 }

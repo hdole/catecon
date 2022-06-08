@@ -25,9 +25,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": -210,
-          "y": 120
+          "y": 260
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -38,7 +38,7 @@
           "x": -200,
           "y": 400
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_0",
@@ -66,7 +66,7 @@
           "x": -200,
           "y": 580
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_2",
@@ -94,7 +94,7 @@
           "x": -200,
           "y": 800
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_5",
@@ -113,7 +113,7 @@
           "x": -190,
           "y": 980
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_6",
@@ -132,7 +132,7 @@
           "x": -200,
           "y": 1200
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "o_4",
@@ -210,6 +210,14 @@
   },
   "elements": [
     {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
       "basename": "index",
       "prototype": "CatObject",
       "properName": "Index"
@@ -226,14 +234,6 @@
     {
       "basename": "k",
       "prototype": "FiniteObject"
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "1",
-      "size": 1,
-      "min": 0,
-      "max": 1
     },
     {
       "prototype": "ProductObject",
@@ -277,11 +277,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644129758166,
+  "timestamp": 1654678904324,
   "version": 0,
   "viewport": {
     "x": 669,
     "y": -30,
-    "scale": 2.0356019245259898
+    "scale": 2.0356019245259898,
+    "width": 2560,
+    "height": 1369
   }
 }

@@ -24,7 +24,7 @@
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
-          "x": -380,
+          "x": -370,
           "y": -780
         },
         "height": 240,
@@ -320,11 +320,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1652437323256,
+  "timestamp": 1654678759492,
   "version": 0,
   "viewport": {
     "x": 961,
     "y": 1939,
-    "scale": 1.8401918602386822
+    "scale": 1.8401918602386822,
+    "width": 2560,
+    "height": 1369
   }
 }

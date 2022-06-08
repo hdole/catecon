@@ -26,7 +26,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -800,
-          "y": -140
+          "y": -180
         },
         "height": 308,
         "weight": "bold"
@@ -645,6 +645,42 @@
         }
       },
       {
+        "basename": "o_67",
+        "prototype": "IndexObject",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": -590,
+          "y": 470
+        }
+      },
+      {
+        "basename": "o_68",
+        "prototype": "IndexObject",
+        "to": "hdole/floats/CPo{#1,#1}oPC",
+        "xy": {
+          "x": -440,
+          "y": 470
+        }
+      },
+      {
+        "basename": "o_69",
+        "prototype": "IndexObject",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": -580,
+          "y": 320
+        }
+      },
+      {
+        "basename": "o_70",
+        "prototype": "IndexObject",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": -430,
+          "y": 320
+        }
+      },
+      {
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_2",
@@ -1134,6 +1170,20 @@
         "to": "fact_0"
       },
       {
+        "basename": "m_57",
+        "prototype": "IndexMorphism",
+        "domain": "o_67",
+        "codomain": "o_68",
+        "to": "hdole/floats/feq0_64"
+      },
+      {
+        "basename": "m_58",
+        "prototype": "IndexMorphism",
+        "domain": "o_69",
+        "codomain": "o_70",
+        "to": "fact"
+      },
+      {
         "description": "Definition of factorial",
         "basename": "d_0",
         "prototype": "Definition",
@@ -1153,56 +1203,6 @@
         "blobs": [
           "hdole/factorial/o_0"
         ]
-      },
-      {
-        "basename": "o_67",
-        "prototype": "IndexObject",
-        "to": "hdole/floats/F64",
-        "xy": {
-          "x": -590,
-          "y": 470
-        }
-      },
-      {
-        "basename": "o_68",
-        "prototype": "IndexObject",
-        "to": "hdole/floats/CPo{#1,#1}oPC",
-        "xy": {
-          "x": -440,
-          "y": 470
-        }
-      },
-      {
-        "basename": "m_57",
-        "prototype": "IndexMorphism",
-        "domain": "o_67",
-        "codomain": "o_68",
-        "to": "hdole/floats/feq0_64"
-      },
-      {
-        "basename": "o_69",
-        "prototype": "IndexObject",
-        "to": "hdole/floats/F64",
-        "xy": {
-          "x": -580,
-          "y": 320
-        }
-      },
-      {
-        "basename": "o_70",
-        "prototype": "IndexObject",
-        "to": "hdole/floats/F64",
-        "xy": {
-          "x": -430,
-          "y": 320
-        }
-      },
-      {
-        "basename": "m_58",
-        "prototype": "IndexMorphism",
-        "domain": "o_69",
-        "codomain": "o_70",
-        "to": "fact"
       }
     ],
     "cells": []
@@ -1864,11 +1864,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1654470879623,
+  "timestamp": 1654677033799,
   "version": 0,
   "viewport": {
-    "x": 1493,
-    "y": 446,
-    "scale": 0.9500335210550389
+    "x": 1428,
+    "y": 381,
+    "scale": 0.6630540898994104,
+    "width": 1280,
+    "height": 729
   }
 }

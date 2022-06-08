@@ -329,9 +329,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": -500,
-          "y": -80
+          "y": -60
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -342,7 +342,7 @@
           "x": 750,
           "y": 110
         },
-        "height": "24"
+        "height": 24
       },
       {
         "basename": "m_2",
@@ -379,7 +379,7 @@
     {
       "basename": "#1",
       "prototype": "FiniteObject",
-      "properName": "&#10034;",
+      "properName": "1",
       "size": 1,
       "min": 0,
       "max": 1
@@ -436,11 +436,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644486238308,
+  "timestamp": 1654678837605,
   "version": 0,
   "viewport": {
     "x": 874,
     "y": 388,
-    "scale": 1.2230534509222923
+    "scale": 1.2230534509222923,
+    "width": 2560,
+    "height": 1369
   }
 }

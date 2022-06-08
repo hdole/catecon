@@ -71,7 +71,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": 50
+          "y": 60
         },
         "height": 24
       },
@@ -171,23 +171,6 @@
             0
           ]
         ]
-      },
-      {
-        "description": "Definition of monomorphism",
-        "basename": "d_0",
-        "prototype": "Definition",
-        "xy": {
-          "x": -70,
-          "y": 0
-        },
-        "height": 24,
-        "defname": "monomorphism",
-        "sequence": [
-          "f"
-        ],
-        "blobs": [
-          "hdole/monomorphism/o_4"
-        ]
       }
     ],
     "cells": [
@@ -204,7 +187,7 @@
         "attributes": [
           [
             "level",
-            2
+            1
           ]
         ]
       },
@@ -268,11 +251,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1653279395816,
+  "timestamp": 1654677045646,
   "version": 0,
   "viewport": {
-    "x": 882,
-    "y": 2094,
-    "scale": 3.0978225418809093
+    "x": 883,
+    "y": 2063,
+    "scale": 3.094482972878928,
+    "width": 2560,
+    "height": 1369
   }
 }

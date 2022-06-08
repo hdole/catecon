@@ -22,10 +22,10 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 100,
-          "y": -360
+          "x": 110,
+          "y": -330
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -36,7 +36,7 @@
           "x": 190,
           "y": -160
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "The objects in the index category map to an XY location.",
@@ -46,7 +46,7 @@
           "x": 190,
           "y": -10
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "The objects in the index category map to an XY location.",
@@ -56,7 +56,7 @@
           "x": 200,
           "y": 100
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "A morphism in an index category has a flag which indicates if the target morphism&#39;s name\nis flipped to one side or the other of the plotted arrow between the two index objects.",
@@ -66,18 +66,20 @@
           "x": 200,
           "y": 230
         },
-        "height": "24"
+        "height": 24
       }
     ],
     "cells": []
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1641589025253,
+  "timestamp": 1654678938842,
   "version": 0,
   "viewport": {
     "x": 103,
-    "y": 900,
-    "scale": 1.428905813932552
+    "y": 832,
+    "scale": 1.428905813932552,
+    "width": 2560,
+    "height": 1369
   }
 }

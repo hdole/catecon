@@ -270,6 +270,14 @@
   },
   "elements": [
     {
+      "basename": "#1",
+      "prototype": "FiniteObject",
+      "properName": "1",
+      "size": 1,
+      "min": 0,
+      "max": 1
+    },
+    {
       "description": "The quantum qubit",
       "basename": "q",
       "prototype": "CatObject",
@@ -282,14 +290,6 @@
         "q",
         "q"
       ]
-    },
-    {
-      "basename": "#1",
-      "prototype": "FiniteObject",
-      "properName": "&#10034;",
-      "size": 1,
-      "min": 0,
-      "max": 1
     },
     {
       "description": "Identity for the object &Qopf;",
@@ -352,11 +352,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1644486265386,
+  "timestamp": 1654678863357,
   "version": 0,
   "viewport": {
-    "x": -868,
-    "y": -2562,
-    "scale": 6.91743105187686
+    "x": 1022,
+    "y": -251,
+    "scale": 0.8297749840391346,
+    "width": 294.32513427734375,
+    "height": 1495.586181640625
   }
 }

@@ -23,9 +23,9 @@
         "prototype": "IndexText",
         "xy": {
           "x": 80,
-          "y": -210
+          "y": -200
         },
-        "height": "200",
+        "height": 200,
         "weight": "bold"
       },
       {
@@ -36,7 +36,7 @@
           "x": 120,
           "y": -90
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "In Catecon, you get help on an action (aka button) by doing\na control-click on the action.  You are then taken to the\ndiagram explaining that action.",
@@ -46,7 +46,7 @@
           "x": 120,
           "y": 20
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "View the available actions <diagram name=\"hdole/Actions\">here</diagram>.",
@@ -56,7 +56,7 @@
           "x": 120,
           "y": 200
         },
-        "height": "24"
+        "height": 24
       },
       {
         "description": "Hot keys are defined <diagram name=\"hdole/hotkeys\">here</diagram>.",
@@ -66,18 +66,20 @@
           "x": 120,
           "y": 250
         },
-        "height": "24"
+        "height": 24
       }
     ],
     "cells": []
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1645319902513,
+  "timestamp": 1654678790548,
   "version": 0,
   "viewport": {
     "x": 308,
     "y": 795,
-    "scale": 1.9927216600939544
+    "scale": 1.9927216600939544,
+    "width": 2560,
+    "height": 1369
   }
 }
