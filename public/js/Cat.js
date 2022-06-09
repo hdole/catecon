@@ -336,9 +336,9 @@ class U		// utilities
 		}
 		return ret;
 	}
-	static refcntSorter(a, b) { return a.refcnt < b.refcnt ? -1 : b.refcnt > a.refcnt ? 1 : 0; }		// high to low
+	static refcntSorter(a, b) { return a.refcnt > b.refcnt ? -1 : a.refcnt < b.refcnt ? 1 : 0; }		// high to low
 	static TimestampSorter(a, b) { return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0; }
-	static NameSorter(a, b) { return a.name < b.name ? 1 : a.name > b.name ? -1 : 0; }		// a to z
+	static NameSorter(a, b) { return a.name.localeCompare(b.name); }
 	static isIndexItem(elt)
 	{
 		return elt instanceof IndexObject || elt instanceof IndexText || Arrow.isArrow(elt);
@@ -787,6 +787,10 @@ class Runtime
 		this.setupWorkers();
 		this.fetchCatalog( _ =>
 		{
+			this.catalog.forEach(info =>
+			{
+				info.refcnt = 0;
+			});
 			this.setupCore();
 			this.setupActions();
 			this.setupSet();
@@ -1935,6 +1939,7 @@ class Navbar
 			{
 				const toolbar = this.element.querySelector('.buttonBarRight');
 				toolbar && D.removeChildren(toolbar);
+				this.update();
 			}
 		});
 		window.addEventListener('Autohide', e =>
@@ -2421,7 +2426,7 @@ class SearchTool
 	}
 	setRefcntSorter(e)
 	{
-		this.searchArgs.sorter = U.RefcntSorter;
+		this.searchArgs.sorter = U.refcntSorter;
 		D.setActiveIcon(e.target);
 		this.search();
 	}
@@ -2563,7 +2568,7 @@ class ElementTool
 	}
 	setRefcntSorter(e)
 	{
-		this.searchArgs.sorter = U.RefcntSorter;
+		this.searchArgs.sorter = U.refcntSorter;
 		D.setActiveIcon(e.target);
 		this.search();
 	}
@@ -2993,28 +2998,25 @@ class DiagramTool extends ElementTool
 		const nobuts = new Set(exclude.split(' '));
 		const buttons = [];
 		const name = info.name;
-		const diagram = R.$CAT.getElement(name);
-		if (diagram)
+		if (R.user.canUpload() && R.cloud && info.user === R.user.name)
 		{
-			if (R.user.canUpload() && R.cloud && info.user === R.user.name)
-			{
-				if (!nobuts.has('upload') && R.isLocalNewer(diagram.name))
-					buttons.push(D.getIcon('upload', 'upload', e => diagram.upload(e, false), {title:'Upload to cloud ' + R.cloudURL, aniId:'diagramUploadBtn'}));
-				if (!nobuts.has('download') && R.isCloudNewer(diagram.name))
-					buttons.push(D.getIcon('downcloud', 'downcloud', e => diagram.download(e, false), {title:'Download from cloud ' + R.cloudURL}));
-			}
-			if (!nobuts.has('download'))
-			{
-				if (info.category === 'em/Cat')
-				{
-					buttons.push(D.getIcon('js', 'download-js', e => diagram.downloadJS(e), {title:'Download Javascript'}));
-					buttons.push(D.getIcon('cpp', 'download-cpp', e => diagram.downloadCPP(e), {title:'Download C++'}));
-				}
-				buttons.push(D.getIcon('json', 'download-json', e => diagram.downloadJSON(e), {title:'Download JSON'}));
-				buttons.push(D.getIcon('png', 'download-png', e => window.open(`diagram/${name}.png`, 'Diagram PNG',
-					`height=${D.snapshotHeight}, width=${D.snapshotWidth}, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0`), {title:'View PNG'}));
-			}
+			if (!nobuts.has('upload') && R.isLocalNewer(name))
+				buttons.push(D.getIcon('upload', 'upload', e => R.$CAT.getDiagram(name).upload(e, false), {title:'Upload to cloud ' + R.cloudURL, aniId:'diagramUploadBtn'}));
+			if (!nobuts.has('download') && R.isCloudNewer(name))
+				buttons.push(D.getIcon('downcloud', 'downcloud', e => R.$CAT.getDiagram(name).download(e, false), {title:'Download from cloud ' + R.cloudURL}));
 		}
+		if (!nobuts.has('download'))
+		{
+			if (info.category === 'zf/Set')
+			{
+				buttons.push(D.getIcon('js', 'download-js', e => R.$CAT.getDiagram(name).downloadJS(e), {title:'Download Javascript'}));
+				buttons.push(D.getIcon('cpp', 'download-cpp', e => R.$CAT.getDiagram(name).downloadCPP(e), {title:'Download C++'}));
+			}
+			buttons.push(D.getIcon('json', 'download-json', e => R.$CAT.getDiagram(name).downloadJSON(e), {title:'Download JSON'}));
+			buttons.push(D.getIcon('png', 'download-png', e => window.open(`diagram/${name}.png`, 'Diagram PNG',
+				`height=${D.snapshotHeight}, width=${D.snapshotWidth}, toolbar=0, location=0, status=0, scrollbars=0, resizeable=0`), {title:'View PNG'}));
+		}
+		const diagram = R.$CAT.getElement(name);
 		if (!nobuts.has('view'))
 			buttons.push(D.getIcon('view', 'view', e => Runtime.SelectDiagram(name, 'default'), {title:'View diagram'}));
 		const refcnt = diagram ? diagram.refcnt : info ? info.refcnt : 0;
@@ -3883,8 +3885,8 @@ class Session
 		viewport.x = Math.round(vp.x);
 		viewport.y = Math.round(vp.y);
 		viewport.scale = vp.scale;
-		viewport.height = vp.height;
-		viewport.width = vp.width;
+		viewport.height = D.height();
+		viewport.width = D.width();
 	}
 	setCurrentViewport(vp = {x:0, y:0, scale:1.0, timestamp:0})
 	{
@@ -5487,6 +5489,11 @@ class Display
 			}
 		}
 	}
+	updateCatalogDiagramRefcnt(diagram)
+	{
+		const info = R.catalog.get(diagram.name);
+		info.refcnt = diagram.refcnt;
+	}
 	addEventListeners()
 	{
 		window.addEventListener('resize', e =>
@@ -5643,6 +5650,7 @@ class Display
 						diagram.checkCells();
 						diagram.domain.checkCells();
 						this.autosave(diagram);
+						this.updateCatalogDiagramRefcnt(args.arg);
 						break;
 					case 'deselect':
 						args.arg.showSelected(false);
@@ -5671,7 +5679,13 @@ class Display
 			switch(args.command)
 			{
 				case 'load':
+console.log('load', name);
 					diagram.checkCells();
+					diagram.allReferences.forEach((val, nm) =>
+					{
+						const dgrm = R.$CAT.getElement(nm);
+						this.updateCatalogDiagramRefcnt(dgrm);
+					});
 					break;
 				case 'default':		// make it the viewable diagram
 					if (diagram)
@@ -5822,7 +5836,8 @@ class Display
 					let dgrmSvg = this.diagramSVG.firstChild;
 					while(dgrmSvg)
 					{
-						dgrmSvg.classList.add('hidden');
+						if (dgrmSvg instanceof SVGGElement)
+							dgrmSvg.classList.add('hidden');
 						dgrmSvg = dgrmSvg.nextSibling;
 					}
 					this.diagramSVG.classList.remove('hidden');
@@ -5830,12 +5845,6 @@ class Display
 					const defaultView = _ =>
 					{
 						const vp = diagram.viewport;
-						// TODO REMOVE PATCH
-						if (!('width' in vp))
-						{
-							vp.width = D.width();
-							vp.height = D.height();
-						}
 						if (vp.x === 0 && vp.y === 0 && vp.height === 0 && vp.width === 0)
 							diagram.homeTop();
 						else
@@ -6589,7 +6598,7 @@ class Display
 			y += dh/2 - scale * bbox.height/2;
 		else
 			x += dw/2 - scale * bbox.width/2;
-		return {x, y, scale, width:bbox.width, height:bbox.height};
+		return {x, y, scale};
 	}
 	getViewportByBBoxTop(bbox)	// bbox in session coordinates
 	{
@@ -7817,7 +7826,7 @@ class LoginPanel extends Panel
 															H3.tr(H3.td('Email')),
 															H3.tr(H3.td(H3.input('##signupUserEmail', {type:'text', placeholder:'Email'}))),
 													LoginPanel.PasswordForm(Cat.R.cloud.signup),
-													H3.tr(H3.td(H3.button('Sign up', {onclick:_ => Cat.R.cloud.signup()})))), '##signupPnl.section'));
+													H3.tr(H3.td(H3.button('Sign up', {onclick:_ => Cat.R.cloud.signup()})))), '##signupPnl.section.center'));
 				this.loginInfoElt.appendChild(form);
 				break;
 			case 'registered':
@@ -7898,16 +7907,19 @@ class SettingsPanel extends Panel
 		const input = H3.input({type:"checkbox", onchange:e => D.setDarkmode(e.target.checked), id:'check-darkmode'});
 		input.checked = D.default.darkmode;
 		tbl.appendChild(H3.tr(H3.td(input), H3.td('Dark mode', '.left')));
-		tbl.appendChild(H3.tr(H3.td(H3.button('Reset Defaults', '.textButton', {onclick:_ =>
+		if (R.debug(1))
 		{
-			Cat.D.resetDefaults();
-			this.update();
-		}}), {colspan:2})));
-		if (R.user.cloud && R.user.cloud.permissions.includes('admin'))
-		{
-			tbl.appendChild(H3.tr(	H3.td(H3.button('Update Reference Counts', '.textButton', {onclick:_ => Cat.R.updateRefcnts()}), {colspan:2})));
-			tbl.appendChild(H3.tr(	H3.td(H3.button('Rewrite diagrams', '.textButton', {onclick:_ => Cat.R.rewriteDiagrams()}), {colspan:2})));
-			tbl.appendChild(H3.tr(	H3.td(H3.button('Update bug report', '.textButton', {onclick:_ => Cat.R.updateBugReport()}), {colspan:2})));
+			tbl.appendChild(H3.tr(H3.td(H3.button('Reset Defaults', '.textButton', {onclick:_ =>
+			{
+				Cat.D.resetDefaults();
+				this.update();
+			}}), {colspan:2})));
+			if (R.user.cloud && R.user.cloud.permissions.includes('admin'))
+			{
+				tbl.appendChild(H3.tr(	H3.td(H3.button('Update Reference Counts', '.textButton', {onclick:_ => Cat.R.updateRefcnts()}), {colspan:2})));
+				tbl.appendChild(H3.tr(	H3.td(H3.button('Rewrite diagrams', '.textButton', {onclick:_ => Cat.R.rewriteDiagrams()}), {colspan:2})));
+				tbl.appendChild(H3.tr(	H3.td(H3.button('Update bug report', '.textButton', {onclick:_ => Cat.R.updateBugReport()}), {colspan:2})));
+			}
 		}
 	}
 }
@@ -13706,8 +13718,7 @@ class UserAction extends Action
 	}
 }
 
-// create the object of all such instances from a definition
-class AllSuchAction extends Action
+class AllSuchAction extends Action		// create the object of all such instances from a definition
 {
 	constructor(diagram)
 	{
@@ -19341,6 +19352,7 @@ class Diagram extends Functor
 				this.allReferences = this.getAllReferenceDiagrams();
 				this.updateTimestamp();
 				R.setDiagramInfo(this);
+				D.emitDiagramEvent(this, 'removeReference', r);
 			}
 		}
 	}
@@ -19934,7 +19946,7 @@ class Diagram extends Functor
 		});
 		if (!hasTitle)
 		{
-			new IndexText(this, {xy:{x:tx, y:ty}, height:grid/2, weight:'bold', description:this.basename});
+			new IndexText(this, {xy:{x:tx, y:ty}, height:grid/2, weight:'bold', description:U.Cap(this.basename)});
 			if (this.description !== '')
 				new IndexText(this, {xy:{x:tx, y:ty + grid/4}, height:grid/8, weight:'normal', description:this.description});
 		}
@@ -20521,6 +20533,7 @@ class Diagram extends Functor
 		const placement = D.session.getPlacement(this.name);
 		const viewport = D.session.getViewport(this);
 		const vp = new D2(viewport).add(placement);
+if (viewport.width !== D.width())debugger;
 		this.viewport = {x:vp.x, y:vp.y, scale:viewport.scale / placement.scale, width:viewport.width, height:viewport.height};
 	}
 	getCell(name)
@@ -20653,8 +20666,9 @@ class Diagram extends Functor
 		{
 				name:			diagram.name,
 				basename:		diagram.basename,
-				description	:	diagram.description,
+				description:	diagram.description,
 				properName:		diagram.properName,
+				refcnt:			0,
 				timestamp:		diagram.timestamp,
 				user:			diagram.user,
 		};
@@ -20666,6 +20680,7 @@ class Diagram extends Functor
 			info.codomain = diagram.codomain.name;
 			info.prototype = diagram.constructor.name;
 			info.references = refs;
+			info.refcnt = diagram.refcnt;
 		}
 		else
 		{
