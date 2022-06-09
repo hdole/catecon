@@ -1131,50 +1131,6 @@
         "height": 48
       },
       {
-        "description": "Tab",
-        "basename": "t_104",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 1150,
-          "y": 5850
-        },
-        "height": 36,
-        "weight": "bold",
-        "textAnchor": "end"
-      },
-      {
-        "description": "shift-Tab",
-        "basename": "t_105",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 1150,
-          "y": 5950
-        },
-        "height": 36,
-        "weight": "bold",
-        "textAnchor": "end"
-      },
-      {
-        "description": "\nChange the input mode on an editable diagram.",
-        "basename": "t_106",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 1300,
-          "y": 5800
-        },
-        "height": 24
-      },
-      {
-        "description": "If one element is selected, then select the prior element of the same type.",
-        "basename": "t_107",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 1300,
-          "y": 5950
-        },
-        "height": 24
-      },
-      {
         "description": "<icon>edit</icon>",
         "basename": "t_108",
         "prototype": "IndexText",
@@ -1217,7 +1173,7 @@
         "textAnchor": "end"
       },
       {
-        "description": "If nothing selected, place object '2' at mouse location.  If an object A or morphism m is\nselected, then the square AxA or mxm is placed.",
+        "description": "If nothing selected, place object '1+1' at mouse location.  If an object A or morphism m is\nselected, then the square AxA or mxm is placed.",
         "basename": "t_112",
         "prototype": "IndexText",
         "xy": {
@@ -1517,16 +1473,6 @@
         "height": 24
       },
       {
-        "description": "BUG:  Change tab text",
-        "basename": "t_139",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 1940,
-          "y": 5860
-        },
-        "height": 24
-      },
-      {
         "description": "W",
         "basename": "t_140",
         "prototype": "IndexText",
@@ -1553,12 +1499,12 @@
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1654678632934,
+  "timestamp": 1654746500678,
   "version": 0,
   "viewport": {
-    "x": -918,
-    "y": -170,
-    "scale": 1.278557913367758,
+    "x": -789,
+    "y": -5384,
+    "scale": 1.2831385215310533,
     "width": 2560,
     "height": 1369
   }

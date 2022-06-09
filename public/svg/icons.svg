@@ -582,7 +582,7 @@
 	</symbol>
 	<symbol id="icon-view" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="160" r="160" fill="url(#radgrad1)"/>
-		<ellipse class="icon-std" cx="160" cy="160" rx="150" ry="100" fill="url(#radgrad1)"/>
+		<ellipse class="icon-thin" cx="160" cy="160" rx="150" ry="100" fill="url(#radgrad1)"/>
 	</symbol>
 	<symbol id="icon-view-png" class="icon" viewbox="0 0 320 320">
 		<circle cx="160" cy="120" r="120" fill="url(#radgrad1)"/>
