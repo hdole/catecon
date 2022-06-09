@@ -457,6 +457,7 @@ p
 .navtxt-link
 {
 	cursor:				pointer;
+	text-decoration:	underline;
 }
 .navtxt-text
 {
@@ -644,7 +645,7 @@ p
 {
 	fill:			none;
 	stroke:			var(--color-morphism);
-	stroke-width:	20px;
+	stroke-width:	15px;
 }
 
 .arrow3 {fill:none; stroke:#333; stroke-width:20px;}
@@ -1040,11 +1041,6 @@ textarea
 	stroke-miterlimit:	2;
 	stroke-width:		1px;
 	position:			absolute;
-}
-
-.indent
-{
-	margin-left:	4em;
 }
 
 .smallCaps
