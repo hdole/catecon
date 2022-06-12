@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -200,
-          "y": -570
+          "y": -580
         },
         "height": 92,
         "weight": "bold"
@@ -43,7 +43,7 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 100,
+          "x": 120,
           "y": -300
         }
       },
@@ -80,7 +80,7 @@
         "prototype": "IndexObject",
         "to": "D",
         "xy": {
-          "x": 200,
+          "x": 210,
           "y": -180
         }
       },
@@ -89,7 +89,7 @@
         "prototype": "IndexObject",
         "to": "em/Cat",
         "xy": {
-          "x": 200,
+          "x": 210,
           "y": -50
         }
       },
@@ -132,15 +132,15 @@
             true
           ],
           [
+            "bezier",
+            1
+          ],
+          [
             "quantifier",
             "forall"
           ],
           [
             "level",
-            1
-          ],
-          [
-            "bezier",
             1
           ]
         ],
@@ -187,7 +187,7 @@
         "attributes": [
           [
             "level",
-            1
+            2
           ]
         ]
       },
@@ -202,7 +202,13 @@
           "m_5"
         ],
         "assertion": "equals",
-        "hidden": false
+        "hidden": false,
+        "attributes": [
+          [
+            "level",
+            1
+          ]
+        ]
       }
     ]
   },
@@ -251,13 +257,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1654677045646,
+  "timestamp": 1655014996608,
   "version": 0,
   "viewport": {
-    "x": 883,
-    "y": 2063,
-    "scale": 3.094482972878928,
+    "x": 882,
+    "y": 1562,
+    "scale": 3.0978271448280372,
     "width": 2560,
-    "height": 1369
+    "height": 1440
   }
 }

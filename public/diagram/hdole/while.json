@@ -86,7 +86,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 380,
-          "y": 80
+          "y": 40
         },
         "height": 414,
         "weight": "bold"
@@ -125,33 +125,6 @@
         "xy": {
           "x": 650,
           "y": 700
-        }
-      },
-      {
-        "basename": "o_17",
-        "prototype": "IndexObject",
-        "to": "T",
-        "xy": {
-          "x": 1500,
-          "y": 500
-        }
-      },
-      {
-        "basename": "o_18",
-        "prototype": "IndexObject",
-        "to": "T",
-        "xy": {
-          "x": 1650,
-          "y": 500
-        }
-      },
-      {
-        "basename": "o_19",
-        "prototype": "IndexObject",
-        "to": "CPo{#1,#1}oPC",
-        "xy": {
-          "x": 1500,
-          "y": 650
         }
       },
       {
@@ -302,20 +275,6 @@
         "domain": "o_14",
         "codomain": "o_15",
         "to": "while"
-      },
-      {
-        "basename": "m_17",
-        "prototype": "IndexMorphism",
-        "domain": "o_17",
-        "codomain": "o_18",
-        "to": "u"
-      },
-      {
-        "basename": "m_18",
-        "prototype": "IndexMorphism",
-        "domain": "o_17",
-        "codomain": "o_19",
-        "to": "t"
       }
     ],
     "cells": []
@@ -340,10 +299,6 @@
         "#1",
         "#1"
       ]
-    },
-    {
-      "basename": "T",
-      "prototype": "CatObject"
     },
     {
       "basename": "update",
@@ -392,28 +347,16 @@
       "prototype": "Morphism",
       "domain": "S",
       "codomain": "S"
-    },
-    {
-      "basename": "u",
-      "prototype": "Morphism",
-      "domain": "T",
-      "codomain": "T"
-    },
-    {
-      "basename": "t",
-      "prototype": "Morphism",
-      "domain": "T",
-      "codomain": "CPo{#1,#1}oPC"
     }
   ],
   "user": "hdole",
-  "timestamp": 1654678765409,
+  "timestamp": 1654835742569,
   "version": 0,
   "viewport": {
     "x": 61,
-    "y": 432,
+    "y": 468,
     "scale": 1.2141131442921609,
     "width": 2560,
-    "height": 1369
+    "height": 1440
   }
 }

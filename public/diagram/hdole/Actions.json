@@ -74,7 +74,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 250,
-          "y": -40
+          "y": -20
         },
         "height": 156,
         "weight": "bold"
@@ -86,16 +86,6 @@
         "xy": {
           "x": 300,
           "y": 1300
-        },
-        "height": 24
-      },
-      {
-        "description": "<icon>action</icon>:  Generalize the selected elements to a new action",
-        "basename": "t_1",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 300,
-          "y": 300
         },
         "height": 24
       },
@@ -166,16 +156,6 @@
         "xy": {
           "x": 300,
           "y": 1100
-        },
-        "height": 24
-      },
-      {
-        "description": "<icon>expression</icon>  Expression:  Form an expression from a blob.",
-        "basename": "t_15",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 300,
-          "y": 700
         },
         "height": 24
       },
@@ -482,19 +462,29 @@
           "y": 1450
         },
         "height": 24
+      },
+      {
+        "description": "<icon>definition</icon>  Definition:  Form a definition form selected blobs.",
+        "basename": "t_1",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 300,
+          "y": 700
+        },
+        "height": 24
       }
     ],
     "cells": []
   },
   "elements": [],
   "user": "hdole",
-  "timestamp": 1654678721753,
+  "timestamp": 1654835811043,
   "version": 0,
   "viewport": {
     "x": -205,
-    "y": 418,
-    "scale": 1.8714404826836144,
+    "y": 362,
+    "scale": 1.8716878754631412,
     "width": 2560,
-    "height": 1369
+    "height": 1440
   }
 }
