@@ -1474,19 +1474,18 @@ class Runtime
 				throw 'error creating bug report: ' + response.statusText;
 		}).catch(err => R.recordError(err));
 	}
-	upload(e, diagram, local, fn)
+	upload(pngURL, diagram, local, fn)
 	{
 		if (!this.user.canUpload())
 			return;
 		const body = {diagram:diagram instanceof Diagram ? diagram.json() : diagram, user:this.user.name};
-		const png = D.diagramPNGs.get(diagram.name);
-		if (png)
-			body.png = png;
+		if (pngURL)
+			body.png = pngURL;
 		R.debug(1) && console.log('uploading', diagram.name);
 		if (local)
 			return this.authFetch(this.getURL('upload', local), body).then(res => fn(res)).catch(err => R.recordError(err));
 		// keep local server up to date after update to cloud
-		return this.authFetch(this.getURL('upload', false), body).then(res => this.upload(e, diagram, true, fn)).catch(err => R.recordError(err));
+		return this.authFetch(this.getURL('upload', false), body).then(res => this.upload(pngURL, diagram, true, fn)).catch(err => R.recordError(err));
 	}
 	addReference(e, name, fn = null)
 	{
@@ -6145,7 +6144,8 @@ console.log('load', name);
 			ctx.fillRect(0, 0, ssWidth, ssHeight);
 			ctx.drawImage(img, 0, 0);
 			this.url.revokeObjectURL(url);
-			fn && canvas.toBlob(blob => fn(blob, `${diagram.name}.png`));
+			const cargo = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+			fn && canvas.toBlob(blob => fn(blob, `${diagram.name}.png`, cargo));
 		};
 		img.crossOrigin = "";
 		img.src = url;
@@ -6334,7 +6334,6 @@ console.log('load', name);
 			{
 				if (png)
 				{
-					this.diagramPNGs.set(name, png);
 					fn(png);
 					return;
 				}
@@ -7140,7 +7139,7 @@ console.log('load', name);
 			return idx.length === 1 && idx[0] === -1 ? idx[0] : idx;
 		});
 	}
-	savePNG(name, png)
+	savePNG(name, png)		// save to indexeddb
 	{
 		D.diagramPNGs.set(name, png);
 		const tx = this.store.transaction(['PNGs'], 'readwrite');
@@ -19044,20 +19043,20 @@ class Diagram extends Functor
 	{
 		if (R.cloud && ((this.user === R.user.name && R.user.canUpload()) || R.user.isAdmin()))
 		{
+			if (e && 'target' in e)
+			{
+				btn = e.target.parentNode.querySelector('animateTransform');
+				if (btn)	// start button animation
+				{
+					btn.setAttribute('repeatCount', 'indefinite');
+					btn.beginElement();
+				}
+			}
 			const start = Date.now();
-			this.savePng(e, e =>
+			this.savePng(pngURL =>
 			{
 				let btn = null;
-				if (e && 'target' in e)
-				{
-					btn = e.target.parentNode.querySelector('animateTransform');
-					if (btn)	// start button animation
-					{
-						btn.setAttribute('repeatCount', 'indefinite');
-						btn.beginElement();
-					}
-				}
-				R.upload(e, this, local, res =>
+				R.upload(pngURL, this, local, res =>
 				{
 					btn && btn.setAttribute('repeatCount', 1);
 					if (!res.ok)
@@ -20377,12 +20376,12 @@ class Diagram extends Functor
 			dgrmF4gnd.setAttribute('height', `${height}px`);
 		}
 	}
-	savePng(e, fn = null)
+	savePng(fn = null)
 	{
-		!D.isTextEditActive() && D.svg2canvas(this, (png, pngName) =>
+		!D.isTextEditActive() && D.svg2canvas(this, (png, pngName, pngURL) =>
 		{
 			D.savePNG(this.name, png);
-			fn && fn(e);
+			fn && fn(pngURL);
 		});
 	}
 	updateTimestamp()
