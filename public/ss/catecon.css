@@ -24,6 +24,9 @@
 	--color-toolbar-bg:	#eee;
 	--color-toolbar-shadow:	#bbb;
 	--color-warn:		#ff0;
+	--height-button:	32px;
+	--height-navbar-text:	22px;
+	--height-sidenavAccordion-text:	16px;
 }
 
 [data-theme="dark"]
@@ -52,6 +55,9 @@
 	--color-toolbar-bg:	#444;
 	--color-toolbar-shadow:	#333;
 	--color-warn:		#ff0;
+	--height-button:	32px;
+	--height-navbar-text	22px;
+	--height-sidenavAccordion-text	16px;
 }
 
 html, body
@@ -213,7 +219,7 @@ h5
 	margin:				0px;
 	overflow-x:			hidden;
 	position:			fixed;
-	top:				32px;
+	top:				var(--height-button);
 	transition:			1s;
 	width:				0;
 	z-index:			2;
@@ -390,13 +396,13 @@ p
 .w20
 {
 	width:	20%;
-	height:	32px;
+	height:	var(--height-button);
 }
 
 .w33
 {
 	width:	33%;
-	height:	32px;
+	height:	var(--height-button);
 }
 
 .w100
@@ -407,7 +413,7 @@ p
 #navbar
 {
 	color:				var(--color-bg);
-	height:				32px;
+	height:				var(--height-button);
 	margin:				0;
 	overflow:			hidden;
 	position:			fixed;
@@ -448,10 +454,10 @@ p
 {
 	color:				white;
 	font-weight:		bold;
-	font-size:			22px;
+	font-size:			var(--height-navbar-text);
 	padding:			0px;
 	text-align:			center;
-	height:				32px;
+	height:				var(--height-button);
 	margin:				auto 0;
 }
 .navtxt-link
@@ -690,7 +696,7 @@ p
 	color:				var(--color-body);
 	cursor:				pointer;
 	font-weight:		bold;
-	font-size:			14px;
+	font-size:			var(--height-sidenavAccordion-text);
 	margin:				4px 0px 4px 0px;
 	outline:			none;
 	text-align:			center;
@@ -760,7 +766,7 @@ p
 {
 	border-spacing:		0px;
 	border-collapse:	collapse;
-	height:				32px;
+	height:				var(--height-button);
 	padding:			0px;
 	width:				auto;
 	vertical-align:		middle;
@@ -1250,7 +1256,7 @@ description
 .catalogTop
 {
 	text-align:			center;
-	top:				32px;
+	top:				var(--height-button);
 	width:				100%;
 }
 
@@ -1474,5 +1480,5 @@ tspan
 {
 	background:	var(--color-panel-bg);
 	border:		1px solid black;
-	height:		32px
+	height:		var(--height-button)
 }
