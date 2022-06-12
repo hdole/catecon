@@ -4918,6 +4918,12 @@ class Display
 		this.gradients.radgrad1 = document.getElementById('radgrad1');		// these gradients use url's
 		this.gradients.radgrad2 = document.getElementById('radgrad2');
 		this.generateGraphColors();
+		const versionUrl = R.getURL('config.json');
+		fetch(versionUrl).then(res => res.json()).then(json =>
+		{
+			document.getElementById('version').innerText = json.version;
+			document.getElementById('updateTime').innerText = new Date(json.timestamp).toLocaleString();
+		});
 	}
 	saveDefaults()
 	{
@@ -7739,6 +7745,9 @@ class HelpPanel extends Panel
 			H3.table(H3.tr(H3.td(this.closeBtnCell(), this.expandPanelBtn())), '.buttonBarRight.stdBackground'),
 			H3.h3('Catecon'),
 			H3.h4('The Categorical Console'),
+			H3.div(	H3.span('.small.italic', 'Version:'), H3.span('##version.small.bold'),
+					H3.br(),
+					H3.span('.small.italic', 'Updated:'), H3.span('##updateTime.small.bold')),
 			H3.button('Category Theory', '##catHelpPnlBtn.sidenavAccordion', {title:'References', onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'catHelpPnl')}),
 				H3.div(	H3.small('All of mathematics is divided into one part: Category Theory', ''),
 						H3.h4('References'),
