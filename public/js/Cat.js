@@ -1563,7 +1563,7 @@ class Runtime
 			if (this.sameForm(ref.domain, test.domain, eltMap) && this.sameForm(ref.codomain, test.codomain, eltMap))
 			{
 					if (eltMap.has(ref))
-						return test !== eltMap.get(ref);
+						return test === eltMap.get(ref);
 					eltMap.set(ref, test);
 					return true;
 			}
@@ -3709,7 +3709,7 @@ class DefinitionTool extends ElementTool
 		{
 			selector:			{value: null,		writable: true},
 			error:				{value: null,		writable: true},
-			targetCat:				{value: null,		writable: true},
+			targetCat:			{value: null,		writable: true},
 		});
 	}
 	html(e)
@@ -6373,6 +6373,8 @@ console.log('load', name);
 				nuArgs.src = R.getDiagramURL(name + '.png');
 			if (!('alt' in nuArgs))
 				nuArgs.alt = 'Image not available';
+			nuArgs.height = `${D.screenScale * D.default.diagram.imageScale * 330}px`;
+			nuArgs.width = `${D.screenScale * D.default.diagram.imageScale * 360}px`;
 			fn && fn(H3.img('.stdBackground', nuArgs));
 		});
 	}
@@ -9982,12 +9984,12 @@ class Definition extends IndexText
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		nuArgs.basename = U.getArg(nuArgs, 'basename', diagram.getAnon('d'));
+		nuArgs.basename = nuArgs.defname;
 		super(diagram, nuArgs);
 		const sequence = diagram.getElements(nuArgs.sequence);
 		if (sequence.filter(elt => !(elt instanceof CatObject) && !(elt instanceof Morphism)).length > 0)
 			throw 'bad sequence';
-		const action = new UserAction(R.$CAT.getElement('actions'), {definition:this, basename:`${diagram.user}/${nuArgs.defname}`, sequence});
+		const action = new UserAction(R.$CAT.getElement('actions'), {definition:this, basename:`${diagram.name}/${nuArgs.defname}`, sequence});
 		action.incrRefcnt();
 		Object.defineProperties(this,
 		{
@@ -10098,7 +10100,7 @@ class Definition extends IndexText
 			elementMap.set(elt, nuElt);
 		});
 		const sequence = this.sequence.map(elt => elementMap.get(elt));
-		const defi = new DefinitionInstance(diagram, {targetCat, sequence, elementMap, definition:this, xy, description:`Instantiation of ${this.defname}`});
+		const defi = new DefinitionInstance(diagram, {targetCat, sequence, elementMap, definition:this, xy});
 		defi.postload();
 		diagram.makeSelected(defi);
 	}
@@ -10194,7 +10196,8 @@ class Definition extends IndexText
 		if (isIndex)		// add quantifier gui
 		{
 			const id = item.elementId('quant');
-			R.Actions.definition.quantifiers.map(q => tools.appendChild(D.getIcon(`quantifier-${q}`, `quantifier-${q}`, e => R.Actions.definition.action(e, item.diagram, item, q), {scale:D.default.button.small, title:'Set quantifier', id:`${id}-quantifier-${q}`})));
+			R.Actions.definition.quantifiers.map(q =>
+				tools.appendChild(D.getIcon(`quantifier-${q}`, `quantifier-${q}`, e => R.Actions.definition.action(e, item.diagram, item, q), {scale:D.default.button.small, title:'Set quantifier', id:`${id}-quantifier-${q}`})));
 			D.setActiveIcon(row.querySelector(`#${id}-quantifier-${oldQuant}`), true);
 		}
 		else if (item instanceof Cell)
@@ -10346,6 +10349,7 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 		const sequence = diagram.getElements(args.sequence);
 		sequence.map(elt => elt.incrRefcnt());
 		const definition = diagram.getElement(args.definition);
+		this.description = ('description' in args && args.description !== '') ? args.description : `Let ${sequence.map(elt => elt instanceof Morphism ? elt.getArrowRep() : elt.properName).join(', ')} be a ${definition.properName}.`;
 		Object.defineProperties(this,
 		{
 			targetCat:		{value: targetCat,					writable: false},
@@ -10505,7 +10509,6 @@ class Theorem extends IndexText
 		this.blobs.map(blob => blob.cells.forEach(cell => this.cells.push(cell)));
 		this.cells.map(cell => cell.forEachElement(elt => elt.incrRefcnt()));
 		this.morphism = new Morphism(R.actionDiagram, {basename:this.basename, domain:this.source.definition.action, codomain:this.target.action, description:this.description});
-		this.morphism.proof = this;
 		this.morphism.incrRefcnt();
 		if (D)
 		{
@@ -10534,7 +10537,6 @@ class Theorem extends IndexText
 			this.target.decrRefcnt();
 			this.sequence.map(elt => elt.decrRefcnt());
 			this.cells.map(cell => cell.forEachElement(elt => elt.decrRefcnt()));
-			delete this.morphism.proof;
 			this.morphism.decrRefcnt();
 			window.removeEventListener('Cell', this.listener);
 		}
@@ -10544,8 +10546,8 @@ class Theorem extends IndexText
 	{
 		super.help()
 		D.toolbar.body.appendChild(H3.h3('Theorem'));
-		D.toolbar.body.appendChild(H3.p(`Source ${this.source.defname}`));
-		D.toolbar.body.appendChild(H3.p(`Target ${this.target.defname}`));
+		D.toolbar.body.appendChild(H3.p(`Source: ${this.source.definition.defname}`));
+		D.toolbar.body.appendChild(H3.p(`Target: ${this.target.defname}`));
 		this.cells.map(cell => D.toolbar.table.appendChild(H3.tr(H3.td(cell.getHtmlRep()), H3.td(cell.commutes === 'computed' ? '⟲' : '?'))));
 	}
 	json()
@@ -13275,7 +13277,7 @@ class DefinitionAction extends Action
 			D.emitElementEvent(diagram, 'update', element);
 			diagram.log({command:'quantifier', quantifier});
 			diagram.antilog({command:'quantifier', quantifier:oldQuant});
-			this.html(e, diagram, [element]);
+			this.html(e, diagram, diagram.selected);
 		}
 	}
 	doit(e, diagram, index, quantifier)
@@ -13698,7 +13700,6 @@ class UserAction extends Action
 		else if (this.hasForm(diagram, ary, eltMap))
 		{
 			const cells = this.definition.getCells();
-			const eltMap = new Map();
 			const procMorphism = m => this._build(diagram, m.to, eltMap);
 			cells.map(cell => {cell.left.map(procMorphism); cell.right.map(procMorphism);});
 			const bbox = diagram.svgRoot.getBBox();
