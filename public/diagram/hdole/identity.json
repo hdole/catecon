@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 470,
-          "y": 210
+          "y": 200
         },
         "height": 172,
         "weight": "bold"
@@ -97,16 +97,6 @@
         "prototype": "IndexMorphism",
         "domain": "o_2",
         "codomain": "o_3",
-        "attributes": [
-          [
-            "quantifier",
-            "forall"
-          ],
-          [
-            "level",
-            1
-          ]
-        ],
         "to": "f"
       },
       {
@@ -163,14 +153,6 @@
           [
             "flipName",
             true
-          ],
-          [
-            "quantifier",
-            "forall"
-          ],
-          [
-            "level",
-            1
           ]
         ],
         "to": "g"
@@ -190,20 +172,20 @@
       },
       {
         "description": "Definition of identity",
-        "basename": "d_0",
+        "basename": "identity",
         "prototype": "Definition",
         "xy": {
-          "x": 620,
-          "y": 640
+          "x": 610,
+          "y": 660
         },
-        "height": 24,
+        "height": 28,
         "defname": "identity",
         "sequence": [
           "id"
         ],
         "blobs": [
-          "hdole/identity/o_2",
-          "hdole/identity/o_1"
+          "hdole/identity/o_4",
+          "hdole/identity/o_5"
         ]
       }
     ],
@@ -274,13 +256,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1655073593457,
+  "timestamp": 1655151741074,
   "version": 0,
   "viewport": {
-    "x": -1267,
-    "y": -55,
-    "scale": 3.2530114748298393,
+    "x": -279,
+    "y": -51,
+    "scale": 1.991427011481296,
     "width": 2560,
-    "height": 1440
+    "height": 1368
   }
 }

@@ -23,7 +23,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -210,
-          "y": -580
+          "y": -540
         },
         "height": 374,
         "weight": "bold"
@@ -1723,42 +1723,6 @@
         "domain": "o_82",
         "codomain": "o_80",
         "to": "comp"
-      },
-      {
-        "description": "Definition of category",
-        "basename": "d_0",
-        "prototype": "Definition",
-        "xy": {
-          "x": -160,
-          "y": 6180
-        },
-        "height": 148,
-        "defname": "category",
-        "sequence": [
-          "id",
-          "dom",
-          "cod",
-          "comp"
-        ],
-        "blobs": [
-          "hdole/category/o_6",
-          "hdole/category/o_8",
-          "hdole/category/o_10",
-          "hdole/category/o_12",
-          "hdole/category/o_14",
-          "hdole/category/o_17",
-          "hdole/category/o_22",
-          "hdole/category/o_24",
-          "hdole/category/o_28",
-          "hdole/category/o_32",
-          "hdole/category/o_44",
-          "hdole/category/o_48",
-          "hdole/category/o_53",
-          "hdole/category/o_59",
-          "hdole/category/o_66",
-          "hdole/category/o_72",
-          "hdole/category/o_78"
-        ]
       }
     ],
     "cells": [
@@ -2178,13 +2142,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1655075018323,
+  "timestamp": 1655151670236,
   "version": 0,
   "viewport": {
-    "x": 704,
-    "y": 1158,
-    "scale": 1.1228111386357271,
+    "x": 535,
+    "y": 1201,
+    "scale": 1.302087035051222,
     "width": 2560,
-    "height": 1440
+    "height": 1368
   }
 }
