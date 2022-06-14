@@ -1288,7 +1288,7 @@ class Runtime
 							[...this.catalog.values()].map(info =>
 							{
 								if (!('isLocal' in info))
-									info.local = false;
+									info.isLocal = false;
 							});
 							this.writeCatalog();
 							fn();
