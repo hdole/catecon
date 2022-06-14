@@ -215,7 +215,6 @@ h5
 .sidenavPnl
 {
 	background-color:	var(--color-panel-bg);
-	height:				100%;
 	margin:				0px;
 	overflow-x:			hidden;
 	position:			fixed;
