@@ -3,6 +3,7 @@ html(lang="en")
 	head
 		meta(charset="utf-8")
 		meta(name="viewport", content="width=device-width, initial-scale=1")
+		meta(name="description", content="Catecon: The categorical console for category theory")
 		link(rel="stylesheet", type="text/css", href="/ss/catecon.css")
 		link(rel="preconnect", href="https://api-cdn.amazon.com")
 		link(rel="preconnect", href="https://https://cognito-identity.us-west-2.amazonaws.com")
@@ -21,7 +22,7 @@ html(lang="en")
 				#toolbar-header
 				#toolbar-error.hidden.error
 				#toolbar-help
-			svg#topSVG(xmlns="http://www.w3.org/2000/svg")
+			svg#topSVG(xmlns="http://www.w3.org/2000/svg", style="background:var(--color-bg)")
 				defs
 					filter#softGlow(height="300%", width="300%")
 						feMorphology(operator="dilate", radius="2", in="SourceAlpha", result="thicken")
