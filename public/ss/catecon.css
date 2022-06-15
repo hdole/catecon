@@ -1229,17 +1229,11 @@ description
 .diagramBackground
 {
 	fill:				var(--color-bg);
-	fill-opacity:		1;
-	filter:				url(#diagramShadow);
-	stroke:				#aaaa;
-	stroke-width:		1px;
 }
 
 .diagramBackgroundActive
 {
 	fill:				var(--color-bg);
-	fill-opacity:		1;
-	filter:				url(#diagramShadow);
 }
 
 .diagramForeground
@@ -1462,17 +1456,17 @@ tspan
 
 .definition
 {
-	text-decoration:	underline overline;
+	font-size:	28px;
 }
 
 .definitionInstance
 {
-	text-decoration:	underline overline;
+	font-size:	28px;
 }
 
 .theorem
 {
-	text-decoration:	underline overline;
+	font-size:	28px;
 }
 
 .dropTarget
