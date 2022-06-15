@@ -175,17 +175,16 @@
         "basename": "identity",
         "prototype": "Definition",
         "xy": {
-          "x": 610,
-          "y": 660
+          "x": 620,
+          "y": 670
         },
-        "height": 28,
-        "defname": "identity",
+        "height": 24,
         "sequence": [
           "id"
         ],
         "blobs": [
-          "hdole/identity/o_4",
-          "hdole/identity/o_5"
+          "hdole/identity/o_2",
+          "hdole/identity/o_1"
         ]
       }
     ],
@@ -256,7 +255,7 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1655151741074,
+  "timestamp": 1655254148099,
   "version": 0,
   "viewport": {
     "x": -279,

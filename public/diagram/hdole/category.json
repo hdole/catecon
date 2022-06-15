@@ -1688,6 +1688,12 @@
         "prototype": "IndexMorphism",
         "domain": "o_78",
         "codomain": "o_79",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "Pu{Pb{cod,Cm{Fa{Pb{cod,dom}bP:C1_0}aF,dom}mC}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP:Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP:C1_0}aF}mC,Pu{Pb{cod,dom}bP,Cm{Fa{Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP:Pb{cod,dom}bP_0}aF,Fa{Pb{cod,dom}bP:C1_1}aF}mC,Fa{Pb{Cm{Fa{Pb{cod,dom}bP:C1_1}aF,cod}mC,dom}bP:C1_1}aF}uP}uP"
       },
       {
@@ -2142,12 +2148,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1655151670236,
+  "timestamp": 1655289854778,
   "version": 0,
   "viewport": {
     "x": 535,
-    "y": 1201,
-    "scale": 1.302087035051222,
+    "y": -6338,
+    "scale": 1.302099334957004,
     "width": 2560,
     "height": 1368
   }

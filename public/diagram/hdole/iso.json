@@ -25,7 +25,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 650,
-          "y": 600
+          "y": 620
         },
         "height": 95,
         "weight": "bold"
@@ -62,7 +62,7 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 1150,
+          "x": 1130,
           "y": 950
         }
       },
@@ -72,7 +72,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": 650,
-          "y": 660
+          "y": 670
         },
         "height": 24
       },
@@ -81,7 +81,7 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 1000,
+          "x": 980,
           "y": 800
         }
       },
@@ -90,8 +90,62 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 1000,
+          "x": 980,
           "y": 950
+        }
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 650,
+          "y": 1340
+        }
+      },
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 800,
+          "y": 1340
+        }
+      },
+      {
+        "basename": "o_6",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 800,
+          "y": 1490
+        }
+      },
+      {
+        "basename": "o_9",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 880,
+          "y": 1340
+        }
+      },
+      {
+        "basename": "o_10",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 880,
+          "y": 1490
+        }
+      },
+      {
+        "basename": "o_11",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 1030,
+          "y": 1490
         }
       },
       {
@@ -149,77 +203,6 @@
         "to": "finv"
       },
       {
-        "description": "Definition of isomorphism",
-        "basename": "isomorphism",
-        "prototype": "Definition",
-        "xy": {
-          "x": 730,
-          "y": 1080
-        },
-        "height": 24,
-        "defname": "isomorphism",
-        "sequence": [
-          "finv",
-          "f"
-        ],
-        "blobs": [
-          "hdole/iso/o_7",
-          "hdole/iso/o_3"
-        ]
-      },
-      {
-        "description": "Let id : T&rarr;T be a identity.",
-        "basename": "t_2",
-        "prototype": "DefinitionInstance",
-        "xy": {
-          "x": 740,
-          "y": 1200
-        },
-        "height": 24,
-        "targetCat": "hdole/iso/D",
-        "definition": "hdole/identity/identity",
-        "sequence": [
-          "hdole/iso/id"
-        ],
-        "elementMap": [
-          [
-            "hdole/identity/A",
-            "hdole/iso/T"
-          ],
-          [
-            "hdole/identity/id",
-            "hdole/iso/id"
-          ]
-        ]
-      },
-      {
-        "basename": "o_1",
-        "prototype": "IndexObject",
-        "to": "T",
-        "xy": {
-          "x": 650,
-          "y": 1360
-        }
-      },
-      {
-        "basename": "o_2",
-        "prototype": "IndexObject",
-        "to": "T",
-        "xy": {
-          "x": 800,
-          "y": 1360
-        }
-      },
-      {
-        "basename": "o_6",
-        "prototype": "IndexObject",
-        "to": "T",
-        "xy": {
-          "x": 800,
-          "y": 1510
-        }
-      },
-      {
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_1",
@@ -247,33 +230,6 @@
         "to": "Id{T}dI"
       },
       {
-        "basename": "o_9",
-        "prototype": "IndexObject",
-        "to": "T",
-        "xy": {
-          "x": 920,
-          "y": 1370
-        }
-      },
-      {
-        "basename": "o_10",
-        "prototype": "IndexObject",
-        "to": "T",
-        "xy": {
-          "x": 920,
-          "y": 1520
-        }
-      },
-      {
-        "basename": "o_11",
-        "prototype": "IndexObject",
-        "to": "T",
-        "xy": {
-          "x": 1070,
-          "y": 1520
-        }
-      },
-      {
         "basename": "m_9",
         "prototype": "IndexMorphism",
         "domain": "o_9",
@@ -295,14 +251,60 @@
         "to": "Id{T}dI"
       },
       {
-        "description": "Theorem: identity is isomorphism",
+        "description": "<icon>definition</icon>Definition: isomorphism",
+        "basename": "isomorphism",
+        "prototype": "Definition",
+        "xy": {
+          "x": 710,
+          "y": 1080
+        },
+        "height": 28,
+        "weight": "bold",
+        "sequence": [
+          "f",
+          "finv"
+        ],
+        "blobs": [
+          "hdole/iso/o_4",
+          "hdole/iso/o_0"
+        ]
+      },
+      {
+        "description": "<icon>definition</icon>Let id : T→T as identity.",
+        "basename": "t_2",
+        "prototype": "DefinitionInstance",
+        "xy": {
+          "x": 710,
+          "y": 1210
+        },
+        "height": "28",
+        "weight": "bold",
+        "targetCat": "hdole/iso/D",
+        "definition": "hdole/identity/identity",
+        "sequence": [
+          "hdole/iso/id"
+        ],
+        "elementMap": [
+          [
+            "hdole/identity/A",
+            "hdole/iso/T"
+          ],
+          [
+            "hdole/identity/id",
+            "hdole/iso/id"
+          ]
+        ]
+      },
+      {
+        "description": "<icon>theorem</icon>Theorem: identity is isomorphism",
         "basename": "id_is_iso",
         "prototype": "Theorem",
         "xy": {
-          "x": 660,
-          "y": 1630
+          "x": 710,
+          "y": 1600
         },
-        "height": 24,
+        "height": 28,
+        "weight": "bold",
         "source": "hdole/iso/t_2",
         "target": "hdole/iso/isomorphism",
         "sequence": [
@@ -402,12 +404,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1655152253993,
+  "timestamp": 1655275687096,
   "version": 0,
   "viewport": {
-    "x": 4,
-    "y": -1892,
-    "scale": 1.5577312568968347,
+    "x": -1975,
+    "y": -1823,
+    "scale": 3.4833245322136124,
     "width": 2560,
     "height": 1368
   }
