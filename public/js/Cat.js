@@ -2181,8 +2181,11 @@ class Toolbar
 	}
 	hide()
 	{
-		this.element.classList.add('hidden');
-		this.closed = true;
+		if (!this.closed)
+		{
+			this.element.classList.add('hidden');
+			this.closed = true;
+		}
 	}
 	reveal()
 	{
@@ -3720,6 +3723,7 @@ class DefinitionTool extends ElementTool
 		const h3 = D.toolbar.table.querySelector('h3');
 		h3.innerHTML = 'Definitions';
 		const cats = R.diagram.getCategories();
+		this.targetCat = cats[0];
 		const catSelector = H3.select({onchange:e => {this.targetCat = R.diagram.getElement(e.target.value);}}, [...cats].map(cat =>
 		{
 			const args = {value:cat.name};
@@ -5687,7 +5691,6 @@ class Display
 			switch(args.command)
 			{
 				case 'load':
-console.log('load', name);
 					diagram.checkCells();
 					diagram.allReferences.forEach((val, nm) =>
 					{
@@ -6804,20 +6807,15 @@ console.log('load', name);
 	{
 		if (this.onEnter(e, action))
 			return;
-		const basename = suffix + ('value' in e.target ? e.target.value : e.target.innerText);	// input elements vs other tags
-		let name = `${diagram.name}/${basename}`;
-		let elt = diagram.getElement(name);
-		if (elt && elt === base)
-			return;
-		if (elt === undefined)
-			elt = diagram.codomain.elements.get(name);
+		const basename = 'value' in e.target ? e.target.value : e.target.innerText;
+		const isGood = diagram.isGoodBasename(basename, suffix);
 		if (e.target.contentEditable)
 		{
-			e.target.style.backgroundColor = elt ? 'red' : '';
-			e.target.style.color = elt ? 'white' : '';
+			e.target.style.backgroundColor = isGood ? '' : 'red';
+			e.target.style.color = isGood ? '' : 'white';
 		}
 		else
-			elt ? e.target.classList.add('error') : e.target.classList.remove('error');
+			isGood ? e.target.classList.remove('error') : e.target.classList.add('error');
 	}
 	inputDiagramBasenameSearch(e, action, base = null)
 	{
@@ -7770,7 +7768,7 @@ class HelpPanel extends Panel
 			H3.hr(),
 			H3.small('&copy;2018-2022 Harry Dole'),
 			H3.br(),
-			H3.small('harry@harrydole.com', '.italic')];
+			H3.small('hdole@catecon.net', '.italic')];
 		elements.map(elt => this.elt.appendChild(elt));
 		this.initialize();
 	}
@@ -9827,13 +9825,7 @@ class IndexText extends Element
 	{
 		this.setXY(xy ? xy : this.getXY(), majorGrid);
 		!this.svg && this.diagram.addSVG(this);
-		if (this.svg)
-		{
-			this.svg.setAttribute('transform', `translate(${this.x} ${this.y})`);
-			this.svgText.style.fontSize = `${this.height}px`;
-			this.svgText.style.fontWeight = this.weight;
-			this.svgText.style.textAnchor = this.textAnchor;
-		}
+		this.svg && this.svg.setAttribute('transform', `translate(${this.x} ${this.y})`);
 	}
 	isFusible()
 	{
@@ -9984,17 +9976,16 @@ class Definition extends IndexText
 	constructor(diagram, args)
 	{
 		const nuArgs = U.clone(args);
-		nuArgs.basename = nuArgs.defname;
+nuArgs.basename = 'defname' in nuArgs ? nuArgs.defname : nuArgs.basename;
 		super(diagram, nuArgs);
 		const sequence = diagram.getElements(nuArgs.sequence);
 		if (sequence.filter(elt => !(elt instanceof CatObject) && !(elt instanceof Morphism)).length > 0)
 			throw 'bad sequence';
-		const action = new UserAction(R.$CAT.getElement('actions'), {definition:this, basename:`${diagram.name}/${nuArgs.defname}`, sequence});
+		const action = new UserAction(R.$CAT.getElement('actions'), {definition:this, basename:`${diagram.name}/${nuArgs.basename}`, sequence, properName:this.properName});
 		action.incrRefcnt();
 		Object.defineProperties(this,
 		{
 			action:		{value: action,			writable: false},
-			defname:	{value: nuArgs.defname,	writable: false},
 			sequence:	{value: sequence,		writable: false},
 			blobs:		{value: args.blobs,		writable: true},
 			generators:	{value: null,			writable: true},
@@ -10024,13 +10015,12 @@ class Definition extends IndexText
 	{
 		super.help()
 		D.toolbar.body.appendChild(H3.h3('Definition'));
-		D.toolbar.body.appendChild(H3.p(this.defname));
+		D.toolbar.body.appendChild(H3.p(this.basename));
 		Definition.show(this.diagram, this.sequence, this.blobs);
 	}
 	json()
 	{
 		const a = super.json();
-		a.defname = this.defname;
 		a.sequence = this.sequence.map(elt => elt.refName(this.diagram));
 		a.blobs = this.blobs.map(b => b.seed.name);
 		return a;
@@ -10038,7 +10028,7 @@ class Definition extends IndexText
 	getHtmlRep()
 	{
 		const id = this.elementId();
-		const div = H3.div(H3.tag('description', this.defname), {id});
+		const div = H3.div(H3.tag('description', this.basename), {id});
 		if (this.diagram === R.diagram)
 		{
 			div.onmouseenter = e => this.mouseenter(e);
@@ -10349,7 +10339,8 @@ class DefinitionInstance extends IndexText		// instantiate a definition in a dia
 		const sequence = diagram.getElements(args.sequence);
 		sequence.map(elt => elt.incrRefcnt());
 		const definition = diagram.getElement(args.definition);
-		this.description = ('description' in args && args.description !== '') ? args.description : `Let ${sequence.map(elt => elt instanceof Morphism ? elt.getArrowRep() : elt.properName).join(', ')} be a ${definition.properName}.`;
+		this.description = ('description' in args && args.description !== '') ? args.description : `<icon>definition</icon>Let ${sequence.map(elt => elt instanceof Morphism ? elt.getArrowRep() : elt.properName).join(', ')} as ${definition.properName}.`;
+		this.weight = 'weight' in args ? args.weight : 'bold';
 		Object.defineProperties(this,
 		{
 			targetCat:		{value: targetCat,					writable: false},
@@ -10546,8 +10537,8 @@ class Theorem extends IndexText
 	{
 		super.help()
 		D.toolbar.body.appendChild(H3.h3('Theorem'));
-		D.toolbar.body.appendChild(H3.p(`Source: ${this.source.definition.defname}`));
-		D.toolbar.body.appendChild(H3.p(`Target: ${this.target.defname}`));
+		D.toolbar.body.appendChild(H3.p(`Source: ${this.source.definition.basename}`));
+		D.toolbar.body.appendChild(H3.p(`Target: ${this.target.basename}`));
 		this.cells.map(cell => D.toolbar.table.appendChild(H3.tr(H3.td(cell.getHtmlRep()), H3.td(cell.commutes === 'computed' ? '⟲' : '?'))));
 	}
 	json()
@@ -10812,13 +10803,11 @@ class IndexObject extends CatObject
 					const now = Date.now();
 					if (now - startTime > 200)
 					{
-console.log('change');
 						D.statusbar.show(e, `Scope changed to ${this.to.properName}`);
 						D.setCategory(this.to);
 					}
 				}
 			};
-
 		txt.onmousemove = e => this.mousemove(e);
 		txt.ondblclick = e => this.isEditable() && this.placeProjection(e);		// defer test for editablity to due authentication loading is async
 		node.appendChild(svg);
@@ -13249,12 +13238,12 @@ class DefinitionAction extends Action
 			{
 				placeholder:'Definition',
 				title:'Definition',
-				onkeyup:e => D.inputBasenameSearch(e, R.actionDiagram, e => e.stopPropagation(), null, R.user.name + '/'),
+				onkeyup:e => D.inputBasenameSearch(e, diagram, e => e.stopPropagation()),
 				onkeydown:e => Cat.D.onEnter(e, action),
 			}),
-			D.getIcon('edit', 'edit', action, {scale:D.default.button.small, title:'Create definition'}),
+			D.getIcon('edit', 'edit', e => diagram.isGoodBasename(D.toolbar.body.querySelector('#new-definition').value) && action, {scale:D.default.button.small, title:'Create definition'}),
 			H3.br(),
-			H3.small('.italic', `Full name has the form sys/Action/${R.user.name}/basename`),
+			H3.small('.italic', `Full name has the form sys/Action/${diagram.name}/basename`),
 			H3.br(),
 			H3.div('.center', H3.small('.bold', 'Following form the base the definition')),
 		].map(elt => body.appendChild(elt));
@@ -13305,13 +13294,13 @@ class DefinitionAction extends Action
 			child = child.nextSibling;
 		}
 		const sequence = nuSequence.map(name => diagram.getElement(name));
-		const defname = D.toolbar.body.querySelector('#new-definition').value;
-		const description = `Definition of ${defname}`;
+		const basename = D.toolbar.body.querySelector('#new-definition').value;
+		const description = `<icon>definition</icon>Definition: ${basename}`;
 		const xy = D.toolbar.mouseCoords;	// use original location
 		const width = D.textWidth(description);
 		const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height/2, width, height:D.default.font.height};
 		const place = diagram.autoplaceSvg(bbox, null, 16);
-		const def = diagram.get('Definition', {description, defname, sequence, blobs, xy:{x:place.x, y:place.y}});
+		const def = diagram.get('Definition', {description, basename, sequence, blobs, xy:{x:place.x, y:place.y, weight:'bold'}, properName:basename});
 		def.postload();
 		diagram.makeSelected(def);
 	}
@@ -13362,8 +13351,8 @@ class TheoremAction extends Action
 		};
 		const body = D.toolbar.body;
 		[	H3.h3('Create Theorem'),
-			H3.p(`Source instance: ${source.definition.defname}`),
-			H3.p(`Target instance: ${target.defname}`),
+			H3.p(`Source instance: ${source.definition.basename}`),
+			H3.p(`Target instance: ${target.basename}`),
 			H3.label('Theorem basename:', {for:'new-definition'}),
 			H3.input('##new-theorem.ifocus',
 				{
@@ -13394,10 +13383,10 @@ class TheoremAction extends Action
 		const sequence = target.sequence.map((elt, i) => diagram.getElement(D.toolbar.body.querySelector(`#select-${i}`).value));
 		const seeds = target.action.action(e, diagram, sequence);
 		const blobs = seeds.map(seed => diagram.getBlob(seed));
-		const description = `Theorem: ${source.definition.defname} is ${target.defname}`;
+		const description = `<icon>theorem</icon>Theorem: ${source.definition.basename} is ${target.basename}`;
 		const bbox = diagram.svgRoot.getBBox();
 		const xy = new D2({x:bbox.x, y:bbox.y + bbox.height + D.default.arrow.length});
-		const theorem = new Theorem(diagram, {basename, source, target, sequence, blobs, description, xy});
+		const theorem = new Theorem(diagram, {basename, source, target, sequence, blobs, description, weight:'bold', xy});
 		diagram.addSelected(theorem);
 		diagram.viewElements(...diagram.selected);
 	}
@@ -13564,7 +13553,7 @@ class UserAction extends Action
 		super.html();
 		const help = D.toolbar;
 		help.body.appendChild(H3.h3(`Action ${U.HtmlEntitySafe(this.basename)}`));
-		this.definition.hasAssertions() && help.body.appendChild(H3.span('Generate assertions from definition:', D.getIcon('edit', 'edit', e => this.action(e, R.diagram, R.diagram.selected), {scale:D.default.button.small})));
+		this.definition.hasAssertions() && help.body.appendChild(H3.span('Generate cells from definition:', D.getIcon('edit', 'edit', e => this.action(e, R.diagram, R.diagram.selected), {scale:D.default.button.small})));
 		const rows = [H3.tr(H3.th('Source'), H3.th('Target'))];
 		rows.push(...this.definition.sequence.map((elt, i) => H3.tr(H3.td(elt.getHtmlRep()), H3.td(R.diagram.selected[i].getHtmlRep()))));
 		help.table.appendChild(H3.table(rows));
@@ -19241,7 +19230,7 @@ class Diagram extends Functor
 	}
 	getElement(name, cat = null)
 	{
-		if (name === undefined)
+		if (name === undefined || name === null)
 			throw 'no name';
 		if (name instanceof Element)
 			return name;
@@ -20339,28 +20328,8 @@ class Diagram extends Functor
 			if (D.default.fullscreen)
 			{
 				dgrmF4gnd.classList.remove('grabbable');
-				const viewport = D.session.getCurrentViewport();
-				const scale = 1 / viewport.scale;
-				const pnt = D.userToSessionCoords({x:0, y:0});
-				const box = D2.expand(new D2({x:pnt.x, y:pnt.y, width:scale * D.width(), height:scale * D.height()}), D.height()/2);
-				if (bkgnd)
-				{
-					bkgnd.setAttribute('x', `${box.x}px`);
-					bkgnd.setAttribute('y', `${box.y}px`);
-					bkgnd.setAttribute('width', `${box.width}px`);		// 2x for margin due to transitions
-					bkgnd.setAttribute('height', `${box.height}px`);
-				}
-				else
-				{
-					const args = {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
-																		x:`${box.x}px`, y:`${box.y}px`, width:`${box.width}px`, height:`${box.height}px`};
-					bkgnd = H3.rect('.diagramBackgroundActive', {id:'diagram-background', 'data-name':this.name, 'data-type':'diagram',
-																		x:`${box.x}px`, y:`${box.y}px`, width:`${box.width}px`, height:`${box.height}px`});
-				}
-				bkgnd.ondblclick = e => this.isEditable() && this.newInput(e);		// defer editable check
-				this.svgRoot.parentNode.insertBefore(bkgnd, this.svgRoot);
-				dgrmBkgnd.classList.add('hidden');
-				dgrmF4gnd.classList.add('hidden');
+				!dgrmBkgnd.classList.contains('hidden') && dgrmBkgnd.classList.add('hidden');
+				!dgrmF4gnd.classList.contains('hidden') && dgrmF4gnd.classList.add('hidden');
 				return;
 			}
 			else
@@ -20712,6 +20681,17 @@ class Diagram extends Functor
 		});
 		this.domain.elements.forEach(e => 'to' in e && e.to === elt && useElts.push(e));
 		return useElts;
+	}
+	isGoodBasename(base, suffix = '')
+	{
+		const basename = suffix + base;
+		let name = `${this.name}/${basename}`;
+		let elt = this.getElement(name);
+		if (elt)
+			return false;
+		if (elt === undefined)
+			elt = this.codomain.elements.get(name);
+		return elt === undefined;
 	}
 	static Codename(args)
 	{
