@@ -149,7 +149,21 @@ class U		// utilities
 		for (let i=0; i<subs.length; ++i)
 		{
 			let s = subs[i].toString();
-			sub += s.replace(/[0-9]/g, submap).replace(/,/g, '&#806');	// combining comma below
+			sub += s.replace(/[+-=()0-9]/g, submap).replace(/,/g, '&#806');	// combining comma below
+		}
+		return sub;
+	}
+	static superscript(...subs)
+	{
+		let sub = '';
+		function supermap(m)
+		{
+			return U.supermap[m];
+		}
+		for (let i=0; i<subs.length; ++i)
+		{
+			let s = subs[i].toString();
+			sub += s.replace(/[+-=()n0-9]/g, supermap).replace(/,/g, '&#806');	// combining comma below
 		}
 		return sub;
 	}
@@ -505,6 +519,34 @@ Object.defineProperties(U,
 			'7': '&#x2087;',
 			'8': '&#x2088;',
 			'9': '&#x2089;',
+			'+': '&#x208A;',
+			'-': '&#x208B;',
+			'=': '&#x208C;',
+			'(': '&#x208D;',
+			')': '&#x208E;',
+		},
+		writable:	false,
+	},
+	supermap:
+	{
+		value:
+		{
+			'0': '&#x2070',
+			'1': '&#x00B9',
+			'2': '&#x00B2',
+			'3': '&#x00B3',
+			'4': '&#x2074',
+			'5': '&#x2075',
+			'6': '&#x2076',
+			'7': '&#x2077',
+			'8': '&#x2078',
+			'9': '&#x2079',
+			'+': '&#x207A',
+			'-': '&#x207B',
+			'=': '&#x207C',
+			'(': '&#x207D',
+			')': '&#x207E',
+			'n': '&#x207F',
 		},
 		writable:	false,
 	},
@@ -710,7 +752,6 @@ class Runtime
 		this.$Cat = new Diagram(null, $CatArgs);
 		this.Cat.newObject = (diagram, basename) =>
 		{
-			this.getElement(basename);
 			const name = `${diagram.name}/${basename}`;
 			let cat = this.Cat.getElement(name);
 			cat = cat ? cat : new Category(diagram, {name, basename});
@@ -1345,32 +1386,30 @@ class Runtime
 		if (this.canDeleteDiagram(name) && (D ? confirm(`Are you sure you want to delete diagram ${name}?`) : true))
 		{
 			const diagram = this.$CAT.getElement(name);
-			if (diagram)
+			const sync = diagram ? diagram.sync : true;
+			this.authFetch(this.getURL('delete'), {diagram:name}).then(res =>
 			{
-				const sync = diagram.sync;
-				this.authFetch(this.getURL('delete'), {diagram:name}).then(res =>
+				const diagram = this.$CAT.getElement(name);
+				if (!res.ok)
 				{
-					const diagram = this.$CAT.getElement(name);
-					if (!res.ok)
-					{
-						R.recordError(res.statusText);
-						if (diagram)
-							diagram.sync = sync;
-						return;
-					}
+					R.recordError(res.statusText);
 					if (diagram)
-					{
-						diagram.decrRefcnt();
 						diagram.sync = sync;
-					}
-					else
-						this.catalog.delete(name);
-				}).catch(err =>
+					return;
+				}
+				if (diagram)
 				{
+					diagram.decrRefcnt();
 					diagram.sync = sync;
-					R.recordError(err);
-				});
-			}
+				}
+				else
+					this.catalog.delete(name);
+			}).catch(err =>
+			{
+				if (diagram)
+					diagram.sync = sync;
+				R.recordError(err);
+			});
 		}
 	}
 	getDiagramInfo(name)
@@ -1526,6 +1565,11 @@ class Runtime
 		const description = U.HtmlSafe(desc);
 		const diagram = new Diagram(userDiagram, {basename, codomain, properName, description, user:this.user.name});
 		this.setDiagramInfo(diagram);
+		D.emitCATEvent('new', diagram);
+		[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
+		diagram.makeSVG();
+		diagram.placeText(U.Cap(diagram.properName), {x:0, y:0}, D.default.title.height, D.default.title.weight);
+		diagram.description !== '' && diagram.placeText(diagram.description, {x:0, y:D.gridSize()}, D.default.font.height);
 		return diagram;
 	}
 	isNamed(elt)
@@ -1913,6 +1957,7 @@ class Navbar
 			switch(e.detail.command)
 			{
 				case 'default':
+				case 'delete':
 					this.update(e);
 					this.updateStatusTools();
 					break;
@@ -3324,6 +3369,7 @@ class CatalogTool extends DiagramTool		// GUI only
 					div = this.catalog.querySelector(`div[data-name="${diagram.name}"]`);	// find catalog entry
 					div && div.remove();		// remove image in catalog
 					this.diagrams = this.diagrams.filter(d => d.name !== diagram.name);
+					this.update();
 					break;
 				case 'upload':
 					if (this.mode === 'search')
@@ -3626,14 +3672,7 @@ class CatalogTool extends DiagramTool		// GUI only
 		const codomainElt = document.getElementById('catalog-select-codomain');
 		const diagram = R.createDiagram(codomainElt.value, basenameElt.value, properNameElt.value, descriptionElt.value);
 		if (diagram instanceof Diagram)
-		{
-			D.emitCATEvent('new', diagram);
-			[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
-			diagram.makeSVG();
-			diagram.placeText(diagram.properName, {x:0, y:0}, D.default.title.height, D.default.title.weight);
-			diagram.description !== '' && diagram.placeText(diagram.description, {x:0, y:D.gridSize()}, D.default.font.height);
 			Runtime.SelectDiagram(diagram, 'home');
-		}
 		else
 			errorElt.innerHTML = U.HtmlSafe(diagram);
 	}
@@ -4928,6 +4967,7 @@ class Display
 			document.getElementById('version').innerText = json.version;
 			document.getElementById('updateTime').innerText = new Date(json.timestamp).toLocaleString();
 		});
+		this.topSVG.ondblclick = e => R.diagram && R.diagram.isEditable() && R.diagram.newInput(e);
 	}
 	saveDefaults()
 	{
@@ -5562,6 +5602,8 @@ class Display
 				{
 					case 'detach':
 						element.attributes.set('bezier', 0);
+						element.updateDecorations();
+						updateMorphism(element, args);
 						break;
 					case 'fuse':
 						diagram.domain.loadCells();
@@ -5737,7 +5779,9 @@ class Display
 					if (args.command === 'delete')
 					{
 						R.catalog.delete(name);
+						R.writeCatalog();
 						this.diagramPNGs.delete(name);
+						this.deleteDiagram(name);
 					}
 					break;
 				case 'new':
@@ -5847,8 +5891,7 @@ class Display
 					let dgrmSvg = this.diagramSVG.firstChild;
 					while(dgrmSvg)
 					{
-						if (dgrmSvg instanceof SVGGElement)
-							dgrmSvg.classList.add('hidden');
+						dgrmSvg instanceof SVGGElement && dgrmSvg.classList.add('hidden');
 						dgrmSvg = dgrmSvg.nextSibling;
 					}
 					this.diagramSVG.classList.remove('hidden');
@@ -5867,6 +5910,7 @@ class Display
 					switch(action)
 					{
 						case 'home':
+							diagram.home();
 							break;
 						case 'defaultView':
 							defaultView();
@@ -6951,7 +6995,7 @@ class Display
 			this.statusbar.show(e, `User ${json.user} is not the logged in user ${this.user.name}`);
 			return;
 		}
-		if (!this.canDeleteDiagram(json.name))
+		if (!R.canDeleteDiagram(json.name))
 		{
 			this.statusbar.show(e, `Cannot delete diagram ${json.name}`);
 			return;
@@ -7153,6 +7197,17 @@ class Display
 		tx.onerror = e => R.recordError(e);
 		const pngStore = tx.objectStore('PNGs');
 		pngStore.put({name, png});
+	}
+	deleteDiagram(name)
+	{
+		const pngtx = this.store.transaction(['PNGs'], 'readwrite');
+		pngtx.onsuccess = e => R.debug(1) && console.log('png deleted', name);
+		pngtx.onerror = e => R.recordError(e);
+		const pngreq = pngtx.objectStore('PNGs').delete(name);
+		const tx = this.store.transaction(['diagrams'], 'readwrite');
+		tx.onsuccess = e => R.debug(1) && console.log('diagram json deleted', name);
+		tx.onerror = e => R.recordError(e);
+		const req = tx.objectStore('diagrams').delete(name);
 	}
 }
 
@@ -7969,7 +8024,6 @@ class Element
 				if (category.elements.has(name))
 					throw `Element with given name ${U.HtmlSafe(name)} already exists in category ${U.HtmlSafe(category.name)}`;
 				category.elements.set(name, this);
-				category.refcnt++;
 			}
 		}
 		else
@@ -9651,7 +9705,11 @@ class IndexText extends Element
 	setSvgText()
 	{
 		this.svgText = H3.text(this.isEditable ? '.grabbable' : null, {'text-anchor':this.textAnchor, style:this.ssStyle(), 'data-name':this.name});
-		this.svgText.ondblclick = e => this.isEditable() && this.textEditor();		// defer editable check
+		this.svgText.ondblclick = e =>
+		{
+			this.isEditable() && this.textEditor();		// defer editable check
+			e.stopPropagation();
+		};
 		this.svg.appendChild(this.svgText);
 	}
 	tspan()
@@ -9782,7 +9840,7 @@ class IndexText extends Element
 		super.decrRefcnt();
 		if (this.refcnt <= 0)
 		{
-			this.svg !== null && this.svg.remove();
+			this.svg !== null && this.svg.parentElement && this.svg.remove();
 			this.category && this.diagram.domain.deleteElement(this);
 		}
 	}
@@ -9879,7 +9937,8 @@ class IndexText extends Element
 		});
 		cls !== '' && div.classList.add(cls);
 		const mod = 8;
-		this.foreign = H3.foreignObject(div, {width:mod + bbox.width + 'px', height:mod + bbox.height + 'px', y:`-${this.height}px`});
+		const width = `${8 + D.textWidth(this.description, U.Decap(this.constructor.name))}px`;
+		this.foreign = H3.foreignObject(div, {width, height:mod + bbox.height + 'px', y:`-${this.height}px`});
 		const onkeydown = e =>
 		{
 			this.foreign.style.width = (D.default.icon + div.offsetWidth) + 'px';
@@ -10090,6 +10149,8 @@ nuArgs.basename = 'defname' in nuArgs ? nuArgs.defname : nuArgs.basename;
 			elementMap.set(elt, nuElt);
 		});
 		const sequence = this.sequence.map(elt => elementMap.get(elt));
+		if (diagram !== this.diagram && !diagram.allReferences.has(this.diagram.name))
+			diagram.addReference(this.diagram);
 		const defi = new DefinitionInstance(diagram, {targetCat, sequence, elementMap, definition:this, xy});
 		defi.postload();
 		diagram.makeSelected(defi);
@@ -10809,7 +10870,11 @@ class IndexObject extends CatObject
 				}
 			};
 		txt.onmousemove = e => this.mousemove(e);
-		txt.ondblclick = e => this.isEditable() && this.placeProjection(e);		// defer test for editablity to due authentication loading is async
+		txt.ondblclick = e =>
+		{
+			this.isEditable() && this.placeProjection(e);		// defer test for editablity to due authentication loading is async
+			e.stopPropagation();
+		};
 		node.appendChild(svg);
 		this.svg = svg;
 	}
@@ -10858,7 +10923,7 @@ class IndexObject extends CatObject
 	{
 		if (!o || this === 0)
 			return false;
-		return o instanceof IndexObject && (this.to.isEquivalent(o.to) || this.isIdentityFusible());
+		return o instanceof IndexObject && this.to.isEquivalent(o.to);
 	}
 	updateFusible(e, on)
 	{
@@ -13241,7 +13306,7 @@ class DefinitionAction extends Action
 				onkeyup:e => D.inputBasenameSearch(e, diagram, e => e.stopPropagation()),
 				onkeydown:e => Cat.D.onEnter(e, action),
 			}),
-			D.getIcon('edit', 'edit', e => diagram.isGoodBasename(D.toolbar.body.querySelector('#new-definition').value) && action, {scale:D.default.button.small, title:'Create definition'}),
+			D.getIcon('edit', 'edit', e => diagram.isGoodBasename(D.toolbar.body.querySelector('#new-definition').value) && action(e), {scale:D.default.button.small, title:'Create definition'}),
 			H3.br(),
 			H3.small('.italic', `Full name has the form sys/Action/${diagram.name}/basename`),
 			H3.br(),
@@ -13261,20 +13326,19 @@ class DefinitionAction extends Action
 		if (!this.isValid(quantifier))
 			throw 'invalid quantifier';
 		const oldQuant = element.getQuantifier();
-		if (this.doit(e, diagram, element, quantifier))
+		const blob = diagram.getBlob(element);
+		if (this.doit(e, diagram, blob, element, quantifier))
 		{
-			D.emitElementEvent(diagram, 'update', element);
+			blob.getInstances(element.to).map(ins => D.emitElementEvent(diagram, 'update', ins));
 			diagram.log({command:'quantifier', quantifier});
 			diagram.antilog({command:'quantifier', quantifier:oldQuant});
 			this.html(e, diagram, diagram.selected);
 		}
 	}
-	doit(e, diagram, index, quantifier)
+	doit(e, diagram, blob, index, quantifier)
 	{
-		const blob = diagram.getBlob(index);
 		blob.getInstances(index.to).map(ins => ins.setQuantifier('none'));	// remove all quantifiers on the element
-		const lvl = blob.levels[index.getLevel()];
-		lvl.filter(elt => elt === index.to).map(elt => index.setQuantifier(quantifier));
+		blob.getInstances(index.to).map(ins => ins.setQuantifier(quantifier));
 		blob.updateLevels();
 		return true;
 	}
@@ -13300,7 +13364,7 @@ class DefinitionAction extends Action
 		const width = D.textWidth(description);
 		const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height/2, width, height:D.default.font.height};
 		const place = diagram.autoplaceSvg(bbox, null, 16);
-		const def = diagram.get('Definition', {description, basename, sequence, blobs, xy:{x:place.x, y:place.y, weight:'bold'}, properName:basename});
+		const def = diagram.get('Definition', {description, basename, sequence, blobs, xy:{x:place.x, y:place.y}, weight:'bold', properName:basename});
 		def.postload();
 		diagram.makeSelected(def);
 	}
@@ -15008,7 +15072,11 @@ const Arrow =
 			}
 			const args = {'data-type':'morphism', 'data-name':this.name, 'data-to':this.to.name, 'data-sig':this.to.signature, id:`${this.elementId()}_name`,
 					onmouseenter:e => this.mouseenter(e), onmouseout:e => this.mouseout(e), onmouseover:e => this.mouseover(e), onmousedown:e => Cat.R.diagram.userSelectElement(e, this.name)};
-			args.ondblclick = e => this.isEditable() && Cat.R.Actions.flipName.action(e, this.diagram, [this]);		// defer editable check
+			args.ondblclick = e =>
+			{
+				this.isEditable() && Cat.R.Actions.flipName.action(e, this.diagram, [this]);		// defer editable check
+				e.stopPropagation();
+			};
 			this.svg_name = H3.text('.morphTxt.grabbable', args, properName);
 			const width = D.textWidth(properName, 'morphTxt');
 			const off = this.getNameOffset();
@@ -18992,6 +19060,7 @@ class Diagram extends Functor
 	{
 		if (!this.svgRoot)
 		{
+			D.diagramSVG.classList.remove('trans');
 			this.svgRoot = H3.g({id:this.elementId('root'), 'data-name':this.name});
 			this.makeGrounds();
 			const f4gnd = this.svgRoot.lastElementChild;
@@ -19025,6 +19094,7 @@ class Diagram extends Functor
 					this.ready--;
 				}, 0);
 			});
+			D.diagramSVG.classList.add('trans');
 		}
 		if (fn)
 		{
@@ -19157,14 +19227,26 @@ class Diagram extends Functor
 		{
 			let nuVal = '';
 			let ndx = 0;
-			let match = value.match(/:[0-9]+/);		// map ":digits" to subscript digits
+			let match = value.match(/:[+-=()0-9]+/);		// map ":digits" to subscript digits
 			while (match)
 			{
 				nuVal += value.substring(ndx, match.index);
 				nuVal += U.subscript(match[0].substring(1));
 				ndx = match.index + match[0].length;
 				value = value.substring(ndx);
-				match = value.match(/:[0-9]+/);
+				match = value.match(/:[+-=()0-9]+/);
+			}
+			value = nuVal + value;
+			nuVal = '';
+			ndx = 0;
+			match = value.match(/;[+-=()n0-9]+/);		// map ":digits" to subscript digits
+			while (match)
+			{
+				nuVal += value.substring(ndx, match.index);
+				nuVal += U.superscript(match[0].substring(1));
+				ndx = match.index + match[0].length;
+				value = value.substring(ndx);
+				match = value.match(/;+-=()n[0-9]+/);
 			}
 			value = nuVal + value;
 		}
@@ -19192,6 +19274,8 @@ class Diagram extends Functor
 		{
 			const qry = `#${id} ${attribute === 'properName' ? 'proper-name' : attribute}`;
 			const txtbox = document.querySelector(qry);
+			if (!txtbox)
+				return;
 			if (this.isEditable() && txtbox.contentEditable === 'true' && txtbox.textContent !== '')
 				this.commitElementText(e, elt.name, txtbox, attribute);
 			else
@@ -19980,7 +20064,7 @@ class Diagram extends Functor
 		this.sync = false;
 		const oldArrowDir = D.default.arrow.dir;
 		D.default.arrow.dir = {x:1, y:0};
-		const indexed = new Set();
+		const indexed = new Map();
 		const locations = [];
 		const grid = 4 * D.gridSize();
 		let hasTitle = false;
@@ -20001,12 +20085,11 @@ class Diagram extends Functor
 		{
 			if (elt instanceof IndexObject || elt instanceof IndexText)
 			{
-				indexed.add(elt.to);
-				if (elt.x === 0 && elt.y % grid === 0)
-					locations.push(elt.y);
+				indexed.set(elt.to, elt);
+				elt.x === 0 && elt.y % grid === 0 && locations.push(elt.y);
 			}
 			else if (Arrow.isArrow(elt))
-				indexed.add(elt.to);
+				indexed.set(elt.to, elt);
 		});
 		locations.sort();
 		const scanned = new Set();
@@ -20030,24 +20113,16 @@ class Diagram extends Functor
 			const height = D.default.font.height;
 			if (elt instanceof CatObject)
 			{
-				this.placeObject(elt, {x, y}, false);
+				const ndx = this.placeObject(elt, {x, y}, false);
+				indexed.set(elt, ndx);
 				if (elt instanceof Action)
 					new IndexText(this, {xy:{x:x + grid, y:y + height/2}, height, weight:'normal', description:`<icon>${elt.basename}</icon>`});
 				if (elt.description !== '')
 					new IndexText(this, {xy:{x:x + 1.25 * grid, y:y + height/2}, height, weight:'normal', description:elt.description});
+				y += grid;
 			}
 			else if (elt instanceof Morphism)
-			{
-				const tw = elt.textWidth();
-				let delta = grid;
-				while (delta < tw)
-					delta += grid;
-				const cod = {x:x + delta, y};
-				this.placeMorphism(elt, {x, y}, cod, false);
-				if (elt.description !== '')
-					new IndexText(this, {xy:{x:x, y:y + grid/4}, height:D.default.font.height, weight:'normal', description:elt.description});
-			}
-			y += grid;
+				this.placeMorphism(elt, indexed.get(elt.domain), indexed.get(elt.codomain), false);
 		});
 		this.sync = sync;
 		D.default.arrow.dir = oldArrowDir;
@@ -20234,7 +20309,7 @@ class Diagram extends Functor
 							elements.length = 0;
 							operator = '';
 						};
-						if (shiftKey)
+						if (shiftKey && type === 'morphism')
 						{
 							const m = this.codomain.newMorphism(e, this, tokens[1], tokens[0], tokens[2]);
 							if (m)
