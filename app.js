@@ -367,6 +367,11 @@ function updateDiagramTable(name, info, fn, cloudTimestamp, update = true)
 
 function updateSQLDiagramsByCatalog()
 {
+	Cat.R.catalog.forEach(dgrm =>
+	{
+		dgrm.cloudTimestamp = dgrm.timestamp;
+		dgrm.timestamp = 0;
+	});
 	console.log('Updating SQL diagrams by catalog');
 	// make local server match cloud
 	dbcon.query('SELECT * FROM Catecon.diagrams', (error, diagrams) =>
@@ -380,16 +385,12 @@ function updateSQLDiagramsByCatalog()
 			if (Cat.R.canUploadUser(info.user))
 			{
 				const cloudInfo = Cat.R.catalog.get(info.name);
-				if (cloudInfo && cloudInfo.timestamp > info.timestamp)		// cloud is newer
+				if (cloudInfo && cloudInfo.cloudTimestamp > info.timestamp)		// cloud is newer
 					updateDiagramTable(info.name, cloudInfo, (error, result) => error && console.log({error}), cloudInfo.cloudTimestamp);
 			}
 			remaining.delete(info.name);
 		});
-		remaining.forEach(name =>
-		{
-			const info = Cat.R.catalog.get(name);
-			Cat.R.canUploadUser(info.user) && updateDiagramTable(name, info, (error, result) => error && console.log({error}), info.cloudTimestamp, localDiagrams.has(name));
-		});
+		remaining.forEach(name => Cat.R.catalog.delete(name));
 	});
 }
 
