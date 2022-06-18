@@ -772,6 +772,14 @@ async function serve()
 				res.status(HTTP.BAD_REQUEST).send({message:'bad name'}).end();
 				return;
 			}
+			const info = Cat.R.catalog.get(name);
+			if (info.refcnt > 0)
+			{
+				console.error('ERROR: diagram is referenced', result[0].refcnt);
+				res.status(HTTP.BAD_REQUEST).send({message:'diagram is referenced'}).end();
+				return;
+			}
+			info.references.map(name => Cat.R.catalog.get(name).refcnt--);
 			Cat.R.catalog.delete(name);
 			dbcon.query(`SELECT user,refcnt FROM Catecon.diagrams WHERE name=${dbcon.escape(name)};`, (error, result) =>
 			{
@@ -787,12 +795,6 @@ async function serve()
 					{
 						console.log('*** user not owner', req.user, result[0].user);
 						res.status(HTTP.UNAUTHORIZED).send({message:'user not owner'}).end();
-						return;
-					}
-					if (result[0].refcnt > 0)
-					{
-						console.log('diagram is referenced', result[0].refcnt);
-						res.status(HTTP.BAD_REQUEST).send({message:'diagram is referenced'}).end();
 						return;
 					}
 					dbcon.query('DELETE FROM Catecon.diagrams WHERE name=?', [name], (error, result) =>
