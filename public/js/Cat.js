@@ -960,6 +960,8 @@ class Runtime
 					else
 					{
 						R.recordError('readDiatgram, diagram not found ' + name);
+						this.sync = sync;
+						fn && fn(name);
 						return;
 					}
 					this.sync = sync;
@@ -1381,9 +1383,9 @@ class Runtime
 			return diagram.refcnt === 0;
 		return false;
 	}
-	deleteDiagram(e, name)
+	deleteDiagram(name)
 	{
-		if (this.canDeleteDiagram(name) && (D ? confirm(`Are you sure you want to delete diagram ${name}?`) : true))
+		if (this.canDeleteDiagram(name))
 		{
 			const diagram = this.$CAT.getElement(name);
 			const sync = diagram ? diagram.sync : true;
@@ -1566,7 +1568,6 @@ class Runtime
 		const diagram = new Diagram(userDiagram, {basename, codomain, properName, description, user:this.user.name});
 		this.setDiagramInfo(diagram);
 		D.emitCATEvent('new', diagram);
-		[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
 		diagram.makeSVG();
 		diagram.placeText(U.Cap(diagram.properName), {x:0, y:0}, D.default.title.height, D.default.title.weight);
 		diagram.description !== '' && diagram.placeText(diagram.description, {x:0, y:D.gridSize()}, D.default.font.height);
@@ -2357,7 +2358,7 @@ class Toolbar
 		btns.push(D.getIcon('morphism', 'morphism', e => setActive(e, 'morphism', ee =>Cat.D.elementTool.Morphism.html(ee)), {scale:D.default.button.small, title:'Morphisms', help:'hdole/morphism'}));
 		diagram.domain.cells.size > 0 && btns.push(D.getIcon('cell', 'cell', e => setActive(e, 'cell', ee => Cat.D.elementTool.Cell.html(ee)), {scale:D.default.button.small, title:'Cells'}));
 		btns.push(D.getIcon('text', 'text', e => setActive(e, 'text', ee => Cat.D.elementTool.Text.html(ee)), {scale:D.default.button.small, title:'Text'}));
-		R.diagram.getDefinitions().length > 0 && btns.push(D.getIcon('definition', 'definition', e => setActive(e, 'definition', ee => Cat.D.elementTool.Definition.html(ee)), {scale:D.default.button.small, title:'Definitions'}));
+		D.session.getDefinitions().length > 0 && btns.push(D.getIcon('definition', 'definition', e => setActive(e, 'definition', ee => Cat.D.elementTool.Definition.html(ee)), {scale:D.default.button.small, title:'Definitions'}));
 		btns.push(D.getIcon('graph', 'graph', _ => Cat.R.diagram.showGraphs(), {scale:D.default.button.small, title:'Show graphs in diagram'}));
 		btns.push(D.getIcon('home', 'home', e => Cat.D.keyboardDown.Home(e), {scale:D.default.button.small, title:'Home'}));
 		btns.push(D.getIcon('help', 'help', e => setActive(e, 'help', ee => R.Actions.help.html(e, diagram, [diagram])), {scale:D.default.button.small, title:'Show help'}));
@@ -3071,7 +3072,7 @@ class DiagramTool extends ElementTool
 		const refcnt = diagram ? diagram.refcnt : info ? info.refcnt : 0;
 		if (!nobuts.has('delete') && refcnt === 0 && info.user === R.user.name && R.canDeleteDiagram(info.name))
 		{
-			const btn = D.getIcon('delete', 'delete', e => Cat.R.deleteDiagram(e, info.name), {scale:D.default.button.small, title:'Delete diagram'});
+			const btn = D.getIcon('delete', 'delete', e => D.deleteDiagram(e, info.name), {scale:D.default.button.small, title:'Delete diagram'});
 			btn.querySelector('rect.btn').style.fill = 'red';
 			buttons.push(btn);
 		}
@@ -3671,6 +3672,7 @@ class CatalogTool extends DiagramTool		// GUI only
 		const descriptionElt = document.getElementById('catalog-new-description');
 		const codomainElt = document.getElementById('catalog-select-codomain');
 		const diagram = R.createDiagram(codomainElt.value, basenameElt.value, properNameElt.value, descriptionElt.value);
+		[basenameElt, properNameElt, descriptionElt].map(elt => elt.value = '');
 		if (diagram instanceof Diagram)
 			Runtime.SelectDiagram(diagram, 'home');
 		else
@@ -3772,7 +3774,7 @@ class DefinitionTool extends ElementTool
 		}));
 		const div = H3.div(H3.p('Instantiate definition in category ', catSelector), H3.p('Select a definition to instantiate.'));
 		h3.after(div);
-		const defs = R.diagram.getDefinitions();
+		const defs = D.session.getDefinitions();
 		defs.unshift({action:{basename:'Select a definition'}, name:null});
 		this.selector = H3.select({onchange:e => this.showDefinition(e.target.value)}, defs.map(def => H3.option(def.action.basename, {value:def.action.basename})));
 		div.after(this.selector);
@@ -3794,7 +3796,7 @@ class DefinitionTool extends ElementTool
 			node.remove();
 			node = this.selector.nextSibling;
 		}
-		const defs = R.diagram.getDefinitions();
+		const defs = D.session.getDefinitions();
 		const def = defs.filter(d => d.action.basename === actionBasename)[0];
 		if (def)
 		{
@@ -4006,6 +4008,12 @@ class Session
 			this.current = null;
 			this.mode = 'catalog';
 		}
+	}
+	getDefinitions()
+	{
+		const defs = [];
+		[...this.diagrams.keys()].map(name => R.$CAT.getElement(name)).map(dgrm => dgrm.forEachDefinition(def => defs.push(def)));
+		return defs;
 	}
 }
 
@@ -5781,7 +5789,6 @@ class Display
 						R.catalog.delete(name);
 						R.writeCatalog();
 						this.diagramPNGs.delete(name);
-						this.deleteDiagram(name);
 					}
 					break;
 				case 'new':
@@ -7198,16 +7205,20 @@ class Display
 		const pngStore = tx.objectStore('PNGs');
 		pngStore.put({name, png});
 	}
-	deleteDiagram(name)
+	deleteDiagram(e, name)
 	{
-		const pngtx = this.store.transaction(['PNGs'], 'readwrite');
-		pngtx.onsuccess = e => R.debug(1) && console.log('png deleted', name);
-		pngtx.onerror = e => R.recordError(e);
-		const pngreq = pngtx.objectStore('PNGs').delete(name);
-		const tx = this.store.transaction(['diagrams'], 'readwrite');
-		tx.onsuccess = e => R.debug(1) && console.log('diagram json deleted', name);
-		tx.onerror = e => R.recordError(e);
-		const req = tx.objectStore('diagrams').delete(name);
+		if (R.canDeleteDiagram(name) && (D ? confirm(`Are you sure you want to delete diagram ${name}?`) : true))
+		{
+			R.deleteDiagram(name);
+			const pngtx = this.store.transaction(['PNGs'], 'readwrite');
+			pngtx.onsuccess = e => R.debug(1) && console.log('png deleted', name);
+			pngtx.onerror = e => R.recordError(e);
+			const pngreq = pngtx.objectStore('PNGs').delete(name);
+			const tx = this.store.transaction(['diagrams'], 'readwrite');
+			tx.onsuccess = e => R.debug(1) && console.log('diagram json deleted', name);
+			tx.onerror = e => R.recordError(e);
+			const req = tx.objectStore('diagrams').delete(name);
+		}
 	}
 }
 
@@ -13365,8 +13376,11 @@ class DefinitionAction extends Action
 		const bbox = {x:xy.x - width/2, y:xy.y - D.default.font.height/2, width, height:D.default.font.height};
 		const place = diagram.autoplaceSvg(bbox, null, 16);
 		const def = diagram.get('Definition', {description, basename, sequence, blobs, xy:{x:place.x, y:place.y}, weight:'bold', properName:basename});
-		def.postload();
-		diagram.makeSelected(def);
+		if (def)
+		{
+			def.postload();
+			diagram.makeSelected(def);
+		}
 	}
 	hasForm(diagram, ary)
 	{
@@ -18376,6 +18390,9 @@ class Diagram extends Functor
 			this.svgRoot && this.svgRoot.remove();
 			['.json', '.png'].map(ext => U.removefile(`${name}${ext}`));		// remove local files
 			this.elements.forEach(elt => this.codomain.elements.delete(elt.name));
+			this.forEachTheorem(thm => thm.decrRefcnt());
+			this.forEachDefinition(def => def.decrRefcnt());
+			this.references.forEach(dgrm => dgrm.refcnt--);
 			D && D.emitCATEvent('delete', this);
 		}
 	}
@@ -18412,7 +18429,7 @@ class Diagram extends Functor
 		}
 		if (this.refcnt === 0 && !R.isSysUser(this.user))
 		{
-			const btn = D.getIcon('delete', 'delete', e => R.deleteDiagram(e, this.name), {scale:D.default.button.small, title:'Delete this diagram'});
+			const btn = D.getIcon('delete', 'delete', e => D.deleteDiagram(e, this.name), {scale:D.default.button.small, title:'Delete this diagram'});
 			btn.querySelector('rect.btn').style.fill = 'red';
 			toolbar2right.appendChild(btn);
 		}
@@ -19411,6 +19428,10 @@ class Diagram extends Functor
 	{
 		this.domain.elements.forEach(e => e instanceof Definition && fn(e));
 	}
+	forEachTheorem(fn)
+	{
+		this.domain.elements.forEach(e => e instanceof Theorem && fn(e));
+	}
 	showGraph(m)
 	{
 		m.isGraphHidden() ? m.showGraph() : m.removeGraph();
@@ -19507,7 +19528,7 @@ class Diagram extends Functor
 			emit && D.emitDiagramEvent(this, 'addReference', diagram);
 			fn && fn(diagram);
 		};
-		if (R.load(elt))
+		if (R.load(name))
 			setup();
 		else
 			R.loadDiagram(name, setup);
@@ -20195,18 +20216,14 @@ class Diagram extends Functor
 		const validateInput = input =>
 		{
 			const tokens = input.trim().split(' ').filter(tok => tok !== '');
-			if (shiftKey && type === 'morphism')
+			if (type === 'morphism')
 			{
-				if (tokens.length === 1)
-					return checkToken('object', tokens[0]);
-				if (tokens.length === 2)
-					return checkToken('object', tokens[0]) && checkToken('base', tokens[1]);
-				if (tokens.length === 3)
-					return checkToken('object', tokens[0]) && checkToken('base', tokens[1]) && checkToken('object', tokens[2]);
-				return false;
-			}
-			else
-			{
+				if (tokens.length === 1 && checkToken('object', tokens[0]))
+					return true;
+				if (tokens.length === 2 && checkToken('object', tokens[0]) && checkToken('base', tokens[1]))
+					return true;
+				if (tokens.length === 3 && checkToken('object', tokens[0]) && checkToken('base', tokens[1]) && checkToken('object', tokens[2]))
+					return true;
 				let operator = '';
 				let opNdx = -1;
 				let elements = Array(tokens.length).fill(null);
@@ -20295,6 +20312,7 @@ class Diagram extends Functor
 					{
 						let operator = '';
 						let elements = [];
+						const category = cat ? cat : R.category;
 						const placeObjects = _ =>
 						{
 							created.push(this.placeObject(this[operator === '*' ? 'prod' : 'coprod'](...elements), xy));
@@ -20309,11 +20327,10 @@ class Diagram extends Functor
 							elements.length = 0;
 							operator = '';
 						};
-						if (shiftKey && type === 'morphism')
+						if (type === 'morphism' && tokens.length === 3 && checkToken('object', tokens[0]) && checkToken('base', tokens[1]) && checkToken('object', tokens[2]))
 						{
-							const m = this.codomain.newMorphism(e, this, tokens[1], tokens[0], tokens[2]);
-							if (m)
-								created.push(this.placeMorphism(m, xy));
+							const m = category.newMorphism(e, this, tokens[1], tokens[0], tokens[2]);
+							m && created.push(this.placeMorphism(m, xy));
 						}
 						else
 						{
@@ -20327,7 +20344,6 @@ class Diagram extends Functor
 								}
 								else
 								{
-									const category = cat ? cat : R.category;
 									const elt = type === 'object' ? category.newObject(this, tok) : R.diagram.getElement(tok);
 									if (ndx > -1 && elements.length > 0)		// admit prior elements with operator
 									{
@@ -20703,12 +20719,6 @@ class Diagram extends Functor
 	hideCode(ext)
 	{
 		this.forEachCode(txt => txt.ext === ext && txt.decrRefcnt());
-	}
-	getDefinitions()
-	{
-		const defs = [];
-		[...R.getReferences(this.name)].map(ref => R.$CAT.getElement(ref)).map(ref => ref.forEachDefinition(def => defs.push(def)));
-		return defs;
 	}
 	getCategories()
 	{
