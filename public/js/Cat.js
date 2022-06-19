@@ -3361,17 +3361,18 @@ class CatalogTool extends DiagramTool		// GUI only
 			let img = null;
 			const args = e.detail;
 			const diagram = args.diagram;
+			const name = typeof diagram === 'string' ? diagram : diagram.name;
 			let div = null;
 			switch(args.command)
 			{
 				case 'close':
-					div = this.catalog.querySelector(`div[data-name="${diagram.name}"]`);
+					div = this.catalog.querySelector(`div[data-name="${name}"]`);
 					div && this.searchArgs.sessionOnly && div.remove();		// remove image in catalog search
 					break;
 				case 'delete':		// delete diagram
-					div = this.catalog.querySelector(`div[data-name="${diagram.name}"]`);	// find catalog entry
+					div = this.catalog.querySelector(`div[data-name="${name}"]`);	// find catalog entry
 					div && div.remove();		// remove image in catalog
-					this.diagrams = this.diagrams.filter(d => d.name !== diagram.name);
+					this.diagrams = this.diagrams.filter(d => d.name !== name);
 					this.update();
 					break;
 				case 'upload':
@@ -3380,7 +3381,7 @@ class CatalogTool extends DiagramTool		// GUI only
 					break;
 				case 'load':
 				case 'new':
-					this.diagrams.filter(info => info.name === diagram.name).length > 0 && this.display(diagram);
+					this.diagrams.filter(info => info.name === name).length > 0 && this.display(diagram);
 					break;
 			}
 		});
