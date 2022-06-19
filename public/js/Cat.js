@@ -3763,9 +3763,9 @@ class DefinitionTool extends ElementTool
 		searchbar.classList.add('hidden');
 		const h3 = D.toolbar.table.querySelector('h3');
 		h3.innerHTML = 'Definitions';
-		const cats = R.diagram.getCategories();
+		const cats = [...R.diagram.getCategories()];
 		this.targetCat = cats[0];
-		const catSelector = H3.select({onchange:e => {this.targetCat = R.diagram.getElement(e.target.value);}}, [...cats].map(cat =>
+		const catSelector = H3.select({onchange:e => {this.targetCat = R.diagram.getElement(e.target.value);}}, cats.map(cat =>
 		{
 			const args = {value:cat.name};
 			if (cat === R.category)
@@ -7207,9 +7207,10 @@ class Display
 	}
 	deleteDiagram(e, name)
 	{
-		if (R.canDeleteDiagram(name) && (D ? confirm(`Are you sure you want to delete diagram ${name}?`) : true))
+		if (R.canDeleteDiagram(name) && (D ? confirm(`Are you sure you want to permanently delete diagram ${name}?`) : true))
 		{
 			R.deleteDiagram(name);
+			R.diagram && R.diagram.name === name && this.cancelAutosave();
 			const pngtx = this.store.transaction(['PNGs'], 'readwrite');
 			pngtx.onsuccess = e => R.debug(1) && console.log('png deleted', name);
 			pngtx.onerror = e => R.recordError(e);
@@ -18388,6 +18389,7 @@ class Diagram extends Functor
 		{
 			const name = this.name;
 			this.svgRoot && this.svgRoot.remove();
+			this.svgRoot = null;
 			['.json', '.png'].map(ext => U.removefile(`${name}${ext}`));		// remove local files
 			this.elements.forEach(elt => this.codomain.elements.delete(elt.name));
 			this.forEachTheorem(thm => thm.decrRefcnt());
@@ -20423,12 +20425,9 @@ class Diagram extends Functor
 				!dgrmF4gnd.classList.contains('hidden') && dgrmF4gnd.classList.add('hidden');
 				return;
 			}
-			else
-			{
-				dgrmBkgnd.classList.remove('hidden');
-				dgrmF4gnd.classList.remove('hidden');
-				dgrmF4gnd.classList.add('grabbable');
-			}
+			dgrmBkgnd && dgrmBkgnd.classList.remove('hidden');
+			dgrmF4gnd.classList.remove('hidden');
+			dgrmF4gnd.classList.add('grabbable');
 			const bbox = this.getSessionBBox();
 			const placement = D.session.getPlacement(this.name);
 			const scale = placement.scale;
