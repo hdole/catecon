@@ -1404,6 +1404,8 @@ class Runtime
 					diagram.decrRefcnt();
 					diagram.sync = sync;
 				}
+				else if (D)
+					D.emitCATEvent('delete', name);
 				else
 					this.catalog.delete(name);
 			}).catch(err =>
