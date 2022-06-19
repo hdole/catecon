@@ -814,7 +814,7 @@ async function serve()
 				}
 				else
 				{
-					console.log('Not in database', name);
+					console.log('/delete: cannot find in database to delete', name);
 					res.status(HTTP.OK).end();
 				}
 			});
