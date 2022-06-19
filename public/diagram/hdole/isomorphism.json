@@ -1,0 +1,464 @@
+{
+  "description": "",
+  "basename": "isomorphism",
+  "name": "hdole/isomorphism",
+  "prototype": "Diagram",
+  "category": "em/CAT",
+  "diagram": "hdole/hdole",
+  "domain": "isomorphism_Index",
+  "codomain": "em/Cat",
+  "references": [
+    "hdole/identity"
+  ],
+  "domainInfo": {
+    "description": "index category for diagram hdole/isomorphism",
+    "basename": "isomorphism_Index",
+    "name": "hdole/isomorphism_Index",
+    "prototype": "IndexCategory",
+    "category": "em/CAT",
+    "diagram": "hdole/hdole",
+    "elements": [
+      {
+        "description": "Isomorphism",
+        "basename": "t_0",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 0,
+          "y": 0
+        },
+        "height": 76,
+        "weight": "bold"
+      },
+      {
+        "description": "The morphism f from A to B in the category D is said\nto be invertible (an isomorphism) if there exists a\nmorphism f inverse from B to A such that f⁻¹∘f=id, and\nf∘f⁻¹=id.",
+        "basename": "t_1",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 10,
+          "y": 70
+        },
+        "height": 24
+      },
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": 30,
+          "y": 240
+        }
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 180,
+          "y": 240
+        }
+      },
+      {
+        "description": "",
+        "basename": "e_0",
+        "prototype": "IndexElement",
+        "domain": "o_0",
+        "codomain": "o_1",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
+      },
+      {
+        "basename": "o_2",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": -40,
+          "y": 390
+        }
+      },
+      {
+        "basename": "o_3",
+        "prototype": "IndexObject",
+        "to": "B",
+        "xy": {
+          "x": 110,
+          "y": 390
+        }
+      },
+      {
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "f"
+      },
+      {
+        "description": "",
+        "basename": "e_1",
+        "prototype": "IndexElement",
+        "domain": "m_0",
+        "codomain": "o_0",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
+      },
+      {
+        "basename": "o_5",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 110,
+          "y": 520
+        }
+      },
+      {
+        "basename": "m_1",
+        "prototype": "IndexMorphism",
+        "domain": "o_3",
+        "codomain": "o_5",
+        "to": "finv"
+      },
+      {
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "o_2",
+        "codomain": "o_5",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Id{A}dI"
+      },
+      {
+        "basename": "o_4",
+        "prototype": "IndexObject",
+        "to": "B",
+        "xy": {
+          "x": 220,
+          "y": 390
+        }
+      },
+      {
+        "basename": "o_6",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 220,
+          "y": 520
+        }
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "o_4",
+        "codomain": "o_6",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "finv"
+      },
+      {
+        "basename": "o_8",
+        "prototype": "IndexObject",
+        "to": "B",
+        "xy": {
+          "x": 370,
+          "y": 520
+        }
+      },
+      {
+        "basename": "m_4",
+        "prototype": "IndexMorphism",
+        "domain": "o_6",
+        "codomain": "o_8",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "f"
+      },
+      {
+        "basename": "m_5",
+        "prototype": "IndexMorphism",
+        "domain": "o_4",
+        "codomain": "o_8",
+        "to": "Id{B}dI"
+      },
+      {
+        "description": "<icon>definition</icon>Definition: isomorphism",
+        "basename": "isomorphism",
+        "prototype": "Definition",
+        "xy": {
+          "x": -50,
+          "y": 600
+        },
+        "height": 32,
+        "weight": "bold",
+        "sequence": [
+          "f",
+          "finv"
+        ],
+        "blobs": [
+          "hdole/isomorphism/o_5",
+          "hdole/isomorphism/o_6"
+        ]
+      },
+      {
+        "description": "<icon>definition</icon>Let id : T&rarr;T as identity.",
+        "basename": "t_2",
+        "prototype": "DefinitionInstance",
+        "xy": {
+          "x": -50,
+          "y": 700
+        },
+        "height": 32,
+        "weight": "bold",
+        "targetCat": "hdole/isomorphism/D",
+        "definition": "hdole/identity/identity",
+        "sequence": [
+          "hdole/isomorphism/id"
+        ],
+        "elementMap": [
+          [
+            "hdole/identity/A",
+            "hdole/isomorphism/T"
+          ],
+          [
+            "hdole/identity/id",
+            "hdole/isomorphism/id"
+          ]
+        ]
+      },
+      {
+        "basename": "o_7",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": -50,
+          "y": 860
+        }
+      },
+      {
+        "basename": "o_9",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 100,
+          "y": 860
+        }
+      },
+      {
+        "basename": "o_10",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 100,
+          "y": 990
+        }
+      },
+      {
+        "basename": "m_6",
+        "prototype": "IndexMorphism",
+        "domain": "o_7",
+        "codomain": "o_9",
+        "to": "id"
+      },
+      {
+        "basename": "m_7",
+        "prototype": "IndexMorphism",
+        "domain": "o_9",
+        "codomain": "o_10",
+        "to": "id"
+      },
+      {
+        "basename": "m_8",
+        "prototype": "IndexMorphism",
+        "domain": "o_7",
+        "codomain": "o_10",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Id{T}dI"
+      },
+      {
+        "basename": "o_11",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 200,
+          "y": 860
+        }
+      },
+      {
+        "basename": "o_12",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 200,
+          "y": 990
+        }
+      },
+      {
+        "basename": "o_13",
+        "prototype": "IndexObject",
+        "to": "T",
+        "xy": {
+          "x": 350,
+          "y": 990
+        }
+      },
+      {
+        "basename": "m_9",
+        "prototype": "IndexMorphism",
+        "domain": "o_11",
+        "codomain": "o_12",
+        "to": "id"
+      },
+      {
+        "basename": "m_10",
+        "prototype": "IndexMorphism",
+        "domain": "o_12",
+        "codomain": "o_13",
+        "to": "id"
+      },
+      {
+        "basename": "m_11",
+        "prototype": "IndexMorphism",
+        "domain": "o_11",
+        "codomain": "o_13",
+        "to": "Id{T}dI"
+      },
+      {
+        "description": "<icon>theorem</icon>Theorem: identity is isomorphism",
+        "basename": "id_is_iso",
+        "prototype": "Theorem",
+        "xy": {
+          "x": -60,
+          "y": 1090
+        },
+        "height": 24,
+        "weight": "bold",
+        "source": "hdole/isomorphism/t_2",
+        "target": "hdole/isomorphism/isomorphism",
+        "sequence": [
+          "id",
+          "id"
+        ],
+        "blobs": [
+          "hdole/isomorphism/o_7",
+          "hdole/isomorphism/o_11"
+        ]
+      }
+    ],
+    "cells": [
+      {
+        "name": "hdole/isomorphism/{m_0,m_1},{m_2}",
+        "left": [
+          "m_0",
+          "m_1"
+        ],
+        "right": [
+          "m_2"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      },
+      {
+        "name": "hdole/isomorphism/{m_3,m_4},{m_5}",
+        "left": [
+          "m_3",
+          "m_4"
+        ],
+        "right": [
+          "m_5"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      }
+    ]
+  },
+  "elements": [
+    {
+      "basename": "D",
+      "prototype": "Category",
+      "elements": [
+        {
+          "description": "",
+          "basename": "A",
+          "prototype": "CatObject"
+        },
+        {
+          "description": "",
+          "basename": "B",
+          "prototype": "CatObject"
+        },
+        {
+          "description": "",
+          "basename": "f",
+          "prototype": "Morphism",
+          "domain": "A",
+          "codomain": "B"
+        },
+        {
+          "description": "",
+          "basename": "finv",
+          "prototype": "Morphism",
+          "properName": "f&#x207B&#x00B9",
+          "domain": "B",
+          "codomain": "A"
+        },
+        {
+          "description": "",
+          "basename": "T",
+          "prototype": "CatObject"
+        },
+        {
+          "description": "",
+          "basename": "id",
+          "prototype": "Morphism",
+          "domain": "T",
+          "codomain": "T"
+        }
+      ]
+    },
+    {
+      "prototype": "Identity",
+      "domain": "A"
+    },
+    {
+      "prototype": "Identity",
+      "domain": "B"
+    },
+    {
+      "prototype": "Identity",
+      "domain": "T"
+    }
+  ],
+  "user": "hdole",
+  "timestamp": 1655593119681,
+  "version": 0,
+  "viewport": {
+    "x": 1050,
+    "y": 118,
+    "scale": 0.8702368015807553,
+    "width": 2560,
+    "height": 1440
+  },
+  "properName": "hdole/isomorphism"
+}

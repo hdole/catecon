@@ -3,7 +3,6 @@
   "basename": "identity",
   "name": "hdole/identity",
   "prototype": "Diagram",
-  "properName": "hdole/identity",
   "category": "em/CAT",
   "diagram": "hdole/hdole",
   "domain": "identity_Index",
@@ -22,28 +21,65 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 470,
-          "y": 200
+          "x": 0,
+          "y": 0
         },
-        "height": 172,
+        "height": 76,
         "weight": "bold"
+      },
+      {
+        "description": "The morphism id on an object A in the category D is\nan identity if for every f with domain A that f∘id = f,\nand for every g with codomain A that id∘g = g.",
+        "basename": "t_1",
+        "prototype": "IndexText",
+        "xy": {
+          "x": 10,
+          "y": 50
+        },
+        "height": 24
+      },
+      {
+        "basename": "o_0",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": 20,
+          "y": 180
+        }
+      },
+      {
+        "basename": "o_1",
+        "prototype": "IndexObject",
+        "to": "em/Cat",
+        "xy": {
+          "x": 170,
+          "y": 180
+        }
       },
       {
         "basename": "o_2",
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 650,
-          "y": 550
+          "x": 20,
+          "y": 310
         }
       },
       {
         "basename": "o_3",
         "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 20,
+          "y": 440
+        }
+      },
+      {
+        "basename": "o_5",
+        "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 500,
-          "y": 550
+          "x": -110,
+          "y": 440
         }
       },
       {
@@ -51,8 +87,17 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 650,
-          "y": 400
+          "x": 140,
+          "y": 310
+        }
+      },
+      {
+        "basename": "o_6",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 140,
+          "y": 440
         }
       },
       {
@@ -60,57 +105,48 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 950,
-          "y": 400
+          "x": 280,
+          "y": 310
         }
       },
       {
-        "description": "A morphism id:A→A in the category D is said to be\nan identity given the following commutative diagrams.",
-        "basename": "t_1",
-        "prototype": "IndexText",
-        "xy": {
-          "x": 480,
-          "y": 280
-        },
-        "height": 24
+        "description": "",
+        "basename": "e_0",
+        "prototype": "IndexElement",
+        "domain": "o_0",
+        "codomain": "o_1",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
       },
       {
-        "basename": "o_1",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": 800,
-          "y": 550
-        }
+        "basename": "m_0",
+        "prototype": "IndexMorphism",
+        "domain": "o_2",
+        "codomain": "o_3",
+        "to": "id"
       },
       {
-        "basename": "o_5",
-        "prototype": "IndexObject",
-        "to": "A",
-        "xy": {
-          "x": 800,
-          "y": 400
-        }
+        "description": "",
+        "basename": "e_1",
+        "prototype": "IndexElement",
+        "domain": "o_2",
+        "codomain": "o_0",
+        "attributes": [
+          [
+            "bezier",
+            0
+          ]
+        ]
       },
       {
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_2",
-        "codomain": "o_3",
-        "to": "f"
-      },
-      {
-        "basename": "m_2",
-        "prototype": "IndexMorphism",
-        "domain": "o_4",
-        "codomain": "o_2",
-        "to": "id"
-      },
-      {
-        "basename": "m_3",
-        "prototype": "IndexMorphism",
-        "domain": "o_4",
-        "codomain": "o_3",
+        "codomain": "o_5",
         "attributes": [
           [
             "flipName",
@@ -128,11 +164,45 @@
         "to": "f"
       },
       {
-        "basename": "m_6",
+        "basename": "m_2",
+        "prototype": "IndexMorphism",
+        "domain": "o_3",
+        "codomain": "o_5",
+        "attributes": [
+          [
+            "quantifier",
+            "forall"
+          ],
+          [
+            "level",
+            1
+          ]
+        ],
+        "to": "f"
+      },
+      {
+        "basename": "m_3",
+        "prototype": "IndexMorphism",
+        "domain": "o_4",
+        "codomain": "o_6",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "id"
+      },
+      {
+        "basename": "m_4",
         "prototype": "IndexMorphism",
         "domain": "o_7",
-        "codomain": "o_1",
+        "codomain": "o_4",
         "attributes": [
+          [
+            "flipName",
+            true
+          ],
           [
             "quantifier",
             "forall"
@@ -148,67 +218,59 @@
         "basename": "m_5",
         "prototype": "IndexMorphism",
         "domain": "o_7",
-        "codomain": "o_5",
+        "codomain": "o_6",
         "attributes": [
           [
-            "flipName",
-            true
+            "quantifier",
+            "forall"
+          ],
+          [
+            "level",
+            1
           ]
         ],
         "to": "g"
       },
       {
-        "basename": "m_0",
-        "prototype": "IndexMorphism",
-        "domain": "o_5",
-        "codomain": "o_1",
-        "attributes": [
-          [
-            "flipName",
-            true
-          ]
-        ],
-        "to": "id"
-      },
-      {
-        "description": "Definition of identity",
+        "description": "<icon>definition</icon>Definition: identity",
         "basename": "identity",
         "prototype": "Definition",
         "xy": {
-          "x": 620,
-          "y": 670
+          "x": -60,
+          "y": 540
         },
-        "height": 24,
+        "height": 32,
+        "weight": "bold",
         "sequence": [
           "id"
         ],
         "blobs": [
-          "hdole/identity/o_2",
-          "hdole/identity/o_1"
+          "hdole/identity/o_3",
+          "hdole/identity/o_6"
         ]
       }
     ],
     "cells": [
       {
-        "name": "hdole/identity/{m_2,m_1},{m_3}",
+        "name": "hdole/identity/{m_0,m_2},{m_1}",
         "left": [
-          "m_2",
-          "m_1"
+          "m_0",
+          "m_2"
         ],
         "right": [
-          "m_3"
+          "m_1"
         ],
         "assertion": "equals",
         "hidden": false
       },
       {
-        "name": "hdole/identity/{m_5,m_0},{m_6}",
+        "name": "hdole/identity/{m_4,m_3},{m_5}",
         "left": [
-          "m_5",
-          "m_0"
+          "m_4",
+          "m_3"
         ],
         "right": [
-          "m_6"
+          "m_5"
         ],
         "assertion": "equals",
         "hidden": false
@@ -232,17 +294,17 @@
         },
         {
           "description": "",
-          "basename": "f",
-          "prototype": "Morphism",
-          "domain": "A",
-          "codomain": "B"
-        },
-        {
-          "description": "",
           "basename": "id",
           "prototype": "Morphism",
           "domain": "A",
           "codomain": "A"
+        },
+        {
+          "description": "",
+          "basename": "f",
+          "prototype": "Morphism",
+          "domain": "A",
+          "codomain": "B"
         },
         {
           "description": "",
@@ -255,13 +317,14 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1655254148099,
+  "timestamp": 1655592834750,
   "version": 0,
   "viewport": {
-    "x": -279,
-    "y": -51,
-    "scale": 1.991427011481296,
+    "x": 800,
+    "y": 199,
+    "scale": 2.1461184670770646,
     "width": 2560,
-    "height": 1368
-  }
+    "height": 1440
+  },
+  "properName": "hdole/identity"
 }
