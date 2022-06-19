@@ -779,7 +779,7 @@ async function serve()
 				res.status(HTTP.BAD_REQUEST).send({message:'diagram is referenced'}).end();
 				return;
 			}
-			info.references.map(name => Cat.R.catalog.get(name).refcnt--);
+			info && info.references.map(name => Cat.R.catalog.get(name).refcnt--);
 			Cat.R.catalog.delete(name);
 			dbcon.query(`SELECT user,refcnt FROM Catecon.diagrams WHERE name=${dbcon.escape(name)};`, (error, result) =>
 			{
@@ -813,7 +813,10 @@ async function serve()
 					});
 				}
 				else
+				{
+					console.log('Not in database', name);
 					res.status(HTTP.OK).end();
+				}
 			});
 		});
 
