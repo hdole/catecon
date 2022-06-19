@@ -773,7 +773,7 @@ async function serve()
 				return;
 			}
 			const info = Cat.R.catalog.get(name);
-			if (info.refcnt > 0)
+			if (info && info.refcnt > 0)
 			{
 				console.error('ERROR: diagram is referenced', result[0].refcnt);
 				res.status(HTTP.BAD_REQUEST).send({message:'diagram is referenced'}).end();
