@@ -51,17 +51,8 @@
         "prototype": "IndexObject",
         "to": "#1",
         "xy": {
-          "x": -50,
-          "y": 460
-        }
-      },
-      {
-        "basename": "o_4",
-        "prototype": "IndexObject",
-        "to": "G",
-        "xy": {
-          "x": 120,
-          "y": 460
+          "x": 300,
+          "y": 350
         }
       },
       {
@@ -262,7 +253,13 @@
         "basename": "m_1",
         "prototype": "IndexMorphism",
         "domain": "o_3",
-        "codomain": "o_4",
+        "codomain": "o_1",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
         "to": "unit"
       },
       {
@@ -408,14 +405,13 @@
       },
       {
         "description": "Definition of monoid",
-        "basename": "d_0",
+        "basename": "monoid",
         "prototype": "Definition",
         "xy": {
           "x": -640,
           "y": 1320
         },
         "height": 24,
-        "defname": "monoid",
         "sequence": [
           "mult",
           "unit"
@@ -683,13 +679,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1655074967746,
+  "timestamp": 1655713366567,
   "version": 0,
   "viewport": {
-    "x": 1277,
-    "y": 307,
-    "scale": 1.3384588116861034,
+    "x": 1343,
+    "y": 227,
+    "scale": 0.8123197824618678,
     "width": 2560,
-    "height": 1440
+    "height": 1368
   }
 }

@@ -797,6 +797,76 @@
           ]
         ],
         "to": "fact64"
+      },
+      {
+        "basename": "o_40",
+        "prototype": "IndexObject",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 850,
+          "y": 1150
+        }
+      },
+      {
+        "basename": "o_41",
+        "prototype": "IndexObject",
+        "to": "Po{hdole/floats/F64,#1}oP",
+        "xy": {
+          "x": 1000,
+          "y": 1150
+        }
+      },
+      {
+        "basename": "o_42",
+        "prototype": "IndexObject",
+        "to": "Po{hdole/floats/F64,hdole/floats/F64}oP",
+        "xy": {
+          "x": 1000,
+          "y": 1300
+        }
+      },
+      {
+        "basename": "o_43",
+        "prototype": "IndexObject",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 1000,
+          "y": 1450
+        }
+      },
+      {
+        "basename": "m_41",
+        "prototype": "IndexMorphism",
+        "domain": "o_40",
+        "codomain": "o_41",
+        "to": "Fa{hdole/floats/F64:hdole/floats/F64_0,#1_-1}aF"
+      },
+      {
+        "basename": "m_42",
+        "prototype": "IndexMorphism",
+        "domain": "o_41",
+        "codomain": "o_42",
+        "to": "Pm{Id{hdole/floats/F64}dI,hdole/floats/fone64}mP"
+      },
+      {
+        "basename": "m_43",
+        "prototype": "IndexMorphism",
+        "domain": "o_42",
+        "codomain": "o_43",
+        "to": "hdole/floats/fsub64"
+      },
+      {
+        "basename": "m_44",
+        "prototype": "IndexMorphism",
+        "domain": "o_40",
+        "codomain": "o_43",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Cm{Fa{hdole/floats/F64:hdole/floats/F64_0,#1_-1}aF,Pm{Id{hdole/floats/F64}dI,hdole/floats/fone64}mP,hdole/floats/fsub64}mC"
       }
     ],
     "cells": []
@@ -1199,15 +1269,57 @@
       "domain": "hdole/cpp/stdin",
       "codomain": "hdole/cpp/stdout",
       "source": "hdole/assembly/Cm{hdole/cpp/stdinToF64,fact,hdole/cpp/F64ToStdout}mC"
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/floats/F64",
+        "hdole/floats/#1"
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "Po{hdole/floats/F64,hdole/floats/#1}oP",
+      "codomain": "Po{hdole/floats/F64,hdole/floats/F64}oP",
+      "morphisms": [
+        "Id{hdole/floats/F64}dI",
+        "hdole/floats/fone64"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "hdole/floats/F64",
+        "#1"
+      ]
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "hdole/floats/F64",
+      "codomain": "Po{hdole/floats/F64,#1}oP",
+      "factors": [
+        0,
+        -1
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "hdole/floats/F64",
+      "codomain": "hdole/floats/F64",
+      "morphisms": [
+        "Fa{hdole/floats/F64:hdole/floats/F64_0,#1_-1}aF",
+        "Pm{Id{hdole/floats/F64}dI,hdole/floats/fone64}mP",
+        "hdole/floats/fsub64"
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1655075684851,
+  "timestamp": 1655844509973,
   "version": 0,
   "viewport": {
-    "x": 545,
-    "y": -3,
-    "scale": 0.5847853892448585,
+    "x": -1743,
+    "y": -3458,
+    "scale": 3.215131005923991,
     "width": 2560,
     "height": 1440
   }

@@ -21,10 +21,10 @@
         "basename": "t_0",
         "prototype": "IndexText",
         "xy": {
-          "x": 0,
+          "x": 10,
           "y": 0
         },
-        "height": 76,
+        "height": 96,
         "weight": "bold"
       },
       {
@@ -42,8 +42,8 @@
         "prototype": "IndexObject",
         "to": "D",
         "xy": {
-          "x": 20,
-          "y": 180
+          "x": 170,
+          "y": 170
         }
       },
       {
@@ -51,8 +51,8 @@
         "prototype": "IndexObject",
         "to": "em/Cat",
         "xy": {
-          "x": 170,
-          "y": 180
+          "x": 320,
+          "y": 170
         }
       },
       {
@@ -60,8 +60,8 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 20,
-          "y": 310
+          "x": 170,
+          "y": 320
         }
       },
       {
@@ -69,7 +69,7 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 20,
+          "x": 170,
           "y": 440
         }
       },
@@ -78,7 +78,7 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": -110,
+          "x": 40,
           "y": 440
         }
       },
@@ -87,8 +87,8 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 140,
-          "y": 310
+          "x": 290,
+          "y": 320
         }
       },
       {
@@ -96,7 +96,7 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 140,
+          "x": 290,
           "y": 440
         }
       },
@@ -105,8 +105,8 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 280,
-          "y": 310
+          "x": 430,
+          "y": 320
         }
       },
       {
@@ -236,7 +236,7 @@
         "basename": "identity",
         "prototype": "Definition",
         "xy": {
-          "x": -60,
+          "x": 90,
           "y": 540
         },
         "height": 32,
@@ -317,14 +317,14 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1655592834750,
+  "timestamp": 1655634975777,
   "version": 0,
   "viewport": {
-    "x": 800,
-    "y": 199,
-    "scale": 2.1461184670770646,
+    "x": 225,
+    "y": 293,
+    "scale": 3.65929038264567,
     "width": 2560,
-    "height": 1440
+    "height": 1368
   },
   "properName": "hdole/identity"
 }

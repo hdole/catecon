@@ -635,7 +635,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -740,
-          "y": 150
+          "y": 160
         },
         "height": 308,
         "weight": "bold"
@@ -2200,6 +2200,942 @@
           "x": 870,
           "y": 7130
         }
+      },
+      {
+        "description": "typedef double %0;",
+        "basename": "t_13",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 700,
+          "y": 330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "F64"
+      },
+      {
+        "description": "typedef float %0;",
+        "basename": "t_23",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 300,
+          "y": 330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "F32"
+      },
+      {
+        "description": "typedef long double %0;",
+        "basename": "t_26",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1100,
+          "y": 330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "F128"
+      },
+      {
+        "description": "%0 = 0.0;",
+        "basename": "t_29",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 620,
+          "y": 530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fzero64"
+      },
+      {
+        "description": "%0 = std::numbers:e_v<double>;",
+        "basename": "t_30",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 620,
+          "y": 930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "e64"
+      },
+      {
+        "description": "std::random_device %Type_dev;\nstd::mt19937 %Type_rng(%Type_dev);\nstd::uniform_int_distribution<std::mt19937::result_type> %Type_dist;\n%0 = %Type_dist(%Type_rng);",
+        "basename": "t_31",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 620,
+          "y": 2330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "rand64"
+      },
+      {
+        "description": "%0 = std::numbers::pi_v<double>;",
+        "basename": "t_32",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 620,
+          "y": 1130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "pi64"
+      },
+      {
+        "description": "%1 = (double)%0;",
+        "basename": "t_33",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 630,
+          "y": 2030
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "i64tof64"
+      },
+      {
+        "description": "%1 = ::abs(%0);",
+        "basename": "t_34",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 630,
+          "y": 2530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fabs64"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_35",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 660,
+          "y": 2730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add64"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_36",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 660,
+          "y": 2930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fsub64"
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_37",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 660,
+          "y": 3130
+        },
+        "height": 14,
+        "ext": "cpp",
+        "element": "fmult64"
+      },
+      {
+        "description": "if (%1 != 0.0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_38",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 660,
+          "y": 3330
+        },
+        "height": 14,
+        "ext": "cpp",
+        "element": "fdiv64"
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_39",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 660,
+          "y": 3530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "flt64"
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_40",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 660,
+          "y": 3730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "flte64"
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_41",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 660,
+          "y": 3930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "feq64"
+      },
+      {
+        "description": "%1 = ::ceil(%0);",
+        "basename": "t_42",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 630,
+          "y": 5230
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "ceil64"
+      },
+      {
+        "description": "%1 = ::round(%0);\n",
+        "basename": "t_43",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 630,
+          "y": 5430
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "rnd64"
+      },
+      {
+        "description": "%1 = ::floor(%0);",
+        "basename": "t_44",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 630,
+          "y": 5630
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "floor64"
+      },
+      {
+        "description": "%1 = ::trunc(%0);\n",
+        "basename": "t_45",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 630,
+          "y": 5830
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "trunc64"
+      },
+      {
+        "description": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_46",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 630,
+          "y": 6030
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "log64"
+      },
+      {
+        "description": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n",
+        "basename": "t_47",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 660,
+          "y": 6230
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "pow64"
+      },
+      {
+        "description": "%2 = std::max_element(%0, %1);",
+        "basename": "t_48",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 660,
+          "y": 6430
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fmax64"
+      },
+      {
+        "description": "%2 = std::min_element(%0, %1);",
+        "basename": "t_49",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 660,
+          "y": 6630
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fmin64"
+      },
+      {
+        "description": "%0 = 1.0;",
+        "basename": "t_50",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 620,
+          "y": 730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fone64"
+      },
+      {
+        "description": "%0 = 0.0f;",
+        "basename": "t_51",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 220,
+          "y": 530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fzero32"
+      },
+      {
+        "description": "%0 = 1.0f;",
+        "basename": "t_52",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 220,
+          "y": 730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fone32"
+      },
+      {
+        "description": "%0 = std::numbers::e_v<float>;",
+        "basename": "t_53",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 220,
+          "y": 930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "e32"
+      },
+      {
+        "description": "%0 = 0.0L;",
+        "basename": "t_54",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1020,
+          "y": 530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fzero128"
+      },
+      {
+        "description": "%0 = 1.0L;",
+        "basename": "t_55",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1020,
+          "y": 730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fone128"
+      },
+      {
+        "description": "%0 = std::numbers::e_v<__float128>;",
+        "basename": "t_56",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1020,
+          "y": 930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "e128"
+      },
+      {
+        "description": "%0 = std::numbers::pi_v<float>;",
+        "basename": "t_57",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 220,
+          "y": 1130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "pi32"
+      },
+      {
+        "description": "%0 = std::numbers::pi_v<__float128>;",
+        "basename": "t_58",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1020,
+          "y": 1130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "pi128"
+      },
+      {
+        "description": "%1 = (F32)%0;",
+        "basename": "t_59",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 1930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "i32tof32"
+      },
+      {
+        "description": "%1 = (long double)%0;",
+        "basename": "t_60",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1040,
+          "y": 2130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "i128tof128"
+      },
+      {
+        "description": "%1 = (F64)%0;",
+        "basename": "t_61",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 630,
+          "y": 1330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "f32tof64"
+      },
+      {
+        "description": "%1 = (F128)%0;",
+        "basename": "t_62",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1030,
+          "y": 1330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "f64tof128"
+      },
+      {
+        "description": "%1 = ::abs(%0);",
+        "basename": "t_63",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 2530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fabs32"
+      },
+      {
+        "description": "%1 = ::abs(%0);",
+        "basename": "t_64",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1040,
+          "y": 2530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fabs128"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_65",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 2730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add32"
+      },
+      {
+        "description": "%2 = %0 + %1;",
+        "basename": "t_66",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1070,
+          "y": 2730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "add128"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_67",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 2930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fsub32"
+      },
+      {
+        "description": "%2 = %0 - %1;",
+        "basename": "t_68",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1070,
+          "y": 2930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fsub128"
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_69",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 3130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fmult32"
+      },
+      {
+        "description": "%2 = %0 * %1;",
+        "basename": "t_70",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1070,
+          "y": 3130
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fmult128"
+      },
+      {
+        "description": "if (%1 != 0.0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_71",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1070,
+          "y": 3330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fdiv128"
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_72",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 3530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "flt32"
+      },
+      {
+        "description": "%2 = %0 < %1;",
+        "basename": "t_73",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1070,
+          "y": 3530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "flt128"
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_74",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 3730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "flte32"
+      },
+      {
+        "description": "%2 = %0 <= %1;",
+        "basename": "t_75",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1070,
+          "y": 3730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "flte128"
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_76",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 3930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "feq32"
+      },
+      {
+        "description": "%2 = %0 == %1;",
+        "basename": "t_77",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1070,
+          "y": 3930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "feq128"
+      },
+      {
+        "description": "%1 = ::ceil(%0);",
+        "basename": "t_78",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1040,
+          "y": 5230
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "ceil128"
+      },
+      {
+        "description": "%1 = ::ceil(%0);",
+        "basename": "t_79",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 5230
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "ceil32"
+      },
+      {
+        "description": "%1 = ::round(%0);",
+        "basename": "t_80",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 5430
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "rnd32"
+      },
+      {
+        "description": "%1 = ::round(%0);",
+        "basename": "t_81",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1040,
+          "y": 5430
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "rnd128"
+      },
+      {
+        "description": "%1 = ::floor(%0);",
+        "basename": "t_82",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 5630
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "floor32"
+      },
+      {
+        "description": "%1 = ::floor(%0);",
+        "basename": "t_83",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1040,
+          "y": 5630
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "florr128"
+      },
+      {
+        "description": "%1 = ::trunc(%0);",
+        "basename": "t_84",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 5830
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "trunc32"
+      },
+      {
+        "description": "%1 = ::trunc(%0);",
+        "basename": "t_85",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1040,
+          "y": 5830
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "trnuc128"
+      },
+      {
+        "description": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_86",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 230,
+          "y": 6030
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "log32"
+      },
+      {
+        "description": "if (%0 !== 0.0)\n{\n\t%1.c = 0;\n\t%1.m_0 = ::log(%0);\n}\nelse\n\t%1.c = 1;",
+        "basename": "t_87",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1040,
+          "y": 6030
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "log128"
+      },
+      {
+        "description": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n",
+        "basename": "t_88",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 6230
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "pow32"
+      },
+      {
+        "description": "if (%0 === 0 && %1 === 0)\n\t%2.c = 1;\nelse\n{\n\t%2.c = 0;\n\t%2.m_0 = ::pow(%0, %1);\n}\n",
+        "basename": "t_89",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1070,
+          "y": 6230
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "pow128"
+      },
+      {
+        "description": "if (%1 != 0.0)\n{\n\t%2.c = 0;\n\t%2.m_0 = %0 / %1;\n}\nelse\n\t%2.c = 1;",
+        "basename": "t_91",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 3330
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fdiv32"
+      },
+      {
+        "description": "%2 = std::max_element(%0, %1);",
+        "basename": "t_92",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1070,
+          "y": 6430
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fmax128"
+      },
+      {
+        "description": "%2 = std::max_element(%0, %1);",
+        "basename": "t_93",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 6430
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fmax32"
+      },
+      {
+        "description": "%2 = std::min_element(%0, %1);",
+        "basename": "t_94",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 260,
+          "y": 6630
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fmin32"
+      },
+      {
+        "description": "%2 = std::min_element(%0, %1);",
+        "basename": "t_95",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1070,
+          "y": 6630
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "fmin128"
+      },
+      {
+        "description": "%1 = (float)%0;",
+        "basename": "t_96",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 240,
+          "y": 1530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N32toF32"
+      },
+      {
+        "description": "%1 = (double)%0;",
+        "basename": "t_97",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 630,
+          "y": 1930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "i32tof64"
+      },
+      {
+        "description": "%1 = (long double)%0;",
+        "basename": "t_98",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1030,
+          "y": 1930
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "i32tof128"
+      },
+      {
+        "description": "%1 = (long double)%0;",
+        "basename": "t_99",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1030,
+          "y": 2030
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "i64tof128"
+      },
+      {
+        "description": "%1 = (double)%0;",
+        "basename": "t_100",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 640,
+          "y": 1530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N32toF64"
+      },
+      {
+        "description": "%1 = (long double)%0;",
+        "basename": "t_101",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1040,
+          "y": 1530
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "N32toF128"
+      },
+      {
+        "description": "%1 = (double)%0;",
+        "basename": "t_102",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 640,
+          "y": 1630
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "n64tof64"
+      },
+      {
+        "description": "%1 = (long double)%0;",
+        "basename": "t_103",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1040,
+          "y": 1630
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "n64tof128"
+      },
+      {
+        "description": "%1 = (long double)%0;",
+        "basename": "t_104",
+        "prototype": "IndexCode",
+        "xy": {
+          "x": 1040,
+          "y": 1730
+        },
+        "height": 6,
+        "ext": "cpp",
+        "element": "n128tof128"
       },
       {
         "basename": "m_0",
@@ -4509,12 +5445,12 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1655074996151,
+  "timestamp": 1655883040599,
   "version": 0,
   "viewport": {
     "x": 1020,
-    "y": 187,
-    "scale": 0.9843160139069083,
+    "y": 167,
+    "scale": 0.9843183375124346,
     "width": 2560,
     "height": 1440
   }

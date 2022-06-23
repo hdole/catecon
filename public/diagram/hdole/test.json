@@ -69,8 +69,8 @@
         "prototype": "IndexObject",
         "to": "A",
         "xy": {
-          "x": 680,
-          "y": -870
+          "x": 670,
+          "y": -1010
         }
       },
       {
@@ -78,8 +78,8 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 870,
-          "y": -870
+          "x": 840,
+          "y": -1010
         }
       },
       {
@@ -200,12 +200,12 @@
         }
       },
       {
-        "description": "Test",
+        "description": "<icon>upload</icon>  Test",
         "basename": "t_2",
         "prototype": "IndexText",
         "xy": {
-          "x": -1130,
-          "y": -860
+          "x": -1750,
+          "y": -840
         },
         "height": 500,
         "weight": "bold"
@@ -818,8 +818,8 @@
         "prototype": "IndexObject",
         "to": "B",
         "xy": {
-          "x": 2240,
-          "y": 270
+          "x": 2430,
+          "y": 420
         }
       },
       {
@@ -836,8 +836,8 @@
         "prototype": "IndexObject",
         "to": "D",
         "xy": {
-          "x": 2530,
-          "y": 440
+          "x": 2640,
+          "y": 420
         }
       },
       {
@@ -845,7 +845,7 @@
         "prototype": "IndexObject",
         "to": "CPo{B,C,D}oPC",
         "xy": {
-          "x": 2810,
+          "x": 2760,
           "y": 270
         }
       },
@@ -1022,8 +1022,8 @@
         "prototype": "IndexObject",
         "to": "C",
         "xy": {
-          "x": 2280,
-          "y": 440
+          "x": 2530,
+          "y": 420
         }
       },
       {
@@ -1069,7 +1069,7 @@
         "prototype": "IndexText",
         "xy": {
           "x": -1070,
-          "y": -660
+          "y": -650
         },
         "height": 76,
         "weight": "bold"
@@ -1115,8 +1115,8 @@
         "prototype": "IndexObject",
         "to": "C",
         "xy": {
-          "x": 990,
-          "y": -200
+          "x": 830,
+          "y": -130
         }
       },
       {
@@ -1162,6 +1162,222 @@
         "xy": {
           "x": 1400,
           "y": 780
+        }
+      },
+      {
+        "basename": "o_85",
+        "prototype": "IndexObject",
+        "to": "C",
+        "xy": {
+          "x": 840,
+          "y": -870
+        }
+      },
+      {
+        "basename": "o_84",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 695,
+          "y": -800
+        }
+      },
+      {
+        "basename": "o_86",
+        "prototype": "IndexObject",
+        "to": "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
+        "xy": {
+          "x": 960,
+          "y": 770
+        }
+      },
+      {
+        "basename": "o_126",
+        "prototype": "IndexObject",
+        "to": "point",
+        "xy": {
+          "x": 650,
+          "y": 770
+        }
+      },
+      {
+        "basename": "o_127",
+        "prototype": "IndexObject",
+        "to": "Po{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64}oP",
+        "xy": {
+          "x": -260,
+          "y": 520
+        }
+      },
+      {
+        "basename": "o_128",
+        "prototype": "IndexObject",
+        "to": "Po{Po{hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64}oP",
+        "xy": {
+          "x": 400,
+          "y": 520
+        }
+      },
+      {
+        "basename": "o_129",
+        "prototype": "IndexObject",
+        "to": "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
+        "xy": {
+          "x": 2010,
+          "y": 800
+        }
+      },
+      {
+        "basename": "o_130",
+        "prototype": "IndexObject",
+        "to": "hdole/floats/F64",
+        "xy": {
+          "x": 2470,
+          "y": 800
+        }
+      },
+      {
+        "basename": "o_131",
+        "prototype": "IndexObject",
+        "to": "CPo{A,B}oPC",
+        "xy": {
+          "x": 1120,
+          "y": 950
+        }
+      },
+      {
+        "basename": "o_132",
+        "prototype": "IndexObject",
+        "to": "CPo{C,D}oPC",
+        "xy": {
+          "x": 1240,
+          "y": 1030
+        }
+      },
+      {
+        "basename": "o_133",
+        "prototype": "IndexObject",
+        "to": "Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
+        "xy": {
+          "x": 1810,
+          "y": 1200
+        }
+      },
+      {
+        "basename": "o_136",
+        "prototype": "IndexObject",
+        "to": "CPo{Po{A,B}oP,Po{C,D}oP}oPC",
+        "xy": {
+          "x": 1080,
+          "y": 1170
+        }
+      },
+      {
+        "basename": "o_137",
+        "prototype": "IndexObject",
+        "to": "CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC",
+        "xy": {
+          "x": 1810,
+          "y": 1360
+        }
+      },
+      {
+        "basename": "o_138",
+        "prototype": "IndexObject",
+        "to": "CPo{Po{A,CPo{C,D}oPC}oP,Po{B,CPo{C,D}oPC}oP}oPC",
+        "xy": {
+          "x": 1810,
+          "y": 1040
+        }
+      },
+      {
+        "basename": "o_134",
+        "prototype": "IndexObject",
+        "to": "A",
+        "xy": {
+          "x": 300,
+          "y": 1450
+        }
+      },
+      {
+        "basename": "o_135",
+        "prototype": "IndexObject",
+        "to": "B",
+        "xy": {
+          "x": 500,
+          "y": 1450
+        }
+      },
+      {
+        "basename": "o_139",
+        "prototype": "IndexObject",
+        "to": "C",
+        "xy": {
+          "x": 300,
+          "y": 1500
+        }
+      },
+      {
+        "basename": "o_140",
+        "prototype": "IndexObject",
+        "to": "D",
+        "xy": {
+          "x": 500,
+          "y": 1500
+        }
+      },
+      {
+        "basename": "o_141",
+        "prototype": "IndexObject",
+        "to": "Po{A,C}oP",
+        "xy": {
+          "x": 300,
+          "y": 1550
+        }
+      },
+      {
+        "basename": "o_142",
+        "prototype": "IndexObject",
+        "to": "Po{B,D}oP",
+        "xy": {
+          "x": 500,
+          "y": 1550
+        }
+      },
+      {
+        "basename": "o_143",
+        "prototype": "IndexObject",
+        "to": "CPo{A,C}oPC",
+        "xy": {
+          "x": 300,
+          "y": 1600
+        }
+      },
+      {
+        "basename": "o_144",
+        "prototype": "IndexObject",
+        "to": "CPo{B,D}oPC",
+        "xy": {
+          "x": 500,
+          "y": 1600
+        }
+      },
+      {
+        "basename": "o_145",
+        "prototype": "IndexObject",
+        "to": "Ho{B,C}oH",
+        "xy": {
+          "x": 300,
+          "y": 1650
+        }
+      },
+      {
+        "basename": "o_146",
+        "prototype": "IndexObject",
+        "to": "Ho{A,D}oH",
+        "xy": {
+          "x": 500,
+          "y": 1650
         }
       },
       {
@@ -1227,13 +1443,6 @@
         "domain": "o_13",
         "codomain": "o_14",
         "to": "f"
-      },
-      {
-        "basename": "m_13",
-        "prototype": "IndexMorphism",
-        "domain": "o_13",
-        "codomain": "o_16",
-        "to": "foo"
       },
       {
         "basename": "m_15",
@@ -2124,9 +2333,167 @@
         "domain": "o_83",
         "codomain": "o_80",
         "to": "g"
+      },
+      {
+        "basename": "m_59",
+        "prototype": "IndexMorphism",
+        "domain": "o_14",
+        "codomain": "o_85",
+        "to": "g"
+      },
+      {
+        "basename": "m_60",
+        "prototype": "IndexMorphism",
+        "domain": "o_13",
+        "codomain": "o_85",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "gg"
+      },
+      {
+        "basename": "m_13",
+        "prototype": "IndexMorphism",
+        "domain": "o_84",
+        "codomain": "o_16",
+        "to": "foo"
+      },
+      {
+        "basename": "m_58",
+        "prototype": "IndexMorphism",
+        "domain": "o_86",
+        "codomain": "o_126",
+        "attributes": [
+          [
+            "bezier",
+            -1
+          ]
+        ],
+        "to": "Id{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,point}dI"
+      },
+      {
+        "basename": "m_96",
+        "prototype": "IndexMorphism",
+        "domain": "o_126",
+        "codomain": "o_86",
+        "attributes": [
+          [
+            "bezier",
+            -1
+          ]
+        ],
+        "to": "Id{point,Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP}dI"
+      },
+      {
+        "basename": "m_97",
+        "prototype": "IndexMorphism",
+        "domain": "o_127",
+        "codomain": "o_128",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Pa{Pm{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Id{hdole/floats/F64}dI}mP,Cm{Pm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF,Id{hdole/floats/F64}dI}mP,Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_1,hdole/floats/F64_0}aF,hdole/floats/add64}mC}mC}aP"
+      },
+      {
+        "basename": "m_98",
+        "prototype": "IndexMorphism",
+        "domain": "o_129",
+        "codomain": "o_130",
+        "to": "Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
+      },
+      {
+        "basename": "m_99",
+        "prototype": "IndexMorphism",
+        "domain": "o_129",
+        "codomain": "o_130",
+        "attributes": [
+          [
+            "bezier",
+            1
+          ],
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "madd"
+      },
+      {
+        "basename": "m_100",
+        "prototype": "IndexMorphism",
+        "domain": "o_133",
+        "codomain": "o_137",
+        "to": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP-R}iD"
+      },
+      {
+        "basename": "m_101",
+        "prototype": "IndexMorphism",
+        "domain": "o_133",
+        "codomain": "o_138",
+        "attributes": [
+          [
+            "flipName",
+            true
+          ]
+        ],
+        "to": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP-L}iD"
+      },
+      {
+        "basename": "m_102",
+        "prototype": "IndexMorphism",
+        "domain": "o_134",
+        "codomain": "o_135",
+        "to": "f"
+      },
+      {
+        "basename": "m_103",
+        "prototype": "IndexMorphism",
+        "domain": "o_139",
+        "codomain": "o_140",
+        "to": "h2"
+      },
+      {
+        "basename": "m_104",
+        "prototype": "IndexMorphism",
+        "domain": "o_141",
+        "codomain": "o_142",
+        "to": "Pm{f,h2}mP"
+      },
+      {
+        "basename": "m_105",
+        "prototype": "IndexMorphism",
+        "domain": "o_143",
+        "codomain": "o_144",
+        "to": "CPm{f,h2}mPC"
+      },
+      {
+        "basename": "m_106",
+        "prototype": "IndexMorphism",
+        "domain": "o_145",
+        "codomain": "o_146",
+        "to": "Ho{f,h2}oH"
       }
     ],
-    "cells": []
+    "cells": [
+      {
+        "name": "hdole/test/{m_12,m_59},{m_60}",
+        "left": [
+          "m_12",
+          "m_59"
+        ],
+        "right": [
+          "m_60"
+        ],
+        "assertion": "equals",
+        "hidden": false
+      }
+    ]
   },
   "elements": [
     {
@@ -2448,6 +2815,131 @@
         "B",
         "C",
         "C"
+      ]
+    },
+    {
+      "basename": "point",
+      "prototype": "NamedObject",
+      "source": "hdole/test/Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
+    },
+    {
+      "prototype": "Identity",
+      "domain": "point",
+      "codomain": "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP"
+    },
+    {
+      "prototype": "Identity",
+      "domain": "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
+      "codomain": "point"
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
+        "hdole/floats/F64"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "Po{hdole/floats/F64,hdole/floats/F64}oP",
+        "hdole/floats/F64"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "CPo{A,B}oPC",
+        "CPo{C,D}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "C",
+        "D"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{A,B}oP",
+        "Po{C,D}oP"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "CPo{A,B}oPC",
+        "D"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{CPo{A,B}oPC,C}oP",
+        "Po{CPo{A,B}oPC,D}oP"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "A",
+        "CPo{C,D}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "B",
+        "CPo{C,D}oPC"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "Po{A,CPo{C,D}oPC}oP",
+        "Po{B,CPo{C,D}oPC}oP"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "objects": [
+        "B",
+        "D"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "A",
+        "C"
+      ]
+    },
+    {
+      "prototype": "ProductObject",
+      "dual": true,
+      "objects": [
+        "B",
+        "D"
+      ]
+    },
+    {
+      "prototype": "HomObject",
+      "objects": [
+        "B",
+        "C"
+      ]
+    },
+    {
+      "prototype": "HomObject",
+      "objects": [
+        "A",
+        "D"
       ]
     },
     {
@@ -2798,7 +3290,7 @@
     {
       "basename": "gg",
       "prototype": "Morphism",
-      "properName": "g",
+      "properName": "h",
       "domain": "A",
       "codomain": "C"
     },
@@ -2949,15 +3441,123 @@
     {
       "prototype": "Identity",
       "domain": "B"
+    },
+    {
+      "prototype": "Identity",
+      "domain": "hdole/floats/F64"
+    },
+    {
+      "prototype": "FactorMorphism",
+      "domain": "Po{hdole/floats/F64,hdole/floats/F64}oP",
+      "codomain": "Po{hdole/floats/F64,hdole/floats/F64}oP",
+      "factors": [
+        1,
+        0
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "Po{hdole/floats/F64,hdole/floats/F64}oP",
+      "codomain": "hdole/floats/F64",
+      "morphisms": [
+        "Fa{Po{hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_1,hdole/floats/F64_0}aF",
+        "hdole/floats/add64"
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "Po{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64}oP",
+      "codomain": "Po{hdole/floats/F64,hdole/floats/F64}oP",
+      "morphisms": [
+        "Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC",
+        "Id{hdole/floats/F64}dI"
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "Po{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64}oP",
+      "codomain": "Po{hdole/floats/F64,hdole/floats/F64}oP",
+      "morphisms": [
+        "Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF",
+        "Id{hdole/floats/F64}dI"
+      ]
+    },
+    {
+      "prototype": "Composite",
+      "domain": "Po{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64}oP",
+      "codomain": "hdole/floats/F64",
+      "morphisms": [
+        "Pm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF,Id{hdole/floats/F64}dI}mP",
+        "Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_1,hdole/floats/F64_0}aF,hdole/floats/add64}mC"
+      ]
+    },
+    {
+      "prototype": "ProductAssembly",
+      "domain": "Po{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64}oP",
+      "codomain": "Po{Po{hdole/floats/F64,hdole/floats/F64}oP,hdole/floats/F64}oP",
+      "morphisms": [
+        "Pm{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Id{hdole/floats/F64}dI}mP",
+        "Cm{Pm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF,Id{hdole/floats/F64}dI}mP,Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_1,hdole/floats/F64_0}aF,hdole/floats/add64}mC}mC"
+      ]
+    },
+    {
+      "basename": "madd",
+      "prototype": "NamedMorphism",
+      "domain": "Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP",
+      "codomain": "hdole/floats/F64",
+      "source": "hdole/test/Cm{Pa{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,hdole/floats/fmult64}mC,Fa{Po{hdole/floats/F64,hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_2}aF}aP,hdole/floats/add64}mC"
+    },
+    {
+      "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP-R}iD",
+      "prototype": "Distribute",
+      "properName": "dist",
+      "domain": "Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
+      "codomain": "CPo{Po{CPo{A,B}oPC,C}oP,Po{CPo{A,B}oPC,D}oP}oPC"
+    },
+    {
+      "basename": "Di{Po{CPo{A,B}oPC,CPo{C,D}oPC}oP-L}iD",
+      "prototype": "Distribute",
+      "properName": "dist",
+      "domain": "Po{CPo{A,B}oPC,CPo{C,D}oPC}oP",
+      "codomain": "CPo{Po{A,CPo{C,D}oPC}oP,Po{B,CPo{C,D}oPC}oP}oPC",
+      "side": true
+    },
+    {
+      "prototype": "ProductMorphism",
+      "domain": "Po{A,C}oP",
+      "codomain": "Po{B,D}oP",
+      "morphisms": [
+        "f",
+        "h2"
+      ]
+    },
+    {
+      "prototype": "ProductMorphism",
+      "dual": true,
+      "domain": "CPo{A,C}oPC",
+      "codomain": "CPo{B,D}oPC",
+      "morphisms": [
+        "f",
+        "h2"
+      ]
+    },
+    {
+      "prototype": "HomMorphism",
+      "domain": "Ho{B,C}oH",
+      "codomain": "Ho{A,D}oH",
+      "morphisms": [
+        "f",
+        "h2"
+      ]
     }
   ],
   "user": "hdole",
-  "timestamp": 1655075706873,
+  "timestamp": 1655889036291,
   "version": 0,
   "viewport": {
-    "x": 921,
-    "y": 693,
-    "scale": 0.4815014031427349,
+    "x": 997,
+    "y": 636,
+    "scale": 0.4429478998279296,
     "width": 2560,
     "height": 1440
   }
