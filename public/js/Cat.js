@@ -5909,6 +5909,11 @@ class Display
 					const defaultView = _ =>
 					{
 						const vp = diagram.viewport;
+						if (D && !('width' in vp))
+						{
+							vp.width = D.width();
+							vp.height = D.height();
+						}
 						if (vp.x === 0 && vp.y === 0 && vp.height === 0 && vp.width === 0)
 							diagram.homeTop();
 						else
@@ -7828,7 +7833,14 @@ class HelpPanel extends Panel
 			H3.button('Terms and Conditions', '##TermsPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'TermsPnl')}),
 				H3.div(	H3.p('No hate.'), '##TermsPnl.section'),
 			H3.button('License', '##licensePnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'licensePnl')}),
-				H3.div(H3.p('Use generated code as desired with no constraint.  See T&amp;C\'s'), '##licensePnl.section'),
+//				H3.div(H3.p('Use generated code as desired with no constraint.  See T&amp;C\'s'), '##licensePnl.section'),
+				H3.div('##licensePnl.section',
+//					H3.p('Use generated code as desired with no constraint.  See T&amp;C\'s'),
+					H3.h3('The MIT License (MIT)'),
+					H3.p('Copyright © 2022 Harry Dole'),
+					H3.p('Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:'),
+					H3.p('The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.'),
+					H3.p('THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.')),
 			H3.button('Credits', '##creditaPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'creditsPnl')}),
 				H3.div(	H3.a('Saunders Mac Lane', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=834"}),
 						H3.a('Harry Dole', {href:"https://www.genealogy.math.ndsu.nodak.edu/id.php?id=222286"}), '##creditsPnl.section'),
@@ -7836,9 +7848,7 @@ class HelpPanel extends Panel
 				H3.div( H3.a('3D', {href:"https://threejs.org/"}),
 						H3.a('Crypto', {href:"https://bitwiseshiftleft.github.io/sjcl/"}), '##thirdPartySoftwarePnl.section'),
 			H3.hr(),
-			H3.small('&copy;2018-2022 Harry Dole'),
-			H3.br(),
-			H3.small('hdole@catecon.net', '.italic')];
+			H3.small('Support: hdole@catecon.net', '.italic')];
 		elements.map(elt => this.elt.appendChild(elt));
 		this.initialize();
 	}
@@ -15379,8 +15389,8 @@ class IndexMorphism extends Morphism
 		Object.defineProperties(this,
 		{
 			attributes:		{value: attributes,	writable: false},
-			domains:		{value: new Set(),	writable: false},
-			codomains:		{value: new Set(),	writable: false},
+			domains:		{value: new Set(),	writable: false},		// necessary for arrows like element
+			codomains:		{value: new Set(),	writable: false},		// necessary for arrows like element
 			svg:			{value: null,		writable: true},
 			svg_name:		{value: null,		writable: true},
 			svg_path:		{value: null,		writable: true},
@@ -18340,7 +18350,7 @@ class Diagram extends Functor
 			timestamp:					{value:U.getArg(args, 'timestamp', Date.now()),	writable:true},
 			user:						{value:args.user,	writable:false},
 			version:					{value:U.getArg(args, 'version', 0),			writable:true},
-			viewport:					{value:{x:0, y:0, scale:1.0},					writable:true},
+			viewport:					{value:{x:0, y:0, scale:1.0, width:D ? D.width() : 1, height:D ? D.height() : 1},					writable:true},
 		});
 		if (D)
 		{
