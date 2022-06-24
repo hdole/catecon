@@ -26,13 +26,13 @@
         "prototype": "IndexText",
         "xy": {
           "x": -800,
-          "y": -140
+          "y": -130
         },
         "height": 308,
         "weight": "bold"
       },
       {
-        "description": "double fact(double in)\n{\n        double out;\n        if (in == 0.0)\n                out = 1;\n        else\n                out = in * fact(in--);\n        return out;\n}",
+        "description": "double fact(double in)\n{\n        double out;\n        if (in == 0.0)\n                out = 1;\n        else\n                out = in * fact(--in);\n        return out;\n}",
         "basename": "t_1",
         "prototype": "IndexText",
         "xy": {
@@ -1185,7 +1185,7 @@
       },
       {
         "description": "Definition of factorial",
-        "basename": "d_0",
+        "basename": "factorial",
         "prototype": "Definition",
         "xy": {
           "x": 130,
@@ -1193,7 +1193,6 @@
         },
         "height": 52,
         "weight": "bold",
-        "defname": "factorial",
         "sequence": [
           "hdole/floats/feq0_64",
           "hdole/floats/fdecr64",
@@ -1864,13 +1863,13 @@
     }
   ],
   "user": "hdole",
-  "timestamp": 1655075752143,
+  "timestamp": 1656053801798,
   "version": 0,
   "viewport": {
     "x": 1492,
-    "y": 478,
+    "y": 446,
     "scale": 0.9509982712141185,
     "width": 2560,
-    "height": 1440
+    "height": 1368
   }
 }
