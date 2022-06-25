@@ -144,7 +144,7 @@ class U		// utilities
 		let sub = '';
 		function submap(m)
 		{
-			return U.submap[m];
+			return m in U.submap ? U.submap[m] : m;
 		}
 		for (let i=0; i<subs.length; ++i)
 		{
@@ -158,7 +158,7 @@ class U		// utilities
 		let sub = '';
 		function supermap(m)
 		{
-			return U.supermap[m];
+			return m in U.supermap ? U.supermap[m] : m;
 		}
 		for (let i=0; i<subs.length; ++i)
 		{
