@@ -1193,9 +1193,10 @@ class Runtime
 	}
 	async loadDiagram(name, fn)
 	{
-		if (R.$CAT.getElement(name))
+		let diagram = R.$CAT.getElement(name);
+		if (diagram)
 		{
-			fn && fn();
+			fn && fn(diagram);
 			return;		// already loaded
 		}
 		const refs = [...this.getReferences(name)].reverse();
@@ -1211,7 +1212,7 @@ class Runtime
 			if (!refDiagram)
 				this.readDiagram(name, _ => R.debug(1) && console.log('loadOne', name));
 		}
-		const diagram = this.$CAT.getElement(name);
+		diagram = this.$CAT.getElement(name);
 		if (fn && !diagram)
 		{
 			const doit = _ =>
@@ -1224,7 +1225,7 @@ class Runtime
 				const diagram = this.$CAT.getElement(name);
 				if (!diagram)
 					debugger;
-				fn();
+				fn(diagram);
 			}
 			doit();
 		}
@@ -7827,15 +7828,12 @@ class HelpPanel extends Panel
 				H3.div(	H3.small('All of mathematics is divided into one part: Category Theory', ''),
 						H3.h4('References'),
 						H3.p(H3.a('"Categories For The Working Mathematician"', '.italic', {href:"https://en.wikipedia.org/wiki/Categories_for_the_Working_Mathematician", target:"_blank"})), '##catHelpPnl.section'),
-			H3.button('Articles', '##referencesPnlBTn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'referencesPnl')}),
-				H3.div(	H3.p(H3.a('Intro To Categorical Programming', {href:"https://harrydole.com/wp/2017/09/16/cat-prog/"})),
-						H3.p(H3.a('V Is For Vortex - More Categorical Programming', {href:"https://harrydole.com/wp/2017/10/08/v-is-for-vortex/"})), '##referencesPnl.section'),
+			H3.button('Documentation', '##referencesPnlBTn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'referencesPnl')}),
+				H3.div(	H3.p(H3.a('Catecon: What is it, what does it do, and how does it do it?', {href:"https://catecon.net/doc/Catecon.pdf", target:'_blank'})), '##referencesPnl.section'),
 			H3.button('Terms and Conditions', '##TermsPnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'TermsPnl')}),
 				H3.div(	H3.p('No hate.'), '##TermsPnl.section'),
 			H3.button('License', '##licensePnlBtn.sidenavAccordion', {onclick:e => Cat.D.Panel.SectionToggle(e, e.target, 'licensePnl')}),
-//				H3.div(H3.p('Use generated code as desired with no constraint.  See T&amp;C\'s'), '##licensePnl.section'),
 				H3.div('##licensePnl.section',
-//					H3.p('Use generated code as desired with no constraint.  See T&amp;C\'s'),
 					H3.h3('The MIT License (MIT)'),
 					H3.p('Copyright © 2022 Harry Dole'),
 					H3.p('Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:'),
@@ -10744,7 +10742,7 @@ class IndexObject extends CatObject
 	}
 	help()
 	{
-		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, D.getIcon('copyTo', 'copyTo', e => D.copyTo(e, this.basename), {scale:D.default.button.small, title:'Copy to paste buffer'}), '.italic.small')));
+		D.toolbar.table.appendChild(H3.tr(H3.td('Index:', '.italic.small'), H3.td(this.basename, ' ', D.getIcon('copyTo', 'copyTo', e => D.copyTo(e, this.basename), {scale:D.default.button.small, title:'Copy to paste buffer'}), '.italic.small')));
 		this.to.help();
 	}
 	json()
@@ -14565,7 +14563,11 @@ class Morphism extends Element
 			if (morph.dual)
 				return FactorMorphism.isIdentity(morph.factors, 'objects' in morph.codomain ? morph.codomain.objects.length : 1);
 			else
+			{
+				if (morph.domain.isTerminal() && (morph.factors.length === 0 || morph.factors.length === 1 && morph.factors[0] === -1))
+					return true;
 				return FactorMorphism.isIdentity(morph.factors, 'objects' in morph.domain.basic() ? morph.domain.basic().objects.length : 1);
+			}
 		}
 		return morph instanceof Identity;
 	}
@@ -19661,6 +19663,8 @@ class Diagram extends Functor
 	{
 		if (!obj.isTerminal() && factors.length === 1 && factors[0] === -1)		// terminals only cover terminals
 			return false;
+		if (obj.isTerminal())
+			return true;
 		const graph = this.flattenObject(obj).getGraph();
 		factors.map(fctr => graph.getFactor(fctr).tags.push('covered'));
 		let cover = false;
@@ -19785,6 +19789,15 @@ class Diagram extends Functor
 	stripComp(...morphisms)
 	{
 		this.opcheck(morphisms);
+		let error = false;
+		for(let i=0; i<morphisms.length -1; ++i)
+			if (!morphisms[i].codomain.isEquivalent(morphisms[i+1].domain))
+			{
+				error = true;
+				console.log(`Domain/Codomain mismatach in composite [offset ${i}]: codomain: ${morphisms[i].codomain.properName}, domain: ${morphisms[i+1].domain.properName}`);
+			}
+		if (error)
+			throw 'Domain/Codomain mismatch';
 		return this.comp(...this.stripIds(...morphisms));
 	}
 	prod(...elements)
@@ -20189,7 +20202,10 @@ class Diagram extends Functor
 			}
 			ndx++;
 			if (ndx > attempts)	// give up; too complex
+			{
+				offset = dir.scale(scale * Math.trunc((modulo + 1)/modulo));
 				break;
+			}
 		}
 		R.debug(2) && console.log('autoplace ndx', name, ndx);
 		return offset.add(bbox);
@@ -20639,7 +20655,7 @@ class Diagram extends Functor
 						if (f !== -1 && f !== -2 && Array.isArray(f) && f.length > 0)
 							errors.push(`Invalid factor for bare in ${U.HtmlEntitySafe(elt.name)} ::: ${f.toString()}`)
 					}
-					else if (obj.objects.length -1 < f)
+					else if (!obj.isTerminal() && obj.objects.length -1 < f)
 						errors.push(`Factor beyond range in ${U.HtmlEntitySafe(elt.name)} ::: ${f.toString()}`)
 				});
 			}
@@ -20856,20 +20872,23 @@ class Assembler
 	}
 	clearGraphics()
 	{
-		[...this.diagram.svgRoot.querySelectorAll('.assyError, .assyFold, .assyCoreference, .assyInput, .assyOutput, .assyReference, .assyOrigin')].map(elt => elt.remove());
+		this.diagram.svgRoot && [...this.diagram.svgRoot.querySelectorAll('.assyError, .assyFold, .assyCoreference, .assyInput, .assyOutput, .assyReference, .assyOrigin')].map(elt => elt.remove());
 	}
 	static addBall(title, type, cls, o)
 	{
-		const onmouseenter = e => D.statusbar.show(e, title);
-		if (o instanceof IndexObject)
+		if ('svg' in o && o.svg)
 		{
-			const bbox = o.svg.getBBox();
-			o.svg.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
-		}
-		else if (o instanceof IndexMorphism)
-		{
-			const bbox = o.svg_nameGroup.getBBox();
-			o.svg_nameGroup.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
+			const onmouseenter = e => D.statusbar.show(e, title);
+			if (o instanceof IndexObject)
+			{
+				const bbox = o.svg.getBBox();
+				o.svg.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
+			}
+			else if (o instanceof IndexMorphism)
+			{
+				const bbox = o.svg_nameGroup.getBBox();
+				o.svg_nameGroup.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
+			}
 		}
 	}
 	static isReference(m)
@@ -20896,8 +20915,11 @@ class Assembler
 	}
 	deleteEllipse(type, elt)
 	{
-		const ellipse = this.diagram.svgBase.querySelector(`#${type}-${elt.elementId('asmblr')}`);
-		ellipse && ellipse.remove();
+		if (this.diagram.svgBase)
+		{
+			const ellipse = this.diagram.svgBase.querySelector(`#${type}-${elt.elementId('asmblr')}`);
+			ellipse && ellipse.remove();
+		}
 	}
 	domainCount(object)
 	{
@@ -21273,10 +21295,12 @@ class Assembler
 	}
 	getComposites(domain, codomains)
 	{
-		return this.composites.has(domain) ? this.composites.get(domain).map((comp, i) =>
+		return this.composites.has(domain) ? this.composites.get(domain).map((leg, i) =>
 		{
-			codomains[i] = comp[comp.length -1].codomain;
-			return this.diagram.comp(...comp.map(m => m.to));
+			codomains[i] = leg[leg.length -1].codomain;
+			const comp = this.diagram.comp(...leg.map(m => m.to));
+//			this.obj2morph.set(codomains[i], comp);
+			return comp;
 		}) : [];
 	}
 	formCoreferences(domObjects, coreferences, cofactors, codObjects)
@@ -21292,7 +21316,11 @@ class Assembler
 			const fctr = insert.to.factors[0];	// what factor are we hitting in the coproduct?
 			cofactors[fctr] = factorsi;
 			const iDomObjects = [];
-			subs[fctr] = this.formMorphism(insert.domain, iDomObjects, codObjects);
+			const iCodObjects = [];
+			subs[fctr] = this.formMorphism(insert.domain, iDomObjects, iCodObjects);
+			codObjects.push(...iCodObjects);
+			if (subs[fctr] === null)
+				subs[fctr] = diagram.id(insert.domain.to);
 			if (iDomObjects.length > 0)
 			{
 				iDomObjects.map(o =>
@@ -21316,13 +21344,12 @@ class Assembler
 	{
 		const refs = this.getCoreferences(domain);
 		const factors = refs.map(ref => Morphism.isIdentity(ref.to) ? [0] : ref.to.factors).filter(fctr => !(fctr.length === 1 && fctr[0] === -1));
-		// TODO bad cover
 		return this.diagram.isCovered(domain.to, factors, []);
 	}
 	// refObjects: index objects referenced
-	formReferenceMorphism(ref, refObjects, factors, codObjects)
+	formReferenceMorphism(ref, refObjects, factors, codObjects, domRefs)
 	{
-		const domRefs = this.getReferences(ref.domain);
+		domRefs.push(...this.getReferences(ref.domain));
 		const refFactors = domRefs.map(dref => Morphism.isIdentity(dref.to) ? [] : dref.to.factors).filter(fctr => !(fctr.length === 1 && fctr[0] === -1));
 		if (this.diagram.isCovered(ref.domain.to, refFactors, []) && domRefs.filter(dref => !this.processed.has(dref.codomain)).length === 0)		// must be covered and processed all referenced index objects
 		{
@@ -21336,19 +21363,8 @@ class Assembler
 				{
 					if (!dref.codomain.to.isTerminal())
 					{
-						const domndx = refObjects.indexOf(dref.codomain);
-						if (domndx > -1)
-						{
-							if (!Morphism.isIdentity(dref.to))
-								factors[dref.to.factors[0]] = domndx;
-						}
-						else if (dref === ref)
-						{
-						}
-						else
-						{
-							debugger;
-						}
+						if (!Morphism.isIdentity(dref.to))
+							factors[dref.to.factors[0]] = refObjects.indexOf(dref.codomain);
 					}
 				});
 				return morphism;
@@ -21384,7 +21400,8 @@ class Assembler
 			{
 				const factors = [];
 				const refObjects = [];
-				const morphism = this.formReferenceMorphism(ref, refObjects, factors, codObjects);
+				const domRefs = [];
+				const morphism = this.formReferenceMorphism(ref, refObjects, factors, codObjects, domRefs);
 				if (morphism)
 				{
 					refObjects.map((o, j) =>
@@ -21393,10 +21410,16 @@ class Assembler
 						{
 							const ndx = domObjects.indexOf(o);
 							if (ndx === -1)
-								domObjects.push(o);
+							{
+								const morph = this.obj2morph.get(o);
+								if (morph === undefined)
+									domObjects.push(o);
+								else if (!morph.domain.isTerminal())
+									domObjects.push(morph.domain);
+							}
 						}
 					});
-					return {morphism, refObjects, factors};
+					return {domain:ref, morphism, refObjects, factors, domRefs};
 				}
 				return null;
 			}).filter(item => item);		// remove references that did not generate a morphism
@@ -21423,31 +21446,36 @@ class Assembler
 			assembly[i] = assemblyI;
 			const codDomObjects = [];
 			const codCodObjects = [];
-			const secondMorph = this.formMorphism(cod, codDomObjects, codCodObjects);
+			const secondMorph = this.outputs.has(cod) ? null : this.formMorphism(cod, codDomObjects, codCodObjects);
 			if (secondMorph)
 			{
 				const factors = [];
-				codDomObjects.map((o, j) =>
+				if (codDomObjects.length > 0)
 				{
-					if (domain === o)
+					codDomObjects.map((o, j) =>
 					{
-						factors.push(0);
-						isDomainReferenced = true;
-					}
-					else
-					{
-						const ndx = domObjects.indexOf(o);
-						if (ndx === -1)
+						if (domain === o)
 						{
-							domObjects.push(o);
-							factors.push(domObjects.length);		// +1 for the domain object
+							factors.push(0);
+							isDomainReferenced = true;
 						}
 						else
-							factors.push(ndx + 1);		// +1 for the domain object
-					}
-				});
-				codObjects.push(...codCodObjects);
-				assemblyI.push([secondMorph, factors]);
+						{
+							const ndx = domObjects.indexOf(o);
+							if (ndx === -1)
+							{
+								domObjects.push(o);
+								factors.push(domObjects.length);		// +1 for the domain object
+							}
+							else
+								factors.push(ndx + 1);		// +1 for the domain object
+						}
+					});
+					codObjects.push(...codCodObjects);
+					assemblyI.push([secondMorph, factors]);
+				}
+				else
+					assemblyI.push([secondMorph, []]);
 			}
 			else
 				codObjects.push(cod);
@@ -21493,43 +21521,112 @@ class Assembler
 		//
 		// DOMAIN
 		//
-		// now we know all the objects in our domain
+		// Now we know all the objects in our domain.
+		// All morphisms are added to the final assembly with this domain
+		// 
+		const finalAssembly = [];		// the returned formed morphism is an assembly of the morphisms herein
 		//
-		const domainNdxObjects = [domain, ...domObjects];
-		const preFactors = [domainNdxObjects.length === 1 ? [] : (domain.to.isTerminal() ? -1 : 0)];
-		const simpDomainObjects = domainNdxObjects.map((o, i) =>
+		// STEP 1:  Find all post domain objects across all reference morphisms.
+		//			The pre-domain is the domain formed with the domains of the morphisms from obj2morph of the post domain index objects.
+		//			No terminal objects appear in the pre and post domains.
+		//			They are generated for the individual reference morphisms as needed
+		//
+		const diagObjects = [];
+		const diagNdxObjects = [];
+		const diagFactors = [];
+		//
+		// location of index object in domain
+		//
+		const postNdxObjects = [domain, ...domObjects];
+		const postNdxFactors = [[]];
+		const preMorphisms = [];
+		let cnt = 0;
+		refToMorphisms.map((data, i) =>
 		{
-			i > 0 && preFactors.push(o.to.isTerminal() ? -1 : preFactors.length);
-			return o.to;
-		}).filter(o => !o.isTerminal());
-		const simpDomain = simpDomainObjects.length > 0 ? diagram.prod(...simpDomainObjects) : diagram.getTerminal();
-		const central = diagram.fctr(simpDomain, preFactors);
-		const nuDomain = diagram.prod(...domainNdxObjects.map(o => o.to));
-		//
-		// PREAMBLES
-		//
-		// 		references to
-		//
-		// if an origin or an output we may need to assemble the value
-		//
-		const finalAssembly = [];		// the returned morphism is an assembly of the morphisms herein
-		refToMorphisms.map(data =>
-		{
-			const factors = [];
-			const morphisms = [];
-			data.refObjects.map((o, i) =>
+			const ndxFactors = [];
+			postNdxFactors[i] = ndxFactors;
+			data.refObjects.map((refObj, j) =>
 			{
-				const ndx = domainNdxObjects.indexOf(o);
-				factors[data.factors.length === 0 ? 0 : data.factors[i]] = ndx;
-				morphisms[i] = this.obj2morph.has(o) ? this.obj2morph.get(o) : diagram.id(o.to);
+				ndxFactors.push(cnt++);
+				//
+				// the domain objects (not index) of the morphisms used by the reference morphism
+				//
+				let objMorph = this.obj2morph.get(refObj);
+				if (objMorph === undefined)
+					objMorph = diagram.id(refObj.to);
+				preMorphisms.push(objMorph ? objMorph : diagram.id(refObj.to));
+				const ndx = diagNdxObjects.indexOf(refObj);
+				if (ndx === -1)
+				{
+					if (objMorph.domain.isTerminal())
+						diagFactors.push(-1);
+					else
+					{
+						diagFactors.push(diagObjects.length);
+						diagObjects.push(objMorph.domain);
+						diagNdxObjects.push(refObj);
+					}
+				}
+				else
+					diagFactors.push(ndx);
 			});
-			const prod = diagram.prod(...morphisms);
-			const fctr = diagram.fctr(nuDomain, factors);
-			const setupFactors = morphisms.map((m, i) => m.domain.isTerminal() ? -1 : i);
-			const setupObjects = morphisms.map(m => m.domain).filter(o => !o.isTerminal());
-			const setupDomain = diagram.prod(...setupObjects);
-			const setup = diagram.fctr(setupDomain, setupFactors);
-			finalAssembly.push(diagram.stripComp(fctr, setup, prod, data.morphism));
+		});
+		//
+		// the morphisms to setup all the objects consumed by the reference morphisms
+		//
+		let preMorphism = null;
+		if (preMorphisms.length > 0)
+		{
+			//
+			// form the product of all the input objects
+			//
+			const inProd = diagram.prod(...diagObjects);
+			//
+			// form the diagonal to initialze all inputs
+			//
+			const diagMap = diagram.fctr(inProd, diagFactors);
+			//
+			// form the product of all the input instances
+			//
+			const prod = diagram.prod(...preMorphisms);
+			preMorphism = diagram.comp(diagMap, prod);
+		}
+		const postDomain = preMorphism ? preMorphism.codomain : diagram.prod(...postNdxObjects.map(o => o.to).filter(o => !o.isTerminal()));
+		refToMorphisms.map((data, k) =>
+		{
+			//
+			// Extract from the post domain the objects needed for this reference.
+			// Note the terminal objects get restored as -1's through indexOf.
+			//
+			const postFactorMorph = diagram.fctr(postDomain, postNdxFactors[k]);
+			//
+			// now rearrange the factors into those used by the reference morphism's domain and those referenced later
+			//
+			const assy = [diagram.fctr(postFactorMorph.codomain, data.factors.map(i => postNdxFactors[k][i]))];
+			//
+			// now keep the referenced objects as another projection
+			//
+			const refCodomains = data.domRefs.map(ref => ref.codomain);
+			const consumed = new Set();
+			const refFactors = [];
+			data.refObjects.map((refObj, i) =>
+			{
+				const ndx = refCodomains.indexOf(refObj);
+				if (ndx === -1)
+					refFactors.push(i);
+				else
+				{
+					if (!consumed.has(refObj))
+						consumed.add(refObj);
+					else
+						refFactors.push(i);
+				}
+			});
+			if (refFactors.length > 0)
+				assy.push(diagram.fctr(postFactorMorph.codomain, refFactors));
+			const setupMorph = diagram.assy(...assy);
+			const comp = diagram.stripComp(postFactorMorph, setupMorph, data.morphism);
+			finalAssembly.push(comp);
 		});
 		//
 		//		composites
@@ -21549,15 +21646,15 @@ class Assembler
 				pre.push(diagram.id(domain.to));
 				factors.push(0);
 			}
-			const premanifold = diagram.stripComp(diagram.fctr(nuDomain, factors), diagram.prod(...pre));
+			const premanifold = diagram.stripComp(diagram.fctr(postDomain, factors), diagram.prod(...pre));
 			if (assemblyI.length > 0)
 			{
+				const cod = premanifold.codomain;
 				const assys = assemblyI.map(pair =>
 				{
 					const secondComp = pair[0];
-					const factors = pair[1].map(f => f === 0 ? pre.length -1 : f);
-					factors.unshift(0);
-					return diagram.stripComp(diagram.fctr(premanifold.codomain, factors), secondComp);
+					const secondFactors = [];
+					return diagram.stripComp(diagram.fctr(cod, secondFactors), secondComp);
 				});
 				finalAssembly.push(diagram.comp(premanifold, diagram.assy(...assys)));
 			}
@@ -21573,29 +21670,55 @@ class Assembler
 		{
 			// For distribution, gather the 'extra' terms in domObjects as a single product
 			const refObject = this.diagram.prod(...domObjects.map(o => o.to));
+			if (domObjects.length === 1)		// use entire reference object
+				cofactors[0] = [];
 			// predist: nuDomain ---> domain x refObject
-			const predist = this.diagram.assy(this.diagram.fctr(nuDomain, [0]), this.diagram.fctr(nuDomain, domObjects.map((o, i) => i + 1)));
+			const predist = this.diagram.assy(this.diagram.fctr(postDomain, [0]), this.diagram.fctr(postDomain, domObjects.map((o, i) => i + 1)));
 			const dist = this.diagram.dist(diagram.prod(domain.to, refObject), true);
 			const foldObjects = [];
 			const foldFactors = [];
 			const allCoverCodsEq = cover.reduce((r, m) => r && m.codomain === cover[0].codomain, true);
-			const components = dist.codomain.objects.map((o, i) =>
+			let components = null;
+			if (refObject.isTerminal())
 			{
-				const prep = diagram.fctr(o, [1]);
-				const proj = diagram.fctr(refObject, cofactors[i]);
-				const cvri = cover[i];
-				let ndx = foldObjects.indexOf(cvri.codomain);
-				if (ndx === -1)
+				components = cover;
+				finalAssembly.push(diagram.coprod(...cover));
+			}
+			else
+			{
+				components = dist.codomain.objects.map((o, i) =>
 				{
-					foldObjects.push(cvri.codomain);
-					ndx = foldObjects.length -1;
-				}
-				foldFactors[i] = allCoverCodsEq ? [] : ndx;
-				return diagram.stripComp(prep, proj, cvri);
-			});
-			const coprod = diagram.coprod(...components);
-			const folder = diagram.cofctr(diagram.coprod(...foldObjects), foldFactors);
-			finalAssembly.push(this.diagram.stripComp(predist, dist, coprod, folder));
+					const morphs = [];
+					const isTerm = o.objects[0].isTerminal();
+					if (isTerm)
+					{
+						morphs.push(diagram.fctr(o, [1]));		// 1 is the right hand object in the distribution
+						morphs.push(diagram.fctr(refObject, cofactors[i]));
+					}
+					else
+					{
+						const fctrs = [[0]];		// must include left hand term
+						const cofctri = cofactors[i];
+						fctrs.push(cofctri.length === 0 ? [1] : cofctri[0] + 1);		// adjust due to adding left term
+						if (cofctri.length === 1 && cofctri[0] === -1)
+							fctrs.pop();		// don't want a terminal object
+						morphs.push(diagram.fctr(o, fctrs));
+					}
+					const cvri = cover[i];
+					let ndx = foldObjects.indexOf(cvri.codomain);
+					if (ndx === -1)
+					{
+						foldObjects.push(cvri.codomain);
+						ndx = foldObjects.length -1;
+					}
+					foldFactors[i] = allCoverCodsEq ? [] : ndx;
+					morphs.push(cvri);
+					return diagram.stripComp(...morphs);
+				});
+				const coprod = diagram.coprod(...components);
+				const folder = diagram.cofctr(diagram.coprod(...foldObjects), foldFactors);
+				finalAssembly.push(this.diagram.stripComp(predist, dist, coprod, folder));
+			}
 		}
 		//
 		// ASSEMBLY
@@ -21607,7 +21730,7 @@ class Assembler
 			const morphism = diagram.assy(...finalAssembly);
 			if (codObjects.length === 1)
 				this.obj2morph.set(codObjects[0], morphism);
-			return diagram.stripComp(central, morphism);
+			return preMorphism ? diagram.stripComp(preMorphism, morphism) : morphism;
 		}
 		return null;
 	}
@@ -21618,8 +21741,7 @@ class Assembler
 		const inputs = [...this.inputs];
 		inputs.map(input => scanning.push({domain:input}));
 		const scanInputs = scanning.slice();
-		const codObjects = [];
-		const inputMorphs = scanInputs.map(i => this.formMorphism(i.domain, [], codObjects)).filter(m => m);
+		const inputMorphs = scanInputs.map(i => this.formMorphism(i.domain, [], [])).filter(m => m);
 		return inputMorphs.pop();
 	}
 	// try to form a morphism from a blob
@@ -21671,18 +21793,18 @@ class Assembler
 			//
 			// place on screen the assemblage of the final composite
 			//
-			if (morphism)
+			if (D && morphism)
 			{
 				if (morphism instanceof Composite)
 				{
-					let x = Number.MAX_SAFE_INTEGER;
-					let y = Number.MIN_SAFE_INTEGER;
+					let x = Number.MIN_SAFE_INTEGER;
+					let y = Number.MAX_SAFE_INTEGER;
 					this.objects.forEach(o =>
 					{
-						x = Math.min(x, o.x);
-						y = Math.max(y, o.y);
+						x = Math.max(x, o.x);
+						y = Math.min(y, o.y);
 					});
-					y += D.default.arrow.length;
+					x += D.default.arrow.length;
 					const compObjs = D.placeComposite(e, this.diagram, morphism, D.grid({x, y}));
 					R.Actions.zoom.action(e, this.diagram, compObjs);
 				}
@@ -21697,7 +21819,7 @@ class Assembler
 			}
 			else
 			{
-				D.statusbar.show(e, 'No morphism assembled');
+				D && D.statusbar.show(e, 'No morphism assembled');
 				this.issues.push({message:'No morphism assembled', element:{}});
 			}
 			this.finished = true;
@@ -21706,7 +21828,10 @@ class Assembler
 		catch(x)
 		{
 			this.issues.push({message:x, element:{}});
-			D.statusbar.show(e, 'An error occurred');
+			if (D)
+				D.statusbar.show(e, 'An error occurred');
+			else
+				console.log('*** Error:', x);
 			this.finished = true;
 			return null;
 		}
@@ -21720,6 +21845,7 @@ const Cat =
 {
 	Action,
 	Amazon,
+	Assembler,
 	D,
 	Display,
 	Category,
