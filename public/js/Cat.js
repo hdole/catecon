@@ -769,7 +769,7 @@ class Runtime
 	setupActions()
 	{
 		// function to register a diagram's actions
-		const setup = diagram => D && diagram.elements.forEach(action => {this.Actions[action.basename] = action;});
+		const setup = diagram => diagram.elements.forEach(action => {this.Actions[action.basename] = action;});
 		const actionDiagram = new Diagram(this.$CAT, {basename:'actions', codomain:'Actions', description:'actions for a diagram', user:'ctx'});
 		R.setDiagramInfo(actionDiagram, true, false);
 		this.actionDiagram = actionDiagram;
@@ -2265,19 +2265,29 @@ class Toolbar
 		const selected = diagram.selected;
 		const toolBbox = new D2(this.element.getBoundingClientRect());
 		const oldBox = diagram.userToDiagramCoords(this.element.getBoundingClientRect());
-		const nuBox = diagram.diagramToUserCoords(diagram.autoplaceSvg(oldBox, '', oldBox.height/2, 4, this.mouseCoords, 80));
+		const nuBox = this.mouseCoords.subtract(new D2(oldBox.width / 2, 2 * oldBox.height));
+		nuBox.width = oldBox.width;
+		nuBox.height = oldBox.height;
+		const userBox = diagram.diagramToUserCoords(nuBox);
 		const wid = D.width();
 		const hgt = D.height();
-		if (nuBox.x < 0)
-			nuBox.x = 0;
-		if (nuBox.y < D.default.icon)		// take the navbar into account
-			nuBox.y = D.default.icon;
-		if (nuBox.x + nuBox.width > wid)
-			nuBox.x = wid - nuBox.width;
-		if (nuBox.y + nuBox.height > hgt)
-			nuBox.y = hgt - nuBox.height;
-		this.element.style.left = `${nuBox.x}px`;
-		this.element.style.top = `${nuBox.y}px`;
+		if (userBox.x < 0)
+			userBox.x = 0;
+		if (userBox.y < D.default.icon)		// take the navbar into account
+			userBox.y = D.default.icon;
+		if (userBox.x + userBox.width > wid)	// check for offscreen
+			userBox.x = wid - userBox.width;
+		if (userBox.y + userBox.height > hgt)	// check for offscreen
+			userBox.y = hgt - userBox.height;
+		if (userBox.contains(diagram.diagramToUserCoords(this.mouseCoords)))
+		{
+			if (userBox.y < hgt/2)
+				userBox.y += 2 * D.default.icon;
+			if (userBox.y > hgt/2)
+				userBox.y -= 2 * D.default.icon;
+		}
+		this.element.style.left = `${userBox.x}px`;
+		this.element.style.top = `${userBox.y}px`;
 	}
 	show(e)
 	{
@@ -4378,8 +4388,12 @@ class Display
 					},
 					KeyA(e)
 					{
-						D.toolbar.show();
-						D.elementTool.Cell.html(e);
+						if (R.Actions.morphismAssembly.hasForm(R.diagram, R.diagram.selected))
+						{
+							D.toolbar.show();
+							R.diagram.actionHtml(e, 'morphismAssembly');
+							R.Actions.morphismAssembly.action(e, R.diagram, R.diagram.selected);
+						}
 					},
 					ShiftKeyA(e)
 					{
@@ -4431,6 +4445,11 @@ class Display
 						e.preventDefault();
 					},
 		//			ControlKeyD(e)		BROWSER RESERVED: bookmark current page
+					KeyE(e)
+					{
+						D.toolbar.show();
+						D.elementTool.Cell.html(e);
+					},
 		//			ControlKeyF(e)		BROWSER RESERVED: search on page
 					KeyG(e)
 					{
@@ -4594,12 +4613,6 @@ class Display
 					},
 					ShiftKeyY(e)
 					{
-						if (R.Actions.morphismAssembly.hasForm(R.diagram, R.diagram.selected))
-						{
-							D.toolbar.show();
-							R.diagram.actionHtml(e, 'morphismAssembly');
-							R.Actions.morphismAssembly.action(e, R.diagram, R.diagram.selected);
-						}
 					},
 					KeyZ(e)
 					{
@@ -4657,6 +4670,11 @@ class Display
 							R.diagram.actionHtml(e, 'help');
 						}
 						e.preventDefault();
+					},
+					Slash(e)
+					{
+						const diagram = Cat.R.diagram;
+						diagram && diagram.search(e);
 					},
 					Space(e)
 					{
@@ -9947,7 +9965,7 @@ class IndexText extends Element
 		this.svgText.classList.remove('hidden');
 		delete this.foreign;
 	};
-	textEditor(cls = '')
+	textEditor(cls = '', doSelect = true, fn = null)
 	{
 		D.toolbar.hide();
 		D.closeActiveTextEdit();
@@ -9969,7 +9987,11 @@ class IndexText extends Element
 			if (e.key === 'Escape')
 			{
 				D.closeActiveTextEdit();
-				this.description !== '' && this.diagram.makeSelected(this);
+				if (this.description)
+				{
+					doSelect && this.diagram.makeSelected(this);
+					fn && fn(e, this.description);
+				}
 			}
 			e.stopPropagation();
 		};
@@ -11589,7 +11611,7 @@ class MorphismAssemblyAction extends Action
 		super.html();
 		const elts = [H3.h4('Assemble Morphism'),
 						D.getIcon('assyColor', 'assyColor', e => this.toggle(e, diagram, ary), {scale:D.default.button.small, title:'Dismiss assembly colors'}),
-						D.getIcon('edit', 'edit', e => this.action(e, diagram, ary), {scale:D.default.button.small, title:'Assemble and place the morphism'})];
+						D.getIcon('edit', 'edit', e => this.action(e, diagram, diagram.selected), {scale:D.default.button.small, title:'Assemble and place the morphism'})];
 		elts.map(elt => D.toolbar.body.appendChild(elt));
 	}
 	action(e, diagram, ary)
@@ -11622,9 +11644,10 @@ class MorphismAssemblyAction extends Action
 	}
 	hasForm(diagram, ary)
 	{
-		if (ary.length === 1 && ary[0].isEditable() && ary[0] instanceof IndexObject)
+		if (ary.length === 1 && (Cat.D ? ary[0].isEditable() : true) && ary[0] instanceof IndexObject)
 		{
-			if (diagram.blobs.length === 1 && diagram.blobs[0].objects.has(ary[0]) && diagram.blobs[0].morphisms.size > 1 && diagram.blobs[0].quantifiers.size === 0)
+			const blob = new IndexBlob(ary[0]);
+			if (blob.morphisms.size > 1 && blob.quantifiers.size === 0)
 				return true;
 		}
 		return false;
@@ -12649,7 +12672,7 @@ class LanguageAction extends Action
 		{
 			elt.contentEditable = false;
 			elt.disabled = true;
-			R.diagram.activate(e, type);
+			R.Actions[type].action(e, R.diagram, R.diagram.selected);
 		}
 		else
 		{
@@ -15105,6 +15128,7 @@ const Arrow =
 			args.ondblclick = e =>
 			{
 				this.isEditable() && Cat.R.Actions.flipName.action(e, this.diagram, [this]);		// defer editable check
+				this.emphasis(false);
 				e.stopPropagation();
 			};
 			this.svg_name = H3.text('.morphTxt.grabbable', args, properName);
@@ -16652,10 +16676,18 @@ class IndexBlob
 	{
 		return [...this[to instanceof CatObject ? 'objects' : 'morphisms']].filter(o => o.to === to);
 	}
+	forEachMorphism(doit)
+	{
+		this.morphisms.forEach(doit);
+	}
+	forEachObject(doit)
+	{
+		this.objects.forEach(doit);
+	}
 	forEachElement(doit)
 	{
-		this.objects.forEach(o => doit(o));
-		this.morphisms.forEach(m => doit(m));
+		this.forEachObject(doit);
+		this.forEachMorphism(doit);
 	}
 	getIndexElement(elt)
 	{
@@ -18596,7 +18628,7 @@ class Diagram extends Functor
 		try
 		{
 			const action = R.actionDiagram.getElement(name);
-			if (action && action.hasForm(R.diagram, this.selected))
+			if (action && action.hasForm(this, this.selected))
 				args ? action.action(e, this, this.selected, args) : action.action(e, this, this.selected);
 		}
 		catch(x)
@@ -20806,6 +20838,33 @@ class Diagram extends Functor
 			elt = this.codomain.elements.get(name);
 		return elt === undefined;
 	}
+	search(e)
+	{
+		e.preventDefault();
+		const mxy = D.mouse.xy[0];
+		const xy = this.userToDiagramCoords({x:mxy.x, y:mxy.y});
+		const oldSync = this.sync;
+		this.sync = false;
+		const text = new IndexText(this, {xy, description:''});
+		text.textEditor('', false, (ev, txt) =>
+		{
+			const regx = RegExp(txt);
+			const foundSet = new Set();
+			this.domain.forEachObject(o => (regx.test(o.to.basename) || regx.test(o.basename)) && foundSet.add(o));
+			this.domain.forEachMorphism(m => (regx.test(m.to.basename) || regx.test(m.basename)) && foundSet.add(m));
+			const found = [...foundSet];
+			if (found.length > 0)
+			{
+				this.panToElements(...found);
+				this.makeSelected(...found);
+				D.statusbar.show(e, `Items found: ${found.length}`);
+			}
+			else
+				D.statusbar.show(e, 'Nothing found');
+			text.decrRefcnt();
+		});
+		this.sync = oldSync;
+	}
 	static Codename(args)
 	{
 		return `${args.user}/${args.basename}`;
@@ -20851,24 +20910,27 @@ class Assembler
 {
 	constructor(diagram)
 	{
+		this.blob = null;
 		this.diagram = diagram;
-		this.objects = new Set();
-		this.morphisms = new Set();
 		this.origins = new Set();			// objects that are the domains of the composites
 		this.references = new Set();		// factor, identity, or terminal morphisms used as references
+		this.referenceObjects = new Set();
 		this.coreferences = new Set();
-		this.overloaded = new Set();
 		this.propagated = new Set();
 		this.inputs = new Set();
 		this.outputs = new Set();
 		this.injections = new Set();
-		this.composites = new Map();	// origins+inputs to array of morphisms to compose
+		this.products = new Set();			// assembled from reference projections
+		this.coproducts = new Set();		// assembled from non-reference coproducts
+		this.subobjects = new Set();		// objects that assemble non-reference coproducts
+		this.composites = new Map();		// origins+inputs to array of morphisms to compose
 		this.obj2morph = new Map();
 		this.processed = new Set();
 		this.issues = [];
 		this.finished = false;
 		this.inCoproduct = false;
 		this.clearGraphics();
+		this.scanning = [];
 	}
 	clearGraphics()
 	{
@@ -20882,12 +20944,12 @@ class Assembler
 			if (o instanceof IndexObject)
 			{
 				const bbox = o.svg.getBBox();
-				o.svg.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
+				o.svg.prepend(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
 			}
 			else if (o instanceof IndexMorphism)
 			{
 				const bbox = o.svg_nameGroup.getBBox();
-				o.svg_nameGroup.appendChild(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
+				o.svg_nameGroup.prepend(H3.ellipse('.ball', {id:type + '-' + o.elementId('asmblr'), class:cls, onmouseenter, rx:bbox.width/2 + D.default.margin}));
 			}
 		}
 	}
@@ -20983,11 +21045,6 @@ class Assembler
 		this.outputs.delete(obj);
 		this.deleteEllipse('output', obj);
 	}
-	addOverloaded(ovr)
-	{
-		this.overloaded.add(ovr);
-		Assembler.addBall('Overload', 'ovr', 'assyOverload', ovr);
-	}
 	isOrigin(object)
 	{
 		const codCnt = this.codomainCount(object);
@@ -20996,6 +21053,8 @@ class Assembler
 		if (refCnt > 0 && domCnt > 0)	// build a reference and go
 			return codCnt === 0;		// an origin cannot be set
 		else if (codCnt === 1 && domCnt > 1)
+			return true;
+		else if (this.coproducts.has(object))
 			return true;
 		const corCnt = this.coreferenceCount(object);
 		const useCnt = this.useCount(object);
@@ -21011,48 +21070,46 @@ class Assembler
 		this.origins.delete(obj);
 		this.deleteEllipse('origin', obj);
 	}
+	addIssue(message, element)
+	{
+		this.issues.push({message, element});
+	}
 	addError(message, element)
 	{
 		Assembler.addBall(message, 'error', 'assyError', element);
-		this.issues.push({message, element});
+		this.addIssue(message, element);
 	}
 	getBlob(obj)		// establish connected graph and issues therein, starting at the diagram object obj
 	{
-		const scanning = [obj];
-		const scanned = new Set();
-		while(scanning.length > 0)	// find loops or homsets > 1
+		this.blob = new IndexBlob(obj);
+		this.blob.forEachMorphism(m =>
 		{
-			const domain = scanning.pop();
-			scanned.add(domain);
-			this.objects.add(domain);
-			const scan = scanning;		// jshint
-			domain.domains.forEach(m =>
+			if (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism'))
+				m.to.dual ? this.coreferences.add(m) : this.references.add(m);
+			else if (m.to instanceof FactorMorphism && m.to.dual && m.to.factors.length === 1)
 			{
-				if (this.morphisms.has(m))
-					return;
-				this.morphisms.add(m);
-				if (m.attributes.has('referenceMorphism') && m.attributes.get('referenceMorphism'))
-					m.to.dual ? this.coreferences.add(m) : this.references.add(m);
-				else if (m.to instanceof FactorMorphism && m.to.dual && m.to.factors.length === 1)
-					this.injections.add(m);
-				m.makeGraph();
-				if (m.isEndo())		// in the index cat, not the target cat
-				{
-					this.addError('Circularity', m);
-					this.issues.push({message:'Circularity cannot be scanned', morphism:m});
-					return;
-				}
-				// propagate down the arrow
-				!scanned.has(m.codomain) && scan.push(m.codomain);
-			});
-			// propagate back up the arrow
-			domain.codomains.forEach(m => !scanned.has(m.domain) && scan.push(m.domain));
-		}
-		this.morphisms.size === 0 && this.issues.push({message:'No morphisms', element:base});
+				this.injections.add(m);
+				this.coproducts.add(m.codomain);
+				this.subobjects.add(m.domain);
+			}
+			m.makeGraph();
+			if (m.isEndo())		// in the index cat, not the target cat
+			{
+				this.addError('Circularity', m);
+				this.issues.push({message:'Circularity cannot be scanned', element:m});
+				return;
+			}
+		});
+		this.blob.morphisms.size === 0 && this.issues.push({message:'No morphisms', element:base});
+		this.referenceObjects = new Set([...this.references].map(ref => ref.codomain));
+		this.blob.objects.forEach(o =>
+		{
+			[...o.codomains].filter(m => !this.references.has(m) && !this.coreferences.has(m) && !this.injections.has(m)).length > 1 && this.addError('Too many inputs', o);
+		});
 	}
 	findOrigins()
 	{
-		this.objects.forEach(o => this.isOrigin(o) && this.addOrigin(o));
+		this.blob.objects.forEach(o => this.isOrigin(o) && this.addOrigin(o));
 	}
 	static getBarGraph(dm)
 	{
@@ -21090,12 +21147,7 @@ class Assembler
 	addTag(dm, graph, tag, ndx)
 	{
 		const fctr = graph.getFactor(ndx);
-		if (fctr.hasTag(tag) && ndx[0] !== 0)
-		{
-			if (!fctr.hasTag('Cofactor'))	// cofactor morphs can fold info
-				this.addOverloaded(dm);
-		}
-		else
+		if (!(fctr.hasTag(tag) && ndx[0] !== 0))
 			fctr.addTag(tag);
 	}
 	propTag(dm, m, mGraph, barGraph, tag, setFlag)
@@ -21111,8 +21163,8 @@ class Assembler
 	mergeObjectTags()
 	{
 		// build flattened graph for each object
-		this.objects.forEach(o => o.assyGraph = o.to.getGraph({position:0}));
-		this.objects.forEach(o => Assembler.mergeTags(o));
+		this.blob.objects.forEach(o => o.assyGraph = o.to.getGraph({position:0}));
+		this.blob.objects.forEach(o => Assembler.mergeTags(o));
 		const tagInfo = dm => this.propTag(dm, dm.to, dm.graph, Assembler.getBarGraph(dm), 'info', false);
 		const scanning = [...this.origins];
 		const scanned = new Set();
@@ -21162,7 +21214,7 @@ class Assembler
 	}
 	inputScan()
 	{
-		this.objects.forEach(o => this.isInput(o) && this.addInput(o));
+		this.blob.objects.forEach(o => this.isInput(o) && this.addInput(o));
 		this.inputs.forEach(i => i.assyGraph.addTag('info'));
 	}
 	infoProp()
@@ -21208,7 +21260,7 @@ class Assembler
 	{
 		let isIt = true;
 		const scannerYes = (g, ndx) => isIt = isIt && g.hasTag('info');
-		this.objects.forEach(object => this.isOutput(object) && this.addOutput(object));
+		this.blob.objects.forEach(object => this.isOutput(object) && this.addOutput(object));
 	}
 	originScan()
 	{
@@ -21239,10 +21291,11 @@ class Assembler
 							// do the factors cover the origin?
 							if (!this.diagram.isCovered(src.to, factors, this.issues))
 								this.addError('Origin not covered', src);
+							this.products.add(src);
 						}
 						else
 						{
-							this.issues.push('Duplicate factors found');
+							this.issues.push({message:'Duplicate factors found', element:src});
 							this.addError('Duplicate factors found', src);
 						}
 					}	// else the single identity as reference covers everything
@@ -21253,12 +21306,22 @@ class Assembler
 	}
 	overloadedScan()
 	{
-		this.overloaded.forEach(ovr => this.issues.push({message:'object is overloaded', element:ovr.codomain}));
+		let error = false;
+		this.blob.objects.forEach(obj =>
+		{
+			const refs = this.getReferences(obj);
+			if (refs.length > 0 && obj.codomains.size > 0 && [...obj.codomains].filter(m => !this.references.has(m)).length > 0)
+			{
+				this.addError('Object set by morphism and references', obj);
+				error = true;
+			}
+		});
+		return error;
 	}
 	followComposite(cmp, m)
 	{
 		const cod = m.codomain;
-		if (this.origins.has(cod))
+		if (this.origins.has(cod) || this.injections.has(m))
 			return cod;
 		const morphs = [...cod.domains].filter(m => !this.references.has(m) && !this.injections.has(m));
 		if (morphs.length > 0)
@@ -21272,7 +21335,7 @@ class Assembler
 	}
 	startComposites(scanning)
 	{
-		const obj = scanning.pop();
+		const obj = scanning.shift();
 		const comps = [];
 		this.composites.set(obj, comps);
 		obj.domains.forEach(m =>
@@ -21283,7 +21346,7 @@ class Assembler
 				const cmp = [m];
 				comps.push(cmp);
 				const cod = this.followComposite(cmp, m);
-				scanning.push(cod);
+				!scanning.includes(cod) && !this.outputs.has(cod) && scanning.push(cod);
 			}
 		});
 	}
@@ -21299,7 +21362,6 @@ class Assembler
 		{
 			codomains[i] = leg[leg.length -1].codomain;
 			const comp = this.diagram.comp(...leg.map(m => m.to));
-//			this.obj2morph.set(codomains[i], comp);
 			return comp;
 		}) : [];
 	}
@@ -21384,6 +21446,7 @@ class Assembler
 	{
 		if (this.processed.has(domain))
 			return null;
+Assembler.addBall('Input', 'input', 'assyInput', domain);
 		this.processed.add(domain);
 		const diagram = this.diagram;
 		//
@@ -21414,12 +21477,10 @@ class Assembler
 								const morph = this.obj2morph.get(o);
 								if (morph === undefined)
 									domObjects.push(o);
-								else if (!morph.domain.isTerminal())
-									domObjects.push(morph.domain);
 							}
 						}
 					});
-					return {domain:ref, morphism, refObjects, factors, domRefs};
+					return {morphism, refObjects, factors, domRefs};
 				}
 				return null;
 			}).filter(item => item);		// remove references that did not generate a morphism
@@ -21446,7 +21507,9 @@ class Assembler
 			assembly[i] = assemblyI;
 			const codDomObjects = [];
 			const codCodObjects = [];
-			const secondMorph = this.outputs.has(cod) ? null : this.formMorphism(cod, codDomObjects, codCodObjects);
+			let secondMorph = null;
+			if (!this.outputs.has(cod) && !this.processed.has(cod))
+				secondMorph = this.formMorphism(cod, codDomObjects, codCodObjects);
 			if (secondMorph)
 			{
 				const factors = [];
@@ -21594,10 +21657,6 @@ class Assembler
 		const postDomain = preMorphism ? preMorphism.codomain : diagram.prod(...postNdxObjects.map(o => o.to).filter(o => !o.isTerminal()));
 		refToMorphisms.map((data, k) =>
 		{
-			//
-			// Extract from the post domain the objects needed for this reference.
-			// Note the terminal objects get restored as -1's through indexOf.
-			//
 			const postFactorMorph = diagram.fctr(postDomain, postNdxFactors[k]);
 			//
 			// now rearrange the factors into those used by the reference morphism's domain and those referenced later
@@ -21633,9 +21692,8 @@ class Assembler
 		//
 		firstComposites.map((comp, i) =>
 		{
-			const assemblyI = assembly[i];
 			const pre = [comp];
-			const factors = [domObjects.length === 0 ? [] : 0];
+			const factors = [domObjects.length === 0 ? [] : (domain.to.isTerminal() ? -1 : 0)];
 			domObjects.map((o, j) =>
 			{
 				pre.push(diagram.id(o.to));
@@ -21647,6 +21705,7 @@ class Assembler
 				factors.push(0);
 			}
 			const premanifold = diagram.stripComp(diagram.fctr(postDomain, factors), diagram.prod(...pre));
+			const assemblyI = assembly[i];
 			if (assemblyI.length > 0)
 			{
 				const cod = premanifold.codomain;
@@ -21662,7 +21721,7 @@ class Assembler
 				finalAssembly.push(premanifold);
 		});
 		//
-		//		cover
+		//		reference cover
 		//
 		// the last assembly entry to create is for the cover
 		//
@@ -21721,7 +21780,33 @@ class Assembler
 			}
 		}
 		//
-		// ASSEMBLY
+		//		product/coproduct assembly
+		//
+		//		assumes cover of domain is corrct
+		//
+		if (false && this.coproducts.has(domain))
+		{
+			const morphisms = [];
+			domain.codomains.forEach(m =>
+			{
+				const morph = this.obj2morph.has(m.domain) ? this.obj2morph.get(m.domain) : diagram.id(m.domain.to);
+				morphisms[m.to.factors[0]] = morph;
+			});
+			preMorphism = diagram.coprod(...morphisms);
+		}
+		else if (false && this.products.has(domain))
+		{
+			const morphisms = [];
+			const refs = this.getReferences(domain);
+			refs.forEach(m =>
+			{
+				const morph = this.obj2morph.has(m.codomain) ? this.obj2morph.get(m.codomain) : diagram.id(m.codomain.to);
+				morphisms[m.to.factors[0]] = morph;
+			});
+			preMorphism = diagram.prod(...morphisms);
+		}
+		//
+		// FINAL ASSEMBLY
 		//
 		// form the assembly of all the pieces for our given domain index object
 		//
@@ -21737,22 +21822,42 @@ class Assembler
 	getBlobMorphism()
 	{
 		let ndx = 0;
-		let scanning = [];
-		const inputs = [...this.inputs];
-		inputs.map(input => scanning.push({domain:input}));
-		const scanInputs = scanning.slice();
-		const inputMorphs = scanInputs.map(i => this.formMorphism(i.domain, [], [])).filter(m => m);
-		return inputMorphs.pop();
+		this.scanning = [...this.inputs];
+		const morphisms = [];
+		while(this.scanning.length > 0)
+		{
+			const domObjects = [];
+			const codObjects = [];
+			const morph = this.formMorphism(this.scanning.shift(), domObjects, codObjects);
+			morph && morphisms.push(morph);
+		}
+		return morphisms.pop();
 	}
 	// try to form a morphism from a blob
 	assemble(e, base)
 	{
+		const chk = _ =>
+		{
+			if (this.issues.length > 0)
+			{
+				if (D)
+					D.statusbar.show(e, 'An error occurred');
+				else
+					console.log('*** Issues:');
+				this.issues.map(isu => console.log('    element', isu.element.name, 'issue', isu.message));
+				this.finished = true;
+				return true;
+			}
+			return false;
+		};
 		try
 		{
 			//
 			// establish connected graph and issues therein
 			//
 			this.getBlob(base);
+			if (chk())
+				return null;
 			//
 			// find origins
 			//
@@ -21785,7 +21890,8 @@ class Assembler
 			//
 			// check for overloaded reference objects
 			//
-			this.overloadedScan();
+			if (this.overloadedScan())
+				return;		// errors found
 			//
 			// get the blob's morphism
 			//
@@ -21795,26 +21901,34 @@ class Assembler
 			//
 			if (D && morphism)
 			{
+				const selected = this.diagram.selected.slice();
+				let compObjs = [];
+				let x = Number.MIN_SAFE_INTEGER;
+				let y = Number.MAX_SAFE_INTEGER;
+				this.blob.objects.forEach(o =>
+				{
+					x = Math.max(x, o.x);
+					y = Math.min(y, o.y);
+				});
+				x += D.default.arrow.length;
 				if (morphism instanceof Composite)
 				{
 					let x = Number.MIN_SAFE_INTEGER;
 					let y = Number.MAX_SAFE_INTEGER;
-					this.objects.forEach(o =>
+					this.blob.objects.forEach(o =>
 					{
 						x = Math.max(x, o.x);
 						y = Math.min(y, o.y);
 					});
 					x += D.default.arrow.length;
-					const compObjs = D.placeComposite(e, this.diagram, morphism, D.grid({x, y}));
-					R.Actions.zoom.action(e, this.diagram, compObjs);
+					compObjs = D.placeComposite(e, this.diagram, morphism, D.grid({x, y}));
 				}
 				else
 				{
-					const from = this.diagram.placeMorphism(morphism, base.getXY(), null, true);
-					const elts = [...this.objects];
-					elts.push(from);
-					R.Actions.zoom.action(e, this.diagram, elts);
+					const from = this.diagram.placeMorphism(morphism, {x, y}, null, true);
+					compObjs.push(from.domain, from.codomain);
 				}
+				this.diagram.panToElements(...selected, ...compObjs);
 				D.emitCellEvent(this.diagram, 'check');
 			}
 			else
