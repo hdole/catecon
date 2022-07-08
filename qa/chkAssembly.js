@@ -21,18 +21,6 @@ Cat.R.cloudURL = null;		// do not connect to cloud server
 Cat.R.URL = process.env.CAT_URL;
 Cat.R.local = process.env.CAT_LOCAL === 'true';
 
-function saveDiagram(diagram)
-{
-	console.log('saving diagram', diagram.name);
-	diagram.timestamp = diagram.timestamp + 1;
-	const diagramString = JSON.stringify(diagram.json(), null, 2);
-	const dgrmFile = path.join(process.env.HTTP_DIR, 'diagram', diagram.name + '.jsonX');
-	fs.mkdirSync(path.dirname(dgrmFile), {recursive:true});
-	const dgrmFD = fs.openSync(dgrmFile, 'w');
-	fs.writeSync(dgrmFD, diagramString, 0, diagramString.length +1);
-	fs.closeSync(dgrmFD);
-}
-
 function findDiagramJsons(dir)
 {
 	if (!fs.existsSync(dir))
@@ -47,7 +35,10 @@ function findDiagramJsons(dir)
 	return diagrams;
 }
 
-function check(diagram, obj, sig, name)
+const testResults = {};
+const badResults = {};
+
+function check(diagram, obj, sig)
 {
 	let assembler = new Cat.Assembler(diagram);
 	let object = diagram.getElement(obj);
@@ -56,60 +47,54 @@ function check(diagram, obj, sig, name)
 		console.log('*** Cannot find object to assemble');
 		return false;
 	}
-	let morphism = assembler.assemble(null, object);
-	if (morphism === null)
+	let result = true;
+	try
 	{
-		console.log('*** No morphism assembled', object.name);
+		if (!Cat.R.Actions.morphismAssembly.hasForm(diagram, [obj]))
+		{
+			console.log('*** Warning: object does not match form', obj.name);
+			return false;
+		}
+		let morphism = assembler.assemble(null, object);
+		if (!morphism)
+		{
+			console.log('*** No morphism assembled', object.name);
+			result = false;
+		}
+		else if (morphism.signature !== sig)
+		{
+			console.log('*** Assembly failed', object.name, 'good sig', sig, 'bad sig', morphism.signature);
+			result = false;
+		}
+		if (result)
+			testResults[object.basename] = {object:object.basename, signature:morphism.signature};
+		else
+			badResults[object.basename] = {object:object.basename, signature:morphism ? morphism.signature : ''};
+		result && console.log('Passed', object.name, morphism.signature);
+	}
+	catch(x)
+	{
+		console.log('*** EXCEPTION', x);
 		return false;
 	}
-	if (morphism.signature !== sig)
-	{
-		console.log('*** Assembly failed', object.name, 'good sig', sig, 'bad sig', morphism.signature);
-		return false;
-	}
-	if (morphism.name !== name)
-	{
-		console.log('*** Assembly failed', object.name, 'good name', name, 'bad name', morphism.name);
-		return false;
-	}
-	console.log('Passed', object.name, morphism.signature);
-	return true;
+	return result;
 }
-
-// TODO move to ./qa/tests/assembly.json
-const tests =
-[
-	{
-		object:		'o_1',
-		sig:		'084ece9c2cceab443cda9158ade79c8c12830e9e278fefed050207dad4b4d4d6',
-		name:		'hdole/assembly/Cm{Cm{Fa{hdole/floats/F64:hdole/floats/F64_0,#1_-1}aF,Pm{Id{hdole/floats/F64}dI,hdole/floats/fone64}mP}mC,hdole/floats/fsub64}mC',
-	},
-	{
-		object:		'o_6',
-		sig:		'2aa146ba6af1ffd4713947c2a67cda5d13351c50714183af4d70cdd2ba68a8be',
-		name:		'hdole/assembly/Cm{Cm{Fa{S:S_,S_0}aF,Pm{test,Id{S}dI}mP}mC,Cm{Di{Po{CPo{#1,#1}oPC,S}oP-L}iD,CPm{Cm{Fa{Po{#1,S}oP:S_1}aF,Fa{S:S_1}aF}mC,Cm{Fa{Po{#1,S}oP:S_1}aF,Cm{Fa{S:S_1}aF,Cm{update,while}mC}mC}mC}mPC,CFa{S:S_,S_}aFC}mC}mC',
-	},
-	{
-		object:		'o_13',
-		sig:		'5dc163761e18cd9bf27c699a04a84c8e0cce4acdc1b1c0059f655bba64650160',
-		name:		'hdole/assembly/Cm{Cm{Fa{hdole/floats/F64:hdole/floats/F64_,hdole/floats/F64_0}aF,Pm{hdole/floats/feq0_64,Id{hdole/floats/F64}dI}mP}mC,Cm{Di{Po{CPo{#1,#1}oPC,hdole/floats/F64}oP-L}iD,CPm{Cm{Fa{Po{#1,hdole/floats/F64}oP:hdole/floats/F64_1}aF,Cm{Fa{hdole/floats/F64:hdole/floats/F64_1}aF,Cm{Cm{Fa{hdole/floats/F64:hdole/floats/F64_,hdole/floats/F64_0}aF,Pm{Cm{hdole/floats/fdecr64,fact}mC,Id{hdole/floats/F64}dI}mP}mC,Cm{Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_0,hdole/floats/F64_1}aF,Pm{Cm{hdole/floats/fdecr64,fact}mC,Id{hdole/floats/F64}dI}mP}mC,Cm{Fa{Po{hdole/floats/F64,hdole/floats/F64}oP:hdole/floats/F64_1,hdole/floats/F64_0}aF,hdole/floats/fmult64}mC}mC}mC}mC}mC,Cm{Fa{Po{#1,hdole/floats/F64}oP:hdole/floats/F64_1}aF,Fa{hdole/floats/F64:#1_-1}aF,hdole/floats/fone64}mC}mPC,CFa{hdole/floats/F64:hdole/floats/F64_,hdole/floats/F64_}aFC}mC}mC',
-	},
-	{
-		object:		'o_52',
-		sig:		'acdff222cef78e6079273a7d2d484d6542db3cd1a6769831a34c213b2f22e298',
-		name:		'hdole/assembly/Cm{test,Id{CPo{#1,#1}oPC}dI}mC'
-	},
-	{
-		object:		'o_44',
-		sig:		'e7bf95aab974a63f3cd4a1818f61f9db227afe1342cb97696d17e4fe2b8720b8',
-		name:		'hdole/assembly/Cm{Cm{Fa{S:S_,S_0}aF,Pm{test,Id{S}dI}mP}mC,Cm{Di{Po{CPo{#1,#1}oPC,S}oP-L}iD,CPm{Cm{Fa{Po{#1,S}oP:S_1}aF,Fa{S:S_1}aF}mC,Cm{Fa{Po{#1,S}oP:S_1}aF,Fa{S:S_1}aF}mC}mPC,CFa{S:S_,S_}aFC}mC}mC',
-	},
-];
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 try
 {
+	let writeResults = process.argv.includes('-w');
+	const testdataFilename = './qa/tests/assembly.json';
+	let testdata = {};
+	if (fs.existsSync(testdataFilename))
+	{
+		const testdataFile = fs.readFileSync('./qa/tests/assembly.json');
+		if (testdata)
+			testdata = JSON.parse(testdataFile);
+	}
+	else
+		console.log('WARNING:  Test data not found at ./qa/tests/assembly.json');
 	Cat.R.initialize(_ =>
 	{
 		try
@@ -168,10 +153,34 @@ try
 			Cat.R.loadDiagram('hdole/assembly', diagram =>
 			{
 				console.log('Begin assembly tests');
-				diagram.domain.forEachObject(obj => check(diagram, obj, '', ''));
-//				const errcnt = tests.map(test => check(diagram, test.object, test.sig, test.name)).filter(r => !r).length;
-//				console.log('Assembly test finished with', errcnt, 'errors');
-//				gotError = errcnt > 0;
+				let errcnt = 0;
+				diagram.domain.forEachObject(obj =>
+				{
+					const test = obj.basename in testdata ? testdata[obj.basename] : {object:obj, signature:''};
+					!check(diagram, obj, test.signature) && errcnt++;
+				});
+				if (writeResults)
+				{
+					const ndx = process.argv.indexOf('-s');
+					let sig = ndx > -1 && process.argv.length > ndx + 1 ? process.argv[ndx + 1] : null;
+					if (sig)
+					{
+						console.log('*** Update tests with signature', sig);
+						for (let obj in badResults)
+						{
+							const data = badResults[obj];
+							if (data.signature === sig)
+							{
+								testResults[obj] = data;
+								console.log('***** Updated tests results for', obj);
+							}
+						}
+					}
+					console.log('*** Writing test results to', testdataFilename);
+					fs.writeFileSync(testdataFilename, JSON.stringify(testResults, null, 2));
+				}
+				console.log('*** Assembly test finished with', errcnt, 'errors');
+				gotError = errcnt > 0;
 			});
 		}
 		catch(x)
