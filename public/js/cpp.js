@@ -225,8 +225,7 @@ ${members}
 						code += this.generateRuntime(object);
 						break;
 					case 'ProductObject':
-						if (this.isBool(object))		// TODO sz > 2
-							code += this.generateProductObject(object);
+						code += this.generateProductObject(object);
 						break;
 					case 'HomObject':
 						code += this.generateFunctionPointer(object);
@@ -519,11 +518,8 @@ ${members}
 					this.generatedVariables.add(g.var);
 				}
 				let modifier = '';
-				let constant = '';
 				if (ndx[0] === codNdx)
 					modifier = '& ';
-				else
-					constant = 'const ';
 				const isFold = 'dom' in g && g.dom instanceof Cat.FactorMorphism && g.dom.isFold();
 				code += `${this.getType(this.context.getElement(isFold ? g.element.objects[0].name : g.element.name))} ${g.var};\n`;
 			};
@@ -595,10 +591,6 @@ ${members}
 					this.setupVariables(morphism, graph, new Map(), upGraph, domFactor, codFactor);
 					if ('data' in morphism)
 					{
-						/*
-						const data = JSON.stringify(U.JsonMap(morphism.data));
-						code += this.cline(`std::map<${this.getType(morphism.domain)}, ${this.getType(morphism.codomain)}> ${symbol}_data ${data};\n`);
-						*/
 						if (morphism.domain.isTerminal() && morphism.codomain instanceof Cat.HomObject)
 						{
 							if (codFactor.length > 1)
@@ -706,7 +698,7 @@ ${members}
 						const cnt = morphism.morphisms.length;
 						if (cnt === 2)	// if-then-else
 						{
-							code += this.cline(`if (${graph.graphs[0].var})\n{`);
+							code += this.cline(`if (${graph.graphs[0].var}.c)\n{`);
 							this.incTab();
 							code += isFold ? '' : this.cline(`${graph.graphs[1].var}.c = 1;`);
 							code += this.instantiateMorphism(null, morphism.morphisms[1], ndxMap, graph, [0, 1], [1, 1]);
